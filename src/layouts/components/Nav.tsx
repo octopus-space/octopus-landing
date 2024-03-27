@@ -6,29 +6,29 @@ import instagram from "@/assets/instagram.svg";
 const items = [
   {
     icon: github,
-    link: "",
+    link: "https://github.com/octopus-space",
     label: "github",
   },
   {
     icon: x,
-    link: "",
+    link: "https://twitter.com/OctopusSpaceX",
     label: "x",
   },
-  {
-    icon: medium,
-    link: "",
-    label: "medium",
-  },
-  {
-    icon: discord,
-    link: "",
-    label: "discord",
-  },
-  {
-    icon: instagram,
-    link: "",
-    label: "instagram",
-  },
+  // {
+  //   icon: medium,
+  //   link: "",
+  //   label: "medium",
+  // },
+  // {
+  //   icon: discord,
+  //   link: "",
+  //   label: "discord",
+  // },
+  // {
+  //   icon: instagram,
+  //   link: "",
+  //   label: "instagram",
+  // },
 ];
 
 export default () => {
