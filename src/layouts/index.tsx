@@ -15,7 +15,10 @@ export default function Layout() {
             <div
               className="entryBtn"
               onClick={() => {
-                message.info({ content: "coming soon",icon:<></> });
+                message.info({
+                  content: "coming soon",
+                  icon: "🚀",
+                });
               }}
             >
               Enter APP

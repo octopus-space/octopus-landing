@@ -36,10 +36,10 @@ export default () => {
             </div>
             <div className="buttonWrap" key="btns">
               <div className="button primary" onClick={() => {
-                message.info({ content: "coming soon",icon:<></> });
+                message.info({ content: "coming soon",icon: "🚀", });
               }}>Wrapping</div>
               <div className="button line" onClick={() => {
-                message.info({ content: "coming soon" ,icon:<></>});
+                message.info({ content: "coming soon" ,icon: "🚀",});
               }}>Mapping</div>
             </div>
           </QueueAnim>
