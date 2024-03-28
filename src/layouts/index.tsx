@@ -2,6 +2,7 @@ import { Link, Outlet } from "umi";
 import "./index.less";
 import logo from "@/assets/logo.svg";
 import Nav from "./components/Nav";
+import { message } from "antd";
 
 export default function Layout() {
   return (
@@ -11,7 +12,14 @@ export default function Layout() {
           <img src={logo} alt="" className="logo" />
           <div className="navWrap">
             <Nav />
-            <div className="entryBtn">Enter APP</div>
+            <div
+              className="entryBtn"
+              onClick={() => {
+                message.info({ content: "coming soon",icon:<></> });
+              }}
+            >
+              Enter APP
+            </div>
           </div>
         </div>
       </div>
