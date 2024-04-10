@@ -14,7 +14,7 @@ type Item = {
 };
 export const page3: Item[] = [
   {
-    title: "Bitcion",
+    title: "Bitcoin",
 
     image: btc,
   },
