@@ -9,7 +9,7 @@ import arrow from "@/assets/arrowRight.png";
 import { Button, Divider, Empty, Skeleton, Space } from "antd";
 import "./index.less";
 type HistoryType = "btcToMvc" | "brc20ToMvc" | "mvcToBtc" | "mvcToBrc20";
-const size = 1;
+const size = 10;
 export default ({ type }: { type: HistoryType }) => {
   const { connect, mvcAddress, network } = useModel("wallet");
   const { AssetsInfo } = useModel("wrapping");
@@ -56,7 +56,6 @@ export default ({ type }: { type: HistoryType }) => {
             )
           );
         }
-
         return item;
       });
       setList((prev) => {
@@ -66,12 +65,12 @@ export default ({ type }: { type: HistoryType }) => {
       console.log(err);
     }
     setLoading(false);
-  }, [page, mvcAddress, network, AssetsInfo]);
+  }, [page]);
   useEffect(() => {
     fetchHistory();
   }, [fetchHistory]);
   return (
-    <div style={{ minHeight: 500,overflowY:'scroll' }} className="historyPanel">
+    <div style={{ minHeight: 500,height: 500,overflowY:'scroll' }} className="historyPanel">
       {list.length === 0 && !loading && <Empty description='No Transfers yet'> </Empty>}
 
       {list.map((item) => (
