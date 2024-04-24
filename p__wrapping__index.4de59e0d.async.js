@@ -1685,27 +1685,27 @@ const SvgArrowRight = (props) => /* @__PURE__ */ React.createElement("svg", arro
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "label",
               children: "Service Fee"
-            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
               className: "value",
-              children: bridgeFee
+              children: [bridgeFee, fromChain.key === "btc" ? asset.originSymbol : asset.targetSymbol]
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "label",
               children: "Network Fee"
-            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
               className: "value",
-              children: minerFee
+              children: [minerFee, fromChain.key === "btc" ? asset.originSymbol : asset.targetSymbol]
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "label",
               children: "Total Fee"
-            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
               className: "value",
-              children: totalFee
+              children: [totalFee, fromChain.key === "btc" ? asset.originSymbol : asset.targetSymbol]
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
@@ -1909,6 +1909,16 @@ var defalut = {
     _useState26 = slicedToArray_default()(_useState25, 2),
     ErrorMsg = _useState26[0],
     setErrorMsg = _useState26[1];
+  var _useState27 = (0,react.useState)({
+      minerFee: '',
+      bridgeFee: '',
+      receiveAmount: '',
+      totalFee: '',
+      confirmNumber: ''
+    }),
+    _useState28 = slicedToArray_default()(_useState27, 2),
+    feeInfo = _useState28[0],
+    setFeeInfo = _useState28[1];
   var _useModel2 = (0,_umi_production_exports.useModel)("wrapping"),
     chains = _useModel2.chains,
     fromChain = _useModel2.fromChain,
@@ -1950,20 +1960,24 @@ var defalut = {
       try {
         var info = (0,utils/* calcRedeemBtcInfo */.PO)((0,utils/* amountRaw */.xo)(String(value), asset.decimals), AssetsInfo);
         setErrorMsg("");
-        setReciveAmount((0,utils/* formatSat */.gB)(info.receiveAmount));
+        setReciveAmount(info.receiveAmount);
+        setFeeInfo(info);
       } catch (err) {
         console.log(err);
         message/* default */.ZP.error(err.message || "unknown error");
+        setReciveAmount('');
         setErrorMsg(err.message || "unknown error");
       }
     }
     if (AssetsInfo && asset && protocolType === "brc20" && bridgeType === "redeem") {
       try {
-        var _info = (0,utils/* calcRedeemBrc20Info */.ug)((0,utils/* amountRaw */.xo)(value, asset === null || asset === void 0 ? void 0 : asset.decimals), AssetsInfo, asset);
+        var _info = (0,utils/* calcRedeemBrc20Info */.ug)((0,utils/* amountRaw */.xo)(value, asset.decimals - asset.trimDecimals), AssetsInfo, asset);
         setErrorMsg("");
-        setReciveAmount((0,utils/* formatSat */.gB)(_info.receiveAmount));
+        setReciveAmount(_info.receiveAmount);
+        setFeeInfo(_info);
       } catch (err) {
         console.log(err);
+        setReciveAmount('');
         message/* default */.ZP.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
@@ -1972,9 +1986,11 @@ var defalut = {
       try {
         var _info2 = (0,utils/* calcMintBtcInfo */.jq)((0,utils/* amountRaw */.xo)(value, 8), AssetsInfo);
         setErrorMsg("");
-        setReciveAmount((0,utils/* formatSat */.gB)(_info2.receiveAmount));
+        setReciveAmount(_info2.receiveAmount);
+        setFeeInfo(_info2);
       } catch (err) {
         console.log(err);
+        setReciveAmount('');
         message/* default */.ZP.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
@@ -1984,8 +2000,10 @@ var defalut = {
         var _info3 = (0,utils/* calcMintBrc20Info */.AY)(value, AssetsInfo, asset);
         setErrorMsg("");
         setReciveAmount(_info3.receiveAmount);
+        setFeeInfo(_info3);
       } catch (err) {
         console.log(err);
+        setReciveAmount('');
         message/* default */.ZP.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
@@ -2195,6 +2213,11 @@ var defalut = {
       type: "primary",
       onClick: function onClick() {}
     }, {
+      condition: Number(reciveAmount) < 0,
+      text: "Low Send Amount",
+      type: "primary",
+      onClick: function onClick() {}
+    }, {
       condition: ErrorMsg,
       text: ErrorMsg,
       type: "primary",
@@ -2210,9 +2233,9 @@ var defalut = {
       show: true,
       amount: amount,
       reciveAmount: String(reciveAmount),
-      minerFee: "",
-      bridgeFee: "",
-      totalFee: "",
+      minerFee: String(feeInfo.minerFee),
+      bridgeFee: String(feeInfo.bridgeFee),
+      totalFee: String(feeInfo.totalFee),
       handleSubmit: handleSubmit,
       onClose: function onClose() {
         return setConfirmProps(defalut);
@@ -2231,6 +2254,7 @@ var defalut = {
       onChange: function onChange(value) {
         setProtocolType(value);
         setAmount("");
+        setReciveAmount('');
       },
       options: SegOptions,
       size: "large",
@@ -2426,7 +2450,7 @@ var defalut = {
                 className: "input",
                 onChange: onInputChange,
                 value: amount
-                //   max={sendBal}
+                // max={sendBal}
                 ,
                 variant: "borderless",
                 controls: false
@@ -2505,6 +2529,9 @@ var defalut = {
       onChange: function onChange(_asset) {
         setAsset(_asset);
         setSelectAssetVisible(false);
+        setAmount('');
+        setErrorMsg('');
+        setReciveAmount('');
       }
     }), /*#__PURE__*/(0,jsx_runtime.jsx)(Summary, objectSpread2_default()(objectSpread2_default()({}, confrimProps), {}, {
       submitting: submitting

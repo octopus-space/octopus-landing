@@ -6617,10 +6617,10 @@ var calcRedeemBtcInfo = function calcRedeemBtcInfo(redeemAmount, assetInfo) {
     transactionSize = assetInfo.transactionSize,
     assetList = assetInfo.assetList;
   if (redeemAmount < Number(amountLimitMinimum)) {
-    throw new Error("mint amount less than  minimum amount");
+    throw new Error("amount less than minimum amount");
   }
   if (redeemAmount > Number(amountLimitMaximum)) {
-    throw new Error("mint amount greater than  maximum amount");
+    throw new Error("amount greater than maximum amount");
   }
   var confirmNumber = confirmNumberBySeqAndAmount(redeemAmount, confirmSequence,
   // mint btc -> mvc, get mvc confirm number
@@ -6635,10 +6635,10 @@ var calcRedeemBtcInfo = function calcRedeemBtcInfo(redeemAmount, assetInfo) {
   var receiveAmount = redeemAmount - totalFee;
   debugger;
   return {
-    receiveAmount: receiveAmount,
-    minerFee: minerFee,
-    bridgeFee: bridgeFee,
-    totalFee: totalFee,
+    receiveAmount: formatSat(receiveAmount),
+    minerFee: formatSat(minerFee),
+    bridgeFee: formatSat(bridgeFee),
+    totalFee: formatSat(totalFee),
     confirmNumber: confirmNumber
   };
 };
@@ -6652,10 +6652,10 @@ var calcRedeemBrc20Info = function calcRedeemBrc20Info(redeemAmount, assetInfo, 
   var brcAmount = redeemAmount / Math.pow(10, asset.decimals - asset.trimDecimals);
   var redeemBrc20EqualBtcAmount = asset.price * Number(brcAmount) / btcPrice * Math.pow(10, 8);
   if (redeemBrc20EqualBtcAmount < Number(amountLimitMinimum)) {
-    throw new Error("mint amount less than  minimum amount");
+    throw new Error("amount less than minimum amount");
   }
   if (redeemBrc20EqualBtcAmount > Number(amountLimitMaximum)) {
-    throw new Error("mint amount greater than  maximum amount");
+    throw new Error("amount greater than maximum amount");
   }
   var confirmNumber = confirmNumberBySeqAndAmount(redeemBrc20EqualBtcAmount, confirmSequence,
   // mint btc -> mvc, get mvc confirm number
@@ -6667,10 +6667,10 @@ var calcRedeemBrc20Info = function calcRedeemBrc20Info(redeemAmount, assetInfo, 
   var totalFee = bridgeFee + minerFee;
   var receiveAmount = BigInt(redeemAmount) - totalFee;
   return {
-    receiveAmount: receiveAmount,
-    minerFee: minerFee,
-    bridgeFee: bridgeFee,
-    totalFee: totalFee,
+    receiveAmount: formatSat(String(receiveAmount), asset.decimals - asset.trimDecimals),
+    minerFee: formatSat(String(minerFee), asset.decimals - asset.trimDecimals),
+    bridgeFee: formatSat(String(bridgeFee), asset.decimals - asset.trimDecimals),
+    totalFee: formatSat(String(totalFee), asset.decimals - asset.trimDecimals),
     confirmNumber: confirmNumber
   };
 };
@@ -6685,10 +6685,10 @@ var calcMintBtcInfo = function calcMintBtcInfo(mintAmount, assetInfo) {
     transactionSize = assetInfo.transactionSize,
     assetList = assetInfo.assetList;
   if (mintAmount < Number(amountLimitMinimum)) {
-    throw new Error("mint amount less than  minimum amount");
+    throw new Error("amount less than minimum amount");
   }
   if (mintAmount > Number(amountLimitMaximum)) {
-    throw new Error("mint amount greater than  maximum amount");
+    throw new Error("amount greater than maximum amount");
   }
   var confirmNumber = confirmNumberBySeqAndAmount(mintAmount, confirmSequence,
   // mint btc -> mvc, get mvc confirm number
@@ -6706,10 +6706,10 @@ var calcMintBtcInfo = function calcMintBtcInfo(mintAmount, assetInfo) {
   var totalFee = Math.floor(bridgeFee + minerFee);
   var receiveAmount = mintAmount - totalFee;
   return {
-    receiveAmount: receiveAmount,
-    minerFee: minerFee,
-    bridgeFee: bridgeFee,
-    totalFee: totalFee,
+    receiveAmount: formatSat(receiveAmount),
+    minerFee: formatSat(minerFee),
+    bridgeFee: formatSat(bridgeFee),
+    totalFee: formatSat(totalFee),
     confirmNumber: confirmNumber
   };
 };
@@ -6726,10 +6726,10 @@ var calcMintBrc20Info = function calcMintBrc20Info(mintAmount, assetInfo, asset)
   var assetRdex = asset;
   var mintBrc20EqualBtcAmount = assetRdex.price * Number(mintAmount) / btcPrice * Math.pow(10, 8);
   if (Number(mintBrc20EqualBtcAmount) < Number(amountLimitMinimum)) {
-    throw new Error("mint amount less than  minimum amount");
+    throw new Error("amount less than minimum amount");
   }
   if (Number(mintBrc20EqualBtcAmount) > Number(amountLimitMaximum)) {
-    throw new Error("mint amount greater than  maximum amount");
+    throw new Error("amount greater than maximum amount");
   }
   var confirmNumber = confirmNumberBySeqAndAmount(mintBrc20EqualBtcAmount, confirmSequence,
   // mint btc -> mvc, get mvc confirm number
@@ -6779,8 +6779,8 @@ function prettyTimestamp(timestamp) {
   var isInSeconds = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
   var cutThisYear = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
   if (isInSeconds) timestamp = timestamp * 1000;
-  if (cutThisYear) return dayjs_min_default()(timestamp).format('MM-DD HH:mm:ss');
-  return dayjs_min_default()(timestamp).format('YYYY-MM-DD HH:mm:ss');
+  if (cutThisYear) return dayjs_min_default()(timestamp).format("MM-DD HH:mm:ss");
+  return dayjs_min_default()(timestamp).format("YYYY-MM-DD HH:mm:ss");
 }
 var formatUnitToSats = function formatUnitToSats(value) {
   var decimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 8;
@@ -37072,7 +37072,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"132":"88234bf0","208":"dc1d33cf","242":"d62fc15e","307":"45240fc7","557":"2201ab0f","717":"08a167c2","866":"6fb33101"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"132":"88234bf0","208":"dc1d33cf","242":"d62fc15e","307":"4de59e0d","557":"2201ab0f","717":"08a167c2","866":"6fb33101"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
