@@ -266,7 +266,7 @@ var skeleton = __webpack_require__(21687);
 
 
 
-var size = 1;
+var size = 10;
 /* harmony default export */ var HistoryPanel = (function (_ref) {
   var type = _ref.type;
   var _useModel = (0,_umi_production_exports.useModel)("wallet"),
@@ -352,13 +352,14 @@ var size = 1;
           return _context.stop();
       }
     }, _callee, null, [[2, 13]]);
-  })), [page, mvcAddress, network, AssetsInfo]);
+  })), [page]);
   (0,react.useEffect)(function () {
     fetchHistory();
   }, [fetchHistory]);
   return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
     style: {
       minHeight: 500,
+      height: 500,
       overflowY: 'scroll'
     },
     className: "historyPanel",
