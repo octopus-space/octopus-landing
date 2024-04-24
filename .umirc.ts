@@ -16,4 +16,7 @@ export default defineConfig({
   model: {},
   request: {},
   title: "Octopus - Greater Bitcoin Assets Router Protocol",
+  hash: true,
+  history:{ type: 'hash' },
+  jsMinifier: 'none',
 });
