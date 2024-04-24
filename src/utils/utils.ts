@@ -88,6 +88,7 @@ export const calcRedeemBtcInfo = (
   const minerFee = transactionSize.BTC_REDEEM * feeBtc;
   const totalFee = Math.floor(bridgeFee + minerFee);
   const receiveAmount = redeemAmount - totalFee;
+  debugger
   return {
     receiveAmount,
     minerFee,

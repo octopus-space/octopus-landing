@@ -61,7 +61,8 @@ export default () => {
   } = theme.useToken();
   const [historyVisible, setHistoryVisible] = useState<boolean>(false);
 
-  const { userBal, connected, btcAddress, network } = useModel("wallet");
+  const { userBal, connected, btcAddress, network, getBal } =
+    useModel("wallet");
   const [amount, setAmount] = useState<number | string>("");
   const [reciveAmount, setReciveAmount] = useState<number | string>("");
   const [selectChainVisible, setSelectChainVisible] = useState(false);
@@ -73,6 +74,7 @@ export default () => {
   const [inscription, setInscription] = useState<API.TransferbleBRC20>();
   const [confrimProps, setConfirmProps] = useState<ConfirmProps>(defalut);
   const [loadingBrc20, setLoadingBrc20] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [ErrorMsg, setErrorMsg] = useState("");
   const {
     chains,
@@ -113,14 +115,14 @@ export default () => {
     }
   }, [protocolType, bridgeType, asset, userBal]);
 
-  const onInputChange = (value) => {
+  const onInputChange = (value:string|number) => {
     setAmount(value);
-    if (AssetsInfo && protocolType === "btc" && bridgeType === "redeem") {
+    if (AssetsInfo &&asset&& protocolType === "btc" && bridgeType === "redeem") {
       try {
-        const info = calcRedeemBtcInfo(amountRaw(value, 8), AssetsInfo);
+        const info = calcRedeemBtcInfo(amountRaw(String(value), asset.decimals), AssetsInfo);
         setErrorMsg("");
         setReciveAmount(formatSat(info.receiveAmount));
-      } catch (err) {
+      } catch (err:any) {
         console.log(err);
         message.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
@@ -225,17 +227,18 @@ export default () => {
 
   const redeem = async () => {
     if (!btcAddress || !asset || !network) return;
-    const addressInfo = determineAddressInfo(btcAddress);
-    const addressType: SupportRedeemAddressType =
-      addressInfo.toUpperCase() as SupportRedeemAddressType;
 
     try {
+      setSubmitting(true);
+      const addressInfo = determineAddressInfo(btcAddress);
+      const addressType: SupportRedeemAddressType =
+        addressInfo.toUpperCase() as SupportRedeemAddressType;
       if (!supportRedeemAddressType.includes(addressType)) {
         throw new Error("unsupport address type");
       }
       if (bridgeType === "redeem" && protocolType === "btc") {
         await redeemBtc(
-          amountRaw(String(amount), 8),
+          amountRaw(String(amount), asset.decimals),
           asset,
           addressType,
           network
@@ -249,20 +252,25 @@ export default () => {
           network
         );
       }
+      setSuccessVisible(true);
+      await getBal();
     } catch (err) {
       console.log(err);
       message.error(err.message || "unknown error");
-      setSuccessVisible(true)
+      
     }
+    
+    setSubmitting(false);
   };
 
   const mint = async () => {
     if (!btcAddress || !asset || !network || !AssetsInfo) return;
 
-    const addressInfo = determineAddressInfo(btcAddress);
-    const addressType: SupportRedeemAddressType =
-      addressInfo.toUpperCase() as SupportRedeemAddressType;
     try {
+      setSubmitting(true);
+      const addressInfo = determineAddressInfo(btcAddress);
+      const addressType: SupportRedeemAddressType =
+        addressInfo.toUpperCase() as SupportRedeemAddressType;
       if (bridgeType === "mint" && protocolType === "btc") {
         const ret = await mintBtc(
           amountRaw(String(amount), 8),
@@ -282,10 +290,14 @@ export default () => {
           inscription
         );
       }
+      setSuccessVisible(true);
+      await getBal();
     } catch (err) {
       console.log(err);
       message.error(err.message || "unknown error");
     }
+   
+    setSubmitting(false);
   };
   const Inscribe = async () => {
     if (connected && asset) {
@@ -416,7 +428,7 @@ export default () => {
                         background: colorBgBase,
                         borderRadius: borderRadiusSM,
                       }}
-                      onClick={() => onInputChange(sendBal * 0.25)}
+                      onClick={() => onInputChange((sendBal * 0.25).toFixed(8))}
                     >
                       25%
                     </span>
@@ -426,7 +438,7 @@ export default () => {
                         background: colorBgBase,
                         borderRadius: borderRadiusSM,
                       }}
-                      onClick={() => onInputChange(sendBal * 0.5)}
+                      onClick={() => onInputChange((sendBal * 0.5).toFixed(8))}
                     >
                       50%
                     </span>
@@ -601,11 +613,15 @@ export default () => {
           setSelectAssetVisible(false);
         }}
       />
-      <Summary {...confrimProps} />
+      <Summary {...confrimProps} submitting={submitting} />
       <SuccessModel
         show={successVisible}
         onClose={() => {
           setSuccessVisible(false);
+          setAmount('');
+          setReciveAmount('')
+          setInscription(undefined)
+          setConfirmProps(defalut);
         }}
       />
     </div>

@@ -111,5 +111,6 @@ export default () => {
     setLoginModalShow,
     loginModalShow,
     disConnect,
+    getBal
   };
 };

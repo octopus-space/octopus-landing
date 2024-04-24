@@ -71,17 +71,15 @@ async function signPublicKey(): Promise<{
   const publicKeyReceiveSign = await window.metaidwallet.btc.signMessage(
     publicKeyReceive
   );
-  if(publicKeyReceiveSign.status==='canceled') throw new Error('canceled')
+  if (publicKeyReceiveSign.status === "canceled") throw new Error("canceled");
   const ret = await window.metaidwallet.signMessage({
     message: publicKey,
     encoding: "base64",
   });
-  console.log(ret)
-   if(ret.status==='canceled') throw new Error('canceled')
+  if (ret.status === "canceled") throw new Error("canceled");
   const {
     signature: { signature: publicKeySign },
-  }=ret
- 
+  } = ret;
 
   return {
     publicKey,
@@ -99,15 +97,17 @@ async function signMintPublicKey(): Promise<{
 }> {
   const publicKeyReceive = await window.metaidwallet.getPublicKey();
   const publicKey = await window.metaidwallet.btc.getPublicKey();
- 
+
   const publicKeySign = await window.metaidwallet.btc.signMessage(publicKey);
- 
-  const {
-    signature: { signature: publicKeyReceiveSign },
-  } = await window.metaidwallet.signMessage({
+  if (publicKeySign.status === "canceled") throw new Error("canceled");
+  const ret = await window.metaidwallet.signMessage({
     message: publicKeyReceive,
     encoding: "base64",
   });
+  if (ret.status === "canceled") throw new Error("canceled");
+  const {
+    signature: { signature: publicKeyReceiveSign },
+  } = ret;
 
   return {
     publicKey,
@@ -169,19 +169,15 @@ export async function redeemBtc(
   }
 }
 
-export async function  redeemBrc20(
+export async function redeemBrc20(
   redeemAmount: number,
   asset: API.AssetItem,
   addressType: SupportRedeemAddressType,
   network: Network
 ): Promise<{ orderId: string; txid: string }> {
   try {
-    const {
-      publicKey,
-      publicKeySign,
-      publicKeyReceiveSign,
-      publicKeyReceive,
-    } = await signPublicKey()
+    const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
+      await signPublicKey();
     const createPrepayOrderDto = {
       amount: redeemAmount,
       originTokenId: asset.originTokenId,
@@ -190,32 +186,37 @@ export async function  redeemBrc20(
       publicKeySign,
       publicKeyReceive,
       publicKeyReceiveSign,
-    }
-    const { data: createResp } =
-      await createPrepayOrderRedeemBrc20(network,createPrepayOrderDto)
-    const { orderId, bridgeAddress } = createResp
-    const { targetTokenCodeHash, targetTokenGenesis } = asset
+    };
+    const { data: createResp } = await createPrepayOrderRedeemBrc20(
+      network,
+      createPrepayOrderDto
+    );
+    const { orderId, bridgeAddress } = createResp;
+    const { targetTokenCodeHash, targetTokenGenesis } = asset;
     const txid = await sendToken(
       String(redeemAmount),
       bridgeAddress,
       targetTokenCodeHash,
-      targetTokenGenesis,
-    )
+      targetTokenGenesis
+    );
     const submitPrepayOrderRedeemDto = {
       orderId,
       txid: txid,
-    }
-    await sleep(3000)
-    const ret = await submitPrepayOrderRedeemBrc20(network,submitPrepayOrderRedeemDto)
+    };
+    await sleep(3000);
+    const ret = await submitPrepayOrderRedeemBrc20(
+      network,
+      submitPrepayOrderRedeemDto
+    );
     if (!ret.success) {
-      throw new Error(ret.msg)
+      throw new Error(ret.msg);
     }
     return {
       orderId,
       txid,
-    }
+    };
   } catch (error) {
-    throw new Error(error as any)
+    throw new Error(error as any);
   }
 }
 
@@ -227,9 +228,9 @@ async function buildTx(parmas: {
     feeRate: number;
   };
 }) {
-  const { txHex } = await window.metaidwallet.btc.transfer(parmas);
-  console.log(txHex, txHex);
-  return txHex;
+  const ret = await window.metaidwallet.btc.transfer(parmas);
+  console.log(ret);
+  return ret.txHex;
 }
 export async function mintBtc(
   mintAmount: number,
@@ -238,7 +239,6 @@ export async function mintBtc(
   network: Network,
   assetInfo: API.AssetsData
 ) {
-  console.log(3333);
   const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
     await signMintPublicKey();
 
@@ -428,7 +428,7 @@ async function sendBRC(
     const _signPsbt = await window.metaidwallet.btc.signPsbt({
       psbtHex: psbt.toHex(),
     });
-    const signPsbt =Psbt.fromHex(_signPsbt)
+    const signPsbt = Psbt.fromHex(_signPsbt);
     return signPsbt;
   };
 
@@ -448,7 +448,7 @@ async function sendBRC(
   }
 
   psbt = await buildPsbt(selecedtUTXOs, total.minus(amount).minus(fee));
-  return psbt
+  return psbt;
 }
 
 export async function mintBrc(
@@ -456,7 +456,7 @@ export async function mintBrc(
   btcAsset: API.AssetItem,
   addressType: SupportRedeemAddressType,
   network: Network,
-  assetInfo:API.AssetsData,
+  assetInfo: API.AssetsData,
   inscription: API.TransferbleBRC20
 ) {
   const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
@@ -487,7 +487,12 @@ export async function mintBrc(
       confirmed: true,
       inscriptions: null,
     };
-    const psbt = await sendBRC(bridgeAddress, inscriptionUtxo, assetInfo.feeBtc,network);
+    const psbt = await sendBRC(
+      bridgeAddress,
+      inscriptionUtxo,
+      assetInfo.feeBtc,
+      network
+    );
     const submitPrepayOrderMintDto = {
       orderId,
       txHex: psbt.extractTransaction().toHex(),
