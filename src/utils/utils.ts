@@ -1,6 +1,6 @@
 import Decimal from "decimal.js";
 import BigNumber from "bignumber.js";
-import dayjs from 'dayjs'
+import dayjs from "dayjs";
 export const formatSat = (value: string | number, dec = 8) => {
   if (!value) return "0";
 
@@ -56,10 +56,18 @@ const confirmNumberBySeqAndAmount = function (
   }
   return 5;
 };
+
+export type FeeInfo = {
+  receiveAmount: number | string;
+  minerFee: number | string;
+  bridgeFee: number | string;
+  totalFee: number | string;
+  confirmNumber: number | string;
+};
 export const calcRedeemBtcInfo = (
   redeemAmount: number,
   assetInfo: API.AssetsData
-) => {
+): FeeInfo => {
   const {
     feeBtc,
     amountLimitMaximum,
@@ -69,10 +77,10 @@ export const calcRedeemBtcInfo = (
     assetList,
   } = assetInfo;
   if (redeemAmount < Number(amountLimitMinimum)) {
-    throw new Error("mint amount less than  minimum amount");
+    throw new Error("amount less than minimum amount");
   }
   if (redeemAmount > Number(amountLimitMaximum)) {
-    throw new Error("mint amount greater than  maximum amount");
+    throw new Error("amount greater than maximum amount");
   }
   const confirmNumber = confirmNumberBySeqAndAmount(
     redeemAmount,
@@ -88,12 +96,12 @@ export const calcRedeemBtcInfo = (
   const minerFee = transactionSize.BTC_REDEEM * feeBtc;
   const totalFee = Math.floor(bridgeFee + minerFee);
   const receiveAmount = redeemAmount - totalFee;
-  debugger
+  debugger;
   return {
-    receiveAmount,
-    minerFee,
-    bridgeFee,
-    totalFee,
+    receiveAmount:formatSat(receiveAmount),
+    minerFee:formatSat(minerFee),
+    bridgeFee:formatSat(bridgeFee),
+    totalFee:formatSat(totalFee),
     confirmNumber,
   };
 };
@@ -102,7 +110,7 @@ export const calcRedeemBrc20Info = (
   redeemAmount: number,
   assetInfo: API.AssetsData,
   asset: API.AssetItem
-) => {
+):FeeInfo => {
   const {
     btcPrice,
     feeBtc,
@@ -117,10 +125,10 @@ export const calcRedeemBrc20Info = (
     ((asset.price * Number(brcAmount)) / btcPrice) * 10 ** 8;
 
   if (redeemBrc20EqualBtcAmount < Number(amountLimitMinimum)) {
-    throw new Error("mint amount less than  minimum amount");
+    throw new Error("amount less than minimum amount");
   }
   if (redeemBrc20EqualBtcAmount > Number(amountLimitMaximum)) {
-    throw new Error("mint amount greater than  maximum amount");
+    throw new Error("amount greater than maximum amount");
   }
 
   const confirmNumber = confirmNumberBySeqAndAmount(
@@ -148,10 +156,10 @@ export const calcRedeemBrc20Info = (
   const totalFee = bridgeFee + minerFee;
   const receiveAmount = BigInt(redeemAmount) - totalFee;
   return {
-    receiveAmount,
-    minerFee,
-    bridgeFee,
-    totalFee,
+    receiveAmount:formatSat(String(receiveAmount),asset.decimals-asset.trimDecimals),
+    minerFee:formatSat(String(minerFee),asset.decimals-asset.trimDecimals),
+    bridgeFee:formatSat(String(bridgeFee),asset.decimals-asset.trimDecimals),
+    totalFee:formatSat(String(totalFee),asset.decimals-asset.trimDecimals),
     confirmNumber,
   };
 };
@@ -159,7 +167,7 @@ export const calcRedeemBrc20Info = (
 export const calcMintBtcInfo = (
   mintAmount: number,
   assetInfo: API.AssetsData
-) => {
+):FeeInfo => {
   const {
     btcPrice,
     mvcPrice,
@@ -172,10 +180,10 @@ export const calcMintBtcInfo = (
     assetList,
   } = assetInfo;
   if (mintAmount < Number(amountLimitMinimum)) {
-    throw new Error("mint amount less than  minimum amount");
+    throw new Error("amount less than minimum amount");
   }
   if (mintAmount > Number(amountLimitMaximum)) {
-    throw new Error("mint amount greater than  maximum amount");
+    throw new Error("amount greater than maximum amount");
   }
   const confirmNumber = confirmNumberBySeqAndAmount(
     mintAmount,
@@ -197,10 +205,10 @@ export const calcMintBtcInfo = (
   const receiveAmount = mintAmount - totalFee;
 
   return {
-    receiveAmount,
-    minerFee,
-    bridgeFee,
-    totalFee,
+    receiveAmount:formatSat(receiveAmount),
+    minerFee:formatSat(minerFee),
+    bridgeFee:formatSat(bridgeFee),
+    totalFee:formatSat(totalFee),
     confirmNumber,
   };
 };
@@ -209,7 +217,7 @@ export const calcMintBrc20Info = (
   mintAmount: number,
   assetInfo: API.AssetsData,
   asset: API.AssetItem
-) => {
+):FeeInfo => {
   const {
     btcPrice,
     mvcPrice,
@@ -225,10 +233,10 @@ export const calcMintBrc20Info = (
   const mintBrc20EqualBtcAmount =
     ((assetRdex.price * Number(mintAmount)) / btcPrice) * 10 ** 8;
   if (Number(mintBrc20EqualBtcAmount) < Number(amountLimitMinimum)) {
-    throw new Error("mint amount less than  minimum amount");
+    throw new Error("amount less than minimum amount");
   }
   if (Number(mintBrc20EqualBtcAmount) > Number(amountLimitMaximum)) {
-    throw new Error("mint amount greater than  maximum amount");
+    throw new Error("amount greater than maximum amount");
   }
 
   const confirmNumber = confirmNumberBySeqAndAmount(
@@ -240,7 +248,6 @@ export const calcMintBrc20Info = (
   let bridgeFee: number = 0;
   let minerFee: number = 0;
   if (assetRdex.feeRateNumeratorMint > 0 || assetRdex.feeRateConstMint > 0) {
-    
     bridgeFee =
       (Number(mintAmount) * assetRdex.feeRateNumeratorMint) / 10000 +
       ((assetRdex.feeRateConstMint / 10 ** 8) * btcPrice) / assetRdex.price;
@@ -294,31 +301,31 @@ export function determineAddressInfo(address: string): string {
 export function prettyTimestamp(
   timestamp: number,
   isInSeconds = false,
-  cutThisYear = false,
+  cutThisYear = false
 ) {
-  if (isInSeconds) timestamp = timestamp * 1000
+  if (isInSeconds) timestamp = timestamp * 1000;
 
-  if (cutThisYear) return dayjs(timestamp).format('MM-DD HH:mm:ss')
+  if (cutThisYear) return dayjs(timestamp).format("MM-DD HH:mm:ss");
 
-  return dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss')
+  return dayjs(timestamp).format("YYYY-MM-DD HH:mm:ss");
 }
 
 export const formatUnitToSats = (
   value: number | string,
-  decimal: number = 8,
+  decimal: number = 8
 ) => {
   if (!value) {
-    return 0
+    return 0;
   }
-  return new Decimal(value).mul(10 ** decimal).toNumber()
-}
+  return new Decimal(value).mul(10 ** decimal).toNumber();
+};
 
 export const formatUnitToBtc = (
   value: number | string,
-  decimal: number = 8,
+  decimal: number = 8
 ) => {
   if (!value) {
-    return 0
+    return 0;
   }
-  return new Decimal(value).div(10 ** decimal).toNumber()
-}
+  return new Decimal(value).div(10 ** decimal).toNumber();
+};

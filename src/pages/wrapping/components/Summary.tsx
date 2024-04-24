@@ -72,15 +72,21 @@ export default ({
           <div className="feeList">
             <div className="item">
               <span className="label">Service Fee</span>
-              <span className="value">{bridgeFee}</span>
+              <span className="value">{bridgeFee}{fromChain.key === "btc"
+                      ? asset.originSymbol
+                      : asset.targetSymbol}</span>
             </div>
             <div className="item">
               <span className="label">Network Fee</span>
-              <span className="value">{minerFee}</span>
+              <span className="value">{minerFee}{fromChain.key === "btc"
+                      ? asset.originSymbol
+                      : asset.targetSymbol}</span>
             </div>
             <div className="item">
               <span className="label">Total Fee</span>
-              <span className="value">{totalFee}</span>
+              <span className="value">{totalFee}{fromChain.key === "btc"
+                      ? asset.originSymbol
+                      : asset.targetSymbol}</span>
             </div>
             <div className="item">
               <span className="label">Estimated Receipt Time</span>

@@ -19,6 +19,7 @@ import { useModel } from "umi";
 import switchIcon from "@/assets/switch.svg";
 import historyIcon from "@/assets/history.svg";
 import {
+    FeeInfo,
   amountRaw,
   calcMintBrc20Info,
   calcMintBtcInfo,
@@ -76,6 +77,13 @@ export default () => {
   const [loadingBrc20, setLoadingBrc20] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [ErrorMsg, setErrorMsg] = useState("");
+  const [feeInfo,setFeeInfo]=useState<FeeInfo>({
+    minerFee:'',
+    bridgeFee:'',
+    receiveAmount:'',
+    totalFee:'',
+    confirmNumber:''
+  })
   const {
     chains,
     fromChain,
@@ -121,10 +129,12 @@ export default () => {
       try {
         const info = calcRedeemBtcInfo(amountRaw(String(value), asset.decimals), AssetsInfo);
         setErrorMsg("");
-        setReciveAmount(formatSat(info.receiveAmount));
+        setReciveAmount(info.receiveAmount);
+        setFeeInfo(info)
       } catch (err:any) {
         console.log(err);
         message.error(err.message || "unknown error");
+        setReciveAmount('');
         setErrorMsg(err.message || "unknown error");
       }
     }
@@ -136,14 +146,16 @@ export default () => {
     ) {
       try {
         const info = calcRedeemBrc20Info(
-          amountRaw(value, asset?.decimals),
+          amountRaw(value, asset.decimals-asset.trimDecimals),
           AssetsInfo,
           asset
         );
         setErrorMsg("");
-        setReciveAmount(formatSat(info.receiveAmount));
+        setReciveAmount(info.receiveAmount);
+        setFeeInfo(info)
       } catch (err) {
         console.log(err);
+        setReciveAmount('');
         message.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
@@ -152,9 +164,11 @@ export default () => {
       try {
         const info = calcMintBtcInfo(amountRaw(value, 8), AssetsInfo);
         setErrorMsg("");
-        setReciveAmount(formatSat(info.receiveAmount));
+        setReciveAmount(info.receiveAmount);
+        setFeeInfo(info)
       } catch (err) {
         console.log(err);
+        setReciveAmount('');
         message.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
@@ -170,8 +184,10 @@ export default () => {
         const info = calcMintBrc20Info(value, AssetsInfo, asset);
         setErrorMsg("");
         setReciveAmount(info.receiveAmount);
+        setFeeInfo(info)
       } catch (err) {
         console.log(err);
+        setReciveAmount('');
         message.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
@@ -313,6 +329,12 @@ export default () => {
         onClick: () => {},
       },
       {
+        condition: Number(reciveAmount)<0,
+        text: "Low Send Amount",
+        type: "primary",
+        onClick: () => {},
+      },
+      {
         condition: ErrorMsg,
         text: ErrorMsg,
         type: "primary",
@@ -329,9 +351,9 @@ export default () => {
       show: true,
       amount,
       reciveAmount: String(reciveAmount),
-      minerFee: "",
-      bridgeFee: "",
-      totalFee: "",
+      minerFee: String(feeInfo.minerFee),
+      bridgeFee: String(feeInfo.bridgeFee),
+      totalFee: String(feeInfo.totalFee),
       handleSubmit,
       onClose: () => setConfirmProps(defalut),
     });
@@ -344,6 +366,7 @@ export default () => {
         onChange={(value) => {
           setProtocolType(value);
           setAmount("");
+          setReciveAmount('');
         }}
         options={SegOptions}
         size="large"
@@ -530,7 +553,7 @@ export default () => {
                       className="input"
                       onChange={onInputChange}
                       value={amount}
-                      //   max={sendBal}
+                        // max={sendBal}
                       variant={"borderless"}
                       controls={false}
                     />
@@ -611,6 +634,9 @@ export default () => {
         onChange={(_asset) => {
           setAsset(_asset);
           setSelectAssetVisible(false);
+          setAmount('');
+          setErrorMsg('');
+          setReciveAmount('');
         }}
       />
       <Summary {...confrimProps} submitting={submitting} />
