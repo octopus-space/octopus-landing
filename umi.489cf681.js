@@ -209,7 +209,7 @@ var checkExtension = function checkExtension() {
             return _context.abrupt("return");
           case 2:
             _context.next = 4;
-            return metaidwallet.isConnected();
+            return window.metaidwallet.isConnected();
           case 4:
             isConnected = _context.sent;
             console.log(isConnected, "isConnected");
@@ -248,7 +248,7 @@ var checkExtension = function checkExtension() {
             return _context2.abrupt("return");
           case 2:
             _context2.next = 4;
-            return metaidwallet.disconnect();
+            return window.metaidwallet.disconnect();
           case 4:
             ret = _context2.sent;
             setConnected(false);
@@ -275,11 +275,11 @@ var checkExtension = function checkExtension() {
             break;
           }
           _context3.next = 3;
-          return metaidwallet.btc.getBalance(network);
+          return window.metaidwallet.btc.getBalance(network);
         case 3:
           btcBal = _context3.sent;
           _context3.next = 6;
-          return metaidwallet.token.getBalance();
+          return window.metaidwallet.token.getBalance();
         case 6:
           tokens = _context3.sent;
           _bals = {
@@ -297,16 +297,16 @@ var checkExtension = function checkExtension() {
     }, _callee3);
   })), [network, connected]);
   var init = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4() {
-    var isConnected, _mvc, _yield$metaidwallet$g, _network, _btcAddress;
+    var isConnected, _mvc, _yield$window$metaidw, _network, _btcAddress;
     return regeneratorRuntime_default()().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
-          if (!(walletName === "metalet" && metaidwallet)) {
+          if (!(walletName === "metalet" && window.metaidwallet)) {
             _context4.next = 20;
             break;
           }
           _context4.next = 3;
-          return metaidwallet.isConnected();
+          return window.metaidwallet.isConnected();
         case 3:
           isConnected = _context4.sent;
           if (!isConnected) {
@@ -314,16 +314,16 @@ var checkExtension = function checkExtension() {
             break;
           }
           _context4.next = 7;
-          return metaidwallet.getAddress();
+          return window.metaidwallet.getAddress();
         case 7:
           _mvc = _context4.sent;
           _context4.next = 10;
-          return metaidwallet.getNetwork();
+          return window.metaidwallet.getNetwork();
         case 10:
-          _yield$metaidwallet$g = _context4.sent;
-          _network = _yield$metaidwallet$g.network;
+          _yield$window$metaidw = _context4.sent;
+          _network = _yield$window$metaidw.network;
           _context4.next = 14;
-          return metaidwallet.btc.getAddress();
+          return window.metaidwallet.btc.getAddress();
         case 14:
           _btcAddress = _context4.sent;
           setConnected(true);
@@ -350,14 +350,14 @@ var checkExtension = function checkExtension() {
     var handleNetChange = function handleNetChange(network) {
       init();
     };
-    if (walletName === "metalet" && metaidwallet) {
-      metaidwallet.on("accountsChanged", handleAccountChange);
-      metaidwallet.on("networkChanged", handleNetChange);
+    if (walletName === "metalet" && window.metaidwallet) {
+      window.metaidwallet.on("accountsChanged", handleAccountChange);
+      window.metaidwallet.on("networkChanged", handleNetChange);
     }
     return function () {
-      if (walletName === "metalet" && metaidwallet) {
-        metaidwallet.removeListener("accountsChanged", handleAccountChange);
-        metaidwallet.removeListener("networkChanged", handleNetChange);
+      if (walletName === "metalet" && window.metaidwallet) {
+        window.metaidwallet.removeListener("accountsChanged", handleAccountChange);
+        window.metaidwallet.removeListener("networkChanged", handleNetChange);
       }
     };
   }, [walletName]);
