@@ -23,7 +23,7 @@ export default () => {
 
   const connect = async () => {
     if (!checkExtension()) return;
-    const isConnected = await metaidwallet.isConnected();
+    const isConnected = await window.metaidwallet.isConnected();
     console.log(isConnected, "isConnected");
     if (!isConnected) {
       const ret = await window.metaidwallet.connect();
@@ -34,7 +34,7 @@ export default () => {
 
   const disConnect = async () => {
     if (!checkExtension()) return;
-    const ret = await metaidwallet.disconnect();
+    const ret = await window.metaidwallet.disconnect();
     setConnected(false);
     setMVCAddress('');
     setBTCAddress('');
@@ -43,8 +43,8 @@ export default () => {
   const getBal = useCallback(async () => {
     if (network && connected) {
       //btc
-      const btcBal = await metaidwallet.btc.getBalance(network);
-      const tokens = await metaidwallet.token.getBalance();
+      const btcBal = await window.metaidwallet.btc.getBalance(network);
+      const tokens = await window.metaidwallet.token.getBalance();
       const _bals: Record<string, any> = {
         btc: formatSat(btcBal.total),
       };
@@ -60,12 +60,12 @@ export default () => {
     }
   }, [network, connected]);
   const init = useCallback(async () => {
-    if (walletName === "metalet" && metaidwallet) {
-      const isConnected = await metaidwallet.isConnected();
+    if (walletName === "metalet" && window.metaidwallet) {
+      const isConnected = await window.metaidwallet.isConnected();
       if (isConnected) {
-        const _mvc = await metaidwallet.getAddress();
-        const { network } = await metaidwallet.getNetwork();
-        const btcAddress = await metaidwallet.btc.getAddress();
+        const _mvc = await window.metaidwallet.getAddress();
+        const { network } = await window.metaidwallet.getNetwork();
+        const btcAddress = await window.metaidwallet.btc.getAddress();
         setConnected(true);
         setMVCAddress(_mvc);
         setNetwork(network);
@@ -88,15 +88,15 @@ export default () => {
     const handleNetChange = (network: string) => {
       init();
     };
-    if (walletName === "metalet" && metaidwallet) {
-      metaidwallet.on("accountsChanged", handleAccountChange);
-      metaidwallet.on("networkChanged", handleNetChange);
+    if (walletName === "metalet" && window.metaidwallet) {
+      window.metaidwallet.on("accountsChanged", handleAccountChange);
+      window.metaidwallet.on("networkChanged", handleNetChange);
     }
 
     return () => {
-      if (walletName === "metalet" && metaidwallet) {
-        metaidwallet.removeListener("accountsChanged", handleAccountChange);
-        metaidwallet.removeListener("networkChanged", handleNetChange);
+      if (walletName === "metalet" && window.metaidwallet) {
+        window.metaidwallet.removeListener("accountsChanged", handleAccountChange);
+        window.metaidwallet.removeListener("networkChanged", handleNetChange);
       }
     };
   }, [walletName]);
