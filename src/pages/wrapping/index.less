@@ -1,0 +1,159 @@
+.wrapPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .ant-segmented-item {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .SegmentedItem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    span {
+      margin-left: 4px;
+      font-size: 13px;
+    }
+  }
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 20px;
+    font-weight: 600;
+    .imgwrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      transition-duration: 0.2s;
+      &:active {
+        opacity: 0.8;
+      }
+    }
+  }
+  .chains {
+    margin-top: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .switchIcon {
+      margin: 35px 16px 0 16px;
+      cursor: pointer;
+      &:active {
+        opacity: 0.8;
+      }
+    }
+    .chain {
+      flex-grow: 1;
+      .label {
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+      }
+      .selectWrap {
+        margin-top: 11px;
+        width: 200px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        // cursor: pointer;
+      }
+    }
+  }
+  .inputCardWrap {
+    .label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 30px 0 16px;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 24px;
+      .tag {
+        font-size: 10px;
+        font-weight: 300;
+        line-height: 16px;
+        width: 40px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        &:active {
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+
+  .inputCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 24px;
+    box-sizing: border-box;
+    border: 2px solid #080731;
+    &:focus-within {
+      border: 2px solid #6e66fa;
+    }
+    .inputWrap {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      .input {
+        width: 100%;
+        font-size: 20px;
+        input {
+          text-align: right;
+          padding: 4px 0;
+        }
+      }
+    }
+  }
+  .bal {
+    font-size: 10px;
+    font-weight: 300;
+    line-height: normal;
+    text-align: right;
+    letter-spacing: 0em;
+
+    font-variation-settings: "opsz" auto;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .submitWrap {
+    margin-top: 34px;
+  }
+  .brcItem {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid rgb(216, 216, 216);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    &.active {
+      border: 1px solid var(--primary);
+    }
+    .tick {
+      font-size: 11px;
+    }
+    .amount {
+      font-size: 12px;
+    }
+    .number {
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      background-color: var(--primary);
+    }
+  }
+}

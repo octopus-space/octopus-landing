@@ -1,7 +1,7 @@
 import { defineConfig } from "umi";
 
 export default defineConfig({
-  routes: [{ path: "/", component: "index" }],
+  routes: [{ path: "/", component: "index" },{ path: "/wrapping", component: "wrapping/index" }],
   metas: [
     { name: "keywords", content: "Octopus" },
     {
@@ -12,5 +12,8 @@ export default defineConfig({
   ],
   favicons: ["/favicon.png"],
   npmClient: "pnpm",
+  plugins: ["@umijs/plugins/dist/model", "@umijs/plugins/dist/request"],
+  model: {},
+  request: {},
   title: "Octopus - Greater Bitcoin Assets Router Protocol",
 });
