@@ -220,7 +220,7 @@ var checkExtension = function checkExtension() {
             throw new Error("unlock first");
           case 8:
             if (isConnected) {
-              _context.next = 13;
+              _context.next = 15;
               break;
             }
             _context.next = 11;
@@ -228,10 +228,15 @@ var checkExtension = function checkExtension() {
           case 11:
             ret = _context.sent;
             console.log(ret);
-          case 13:
-            _context.next = 15;
-            return init();
+            if (!ret.status) {
+              _context.next = 15;
+              break;
+            }
+            throw new Error(ret.status);
           case 15:
+            _context.next = 17;
+            return init();
+          case 17:
           case "end":
             return _context.stop();
         }
@@ -37078,7 +37083,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"132":"88234bf0","208":"dc1d33cf","242":"d62fc15e","307":"7e62605d","557":"2201ab0f","717":"142980df","866":"6fb33101"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"14b861d7","242":"d62fc15e","307":"a223d07c","717":"b2ab699a","782":"6d83ca01","866":"6fb33101","973":"e8b534b2"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -37087,7 +37092,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.miniCssF = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + {"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] + "." + {"307":"40844354","717":"b1e4d826","866":"5c37dee4"}[chunkId] + ".chunk.css";
+/******/ 			return "" + {"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] + "." + {"307":"6887e1d2","717":"f68794c1","866":"5c37dee4"}[chunkId] + ".chunk.css";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -38718,10 +38723,10 @@ function _getRoutes() {
                 return Promise.all(/* import() | p__index */[__webpack_require__.e(208), __webpack_require__.e(242), __webpack_require__.e(866)]).then(__webpack_require__.bind(__webpack_require__, 68606));
               }),
               '2': /*#__PURE__*/react.lazy(function () {
-                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(208), __webpack_require__.e(557), __webpack_require__.e(132), __webpack_require__.e(307)]).then(__webpack_require__.bind(__webpack_require__, 87641));
+                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(208), __webpack_require__.e(973), __webpack_require__.e(782), __webpack_require__.e(307)]).then(__webpack_require__.bind(__webpack_require__, 79152));
               }),
               '@@/global-layout': /*#__PURE__*/react.lazy(function () {
-                return Promise.all(/* import() | layouts__index */[__webpack_require__.e(208), __webpack_require__.e(557), __webpack_require__.e(717)]).then(__webpack_require__.bind(__webpack_require__, 8245));
+                return Promise.all(/* import() | layouts__index */[__webpack_require__.e(208), __webpack_require__.e(973), __webpack_require__.e(717)]).then(__webpack_require__.bind(__webpack_require__, 68240));
               })
             }
           });

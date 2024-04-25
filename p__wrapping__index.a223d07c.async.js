@@ -13,10 +13,10 @@ __webpack_require__.d(__webpack_exports__, {
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/objectSpread2.js
 var objectSpread2 = __webpack_require__(97857);
 var objectSpread2_default = /*#__PURE__*/__webpack_require__.n(objectSpread2);
-// EXTERNAL MODULE: ./node_modules/antd/es/grid/index.js
-var grid = __webpack_require__(75302);
-// EXTERNAL MODULE: ./node_modules/antd/es/modal/index.js + 29 modules
-var modal = __webpack_require__(21555);
+// EXTERNAL MODULE: ./node_modules/antd/es/grid/index.js + 2 modules
+var grid = __webpack_require__(74250);
+// EXTERNAL MODULE: ./node_modules/antd/es/modal/index.js + 28 modules
+var modal = __webpack_require__(97280);
 // EXTERNAL MODULE: ./node_modules/antd/es/drawer/index.js + 9 modules
 var drawer = __webpack_require__(85265);
 // EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
@@ -94,7 +94,7 @@ var Popup = function Popup(_ref) {
 
 /***/ }),
 
-/***/ 87641:
+/***/ 79152:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 // ESM COMPAT FLAG
@@ -125,6 +125,8 @@ var message = __webpack_require__(68872);
 var segmented = __webpack_require__(92783);
 // EXTERNAL MODULE: ./node_modules/antd/es/card/index.js + 4 modules
 var card = __webpack_require__(4393);
+// EXTERNAL MODULE: ./node_modules/antd/es/dropdown/index.js + 36 modules
+var dropdown = __webpack_require__(84819);
 // EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 15 modules
 var es_button = __webpack_require__(45093);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/index.js + 2 modules
@@ -229,8 +231,8 @@ var TokenIcon = function TokenIcon(_ref) {
 /* harmony default export */ var components_TokenIcon = (TokenIcon);
 // EXTERNAL MODULE: ./src/components/ResponPopup/index.tsx + 1 modules
 var ResponPopup = __webpack_require__(93417);
-// EXTERNAL MODULE: ./node_modules/antd/es/tabs/index.js + 68 modules
-var tabs = __webpack_require__(7168);
+// EXTERNAL MODULE: ./node_modules/antd/es/tabs/index.js + 26 modules
+var tabs = __webpack_require__(75214);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/toConsumableArray.js
 var toConsumableArray = __webpack_require__(19632);
 var toConsumableArray_default = /*#__PURE__*/__webpack_require__.n(toConsumableArray);
@@ -249,7 +251,10 @@ var skeleton = __webpack_require__(21687);
 ;// CONCATENATED MODULE: ./src/pages/wrapping/components/index.less
 // extracted by mini-css-extract-plugin
 
+;// CONCATENATED MODULE: ./src/assets/empty.png
+var empty_namespaceObject = "data:image/png;base64,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";
 ;// CONCATENATED MODULE: ./src/pages/wrapping/components/HistoryPanel.tsx
+
 
 
 
@@ -365,6 +370,12 @@ var size = 10;
     className: "historyPanel",
     children: [list.length === 0 && !loading && /*#__PURE__*/(0,jsx_runtime.jsx)(empty/* default */.Z, {
       description: "No Transfers yet",
+      image: empty_namespaceObject,
+      imageStyle: {
+        width: 60,
+        height: 60,
+        margin: '0 auto'
+      },
       children: " "
     }), list.map(function (item) {
       return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
@@ -475,6 +486,7 @@ var size = 10;
     show: show,
     onClose: onClose,
     closable: true,
+    className: "historyWrap",
     children: /*#__PURE__*/(0,jsx_runtime.jsx)(tabs/* default */.Z, {
       defaultActiveKey: "1",
       items: items,
@@ -695,41 +707,29 @@ var SegOptions = [{
 
 
 
-
 /* harmony default export */ var SelectNet = (function (_ref) {
-  var show = _ref.show,
-    onClose = _ref.onClose,
-    onChange = _ref.onChange;
+  var onChange = _ref.onChange,
+    defalutChain = _ref.defalutChain;
   var _useModel = (0,_umi_production_exports.useModel)("wrapping"),
     chains = _useModel.chains;
-  return /*#__PURE__*/(0,jsx_runtime.jsx)(ResponPopup/* default */.Z, {
-    title: "Select Network",
-    modalWidth: 390,
-    show: show,
-    onClose: onClose,
-    closable: true,
-    bodyStyle: {
-      padding: "28px 25px"
-    },
-    className: "walletModal",
-    children: /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-      className: "walletWrap",
-      children: chains.map(function (item) {
-        return /*#__PURE__*/(0,jsx_runtime.jsxs)(es_button/* default */.ZP, {
-          className: "item",
-          type: "primary",
-          onClick: function onClick() {
-            return onChange(item);
-          },
-          children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-            src: item.icon,
-            symbol: item.label,
-            size: 40
-          }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-            children: item.label
-          })]
-        }, item.key);
-      })
+  return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+    className: "selectNetWrap",
+    children: chains.map(function (item) {
+      return /*#__PURE__*/(0,jsx_runtime.jsxs)(es_button/* default */.ZP, {
+        className: "item ".concat((defalutChain === null || defalutChain === void 0 ? void 0 : defalutChain.key) === item.key ? 'active' : ''),
+        type: "primary",
+        onClick: function onClick() {
+          return onChange(item);
+        },
+        children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+          src: item.icon,
+          symbol: item.label,
+          size: 30
+        }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+          className: "name",
+          children: item.label
+        })]
+      }, item.key);
     })
   });
 });
@@ -1482,8 +1482,6 @@ function _mintBrc() {
 
 // EXTERNAL MODULE: ./node_modules/antd/es/input/index.js + 19 modules
 var input = __webpack_require__(56846);
-// EXTERNAL MODULE: ./node_modules/antd/es/avatar/index.js + 22 modules
-var avatar = __webpack_require__(43863);
 // EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/SearchOutlined.js + 1 modules
 var SearchOutlined = __webpack_require__(68795);
 ;// CONCATENATED MODULE: ./src/components/SelectAsset/index.tsx
@@ -1498,14 +1496,13 @@ var SearchOutlined = __webpack_require__(68795);
 
 var Search = input/* default */.Z.Search;
 /* harmony default export */ var SelectAsset = (function (_ref) {
-  var show = _ref.show,
-    onClose = _ref.onClose,
-    onChange = _ref.onChange;
+  var onChange = _ref.onChange,
+    type = _ref.type;
   var _useModel = (0,_umi_production_exports.useModel)("wrapping"),
     chains = _useModel.chains,
     assets = _useModel.assets,
     asset = _useModel.asset;
-  var _useState = (0,react.useState)(''),
+  var _useState = (0,react.useState)(""),
     _useState2 = slicedToArray_default()(_useState, 2),
     searchWord = _useState2[0],
     setSerachWord = _useState2[1];
@@ -1523,53 +1520,48 @@ var Search = input/* default */.Z.Search;
       setList(assets);
     }
   }, [searchWord, assets]);
-  return /*#__PURE__*/(0,jsx_runtime.jsx)(ResponPopup/* default */.Z, {
-    title: "Select Asset",
-    modalWidth: 390,
-    show: show,
-    onClose: onClose,
-    closable: true,
-    bodyStyle: {
-      padding: "28px 25px"
-    },
-    className: "walletModal",
-    children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+  return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+    className: "selectAssetWrap",
+    children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+      className: "title",
+      children: "Select Asset"
+    }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
       className: "assetWrap",
-      children: [/*#__PURE__*/(0,jsx_runtime.jsx)(input/* default */.Z, {
-        placeholder: "input symbol",
-        onChange: function onChange(e) {
-          return setSerachWord(e.target.value);
-        },
-        allowClear: true,
-        variant: "filled",
-        size: "large",
-        suffix: /*#__PURE__*/(0,jsx_runtime.jsx)(SearchOutlined/* default */.Z, {})
-      }), list.map(function (item) {
-        return /*#__PURE__*/(0,jsx_runtime.jsxs)(es_button/* default */.ZP, {
-          className: "item ".concat((asset === null || asset === void 0 ? void 0 : asset.originTokenId) === item.originTokenId ? "selected" : ""),
-          type: "primary",
-          onClick: function onClick() {
-            return onChange(item);
+      children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+        className: "inputWrap",
+        children: /*#__PURE__*/(0,jsx_runtime.jsx)(input/* default */.Z, {
+          placeholder: "input symbol",
+          onChange: function onChange(e) {
+            return setSerachWord(e.target.value);
           },
-          children: [/*#__PURE__*/(0,jsx_runtime.jsxs)(avatar/* default.Group */.C.Group, {
-            children: [/*#__PURE__*/(0,jsx_runtime.jsx)(avatar/* default */.C, {
-              style: {
-                backgroundColor: "#000"
-              },
-              children: item.originSymbol[0].toUpperCase()
-            }), /*#__PURE__*/(0,jsx_runtime.jsx)(avatar/* default */.C, {
-              style: {
-                backgroundColor: "#000"
-              },
-              children: item.targetSymbol[0].toUpperCase()
+          allowClear: true,
+          variant: "filled",
+          size: "large",
+          suffix: /*#__PURE__*/(0,jsx_runtime.jsx)(SearchOutlined/* default */.Z, {}),
+          style: {
+            height: 48
+          }
+        })
+      }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+        className: "list",
+        children: list.map(function (item) {
+          return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            className: "item ".concat((asset === null || asset === void 0 ? void 0 : asset.originTokenId) === item.originTokenId ? "selected" : ""),
+            onClick: function onClick() {
+              return onChange(item);
+            },
+            children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+              size: 30,
+              src: "",
+              symbol: type === "origin" ? item.originSymbol : item.targetSymbol
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+              className: "symbol",
+              children: type === "origin" ? item.originSymbol : item.targetSymbol
             })]
-          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
-            className: "symbol",
-            children: [item.originSymbol, "-", item.targetSymbol]
-          })]
-        }, item.targetTokenId);
+          }, item.targetTokenId);
+        })
       })]
-    })
+    })]
   });
 });
 ;// CONCATENATED MODULE: ./src/assets/arrowRight.svg
@@ -1874,7 +1866,7 @@ var defalut = {
     _useState8 = slicedToArray_default()(_useState7, 2),
     selectChainVisible = _useState8[0],
     setSelectChainVisible = _useState8[1];
-  var _useState9 = (0,react.useState)(false),
+  var _useState9 = (0,react.useState)(),
     _useState10 = slicedToArray_default()(_useState9, 2),
     selectAssetVisible = _useState10[0],
     setSelectAssetVisible = _useState10[1];
@@ -1911,11 +1903,11 @@ var defalut = {
     ErrorMsg = _useState26[0],
     setErrorMsg = _useState26[1];
   var _useState27 = (0,react.useState)({
-      minerFee: '',
-      bridgeFee: '',
-      receiveAmount: '',
-      totalFee: '',
-      confirmNumber: ''
+      minerFee: "",
+      bridgeFee: "",
+      receiveAmount: "",
+      totalFee: "",
+      confirmNumber: ""
     }),
     _useState28 = slicedToArray_default()(_useState27, 2),
     feeInfo = _useState28[0],
@@ -1966,7 +1958,7 @@ var defalut = {
       } catch (err) {
         console.log(err);
         message/* default */.ZP.error(err.message || "unknown error");
-        setReciveAmount('');
+        setReciveAmount("");
         setErrorMsg(err.message || "unknown error");
       }
     }
@@ -1978,7 +1970,7 @@ var defalut = {
         setFeeInfo(_info);
       } catch (err) {
         console.log(err);
-        setReciveAmount('');
+        setReciveAmount("");
         message/* default */.ZP.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
@@ -1991,7 +1983,7 @@ var defalut = {
         setFeeInfo(_info2);
       } catch (err) {
         console.log(err);
-        setReciveAmount('');
+        setReciveAmount("");
         message/* default */.ZP.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
@@ -2004,7 +1996,7 @@ var defalut = {
         setFeeInfo(_info3);
       } catch (err) {
         console.log(err);
-        setReciveAmount('');
+        setReciveAmount("");
         message/* default */.ZP.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
@@ -2057,7 +2049,7 @@ var defalut = {
       didCancel = true;
     };
   }, [protocolType, bridgeType, network, asset, btcAddress]);
-  var handleChainChange = function handleChainChange(chain) {
+  var handleChainChange = function handleChainChange(chainType, chain) {
     if (chainType === "from") {
       if (fromChain.key !== chain.key) {
         switchChain();
@@ -2255,7 +2247,7 @@ var defalut = {
       onChange: function onChange(value) {
         setProtocolType(value);
         setAmount("");
-        setReciveAmount('');
+        setReciveAmount("");
       },
       options: SegOptions,
       size: "large",
@@ -2264,7 +2256,8 @@ var defalut = {
       style: {
         width: 520,
         maxWidth: "100vw",
-        position: "relative"
+        position: "relative",
+        border: "2px solid #6e66fa"
       },
       id: "warapping",
       children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
@@ -2288,25 +2281,36 @@ var defalut = {
           children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
             className: "label",
             children: "From"
-          }), /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
-            type: "text",
-            className: "selectWrap",
-            style: {
-              background: colorBgBase,
-              borderRadius: borderRadius
+          }), /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
+            dropdownRender: function dropdownRender() {
+              return /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
+                defalutChain: fromChain,
+                onChange: function onChange(chain) {
+                  handleChainChange("from", chain);
+                  setChainType(undefined);
+                }
+              });
             },
-            onClick: function onClick() {
-              setChainType("from");
-              setSelectChainVisible(true);
-            },
-            children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
-              children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                size: 30,
-                src: fromChain.icon,
-                symbol: fromChain.label
-              }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                children: fromChain.label
-              }), /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+            open: chainType === "from",
+            children: /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
+              type: "text",
+              className: "selectWrap",
+              style: {
+                background: colorBgBase,
+                borderRadius: borderRadius
+              },
+              onClick: function onClick() {
+                setChainType("from");
+              },
+              children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+                children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+                  size: 30,
+                  src: fromChain.icon,
+                  symbol: fromChain.label
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  children: fromChain.label
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+              })
             })
           })]
         }), /*#__PURE__*/(0,jsx_runtime.jsx)("img", {
@@ -2319,25 +2323,36 @@ var defalut = {
           children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
             className: "label",
             children: "To"
-          }), /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
-            type: "text",
-            className: "selectWrap",
-            style: {
-              background: colorBgBase,
-              borderRadius: borderRadius
+          }), /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
+            dropdownRender: function dropdownRender() {
+              return /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
+                defalutChain: toChain,
+                onChange: function onChange(chain) {
+                  handleChainChange("to", chain);
+                  setChainType(undefined);
+                }
+              });
             },
-            onClick: function onClick() {
-              setChainType("to");
-              setSelectChainVisible(true);
-            },
-            children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
-              children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                size: 30,
-                src: toChain.icon,
-                symbol: toChain.label
-              }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                children: toChain.label
-              }), /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+            open: chainType === "to",
+            children: /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
+              type: "text",
+              className: "selectWrap",
+              style: {
+                background: colorBgBase,
+                borderRadius: borderRadius
+              },
+              onClick: function onClick() {
+                setChainType("to");
+              },
+              children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+                children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+                  size: 30,
+                  src: toChain.icon,
+                  symbol: toChain.label
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  children: toChain.label
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+              })
             })
           })]
         })]
@@ -2388,27 +2403,42 @@ var defalut = {
               background: colorBgBase,
               borderRadius: borderRadius
             },
-            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-              onClick: function onClick() {
-                setSelectAssetVisible(true);
+            children: [/*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
+              dropdownRender: function dropdownRender() {
+                return /*#__PURE__*/(0,jsx_runtime.jsx)(SelectAsset, {
+                  type: bridgeType === "mint" ? "origin" : "target",
+                  onChange: function onChange(_asset) {
+                    setAsset(_asset);
+                    setSelectAssetVisible(undefined);
+                    setAmount("");
+                    setErrorMsg("");
+                    setReciveAmount("");
+                  }
+                });
               },
-              style: {
-                cursor: "pointer"
-              },
-              children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
-                children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                  size: 40,
-                  src: "",
-                  symbol: asset.originSymbol
-                }), bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                  children: [asset.originSymbol, " "]
-                }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                  children: [asset.targetSymbol, " "]
-                }), /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+              open: selectAssetVisible == "send",
+              children: /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                onClick: function onClick() {
+                  setSelectAssetVisible("send");
+                },
+                style: {
+                  cursor: "pointer"
+                },
+                children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+                  children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+                    size: 40,
+                    src: "",
+                    symbol: asset.originSymbol
+                  }), bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                    children: [asset.originSymbol, " "]
+                  }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                    children: [asset.targetSymbol, " "]
+                  }), /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+                })
               })
-            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
               className: "inputWrap",
-              children: [protocolType === "brc20" && bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsx)(spin/* default */.Z, {
+              children: protocolType === "brc20" && bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsx)(spin/* default */.Z, {
                 spinning: loadingBrc20,
                 children: /*#__PURE__*/(0,jsx_runtime.jsxs)(flex/* default */.Z, {
                   wrap: "wrap",
@@ -2440,9 +2470,14 @@ var defalut = {
                       })]
                     });
                   }), brc20Info && brc20Info.transferBalanceList.length === 0 && !brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                    children: ["No transferable", " ", /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
-                      type: "link",
+                    children: ["No transferable", /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
+                      type: "text",
+                      className: "inscribeBtn",
                       onClick: Inscribe,
+                      style: {
+                        color: "#6E66FA"
+                      },
+                      disabled: Number(brc20Info.balance) === 0,
                       children: "Inscribe"
                     })]
                   })]
@@ -2455,11 +2490,11 @@ var defalut = {
                 ,
                 variant: "borderless",
                 controls: false
-              }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                className: "bal",
-                children: ["Balance:", protocolType === "brc20" && bridgeType === "mint" ? brc20Info ? brc20Info.balance : "..." : sendBal, bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
-              })]
+              })
             })]
+          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            className: "bal",
+            children: ["Balance:", protocolType === "brc20" && bridgeType === "mint" ? brc20Info ? brc20Info.balance : "..." : sendBal, bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
           })]
         }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
           className: "recive inputCardWrap",
@@ -2474,22 +2509,39 @@ var defalut = {
               background: colorBgBase,
               borderRadius: borderRadius
             },
-            children: [/*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
-              onClick: function onClick() {
-                setSelectAssetVisible(true);
+            children: [/*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
+              dropdownRender: function dropdownRender() {
+                return /*#__PURE__*/(0,jsx_runtime.jsx)(SelectAsset, {
+                  type: bridgeType === "redeem" ? "origin" : "target",
+                  onChange: function onChange(_asset) {
+                    setAsset(_asset);
+                    setSelectAssetVisible(undefined);
+                    setAmount("");
+                    setErrorMsg("");
+                    setReciveAmount("");
+                  }
+                });
               },
-              style: {
-                cursor: "pointer"
-              },
-              children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                size: 40,
-                src: "",
-                symbol: asset.originSymbol
-              }), bridgeType === "redeem" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                children: [asset.originSymbol, " "]
-              }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                children: [asset.targetSymbol, " "]
-              }), /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+              open: selectAssetVisible == "recive",
+              placement: "bottomLeft",
+              autoAdjustOverflow: false,
+              children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+                onClick: function onClick() {
+                  setSelectAssetVisible('recive');
+                },
+                style: {
+                  cursor: "pointer"
+                },
+                children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+                  size: 40,
+                  src: "",
+                  symbol: asset.originSymbol
+                }), bridgeType === "redeem" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                  children: [asset.originSymbol, " "]
+                }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                  children: [asset.targetSymbol, " "]
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+              })
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
               className: "inputWrap",
               children: /*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.Z, {
@@ -2516,32 +2568,14 @@ var defalut = {
           return setHistoryVisible(false);
         }
       })]
-    }), /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
-      show: selectChainVisible,
-      onClose: function onClose() {
-        return setSelectChainVisible(false);
-      },
-      onChange: handleChainChange
-    }), /*#__PURE__*/(0,jsx_runtime.jsx)(SelectAsset, {
-      show: selectAssetVisible,
-      onClose: function onClose() {
-        return setSelectAssetVisible(false);
-      },
-      onChange: function onChange(_asset) {
-        setAsset(_asset);
-        setSelectAssetVisible(false);
-        setAmount('');
-        setErrorMsg('');
-        setReciveAmount('');
-      }
     }), /*#__PURE__*/(0,jsx_runtime.jsx)(Summary, objectSpread2_default()(objectSpread2_default()({}, confrimProps), {}, {
       submitting: submitting
     })), /*#__PURE__*/(0,jsx_runtime.jsx)(SuccessModel, {
       show: successVisible,
       onClose: function onClose() {
         setSuccessVisible(false);
-        setAmount('');
-        setReciveAmount('');
+        setAmount("");
+        setReciveAmount("");
         setInscription(undefined);
         setConfirmProps(defalut);
       }
