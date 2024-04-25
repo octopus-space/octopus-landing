@@ -38,6 +38,7 @@ export default ({ show, onClose }: Props) => {
       show={show}
       onClose={onClose}
       closable
+      className="historyWrap"
     >
       <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
     </Popup>

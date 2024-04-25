@@ -1,27 +1,31 @@
-.walletModal {
-    
-  .walletWrap {
+.selectNetWrap {
+  width: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+  .item {
     margin: 0 auto;
+    display: flex;
+    height: 56px;
+    width: 200px;
+    align-items: center;
 
-    .item {
-      &.item{
-        margin-top: 12px;
-      }
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 340px;
-      height: 100px;
-      background-color: #302d8c;
-      border-radius: 8px;
-      .icon {
-        width: 48px;
-        height: 48px;
-        margin-right: 8px;
-      }
-      font-size: 18px;
-      font-weight: 500;
+    background-color: #302d8c;
+    border-radius: 0;
+    &:hover {
+      background-color: #6e66fa;
     }
+    &.active {
+      background-color: #6e66fa;
+    }
+    padding: 13px 18px;
+    .icon {
+      width: 30px;
+      height: 30px;
+      margin-right: 11px;
+    }
+    .name {
+    }
+    font-size: 14px;
+    font-weight: 500;
   }
 }

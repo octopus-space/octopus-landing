@@ -23,11 +23,11 @@ const _themes = {
       fontSize: 13,
     },
     Card: {
-      colorBgContainer: "rgba(110, 102, 250, 0.32)",
+      colorBgContainer: "#1A185F",
     },
     Modal: {
-      contentBg: "#232150",
-      headerBg: "#232150",
+      contentBg: "#1b185d",
+      headerBg: "#1b185d",
     },
     Input: {
       activeBorderColor: "rgb(110, 102, 250)",
@@ -75,10 +75,11 @@ export default function Layout() {
 
         <div className="footer">
           <div className="footwrap">
-            <img src={logo} alt="" className="logo" />
+           
             <div className="navWrap">
               <Nav />
             </div>
+            <div className="corp">Octopus.space@2024 All Rights Reserved</div>
           </div>
         </div>
       </div>

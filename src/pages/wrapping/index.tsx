@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  Dropdown,
   Flex,
   InputNumber,
   Segmented,
@@ -19,7 +20,7 @@ import { useModel } from "umi";
 import switchIcon from "@/assets/switch.svg";
 import historyIcon from "@/assets/history.svg";
 import {
-    FeeInfo,
+  FeeInfo,
   amountRaw,
   calcMintBrc20Info,
   calcMintBtcInfo,
@@ -67,7 +68,9 @@ export default () => {
   const [amount, setAmount] = useState<number | string>("");
   const [reciveAmount, setReciveAmount] = useState<number | string>("");
   const [selectChainVisible, setSelectChainVisible] = useState(false);
-  const [selectAssetVisible, setSelectAssetVisible] = useState(false);
+  const [selectAssetVisible, setSelectAssetVisible] = useState<
+    "send" | "recive"
+  >();
   const [successVisible, setSuccessVisible] = useState(false);
   const [chainType, setChainType] = useState<"from" | "to">();
 
@@ -77,13 +80,13 @@ export default () => {
   const [loadingBrc20, setLoadingBrc20] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [ErrorMsg, setErrorMsg] = useState("");
-  const [feeInfo,setFeeInfo]=useState<FeeInfo>({
-    minerFee:'',
-    bridgeFee:'',
-    receiveAmount:'',
-    totalFee:'',
-    confirmNumber:''
-  })
+  const [feeInfo, setFeeInfo] = useState<FeeInfo>({
+    minerFee: "",
+    bridgeFee: "",
+    receiveAmount: "",
+    totalFee: "",
+    confirmNumber: "",
+  });
   const {
     chains,
     fromChain,
@@ -123,18 +126,26 @@ export default () => {
     }
   }, [protocolType, bridgeType, asset, userBal]);
 
-  const onInputChange = (value:string|number) => {
+  const onInputChange = (value: string | number) => {
     setAmount(value);
-    if (AssetsInfo &&asset&& protocolType === "btc" && bridgeType === "redeem") {
+    if (
+      AssetsInfo &&
+      asset &&
+      protocolType === "btc" &&
+      bridgeType === "redeem"
+    ) {
       try {
-        const info = calcRedeemBtcInfo(amountRaw(String(value), asset.decimals), AssetsInfo);
+        const info = calcRedeemBtcInfo(
+          amountRaw(String(value), asset.decimals),
+          AssetsInfo
+        );
         setErrorMsg("");
         setReciveAmount(info.receiveAmount);
-        setFeeInfo(info)
-      } catch (err:any) {
+        setFeeInfo(info);
+      } catch (err: any) {
         console.log(err);
         message.error(err.message || "unknown error");
-        setReciveAmount('');
+        setReciveAmount("");
         setErrorMsg(err.message || "unknown error");
       }
     }
@@ -146,16 +157,16 @@ export default () => {
     ) {
       try {
         const info = calcRedeemBrc20Info(
-          amountRaw(value, asset.decimals-asset.trimDecimals),
+          amountRaw(value, asset.decimals - asset.trimDecimals),
           AssetsInfo,
           asset
         );
         setErrorMsg("");
         setReciveAmount(info.receiveAmount);
-        setFeeInfo(info)
+        setFeeInfo(info);
       } catch (err) {
         console.log(err);
-        setReciveAmount('');
+        setReciveAmount("");
         message.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
@@ -165,10 +176,10 @@ export default () => {
         const info = calcMintBtcInfo(amountRaw(value, 8), AssetsInfo);
         setErrorMsg("");
         setReciveAmount(info.receiveAmount);
-        setFeeInfo(info)
+        setFeeInfo(info);
       } catch (err) {
         console.log(err);
-        setReciveAmount('');
+        setReciveAmount("");
         message.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
@@ -184,10 +195,10 @@ export default () => {
         const info = calcMintBrc20Info(value, AssetsInfo, asset);
         setErrorMsg("");
         setReciveAmount(info.receiveAmount);
-        setFeeInfo(info)
+        setFeeInfo(info);
       } catch (err) {
         console.log(err);
-        setReciveAmount('');
+        setReciveAmount("");
         message.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
@@ -227,7 +238,7 @@ export default () => {
     };
   }, [protocolType, bridgeType, network, asset, btcAddress]);
 
-  const handleChainChange = (chain: Chain) => {
+  const handleChainChange = (chainType: "from" | "to", chain: Chain) => {
     if (chainType === "from") {
       if (fromChain.key !== chain.key) {
         switchChain();
@@ -273,9 +284,8 @@ export default () => {
     } catch (err) {
       console.log(err);
       message.error(err.message || "unknown error");
-      
     }
-    
+
     setSubmitting(false);
   };
 
@@ -312,7 +322,7 @@ export default () => {
       console.log(err);
       message.error(err.message || "unknown error");
     }
-   
+
     setSubmitting(false);
   };
   const Inscribe = async () => {
@@ -329,7 +339,7 @@ export default () => {
         onClick: () => {},
       },
       {
-        condition: Number(reciveAmount)<0,
+        condition: Number(reciveAmount) < 0,
         text: "Low Send Amount",
         type: "primary",
         onClick: () => {},
@@ -366,14 +376,19 @@ export default () => {
         onChange={(value) => {
           setProtocolType(value);
           setAmount("");
-          setReciveAmount('');
+          setReciveAmount("");
         }}
         options={SegOptions}
         size="large"
         block
       />
       <Card
-        style={{ width: 520, maxWidth: "100vw", position: "relative" }}
+        style={{
+          width: 520,
+          maxWidth: "100vw",
+          position: "relative",
+          border: "2px solid #6e66fa",
+        }}
         id="warapping"
       >
         <div className="title">
@@ -389,25 +404,37 @@ export default () => {
         <div className="chains">
           <div className="from chain">
             <div className="label">From</div>
-            <Button
-              type="text"
-              className="selectWrap"
-              style={{ background: colorBgBase, borderRadius }}
-              onClick={() => {
-                setChainType("from");
-                setSelectChainVisible(true);
-              }}
-            >
-              <Space>
-                <TokenIcon
-                  size={30}
-                  src={fromChain.icon}
-                  symbol={fromChain.label}
+            <Dropdown
+              dropdownRender={() => (
+                <SelectNet
+                  defalutChain={fromChain}
+                  onChange={(chain) => {
+                    handleChainChange("from", chain);
+                    setChainType(undefined);
+                  }}
                 />
-                <span>{fromChain.label}</span>
-                <DownOutlined />
-              </Space>
-            </Button>
+              )}
+              open={chainType === "from"}
+            >
+              <Button
+                type="text"
+                className="selectWrap"
+                style={{ background: colorBgBase, borderRadius }}
+                onClick={() => {
+                  setChainType("from");
+                }}
+              >
+                <Space>
+                  <TokenIcon
+                    size={30}
+                    src={fromChain.icon}
+                    symbol={fromChain.label}
+                  />
+                  <span>{fromChain.label}</span>
+                  <DownOutlined />
+                </Space>
+              </Button>
+            </Dropdown>
           </div>
           <img
             src={switchIcon}
@@ -417,25 +444,37 @@ export default () => {
           />
           <div className="to chain">
             <div className="label">To</div>
-            <Button
-              type="text"
-              className="selectWrap"
-              style={{ background: colorBgBase, borderRadius }}
-              onClick={() => {
-                setChainType("to");
-                setSelectChainVisible(true);
-              }}
-            >
-              <Space>
-                <TokenIcon
-                  size={30}
-                  src={toChain.icon}
-                  symbol={toChain.label}
+            <Dropdown
+              dropdownRender={() => (
+                <SelectNet
+                  defalutChain={toChain}
+                  onChange={(chain) => {
+                    handleChainChange("to", chain);
+                    setChainType(undefined);
+                  }}
                 />
-                <span>{toChain.label}</span>
-                <DownOutlined />
-              </Space>
-            </Button>
+              )}
+              open={chainType === "to"}
+            >
+              <Button
+                type="text"
+                className="selectWrap"
+                style={{ background: colorBgBase, borderRadius }}
+                onClick={() => {
+                  setChainType("to");
+                }}
+              >
+                <Space>
+                  <TokenIcon
+                    size={30}
+                    src={toChain.icon}
+                    symbol={toChain.label}
+                  />
+                  <span>{toChain.label}</span>
+                  <DownOutlined />
+                </Space>
+              </Button>
+            </Dropdown>
           </div>
         </div>
         {asset && (
@@ -483,22 +522,38 @@ export default () => {
                 className="inputCard"
                 style={{ background: colorBgBase, borderRadius }}
               >
-                <div
-                  onClick={() => {
-                    setSelectAssetVisible(true);
-                  }}
-                  style={{ cursor: "pointer" }}
+                <Dropdown
+                  dropdownRender={() => (
+                    <SelectAsset
+                      type={bridgeType === "mint" ? "origin" : "target"}
+                      onChange={(_asset) => {
+                        setAsset(_asset);
+                        setSelectAssetVisible(undefined);
+                        setAmount("");
+                        setErrorMsg("");
+                        setReciveAmount("");
+                      }}
+                    />
+                  )}
+                  open={selectAssetVisible == "send"}
                 >
-                  <Space>
-                    <TokenIcon size={40} src="" symbol={asset.originSymbol} />
-                    {bridgeType === "mint" ? (
-                      <div>{asset.originSymbol} </div>
-                    ) : (
-                      <div>{asset.targetSymbol} </div>
-                    )}
-                    <DownOutlined />
-                  </Space>
-                </div>
+                  <div
+                    onClick={() => {
+                      setSelectAssetVisible("send");
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <Space>
+                      <TokenIcon size={40} src="" symbol={asset.originSymbol} />
+                      {bridgeType === "mint" ? (
+                        <div>{asset.originSymbol} </div>
+                      ) : (
+                        <div>{asset.targetSymbol} </div>
+                      )}
+                      <DownOutlined />
+                    </Space>
+                  </div>
+                </Dropdown>
                 <div className="inputWrap">
                   {protocolType === "brc20" && bridgeType === "mint" ? (
                     <Spin spinning={loadingBrc20}>
@@ -540,8 +595,14 @@ export default () => {
                           brc20Info.transferBalanceList.length === 0 &&
                           !brc20Info.message && (
                             <div>
-                              No transferable{" "}
-                              <Button type="link" onClick={Inscribe}>
+                              No transferable
+                              <Button
+                                type="text"
+                                className="inscribeBtn"
+                                onClick={Inscribe}
+                                style={{ color: "#6E66FA" }}
+                                disabled={Number(brc20Info.balance)===0}
+                              >
                                 Inscribe
                               </Button>
                             </div>
@@ -553,24 +614,23 @@ export default () => {
                       className="input"
                       onChange={onInputChange}
                       value={amount}
-                        // max={sendBal}
+                      // max={sendBal}
                       variant={"borderless"}
                       controls={false}
                     />
                   )}
-
-                  <div className="bal">
-                    Balance:
-                    {protocolType === "brc20" && bridgeType === "mint"
-                      ? brc20Info
-                        ? brc20Info.balance
-                        : "..."
-                      : sendBal}
-                    {bridgeType === "mint"
-                      ? asset.originSymbol
-                      : asset.targetSymbol}
-                  </div>
                 </div>
+              </div>
+              <div className="bal">
+                Balance:
+                {protocolType === "brc20" && bridgeType === "mint"
+                  ? brc20Info
+                    ? brc20Info.balance
+                    : "..."
+                  : sendBal}
+                {bridgeType === "mint"
+                  ? asset.originSymbol
+                  : asset.targetSymbol}
               </div>
             </div>
 
@@ -582,20 +642,38 @@ export default () => {
                 className="inputCard"
                 style={{ background: colorBgBase, borderRadius }}
               >
-                <Space
-                  onClick={() => {
-                    setSelectAssetVisible(true);
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  <TokenIcon size={40} src="" symbol={asset.originSymbol} />
-                  {bridgeType === "redeem" ? (
-                    <div>{asset.originSymbol} </div>
-                  ) : (
-                    <div>{asset.targetSymbol} </div>
+                <Dropdown
+                  dropdownRender={() => (
+                    <SelectAsset
+                      type={bridgeType === "redeem" ? "origin" : "target"}
+                      onChange={(_asset) => {
+                        setAsset(_asset);
+                        setSelectAssetVisible(undefined);
+                        setAmount("");
+                        setErrorMsg("");
+                        setReciveAmount("");
+                      }}
+                    />
                   )}
-                  <DownOutlined />
-                </Space>
+                  open={selectAssetVisible == "recive"}
+                  placement='bottomLeft'
+                  autoAdjustOverflow={false}
+                >
+                  <Space
+                    onClick={() => {
+                      setSelectAssetVisible('recive');
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <TokenIcon size={40} src="" symbol={asset.originSymbol} />
+                    {bridgeType === "redeem" ? (
+                      <div>{asset.originSymbol} </div>
+                    ) : (
+                      <div>{asset.targetSymbol} </div>
+                    )}
+                    <DownOutlined />
+                  </Space>
+                </Dropdown>
 
                 <div className="inputWrap">
                   <InputNumber
@@ -622,31 +700,15 @@ export default () => {
           onClose={() => setHistoryVisible(false)}
         />
       </Card>
-      <SelectNet
-        show={selectChainVisible}
-        onClose={() => setSelectChainVisible(false)}
-        onChange={handleChainChange}
-      />
 
-      <SelectAsset
-        show={selectAssetVisible}
-        onClose={() => setSelectAssetVisible(false)}
-        onChange={(_asset) => {
-          setAsset(_asset);
-          setSelectAssetVisible(false);
-          setAmount('');
-          setErrorMsg('');
-          setReciveAmount('');
-        }}
-      />
       <Summary {...confrimProps} submitting={submitting} />
       <SuccessModel
         show={successVisible}
         onClose={() => {
           setSuccessVisible(false);
-          setAmount('');
-          setReciveAmount('')
-          setInscription(undefined)
+          setAmount("");
+          setReciveAmount("");
+          setInscription(undefined);
           setConfirmProps(defalut);
         }}
       />

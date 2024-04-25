@@ -31,6 +31,9 @@ export default () => {
     if (!isConnected) {
       const ret = await window.metaidwallet.connect();
       console.log(ret);
+      if (ret.status) {
+        throw new Error(ret.status);
+      }
     }
     await init();
   };

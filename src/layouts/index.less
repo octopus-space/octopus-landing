@@ -1,5 +1,6 @@
 .page {
-  background: linear-gradient(180deg, #000000 7%, #000000 119%);
+  // background: linear-gradient(180deg, #000000 7%, #000000 119%);
+  background: linear-gradient(173deg, #070634 0%, #09074c 46%, #01010b 95%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -10,10 +11,57 @@
     width: 100vw;
     position: sticky;
     background: linear-gradient(180deg, #000000 7%, #000000 119%);
+   
+    &.inside{
+      background: linear-gradient(173deg, #070634 0%, #09074c 46%, #01010b 95%);
+      background-size: 100% 100vh;
+    }
     top: 0;
     left: 0;
     right: 0;
     z-index: 19;
+    .routes {
+      margin-left: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .item {
+        & + .item {
+          margin-left: 40px;
+        }
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &.disabled {
+          .desc {
+            .title {
+              color: #ffffff;
+              font-weight: normal;
+            }
+            .subTitle {
+              color: rgba(255, 255, 255, 0.3);
+            }
+          }
+        }
+        .desc {
+          margin-left: 12px;
+          display: flex;
+          flex-direction: column;
+          .title {
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 24px;
+            color: #6e66fa;
+          }
+          .subTitle {
+            font-size: 12px;
+
+            line-height: 120%;
+            color: rgba(156, 150, 255, 0.4);
+          }
+        }
+      }
+    }
 
     .headerwrap {
       margin: 0 auto;
@@ -23,6 +71,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      .left {
+        display: flex;
+      }
       .navWrap {
         display: flex;
         align-items: center;
@@ -55,7 +106,7 @@
     max-width: 100vw;
     width: 100vw;
     margin: 0 auto;
-    background-color: #080808;
+    // background-color: #080808;
     .footwrap {
       width: 1200px;
       margin: 0 auto;
@@ -64,14 +115,24 @@
       justify-content: space-between;
       height: 80px;
     }
+    .corp{
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .nav{
+      .navItem{
+        width: 30px;
+        height: 30px;
+      }
+    }
   }
   .nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    
-    .navItem{
+
+    .navItem {
       width: 40px;
       height: 40px;
       background: rgba(255, 255, 255, 0.06);
@@ -79,16 +140,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      .telegram{
+      .telegram {
         width: 26px;
         height: 26px;
       }
     }
-   
   }
   .logo {
-    width: 244px;
-    height: 33px;
+    width: 212.2px;
+    height: 35px;
   }
   @media screen and (max-width: 768px) {
     .header {
@@ -115,5 +175,39 @@
         }
       }
     }
+  }
+  
+}
+.walletInfo {
+  width: 154px;
+  border-radius: 8px;
+  overflow: hidden;
+  .item {
+    margin: 0 auto;
+    display: flex;
+    height: 50px;
+    width: 200px;
+    align-items: center;
+
+    background-color: #302d8c;
+    border-radius: 0;
+    &:hover {
+      background-color: #6e66fa;
+    }
+    &.active {
+      background-color: #6e66fa;
+    }
+    padding: 13px 18px;
+    .icon {
+      width: 30px;
+      height: 30px;
+      margin-right: 11px;
+    }
+    .name{
+      margin-left: 11px;
+    }
+   
+    font-size: 14px;
+    font-weight: 500;
   }
 }

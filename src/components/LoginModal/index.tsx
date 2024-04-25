@@ -28,7 +28,7 @@ export default ({ show, onClose }: Props) => {
       className="walletModal"
     >
       <div className="walletWrap">
-        <Button className="item" type="primary" onClick={handleConnect}>
+        <Button className="item" type="primary" onClick={handleConnect}block>
           <img src={metalet} alt="" className="icon" />
           <span>Metalet Wallet</span>
         </Button>

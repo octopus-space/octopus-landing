@@ -1,35 +1,50 @@
-.walletModal {
-    
+.selectAssetWrap {
+  background: #302d8c;
+  width: 468px;
+  margin-top: 13px;
+  margin-left: -26px;
+  border-radius: 8px;
+  overflow: hidden;
+  .title{
+    margin: 18px 22px 0;
+    font-size: 16px;
+  }
   .assetWrap {
     margin: 0 auto;
-    max-height: 400px;
-    overflow-y: scroll;
-    .item {
-      &.item{
-        margin-top: 12px;
-      }
-      &.selected{
-        background: var(--primary);
-        background-color: var(--primary);
-      }
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      
-      width: 340px;
-      height: 50px;
-      background-color: #302d8c;
-      border-radius: 8px;
-      
-      .icon {
-        width: 48px;
-        height: 48px;
-        margin-right: 8px;
-      }
-      font-size: 18px;
-      font-weight: 500;
-      .symbol{
+
+    .inputWrap {
+      margin: 14px 13px 16px 20px;
+    }
+    .list {
+      max-height: 250px;
+      overflow-y: scroll;
+      width: 468px;
+      .item {
+        width: 468px;
+        cursor: pointer;
+        padding: 13px 37px;
+        
+        &.selected {
+          background: #6E66FA;
+          background-color: #6E66FA;
+        }
+        &:hover{
+          background: #6E66FA;
+        }
+        
+        display: flex;
+        align-items: center;
+
+  
+       
+       
+
+        
+        font-size: 14px;
+        font-weight: 500;
+        .symbol {
           margin-left: 8px;
+        }
       }
     }
   }

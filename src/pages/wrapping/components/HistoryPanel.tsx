@@ -8,6 +8,7 @@ import mvc from "@/assets/mvc.png";
 import arrow from "@/assets/arrowRight.png";
 import { Button, Divider, Empty, Skeleton, Space } from "antd";
 import "./index.less";
+import empty from '@/assets/empty.png'
 type HistoryType = "btcToMvc" | "brc20ToMvc" | "mvcToBtc" | "mvcToBrc20";
 const size = 10;
 export default ({ type }: { type: HistoryType }) => {
@@ -71,7 +72,7 @@ export default ({ type }: { type: HistoryType }) => {
   }, [fetchHistory]);
   return (
     <div style={{ minHeight: 500,height: 500,overflowY:'scroll' }} className="historyPanel">
-      {list.length === 0 && !loading && <Empty description='No Transfers yet'> </Empty>}
+      {list.length === 0 && !loading && <Empty description='No Transfers yet' image={empty} imageStyle={{width:60,height:60,margin:'0 auto'}}> </Empty>}
 
       {list.map((item) => (
         <div className="historyCard" key={item.originTxid}>
