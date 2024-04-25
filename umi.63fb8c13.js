@@ -213,19 +213,25 @@ var checkExtension = function checkExtension() {
           case 4:
             isConnected = _context.sent;
             console.log(isConnected, "isConnected");
-            if (isConnected) {
-              _context.next = 11;
+            if (!(isConnected.status === "locked")) {
+              _context.next = 8;
               break;
             }
-            _context.next = 9;
+            throw new Error("unlock first");
+          case 8:
+            if (isConnected) {
+              _context.next = 13;
+              break;
+            }
+            _context.next = 11;
             return window.metaidwallet.connect();
-          case 9:
+          case 11:
             ret = _context.sent;
             console.log(ret);
-          case 11:
-            _context.next = 13;
-            return init();
           case 13:
+            _context.next = 15;
+            return init();
+          case 15:
           case "end":
             return _context.stop();
         }
@@ -252,8 +258,8 @@ var checkExtension = function checkExtension() {
           case 4:
             ret = _context2.sent;
             setConnected(false);
-            setMVCAddress('');
-            setBTCAddress('');
+            setMVCAddress("");
+            setBTCAddress("");
             setUserBal({});
           case 9:
           case "end":
@@ -309,7 +315,7 @@ var checkExtension = function checkExtension() {
           return window.metaidwallet.isConnected();
         case 3:
           isConnected = _context4.sent;
-          if (!isConnected) {
+          if (!(isConnected === true)) {
             _context4.next = 20;
             break;
           }
@@ -37072,7 +37078,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"132":"88234bf0","208":"dc1d33cf","242":"d62fc15e","307":"7e62605d","557":"2201ab0f","717":"08a167c2","866":"6fb33101"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"132":"88234bf0","208":"dc1d33cf","242":"d62fc15e","307":"7e62605d","557":"2201ab0f","717":"142980df","866":"6fb33101"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
