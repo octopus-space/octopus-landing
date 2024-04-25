@@ -25,6 +25,9 @@ export default () => {
     if (!checkExtension()) return;
     const isConnected = await window.metaidwallet.isConnected();
     console.log(isConnected, "isConnected");
+    if (isConnected.status === "locked") {
+      throw new Error("unlock first");
+    }
     if (!isConnected) {
       const ret = await window.metaidwallet.connect();
       console.log(ret);
@@ -36,8 +39,8 @@ export default () => {
     if (!checkExtension()) return;
     const ret = await window.metaidwallet.disconnect();
     setConnected(false);
-    setMVCAddress('');
-    setBTCAddress('');
+    setMVCAddress("");
+    setBTCAddress("");
     setUserBal({});
   };
   const getBal = useCallback(async () => {
@@ -62,7 +65,8 @@ export default () => {
   const init = useCallback(async () => {
     if (walletName === "metalet" && window.metaidwallet) {
       const isConnected = await window.metaidwallet.isConnected();
-      if (isConnected) {
+
+      if (isConnected === true) {
         const _mvc = await window.metaidwallet.getAddress();
         const { network } = await window.metaidwallet.getNetwork();
         const btcAddress = await window.metaidwallet.btc.getAddress();
@@ -95,7 +99,10 @@ export default () => {
 
     return () => {
       if (walletName === "metalet" && window.metaidwallet) {
-        window.metaidwallet.removeListener("accountsChanged", handleAccountChange);
+        window.metaidwallet.removeListener(
+          "accountsChanged",
+          handleAccountChange
+        );
         window.metaidwallet.removeListener("networkChanged", handleNetChange);
       }
     };
@@ -111,6 +118,6 @@ export default () => {
     setLoginModalShow,
     loginModalShow,
     disConnect,
-    getBal
+    getBal,
   };
 };

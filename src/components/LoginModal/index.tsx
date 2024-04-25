@@ -1,7 +1,7 @@
 import Popup from "@/components/ResponPopup";
 import metalet from "@/assets/metalet.png";
 import "./index.less";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { useModel } from "umi";
 type Props = {
   show: boolean;
@@ -10,8 +10,12 @@ type Props = {
 export default ({ show, onClose }: Props) => {
   const { connect } = useModel("wallet");
   const handleConnect = async () => {
-    await connect();
-    onClose();
+    try {
+      await connect();
+      onClose();
+    } catch (err:any) {
+      message.error(err.message||'unknown error');
+    }
   };
   return (
     <Popup
