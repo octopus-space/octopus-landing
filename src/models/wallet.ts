@@ -85,7 +85,10 @@ export default () => {
     }
   }, [walletName]);
   useEffect(() => {
-    init();
+    //
+    setTimeout(()=>{
+      init();
+    },100)
   }, [init]);
   useEffect(() => {
     getBal();
