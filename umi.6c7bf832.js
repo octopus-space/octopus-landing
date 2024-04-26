@@ -318,38 +318,39 @@ var checkExtension = function checkExtension() {
     return regeneratorRuntime_default()().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
+          console.log("init", walletName, window.metaidwallet);
           if (!(walletName === "metalet" && window.metaidwallet)) {
-            _context4.next = 21;
+            _context4.next = 22;
             break;
           }
-          _context4.next = 3;
+          _context4.next = 4;
           return window.metaidwallet.isConnected();
-        case 3:
+        case 4:
           isConnected = _context4.sent;
-          console.log('init', isConnected);
+          console.log("init", isConnected);
           if (!(isConnected === true)) {
-            _context4.next = 21;
+            _context4.next = 22;
             break;
           }
-          _context4.next = 8;
+          _context4.next = 9;
           return window.metaidwallet.getAddress();
-        case 8:
+        case 9:
           _mvc = _context4.sent;
-          _context4.next = 11;
+          _context4.next = 12;
           return window.metaidwallet.getNetwork();
-        case 11:
+        case 12:
           _yield$window$metaidw = _context4.sent;
           _network = _yield$window$metaidw.network;
-          _context4.next = 15;
+          _context4.next = 16;
           return window.metaidwallet.btc.getAddress();
-        case 15:
+        case 16:
           _btcAddress = _context4.sent;
           setConnected(true);
           setMVCAddress(_mvc);
           setNetwork(_network);
           setBTCAddress(_btcAddress);
           getBal();
-        case 21:
+        case 22:
         case "end":
           return _context4.stop();
       }
