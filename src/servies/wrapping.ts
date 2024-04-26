@@ -110,7 +110,7 @@ async function signMintPublicKey(): Promise<{
     encoding: "base64",
   });
   if (ret.status === "canceled") throw new Error("canceled");
-
+  console.log(ret,'signMessage')
   let {
     signature: { signature: publicKeyReceiveSign },
   } = ret;
@@ -437,7 +437,7 @@ async function sendBRC(
       });
       psbt.addInput(payInput);
     }
-
+    debugger
     const _signPsbt = await window.metaidwallet.btc.signPsbt({
       psbtHex: psbt.toHex(),
     });
