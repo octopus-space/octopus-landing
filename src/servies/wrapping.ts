@@ -54,6 +54,7 @@ async function sendToken(
     .catch((e) => {
       throw new Error(e as any);
     });
+    if(res.status) throw new Error(res.status)
   if (res.res[0].txid) {
     return res.res[0].txid;
   } else {
@@ -231,7 +232,7 @@ async function buildTx(parmas: {
   };
 }) {
   const ret = await window.metaidwallet.btc.transfer(parmas);
-  console.log(ret);
+  if(ret.status) throw new Error(ret.status)
   return ret.txHex;
 }
 export async function mintBtc(
@@ -279,6 +280,7 @@ export async function mintBtc(
       network,
       submitPrepayOrderMintDto
     );
+    if(!submitRes.success) throw new Error(submitRes.msg)
 
     return submitRes;
     //成功
@@ -503,7 +505,7 @@ export async function mintBrc(
       network,
       submitPrepayOrderMintDto
     );
-
+    if(!submitRes.success) throw new Error(submitRes.msg)
     return submitRes;
     //成功
   } catch (error) {

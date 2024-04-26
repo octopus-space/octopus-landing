@@ -41,6 +41,7 @@ export default () => {
   const disConnect = async () => {
     if (!checkExtension()) return;
     const ret = await window.metaidwallet.disconnect();
+    if (ret.status === "canceled") return;
     setConnected(false);
     setMVCAddress("");
     setBTCAddress("");

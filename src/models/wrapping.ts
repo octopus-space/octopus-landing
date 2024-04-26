@@ -2,8 +2,8 @@ import { useModel } from "umi";
 import { useCallback, useEffect, useState } from "react";
 import { getAssets } from "@/servies/api";
 import useIntervalAsync from "@/hooks/useIntervalAsync";
-import btc from '@/assets/btc.png'
-import mvc from '@/assets/mvc.png'
+import btc from "@/assets/btc.png";
+import mvc from "@/assets/mvc.png";
 export type Chain = {
   key: string;
   label: string;
@@ -32,53 +32,51 @@ export default () => {
   const [assets, setAssets] = useState<API.AssetItem[]>([]);
   const [protocolType, setProtocolType] = useState<Protocol>("btc");
   const [AssetsInfo, setAssetsInfo] = useState<API.AssetsData>();
-  const fetchAssets = useCallback(async (retry:boolean=true) => {
-    if (network) {
-        try{
-            const ret = await getAssets(network);
-            setTimeout(()=>{
-              setAssetsInfo(ret.data);
-            },1000)
-           
-        }catch(err:any){
-            console.log(err)
-            if(err.message==='Request failed with status code 500'&&retry===true){
-                fetchAssets(false)
-            }
+  const fetchAssets = useCallback(
+    async (retry: boolean = true) => {
+      if (network) {
+        try {
+          const ret = await getAssets(network);
+          setAssetsInfo(ret.data);
+        } catch (err: any) {
+          console.log(err);
+          if (
+            err.message === "Request failed with status code 500" &&
+            retry === true
+          ) {
+            fetchAssets(false);
+          }
         }
-     
-    }
-  }, [network]);
+      }
+    },
+    [network]
+  );
 
   useEffect(() => {
     if (AssetsInfo) {
       if (protocolType === "btc") {
-       
-          const find = AssetsInfo.assetList.find(
-            (item) => item.network === "BTC"
-          );
-          const assets  = AssetsInfo.assetList.filter(
-            (item) => item.network === "BTC"
-          );
-          setAssets(assets)
-          if (find) {
-            setAsset(find);
-          }
-        
+        const find = AssetsInfo.assetList.find(
+          (item) => item.network === "BTC"
+        );
+        const assets = AssetsInfo.assetList.filter(
+          (item) => item.network === "BTC"
+        );
+        setAssets(assets);
+        if (find) {
+          setAsset(find);
+        }
       }
       if (protocolType === "brc20") {
-        
-          const find = AssetsInfo.assetList.find(
-            (item) => item.network === "BRC20"
-          );
-          const assets  = AssetsInfo.assetList.filter(
-            (item) => item.network === "BRC20"
-          );
-          setAssets(assets)
-          if (find) {
-            setAsset(find);
-          }
-        
+        const find = AssetsInfo.assetList.find(
+          (item) => item.network === "BRC20"
+        );
+        const assets = AssetsInfo.assetList.filter(
+          (item) => item.network === "BRC20"
+        );
+        setAssets(assets);
+        if (find) {
+          setAsset(find);
+        }
       }
     }
   }, [AssetsInfo, protocolType]);
@@ -96,6 +94,6 @@ export default () => {
     setProtocolType,
     AssetsInfo,
     assets,
-    setAsset
+    setAsset,
   };
 };
