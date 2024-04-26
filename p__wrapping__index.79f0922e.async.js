@@ -904,6 +904,7 @@ function _signMintPublicKey() {
           }
           throw new Error("canceled");
         case 16:
+          console.log(ret, 'signMessage');
           publicKeyReceiveSign = ret.signature.signature; //2.7 {signature:{signature:'xxx'}}
           //3.0 {signature:''}；
           if (typeof ret.signature === "string") {
@@ -915,7 +916,7 @@ function _signMintPublicKey() {
             publicKeyReceiveSign: publicKeyReceiveSign,
             publicKeyReceive: publicKeyReceive
           });
-        case 19:
+        case 20:
         case "end":
           return _context3.stop();
       }
@@ -1379,15 +1380,16 @@ function _sendBRC() {
                     _iterator2.f();
                     return _context10.finish(23);
                   case 26:
-                    _context10.next = 28;
+                    debugger;
+                    _context10.next = 29;
                     return window.metaidwallet.btc.signPsbt({
                       psbtHex: psbt.toHex()
                     });
-                  case 28:
+                  case 29:
                     _signPsbt = _context10.sent;
                     signPsbt = src/* Psbt */._B.fromHex(_signPsbt);
                     return _context10.abrupt("return", signPsbt);
-                  case 31:
+                  case 32:
                   case "end":
                     return _context10.stop();
                 }
