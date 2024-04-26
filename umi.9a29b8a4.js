@@ -319,36 +319,37 @@ var checkExtension = function checkExtension() {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
           if (!(walletName === "metalet" && window.metaidwallet)) {
-            _context4.next = 20;
+            _context4.next = 21;
             break;
           }
           _context4.next = 3;
           return window.metaidwallet.isConnected();
         case 3:
           isConnected = _context4.sent;
+          console.log('init', isConnected);
           if (!(isConnected === true)) {
-            _context4.next = 20;
+            _context4.next = 21;
             break;
           }
-          _context4.next = 7;
+          _context4.next = 8;
           return window.metaidwallet.getAddress();
-        case 7:
+        case 8:
           _mvc = _context4.sent;
-          _context4.next = 10;
+          _context4.next = 11;
           return window.metaidwallet.getNetwork();
-        case 10:
+        case 11:
           _yield$window$metaidw = _context4.sent;
           _network = _yield$window$metaidw.network;
-          _context4.next = 14;
+          _context4.next = 15;
           return window.metaidwallet.btc.getAddress();
-        case 14:
+        case 15:
           _btcAddress = _context4.sent;
           setConnected(true);
           setMVCAddress(_mvc);
           setNetwork(_network);
           setBTCAddress(_btcAddress);
           getBal();
-        case 20:
+        case 21:
         case "end":
           return _context4.stop();
       }
@@ -37089,7 +37090,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"14b861d7","242":"d62fc15e","307":"cae89901","717":"d34c7048","782":"6d83ca01","866":"6fb33101","973":"e8b534b2"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"14b861d7","242":"d62fc15e","307":"5978f62e","717":"d34c7048","782":"6d83ca01","866":"6fb33101","973":"e8b534b2"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	

@@ -1472,34 +1472,35 @@ function _mintBrc() {
             confirmed: true,
             inscriptions: null
           };
-          _context12.next = 17;
+          debugger;
+          _context12.next = 18;
           return sendBRC(bridgeAddress, inscriptionUtxo, assetInfo.feeBtc, network);
-        case 17:
+        case 18:
           psbt = _context12.sent;
           submitPrepayOrderMintDto = {
             orderId: orderId,
             txHex: psbt.extractTransaction().toHex()
           };
-          _context12.next = 21;
+          _context12.next = 22;
           return (0,api/* submitPrepayOrderMintBrc20 */.nc)(network, submitPrepayOrderMintDto);
-        case 21:
+        case 22:
           submitRes = _context12.sent;
           if (submitRes.success) {
-            _context12.next = 24;
+            _context12.next = 25;
             break;
           }
           throw new Error(submitRes.msg);
-        case 24:
+        case 25:
           return _context12.abrupt("return", submitRes);
-        case 27:
-          _context12.prev = 27;
+        case 28:
+          _context12.prev = 28;
           _context12.t0 = _context12["catch"](8);
           throw new Error(_context12.t0.message || _context12.t0.msg);
-        case 30:
+        case 31:
         case "end":
           return _context12.stop();
       }
-    }, _callee12, null, [[8, 27]]);
+    }, _callee12, null, [[8, 28]]);
   }));
   return _mintBrc.apply(this, arguments);
 }
