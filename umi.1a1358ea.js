@@ -37089,7 +37089,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"14b861d7","242":"d62fc15e","307":"ac8fbcc3","717":"a854053f","782":"6d83ca01","866":"6fb33101","973":"e8b534b2"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"14b861d7","242":"d62fc15e","307":"cae89901","717":"d34c7048","782":"6d83ca01","866":"6fb33101","973":"e8b534b2"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -37098,7 +37098,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.miniCssF = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + {"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] + "." + {"307":"cbc5393a","717":"96cb62f9","866":"5c37dee4"}[chunkId] + ".chunk.css";
+/******/ 			return "" + {"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] + "." + {"307":"cbc5393a","717":"d31d620f","866":"5c37dee4"}[chunkId] + ".chunk.css";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -38729,7 +38729,7 @@ function _getRoutes() {
                 return Promise.all(/* import() | p__index */[__webpack_require__.e(208), __webpack_require__.e(242), __webpack_require__.e(866)]).then(__webpack_require__.bind(__webpack_require__, 68606));
               }),
               '2': /*#__PURE__*/react.lazy(function () {
-                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(208), __webpack_require__.e(973), __webpack_require__.e(782), __webpack_require__.e(307)]).then(__webpack_require__.bind(__webpack_require__, 62934));
+                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(208), __webpack_require__.e(973), __webpack_require__.e(782), __webpack_require__.e(307)]).then(__webpack_require__.bind(__webpack_require__, 9168));
               }),
               '@@/global-layout': /*#__PURE__*/react.lazy(function () {
                 return Promise.all(/* import() | layouts__index */[__webpack_require__.e(208), __webpack_require__.e(973), __webpack_require__.e(717)]).then(__webpack_require__.bind(__webpack_require__, 68240));

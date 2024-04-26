@@ -524,11 +524,8 @@ const SvgExit = (props) => /* @__PURE__ */ React.createElement("svg", exit_sprea
           dropdownRender: function dropdownRender() {
             return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
               className: "walletInfo",
-              children: [/*#__PURE__*/(0,jsx_runtime.jsxs)(es_button/* default */.ZP, {
+              children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                 className: "item",
-                type: "primary"
-                //   onClick={() => onChange(item)}
-                ,
                 children: [/*#__PURE__*/(0,jsx_runtime.jsx)("img", {
                   src: logoIcon,
                   alt: ""
@@ -536,9 +533,8 @@ const SvgExit = (props) => /* @__PURE__ */ React.createElement("svg", exit_sprea
                   className: "name",
                   children: showAddress
                 })]
-              }), /*#__PURE__*/(0,jsx_runtime.jsxs)(es_button/* default */.ZP, {
+              }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                 className: "item active",
-                type: "primary",
                 onClick: disConnect,
                 children: [/*#__PURE__*/(0,jsx_runtime.jsx)("img", {
                   src: exit,
