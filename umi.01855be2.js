@@ -372,7 +372,7 @@ var checkExtension = function checkExtension() {
     var handleNetChange = function handleNetChange(network) {
       init();
     };
-    if (walletName === "metalet" && window.metaidwallet) {
+    if (walletName === "metalet" && window.metaidwallet && connected) {
       window.metaidwallet.on("accountsChanged", handleAccountChange);
       window.metaidwallet.on("networkChanged", handleNetChange);
     }
@@ -382,7 +382,7 @@ var checkExtension = function checkExtension() {
         window.metaidwallet.removeListener("networkChanged", handleNetChange);
       }
     };
-  }, [walletName]);
+  }, [walletName, connected]);
   return {
     mvcAddress: mvcAddress,
     btcAddress: btcAddress,
