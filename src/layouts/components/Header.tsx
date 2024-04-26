@@ -50,22 +50,21 @@ export default () => {
             <Dropdown
               dropdownRender={() => (
                 <div className="walletInfo">
-                  <Button
+                  <div
                     className={`item`}
-                    type="primary"
-                    //   onClick={() => onChange(item)}
+                   
                   >
                      <img src={logoIcon} alt="" />
                     <span className="name">{showAddress}</span>
-                  </Button>
-                  <Button
+                  </div>
+                  <div
                     className={`item active`}
-                    type="primary"
+                    
                     onClick={disConnect}
                   >
                     <img src={exit} alt="" />
                     <span className="name">Disconnect</span>
-                  </Button>
+                  </div>
                 </div>
               )}
               placement='bottomRight'

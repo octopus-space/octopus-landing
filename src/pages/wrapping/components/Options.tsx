@@ -1,6 +1,7 @@
 import TokenIcon from "@/components/TokenIcon";
 import btc from "@/assets/btc.png";
-import BRC20 from "@/assets/metaid_b_y.png";
+import metaid from "@/assets/metaid_b_y.png";
+import BRC20 from "@/assets/brc20.png";
 import arc20 from "@/assets/arc20.png";
 import runes from "@/assets/runes.png";
 import {  SegmentedOptions } from "antd/es/segmented";
@@ -47,7 +48,7 @@ export const SegOptions: SegmentedOptions<any> = [
   {
     label: (
       <div style={{ padding: 4 }} className="SegmentedItem">
-        <TokenIcon symbol="MRC20" src={BRC20} size={28} />
+        <TokenIcon symbol="MRC20" src={metaid} size={28} />
         <span>MRC20</span>
       </div>
     ),

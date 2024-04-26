@@ -399,6 +399,7 @@ async function sendBRC(
   }
 
   utxos.sort((a, b) => b.satoshi - a.satoshi);
+  debugger
   const buildPsbt = async (selectedUtxos: UTXO[], change: Decimal) => {
     const psbt = new Psbt({ network: btcNetwork });
 
