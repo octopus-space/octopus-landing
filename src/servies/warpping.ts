@@ -108,6 +108,8 @@ async function signMintPublicKey(): Promise<{
   const {
     signature: { signature: publicKeyReceiveSign },
   } = ret;
+  //2.7 {signature:{signature:'xxx'}}
+  //3.0 {signature:''}
 
   return {
     publicKey,

@@ -524,26 +524,28 @@ export default () => {
               >
                 <Dropdown
                   dropdownRender={() => (
-                    <SelectAsset
-                      type={bridgeType === "mint" ? "origin" : "target"}
-                      onChange={(_asset) => {
-                        setAsset(_asset);
-                        setSelectAssetVisible(undefined);
-                        setAmount("");
-                        setErrorMsg("");
-                        setReciveAmount("");
-                      }}
-                    />
+                    <div onMouseLeave={()=> setSelectAssetVisible(undefined)}>
+                      <SelectAsset
+                        type={bridgeType === "mint" ? "origin" : "target"}
+                        onChange={(_asset) => {
+                          setAsset(_asset);
+                          setSelectAssetVisible(undefined)
+                          setAmount("");
+                          setErrorMsg("");
+                          setReciveAmount("");
+                        }}
+                      />
+                    </div>
                   )}
+                  onOpenChange={(open) => {
+                    console.log(open);
+                  }}
                   open={selectAssetVisible == "send"}
+                  placement="bottomLeft"
+                  autoAdjustOverflow={false}
                 >
-                  <div
-                    onClick={() => {
-                      setSelectAssetVisible("send");
-                    }}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <Space>
+                  <div onClick={() => {setSelectAssetVisible('send')}} style={{ cursor: "pointer" }}>
+                    <Space style={{height:50}}>
                       <TokenIcon size={40} src="" symbol={asset.originSymbol} />
                       {bridgeType === "mint" ? (
                         <div>{asset.originSymbol} </div>
@@ -561,7 +563,7 @@ export default () => {
                         wrap="wrap"
                         gap="small"
                         justify="flex-end"
-                        style={{ padding: "4px 0" }}
+                       
                       >
                         {brc20Info && brc20Info.message && brc20Info.message}
                         {brc20Info &&
@@ -577,6 +579,7 @@ export default () => {
                                 setInscription(item);
                                 onInputChange(item.amount);
                               }}
+                              key={item.inscriptionId}
                             >
                               <span className="tick">
                                 {bridgeType === "mint" ? (
@@ -601,7 +604,7 @@ export default () => {
                                 className="inscribeBtn"
                                 onClick={Inscribe}
                                 style={{ color: "#6E66FA" }}
-                                disabled={Number(brc20Info.balance)===0}
+                                disabled={Number(brc20Info.balance) === 0}
                               >
                                 Inscribe
                               </Button>
@@ -614,7 +617,7 @@ export default () => {
                       className="input"
                       onChange={onInputChange}
                       value={amount}
-                      // max={sendBal}
+                      max={sendBal}
                       variant={"borderless"}
                       controls={false}
                     />
@@ -656,12 +659,12 @@ export default () => {
                     />
                   )}
                   open={selectAssetVisible == "recive"}
-                  placement='bottomLeft'
+                  placement="bottomLeft"
                   autoAdjustOverflow={false}
                 >
                   <Space
                     onClick={() => {
-                      setSelectAssetVisible('recive');
+                      setSelectAssetVisible("recive");
                     }}
                     style={{ cursor: "pointer" }}
                   >
