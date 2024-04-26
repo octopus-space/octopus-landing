@@ -94,7 +94,7 @@ var Popup = function Popup(_ref) {
 
 /***/ }),
 
-/***/ 79152:
+/***/ 62934:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 // ESM COMPAT FLAG
@@ -740,7 +740,7 @@ var src = __webpack_require__(17656);
 var decimal = __webpack_require__(90482);
 // EXTERNAL MODULE: ./node_modules/@bitcoin-js/tiny-secp256k1-asmjs/lib/index.js + 6 modules
 var lib = __webpack_require__(70155);
-;// CONCATENATED MODULE: ./src/servies/warpping.ts
+;// CONCATENATED MODULE: ./src/servies/wrapping.ts
 /* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
 
 
@@ -2261,7 +2261,7 @@ var defalut = {
         border: "2px solid #6e66fa",
         height: 666
       },
-      id: "warapping",
+      id: "wrapping",
       loading: !AssetsInfo,
       children: /*#__PURE__*/(0,jsx_runtime.jsxs)(spin/* default */.Z, {
         spinning: !AssetsInfo,
