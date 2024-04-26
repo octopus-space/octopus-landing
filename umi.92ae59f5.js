@@ -357,7 +357,10 @@ var checkExtension = function checkExtension() {
     }, _callee4);
   })), [walletName]);
   (0,react.useEffect)(function () {
-    init();
+    //
+    setTimeout(function () {
+      init();
+    }, 100);
   }, [init]);
   (0,react.useEffect)(function () {
     getBal();
