@@ -54,7 +54,7 @@ async function sendToken(
     .catch((e) => {
       throw new Error(e as any);
     });
-    if(res.status) throw new Error(res.status)
+  if (res.status) throw new Error(res.status);
   if (res.res[0].txid) {
     return res.res[0].txid;
   } else {
@@ -78,9 +78,13 @@ async function signPublicKey(): Promise<{
     encoding: "base64",
   });
   if (ret.status === "canceled") throw new Error("canceled");
-  const {
+  let {
     signature: { signature: publicKeySign },
   } = ret;
+
+  if (typeof ret.signature === "string") {
+    publicKeySign = ret.signature;
+  }
 
   return {
     publicKey,
@@ -106,11 +110,15 @@ async function signMintPublicKey(): Promise<{
     encoding: "base64",
   });
   if (ret.status === "canceled") throw new Error("canceled");
-  const {
+
+  let {
     signature: { signature: publicKeyReceiveSign },
   } = ret;
   //2.7 {signature:{signature:'xxx'}}
-  //3.0 {signature:''}
+  //3.0 {signature:''}；
+  if (typeof ret.signature === "string") {
+    publicKeyReceiveSign = ret.signature;
+  }
 
   return {
     publicKey,
@@ -232,7 +240,7 @@ async function buildTx(parmas: {
   };
 }) {
   const ret = await window.metaidwallet.btc.transfer(parmas);
-  if(ret.status) throw new Error(ret.status)
+  if (ret.status) throw new Error(ret.status);
   return ret.txHex;
 }
 export async function mintBtc(
@@ -280,7 +288,7 @@ export async function mintBtc(
       network,
       submitPrepayOrderMintDto
     );
-    if(!submitRes.success) throw new Error(submitRes.msg)
+    if (!submitRes.success) throw new Error(submitRes.msg);
 
     return submitRes;
     //成功
@@ -399,7 +407,7 @@ async function sendBRC(
   }
 
   utxos.sort((a, b) => b.satoshi - a.satoshi);
-  debugger
+  debugger;
   const buildPsbt = async (selectedUtxos: UTXO[], change: Decimal) => {
     const psbt = new Psbt({ network: btcNetwork });
 
@@ -492,7 +500,7 @@ export async function mintBrc(
       confirmed: true,
       inscriptions: null,
     };
-    debugger
+    debugger;
     const psbt = await sendBRC(
       bridgeAddress,
       inscriptionUtxo,
@@ -507,7 +515,7 @@ export async function mintBrc(
       network,
       submitPrepayOrderMintDto
     );
-    if(!submitRes.success) throw new Error(submitRes.msg)
+    if (!submitRes.success) throw new Error(submitRes.msg);
     return submitRes;
     //成功
   } catch (error) {
