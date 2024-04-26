@@ -14,6 +14,7 @@ export default () => {
     loginModalShow,
     setLoginModalShow,
     connected,
+    network
   } = useModel("wallet");
   const showAddress = useMemo(() => {
     if (btcAddress) return btcAddress.replace(/(\w{5})\w+(\w{3})/, "$1...$2");
@@ -30,7 +31,7 @@ export default () => {
             <div className="item">
               <img src={wrapping} alt="" />
               <div className="desc">
-                <div className="title">Wrapping</div>
+                <div className="title">Wrapping {network==='testnet'&&<div className="beta">BETA</div>}</div>
                 <div className="subTitle">Smartcontrat Bridging</div>
               </div>
             </div>

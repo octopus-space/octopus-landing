@@ -3,6 +3,7 @@
   border-radius: 8px;
   overflow: hidden;
   .item {
+    box-sizing: border-box;
     margin: 0 auto;
     display: flex;
     height: 56px;
@@ -11,12 +12,14 @@
 
     background-color: #302d8c;
     border-radius: 0;
+    transition: all 0.8s;
     &:hover {
       background-color: #6e66fa;
+      background: #6e66fa;
     }
-    &.active {
-      background-color: #6e66fa;
-    }
+    // &.active {
+    //   background-color: #6e66fa;
+    // }
     padding: 13px 18px;
     .icon {
       width: 30px;

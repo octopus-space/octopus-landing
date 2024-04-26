@@ -108,6 +108,8 @@ export default () => {
   const handleHistory = () => {
     if (connected) {
       setHistoryVisible(true);
+    } else {
+      message.error("please connect wallet");
     }
   };
   const bridgeType: "mint" | "redeem" = useMemo(() => {
@@ -406,13 +408,18 @@ export default () => {
             <div className="label">From</div>
             <Dropdown
               dropdownRender={() => (
-                <SelectNet
-                  defalutChain={fromChain}
-                  onChange={(chain) => {
-                    handleChainChange("from", chain);
-                    setChainType(undefined);
-                  }}
-                />
+                <div
+                  style={{ marginTop: -100, paddingTop: 100 }}
+                  onMouseLeave={() => setChainType(undefined)}
+                >
+                  <SelectNet
+                    defalutChain={fromChain}
+                    onChange={(chain) => {
+                      handleChainChange("from", chain);
+                      setChainType(undefined);
+                    }}
+                  />
+                </div>
               )}
               open={chainType === "from"}
             >
@@ -424,15 +431,22 @@ export default () => {
                   setChainType("from");
                 }}
               >
-                <Space>
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <TokenIcon
                     size={30}
                     src={fromChain.icon}
                     symbol={fromChain.label}
                   />
-                  <span>{fromChain.label}</span>
-                  <DownOutlined />
-                </Space>
+                  <span style={{ margin: "0 10px 0 5px" }}>
+                    {fromChain.label}
+                  </span>
+                  <div
+                    className={chainType == "from" ? "spanRotate" : "spanReset"}
+                  >
+                    
+                    <DownOutlined />
+                  </div>
+                </div>
               </Button>
             </Dropdown>
           </div>
@@ -446,15 +460,22 @@ export default () => {
             <div className="label">To</div>
             <Dropdown
               dropdownRender={() => (
-                <SelectNet
-                  defalutChain={toChain}
-                  onChange={(chain) => {
-                    handleChainChange("to", chain);
-                    setChainType(undefined);
-                  }}
-                />
+                <div
+                  style={{ marginTop: -100, paddingTop: 100 }}
+                  onMouseLeave={() => setChainType(undefined)}
+                >
+                  <SelectNet
+                    defalutChain={toChain}
+                    onChange={(chain) => {
+                      handleChainChange("to", chain);
+                      setChainType(undefined);
+                    }}
+                  />
+                </div>
               )}
               open={chainType === "to"}
+              placement="bottomLeft"
+              autoAdjustOverflow={false}
             >
               <Button
                 type="text"
@@ -464,15 +485,19 @@ export default () => {
                   setChainType("to");
                 }}
               >
-                <Space>
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <TokenIcon
                     size={30}
                     src={toChain.icon}
                     symbol={toChain.label}
                   />
-                  <span>{toChain.label}</span>
-                  <DownOutlined />
-                </Space>
+                  <span style={{ margin: "0 10px 0 5px" }}>{toChain.label}</span>
+                  <div
+                    className={chainType == "to" ? "spanRotate" : "spanReset"}
+                  >
+                    <DownOutlined />
+                  </div>
+                </div>
               </Button>
             </Dropdown>
           </div>

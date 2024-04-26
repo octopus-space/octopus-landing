@@ -14,15 +14,15 @@ export default ({  onChange,defalutChain }: Props) => {
   return (
     <div className="selectNetWrap">
       {chains.map((item) => (
-        <Button
+        <div
           className={`item ${defalutChain?.key===item.key?'active':''}`}
-          type="primary"
+         
           onClick={() => onChange(item)}
           key={item.key}
         >
           <TokenIcon src={item.icon} symbol={item.label} size={30} />
           <span className="name">{item.label}</span>
-        </Button>
+        </div>
       ))}
     </div>
   );
