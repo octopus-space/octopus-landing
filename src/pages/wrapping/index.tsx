@@ -42,7 +42,7 @@ import {
   redeemBrc20,
   redeemBtc,
   supportRedeemAddressType,
-} from "@/servies/warpping";
+} from "@/servies/wrapping";
 import { getUserBRC20 } from "@/servies/api";
 import SelectAsset from "@/components/SelectAsset";
 import Summary, { ConfirmProps } from "./components/Summary";
@@ -392,7 +392,7 @@ export default () => {
           border: "2px solid #6e66fa",
           height:666
         }}
-        id="warapping"
+        id="wrapping"
         loading={!AssetsInfo}
       >
         <Spin spinning={!AssetsInfo}>
