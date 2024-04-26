@@ -86,9 +86,9 @@ export default () => {
   }, [walletName]);
   useEffect(() => {
     //
-    setTimeout(()=>{
+    setTimeout(() => {
       init();
-    },500)
+    }, 500);
   }, [init]);
   useEffect(() => {
     getBal();
@@ -101,13 +101,13 @@ export default () => {
     const handleNetChange = (network: string) => {
       init();
     };
-    if (walletName === "metalet" && window.metaidwallet&&connected) {
+    if (walletName === "metalet" && window.metaidwallet && connected) {
       window.metaidwallet.on("accountsChanged", handleAccountChange);
       window.metaidwallet.on("networkChanged", handleNetChange);
     }
 
     return () => {
-      if (walletName === "metalet" && window.metaidwallet) {
+      if (walletName === "metalet" && window.metaidwallet && connected) {
         window.metaidwallet.removeListener(
           "accountsChanged",
           handleAccountChange
@@ -115,7 +115,7 @@ export default () => {
         window.metaidwallet.removeListener("networkChanged", handleNetChange);
       }
     };
-  }, [walletName,connected]);
+  }, [walletName, connected]);
 
   return {
     mvcAddress,
