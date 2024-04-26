@@ -894,7 +894,8 @@ function _signMintPublicKey() {
           }
           throw new Error("canceled");
         case 16:
-          publicKeyReceiveSign = ret.signature.signature;
+          publicKeyReceiveSign = ret.signature.signature; //2.7 {signature:{signature:'xxx'}}
+          //3.0 {signature:''}
           return _context3.abrupt("return", {
             publicKey: publicKey,
             publicKeySign: publicKeySign,
@@ -2405,26 +2406,39 @@ var defalut = {
             },
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
               dropdownRender: function dropdownRender() {
-                return /*#__PURE__*/(0,jsx_runtime.jsx)(SelectAsset, {
-                  type: bridgeType === "mint" ? "origin" : "target",
-                  onChange: function onChange(_asset) {
-                    setAsset(_asset);
-                    setSelectAssetVisible(undefined);
-                    setAmount("");
-                    setErrorMsg("");
-                    setReciveAmount("");
-                  }
+                return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                  onMouseLeave: function onMouseLeave() {
+                    return setSelectAssetVisible(undefined);
+                  },
+                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectAsset, {
+                    type: bridgeType === "mint" ? "origin" : "target",
+                    onChange: function onChange(_asset) {
+                      setAsset(_asset);
+                      setSelectAssetVisible(undefined);
+                      setAmount("");
+                      setErrorMsg("");
+                      setReciveAmount("");
+                    }
+                  })
                 });
               },
+              onOpenChange: function onOpenChange(open) {
+                console.log(open);
+              },
               open: selectAssetVisible == "send",
+              placement: "bottomLeft",
+              autoAdjustOverflow: false,
               children: /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
                 onClick: function onClick() {
-                  setSelectAssetVisible("send");
+                  setSelectAssetVisible('send');
                 },
                 style: {
                   cursor: "pointer"
                 },
                 children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+                  style: {
+                    height: 50
+                  },
                   children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
                     size: 40,
                     src: "",
@@ -2444,9 +2458,6 @@ var defalut = {
                   wrap: "wrap",
                   gap: "small",
                   justify: "flex-end",
-                  style: {
-                    padding: "4px 0"
-                  },
                   children: [brc20Info && brc20Info.message && brc20Info.message, brc20Info && brc20Info.transferBalanceList.map(function (item) {
                     return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                       className: "brcItem ".concat(inscription && inscription.inscriptionId === item.inscriptionId ? "active" : ""),
@@ -2468,7 +2479,7 @@ var defalut = {
                         className: "number",
                         children: ["#", item.inscriptionNumber]
                       })]
-                    });
+                    }, item.inscriptionId);
                   }), brc20Info && brc20Info.transferBalanceList.length === 0 && !brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                     children: ["No transferable", /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
                       type: "text",
@@ -2485,9 +2496,8 @@ var defalut = {
               }) : /*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.Z, {
                 className: "input",
                 onChange: onInputChange,
-                value: amount
-                // max={sendBal}
-                ,
+                value: amount,
+                max: sendBal,
                 variant: "borderless",
                 controls: false
               })
@@ -2527,7 +2537,7 @@ var defalut = {
               autoAdjustOverflow: false,
               children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
                 onClick: function onClick() {
-                  setSelectAssetVisible('recive');
+                  setSelectAssetVisible("recive");
                 },
                 style: {
                   cursor: "pointer"

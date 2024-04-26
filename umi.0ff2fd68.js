@@ -37083,7 +37083,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"14b861d7","242":"d62fc15e","307":"a223d07c","717":"b2ab699a","782":"6d83ca01","866":"6fb33101","973":"e8b534b2"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"14b861d7","242":"d62fc15e","307":"68ef8295","717":"b2ab699a","782":"6d83ca01","866":"6fb33101","973":"e8b534b2"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -37092,7 +37092,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.miniCssF = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + {"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] + "." + {"307":"6887e1d2","717":"f68794c1","866":"5c37dee4"}[chunkId] + ".chunk.css";
+/******/ 			return "" + {"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] + "." + {"307":"9fa540a8","717":"f68794c1","866":"5c37dee4"}[chunkId] + ".chunk.css";
 /******/ 		};
 /******/ 	}();
 /******/ 	
