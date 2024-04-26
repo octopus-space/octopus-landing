@@ -101,7 +101,7 @@ export default () => {
     const handleNetChange = (network: string) => {
       init();
     };
-    if (walletName === "metalet" && window.metaidwallet) {
+    if (walletName === "metalet" && window.metaidwallet&&connected) {
       window.metaidwallet.on("accountsChanged", handleAccountChange);
       window.metaidwallet.on("networkChanged", handleNetChange);
     }
@@ -115,7 +115,7 @@ export default () => {
         window.metaidwallet.removeListener("networkChanged", handleNetChange);
       }
     };
-  }, [walletName]);
+  }, [walletName,connected]);
 
   return {
     mvcAddress,
