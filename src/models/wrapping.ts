@@ -36,7 +36,10 @@ export default () => {
     if (network) {
         try{
             const ret = await getAssets(network);
-            setAssetsInfo(ret.data);
+            setTimeout(()=>{
+              setAssetsInfo(ret.data);
+            },1000)
+           
         }catch(err:any){
             console.log(err)
             if(err.message==='Request failed with status code 500'&&retry===true){

@@ -109,7 +109,7 @@ export default () => {
     if (connected) {
       setHistoryVisible(true);
     } else {
-      message.error("please connect wallet");
+      message.warning("please connect wallet");
     }
   };
   const bridgeType: "mint" | "redeem" = useMemo(() => {
@@ -390,365 +390,381 @@ export default () => {
           maxWidth: "100vw",
           position: "relative",
           border: "2px solid #6e66fa",
+          height:666
         }}
         id="warapping"
+        loading={!AssetsInfo}
       >
-        <div className="title">
-          Wrapping
-          <div
-            className="imgwrap"
-            style={{ background: colorBgBase, borderRadius }}
-            onClick={handleHistory}
-          >
-            <img src={historyIcon} alt="" />
-          </div>
-        </div>
-        <div className="chains">
-          <div className="from chain">
-            <div className="label">From</div>
-            <Dropdown
-              dropdownRender={() => (
-                <div
-                  style={{ marginTop: -100, paddingTop: 100 }}
-                  onMouseLeave={() => setChainType(undefined)}
-                >
-                  <SelectNet
-                    defalutChain={fromChain}
-                    onChange={(chain) => {
-                      handleChainChange("from", chain);
-                      setChainType(undefined);
-                    }}
-                  />
-                </div>
-              )}
-              open={chainType === "from"}
+        <Spin spinning={!AssetsInfo}>
+          <div className="title">
+            Wrapping
+            <div
+              className="imgwrap"
+              style={{ background: colorBgBase, borderRadius }}
+              onClick={handleHistory}
             >
-              <Button
-                type="text"
-                className="selectWrap"
-                style={{ background: colorBgBase, borderRadius }}
-                onClick={() => {
-                  setChainType("from");
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <TokenIcon
-                    size={30}
-                    src={fromChain.icon}
-                    symbol={fromChain.label}
-                  />
-                  <span style={{ margin: "0 10px 0 5px" }}>
-                    {fromChain.label}
-                  </span>
-                  <div
-                    className={chainType == "from" ? "spanRotate" : "spanReset"}
-                  >
-                    
-                    <DownOutlined />
-                  </div>
-                </div>
-              </Button>
-            </Dropdown>
+              <img src={historyIcon} alt="" />
+            </div>
           </div>
-          <img
-            src={switchIcon}
-            alt=""
-            className="switchIcon"
-            onClick={switchChain}
-          />
-          <div className="to chain">
-            <div className="label">To</div>
-            <Dropdown
-              dropdownRender={() => (
-                <div
-                  style={{ marginTop: -100, paddingTop: 100 }}
-                  onMouseLeave={() => setChainType(undefined)}
-                >
-                  <SelectNet
-                    defalutChain={toChain}
-                    onChange={(chain) => {
-                      handleChainChange("to", chain);
-                      setChainType(undefined);
-                    }}
-                  />
-                </div>
-              )}
-              open={chainType === "to"}
-              placement="bottomLeft"
-              autoAdjustOverflow={false}
-            >
-              <Button
-                type="text"
-                className="selectWrap"
-                style={{ background: colorBgBase, borderRadius }}
-                onClick={() => {
-                  setChainType("to");
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <TokenIcon
-                    size={30}
-                    src={toChain.icon}
-                    symbol={toChain.label}
-                  />
-                  <span style={{ margin: "0 10px 0 5px" }}>{toChain.label}</span>
+          <div className="chains">
+            <div className="from chain">
+              <div className="label">From</div>
+              <Dropdown
+                dropdownRender={() => (
                   <div
-                    className={chainType == "to" ? "spanRotate" : "spanReset"}
+                    style={{ marginTop: -100, paddingTop: 100 }}
+                    onMouseLeave={() => setChainType(undefined)}
                   >
-                    <DownOutlined />
+                    <SelectNet
+                      defalutChain={fromChain}
+                      onChange={(chain) => {
+                        handleChainChange("from", chain);
+                        setChainType(undefined);
+                      }}
+                    />
                   </div>
-                </div>
-              </Button>
-            </Dropdown>
-          </div>
-        </div>
-        {asset && (
-          <div className="assets">
-            <div className="send inputCardWrap">
-              <div className="label">
-                <span>You send</span>
-                {!(protocolType === "brc20" && bridgeType === "mint") && (
-                  <Space>
-                    <span
-                      className="tag"
-                      style={{
-                        background: colorBgBase,
-                        borderRadius: borderRadiusSM,
-                      }}
-                      onClick={() => onInputChange((sendBal * 0.25).toFixed(8))}
-                    >
-                      25%
-                    </span>
-                    <span
-                      className="tag"
-                      style={{
-                        background: colorBgBase,
-                        borderRadius: borderRadiusSM,
-                      }}
-                      onClick={() => onInputChange((sendBal * 0.5).toFixed(8))}
-                    >
-                      50%
-                    </span>
-                    <span
-                      className="tag"
-                      style={{
-                        background: colorBgBase,
-                        borderRadius: borderRadiusSM,
-                      }}
-                      onClick={() => onInputChange(sendBal)}
-                    >
-                      Max
-                    </span>
-                  </Space>
                 )}
+                open={chainType === "from"}
+              >
+                <Button
+                  type="text"
+                  className="selectWrap"
+                  style={{ background: colorBgBase, borderRadius }}
+                  onClick={() => {
+                    setChainType("from");
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <TokenIcon
+                      size={30}
+                      src={fromChain.icon}
+                      symbol={fromChain.label}
+                    />
+                    <span style={{ margin: "0 10px 0 5px" }}>
+                      {fromChain.label}
+                    </span>
+                    <div
+                      className={
+                        chainType == "from" ? "spanRotate" : "spanReset"
+                      }
+                    >
+                      <DownOutlined />
+                    </div>
+                  </div>
+                </Button>
+              </Dropdown>
+            </div>
+            <img
+              src={switchIcon}
+              alt=""
+              className="switchIcon"
+              onClick={switchChain}
+            />
+            <div className="to chain">
+              <div className="label">To</div>
+              <Dropdown
+                dropdownRender={() => (
+                  <div
+                    style={{ marginTop: -100, paddingTop: 100 }}
+                    onMouseLeave={() => setChainType(undefined)}
+                  >
+                    <SelectNet
+                      defalutChain={toChain}
+                      onChange={(chain) => {
+                        handleChainChange("to", chain);
+                        setChainType(undefined);
+                      }}
+                    />
+                  </div>
+                )}
+                open={chainType === "to"}
+                placement="bottomLeft"
+                autoAdjustOverflow={false}
+              >
+                <Button
+                  type="text"
+                  className="selectWrap"
+                  style={{ background: colorBgBase, borderRadius }}
+                  onClick={() => {
+                    setChainType("to");
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <TokenIcon
+                      size={30}
+                      src={toChain.icon}
+                      symbol={toChain.label}
+                    />
+                    <span style={{ margin: "0 10px 0 5px" }}>
+                      {toChain.label}
+                    </span>
+                    <div
+                      className={chainType == "to" ? "spanRotate" : "spanReset"}
+                    >
+                      <DownOutlined />
+                    </div>
+                  </div>
+                </Button>
+              </Dropdown>
+            </div>
+          </div>
+          {asset && (
+            <div className="assets">
+              <div className="send inputCardWrap">
+                <div className="label">
+                  <span>You send</span>
+                  {!(protocolType === "brc20" && bridgeType === "mint") && (
+                    <Space>
+                      <span
+                        className="tag"
+                        style={{
+                          background: colorBgBase,
+                          borderRadius: borderRadiusSM,
+                        }}
+                        onClick={() =>
+                          onInputChange((sendBal * 0.25).toFixed(8))
+                        }
+                      >
+                        25%
+                      </span>
+                      <span
+                        className="tag"
+                        style={{
+                          background: colorBgBase,
+                          borderRadius: borderRadiusSM,
+                        }}
+                        onClick={() =>
+                          onInputChange((sendBal * 0.5).toFixed(8))
+                        }
+                      >
+                        50%
+                      </span>
+                      <span
+                        className="tag"
+                        style={{
+                          background: colorBgBase,
+                          borderRadius: borderRadiusSM,
+                        }}
+                        onClick={() => onInputChange(sendBal)}
+                      >
+                        Max
+                      </span>
+                    </Space>
+                  )}
+                </div>
+
+                <div
+                  className="inputCard"
+                  style={{ background: colorBgBase, borderRadius }}
+                >
+                  <Dropdown
+                    dropdownRender={() => (
+                      <div
+                        style={{ marginTop: -100, paddingTop: 100 }}
+                        onMouseLeave={() => setSelectAssetVisible(undefined)}
+                      >
+                        <SelectAsset
+                          type={bridgeType === "mint" ? "origin" : "target"}
+                          onChange={(_asset) => {
+                            setAsset(_asset);
+                            setSelectAssetVisible(undefined);
+                            setAmount("");
+                            setErrorMsg("");
+                            setReciveAmount("");
+                          }}
+                        />
+                      </div>
+                    )}
+                    open={selectAssetVisible == "send"}
+                    placement="bottomLeft"
+                    autoAdjustOverflow={false}
+                  >
+                    <div
+                      onClick={() => {
+                        setSelectAssetVisible("send");
+                      }}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <Space style={{ height: 50 }}>
+                        <TokenIcon
+                          size={40}
+                          src=""
+                          symbol={asset.originSymbol}
+                        />
+                        {bridgeType === "mint" ? (
+                          <div>{asset.originSymbol} </div>
+                        ) : (
+                          <div>{asset.targetSymbol} </div>
+                        )}
+                        <div
+                          className={
+                            selectAssetVisible == "send"
+                              ? "spanRotate"
+                              : "spanReset"
+                          }
+                        >
+                          <DownOutlined />
+                        </div>
+                      </Space>
+                    </div>
+                  </Dropdown>
+                  <div className="inputWrap">
+                    {protocolType === "brc20" && bridgeType === "mint" ? (
+                      <Spin spinning={loadingBrc20}>
+                        <Flex wrap="wrap" gap="small" justify="flex-end">
+                          {brc20Info && brc20Info.message && brc20Info.message}
+                          {brc20Info &&
+                            brc20Info.transferBalanceList.map((item) => (
+                              <div
+                                className={`brcItem ${
+                                  inscription &&
+                                  inscription.inscriptionId ===
+                                    item.inscriptionId
+                                    ? "active"
+                                    : ""
+                                }`}
+                                onClick={() => {
+                                  setInscription(item);
+                                  onInputChange(item.amount);
+                                }}
+                                key={item.inscriptionId}
+                              >
+                                <span className="tick">
+                                  {bridgeType === "mint" ? (
+                                    <div>{asset.originSymbol} </div>
+                                  ) : (
+                                    <div>{asset.targetSymbol} </div>
+                                  )}
+                                </span>
+                                <span className="amount">{item.amount}</span>
+                                <span className="number">
+                                  #{item.inscriptionNumber}
+                                </span>
+                              </div>
+                            ))}
+                          {brc20Info &&
+                            brc20Info.transferBalanceList.length === 0 &&
+                            !brc20Info.message && (
+                              <div>
+                                No transferable
+                                <Button
+                                  type="text"
+                                  className="inscribeBtn"
+                                  onClick={Inscribe}
+                                  style={{ color: "#6E66FA" }}
+                                  disabled={Number(brc20Info.balance) === 0}
+                                >
+                                  Inscribe
+                                </Button>
+                              </div>
+                            )}
+                        </Flex>
+                      </Spin>
+                    ) : (
+                      <InputNumber
+                        className="input"
+                        onChange={onInputChange}
+                        value={amount}
+                        max={sendBal}
+                        variant={"borderless"}
+                        controls={false}
+                      />
+                    )}
+                  </div>
+                </div>
+                <div className="bal">
+                  Balance:
+                  {protocolType === "brc20" && bridgeType === "mint"
+                    ? brc20Info
+                      ? brc20Info.balance
+                      : "..."
+                    : sendBal}
+                  {bridgeType === "mint"
+                    ? asset.originSymbol
+                    : asset.targetSymbol}
+                </div>
               </div>
 
-              <div
-                className="inputCard"
-                style={{ background: colorBgBase, borderRadius }}
-              >
-                <Dropdown
-                  dropdownRender={() => (
-                    <div
-                      style={{ marginTop: -100, paddingTop: 100 }}
-                      onMouseLeave={() => setSelectAssetVisible(undefined)}
-                    >
-                      <SelectAsset
-                        type={bridgeType === "mint" ? "origin" : "target"}
-                        onChange={(_asset) => {
-                          setAsset(_asset);
-                          setSelectAssetVisible(undefined);
-                          setAmount("");
-                          setErrorMsg("");
-                          setReciveAmount("");
-                        }}
-                      />
-                    </div>
-                  )}
-                  open={selectAssetVisible == "send"}
-                  placement="bottomLeft"
-                  autoAdjustOverflow={false}
+              <div className="recive inputCardWrap">
+                <div className="label">
+                  <span>You recive</span>
+                </div>
+                <div
+                  className="inputCard"
+                  style={{ background: colorBgBase, borderRadius }}
                 >
-                  <div
-                    onClick={() => {
-                      setSelectAssetVisible("send");
-                    }}
-                    style={{ cursor: "pointer" }}
+                  <Dropdown
+                    dropdownRender={() => (
+                      <div
+                        style={{ marginTop: -100, paddingTop: 100 }}
+                        onMouseLeave={() => setSelectAssetVisible(undefined)}
+                      >
+                        <SelectAsset
+                          type={bridgeType === "redeem" ? "origin" : "target"}
+                          onChange={(_asset) => {
+                            setAsset(_asset);
+                            setSelectAssetVisible(undefined);
+                            setAmount("");
+                            setErrorMsg("");
+                            setReciveAmount("");
+                          }}
+                        />
+                      </div>
+                    )}
+                    open={selectAssetVisible == "recive"}
+                    placement="bottomLeft"
+                    autoAdjustOverflow={false}
                   >
-                    <Space style={{ height: 50 }}>
+                    <Space
+                      onClick={() => {
+                        setSelectAssetVisible("recive");
+                      }}
+                      style={{ cursor: "pointer" }}
+                    >
                       <TokenIcon size={40} src="" symbol={asset.originSymbol} />
-                      {bridgeType === "mint" ? (
+                      {bridgeType === "redeem" ? (
                         <div>{asset.originSymbol} </div>
                       ) : (
                         <div>{asset.targetSymbol} </div>
                       )}
                       <div
                         className={
-                          selectAssetVisible == "send"
+                          selectAssetVisible == "recive"
                             ? "spanRotate"
                             : "spanReset"
                         }
                       >
+                        {" "}
                         <DownOutlined />
                       </div>
                     </Space>
-                  </div>
-                </Dropdown>
-                <div className="inputWrap">
-                  {protocolType === "brc20" && bridgeType === "mint" ? (
-                    <Spin spinning={loadingBrc20}>
-                      <Flex wrap="wrap" gap="small" justify="flex-end">
-                        {brc20Info && brc20Info.message && brc20Info.message}
-                        {brc20Info &&
-                          brc20Info.transferBalanceList.map((item) => (
-                            <div
-                              className={`brcItem ${
-                                inscription &&
-                                inscription.inscriptionId === item.inscriptionId
-                                  ? "active"
-                                  : ""
-                              }`}
-                              onClick={() => {
-                                setInscription(item);
-                                onInputChange(item.amount);
-                              }}
-                              key={item.inscriptionId}
-                            >
-                              <span className="tick">
-                                {bridgeType === "mint" ? (
-                                  <div>{asset.originSymbol} </div>
-                                ) : (
-                                  <div>{asset.targetSymbol} </div>
-                                )}
-                              </span>
-                              <span className="amount">{item.amount}</span>
-                              <span className="number">
-                                #{item.inscriptionNumber}
-                              </span>
-                            </div>
-                          ))}
-                        {brc20Info &&
-                          brc20Info.transferBalanceList.length === 0 &&
-                          !brc20Info.message && (
-                            <div>
-                              No transferable
-                              <Button
-                                type="text"
-                                className="inscribeBtn"
-                                onClick={Inscribe}
-                                style={{ color: "#6E66FA" }}
-                                disabled={Number(brc20Info.balance) === 0}
-                              >
-                                Inscribe
-                              </Button>
-                            </div>
-                          )}
-                      </Flex>
-                    </Spin>
-                  ) : (
+                  </Dropdown>
+
+                  <div className="inputWrap">
                     <InputNumber
                       className="input"
                       onChange={onInputChange}
-                      value={amount}
-                      max={sendBal}
+                      value={reciveAmount}
                       variant={"borderless"}
                       controls={false}
+                      disabled
                     />
-                  )}
-                </div>
-              </div>
-              <div className="bal">
-                Balance:
-                {protocolType === "brc20" && bridgeType === "mint"
-                  ? brc20Info
-                    ? brc20Info.balance
-                    : "..."
-                  : sendBal}
-                {bridgeType === "mint"
-                  ? asset.originSymbol
-                  : asset.targetSymbol}
-              </div>
-            </div>
-
-            <div className="recive inputCardWrap">
-              <div className="label">
-                <span>You recive</span>
-              </div>
-              <div
-                className="inputCard"
-                style={{ background: colorBgBase, borderRadius }}
-              >
-                <Dropdown
-                  dropdownRender={() => (
-                    <div
-                      style={{ marginTop: -100, paddingTop: 100 }}
-                      onMouseLeave={() => setSelectAssetVisible(undefined)}
-                    >
-                      <SelectAsset
-                        type={bridgeType === "redeem" ? "origin" : "target"}
-                        onChange={(_asset) => {
-                          setAsset(_asset);
-                          setSelectAssetVisible(undefined);
-                          setAmount("");
-                          setErrorMsg("");
-                          setReciveAmount("");
-                        }}
-                      />
-                    </div>
-                  )}
-                  open={selectAssetVisible == "recive"}
-                  placement="bottomLeft"
-                  autoAdjustOverflow={false}
-                >
-                  <Space
-                    onClick={() => {
-                      setSelectAssetVisible("recive");
-                    }}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <TokenIcon size={40} src="" symbol={asset.originSymbol} />
-                    {bridgeType === "redeem" ? (
-                      <div>{asset.originSymbol} </div>
-                    ) : (
-                      <div>{asset.targetSymbol} </div>
-                    )}
-                    <div
-                      className={
-                        selectAssetVisible == "recive"
-                          ? "spanRotate"
-                          : "spanReset"
-                      }
-                    >
-                      {" "}
-                      <DownOutlined />
-                    </div>
-                  </Space>
-                </Dropdown>
-
-                <div className="inputWrap">
-                  <InputNumber
-                    className="input"
-                    onChange={onInputChange}
-                    value={reciveAmount}
-                    variant={"borderless"}
-                    controls={false}
-                    disabled
-                  />
+                  </div>
                 </div>
               </div>
             </div>
+          )}
+          <div className="submitWrap">
+            <FormButton conditions={conditions} onClick={handleConfirm}>
+              Bridge
+            </FormButton>
           </div>
-        )}
-        <div className="submitWrap">
-          <FormButton conditions={conditions} onClick={handleConfirm}>
-            Bridge
-          </FormButton>
-        </div>
 
-        <History
-          show={historyVisible}
-          onClose={() => setHistoryVisible(false)}
-        />
+          <History
+            show={historyVisible}
+            onClose={() => setHistoryVisible(false)}
+          />
+        </Spin>
       </Card>
 
       <Summary {...confrimProps} submitting={submitting} />
