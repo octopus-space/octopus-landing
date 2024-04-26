@@ -2407,6 +2407,10 @@ var defalut = {
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
               dropdownRender: function dropdownRender() {
                 return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                  style: {
+                    marginTop: -100,
+                    paddingTop: 100
+                  },
                   onMouseLeave: function onMouseLeave() {
                     return setSelectAssetVisible(undefined);
                   },
@@ -2422,15 +2426,12 @@ var defalut = {
                   })
                 });
               },
-              onOpenChange: function onOpenChange(open) {
-                console.log(open);
-              },
               open: selectAssetVisible == "send",
               placement: "bottomLeft",
               autoAdjustOverflow: false,
               children: /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
                 onClick: function onClick() {
-                  setSelectAssetVisible('send');
+                  setSelectAssetVisible("send");
                 },
                 style: {
                   cursor: "pointer"
@@ -2447,7 +2448,10 @@ var defalut = {
                     children: [asset.originSymbol, " "]
                   }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                     children: [asset.targetSymbol, " "]
-                  }), /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                    className: selectAssetVisible == "send" ? "spanRotate" : "spanReset",
+                    children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
+                  })]
                 })
               })
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
@@ -2521,15 +2525,24 @@ var defalut = {
             },
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
               dropdownRender: function dropdownRender() {
-                return /*#__PURE__*/(0,jsx_runtime.jsx)(SelectAsset, {
-                  type: bridgeType === "redeem" ? "origin" : "target",
-                  onChange: function onChange(_asset) {
-                    setAsset(_asset);
-                    setSelectAssetVisible(undefined);
-                    setAmount("");
-                    setErrorMsg("");
-                    setReciveAmount("");
-                  }
+                return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                  style: {
+                    marginTop: -100,
+                    paddingTop: 100
+                  },
+                  onMouseLeave: function onMouseLeave() {
+                    return setSelectAssetVisible(undefined);
+                  },
+                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectAsset, {
+                    type: bridgeType === "redeem" ? "origin" : "target",
+                    onChange: function onChange(_asset) {
+                      setAsset(_asset);
+                      setSelectAssetVisible(undefined);
+                      setAmount("");
+                      setErrorMsg("");
+                      setReciveAmount("");
+                    }
+                  })
                 });
               },
               open: selectAssetVisible == "recive",
@@ -2550,7 +2563,10 @@ var defalut = {
                   children: [asset.originSymbol, " "]
                 }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                   children: [asset.targetSymbol, " "]
-                }), /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+                }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                  className: selectAssetVisible == "recive" ? "spanRotate" : "spanReset",
+                  children: [" ", /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+                })]
               })
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
               className: "inputWrap",
