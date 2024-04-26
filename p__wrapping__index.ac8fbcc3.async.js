@@ -782,14 +782,20 @@ function _sendToken() {
           });
         case 2:
           res = _context.sent;
+          if (!res.status) {
+            _context.next = 5;
+            break;
+          }
+          throw new Error(res.status);
+        case 5:
           if (!res.res[0].txid) {
-            _context.next = 7;
+            _context.next = 9;
             break;
           }
           return _context.abrupt("return", res.res[0].txid);
-        case 7:
+        case 9:
           return _context.abrupt("return", "");
-        case 8:
+        case 10:
         case "end":
           return _context.stop();
       }
@@ -1063,9 +1069,14 @@ function _buildTx() {
           return window.metaidwallet.btc.transfer(parmas);
         case 2:
           ret = _context6.sent;
-          console.log(ret);
-          return _context6.abrupt("return", ret.txHex);
+          if (!ret.status) {
+            _context6.next = 5;
+            break;
+          }
+          throw new Error(ret.status);
         case 5:
+          return _context6.abrupt("return", ret.txHex);
+        case 6:
         case "end":
           return _context6.stop();
       }
@@ -1126,16 +1137,22 @@ function _mintBtc() {
           return (0,api/* submitPrepayOrderMintBtc */.bv)(network, submitPrepayOrderMintDto);
         case 21:
           submitRes = _context7.sent;
+          if (submitRes.success) {
+            _context7.next = 24;
+            break;
+          }
+          throw new Error(submitRes.msg);
+        case 24:
           return _context7.abrupt("return", submitRes);
-        case 25:
-          _context7.prev = 25;
+        case 27:
+          _context7.prev = 27;
           _context7.t0 = _context7["catch"](9);
           throw new Error(_context7.t0.message || _context7.t0.msg);
-        case 28:
+        case 30:
         case "end":
           return _context7.stop();
       }
-    }, _callee7, null, [[9, 25]]);
+    }, _callee7, null, [[9, 27]]);
   }));
   return _mintBtc.apply(this, arguments);
 }
@@ -1463,16 +1480,22 @@ function _mintBrc() {
           return (0,api/* submitPrepayOrderMintBrc20 */.nc)(network, submitPrepayOrderMintDto);
         case 21:
           submitRes = _context12.sent;
+          if (submitRes.success) {
+            _context12.next = 24;
+            break;
+          }
+          throw new Error(submitRes.msg);
+        case 24:
           return _context12.abrupt("return", submitRes);
-        case 25:
-          _context12.prev = 25;
+        case 27:
+          _context12.prev = 27;
           _context12.t0 = _context12["catch"](8);
           throw new Error(_context12.t0.message || _context12.t0.msg);
-        case 28:
+        case 30:
         case "end":
           return _context12.stop();
       }
-    }, _callee12, null, [[8, 25]]);
+    }, _callee12, null, [[8, 27]]);
   }));
   return _mintBrc.apply(this, arguments);
 }

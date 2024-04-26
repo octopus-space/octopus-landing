@@ -262,11 +262,17 @@ var checkExtension = function checkExtension() {
             return window.metaidwallet.disconnect();
           case 4:
             ret = _context2.sent;
+            if (!(ret.status === "canceled")) {
+              _context2.next = 7;
+              break;
+            }
+            return _context2.abrupt("return");
+          case 7:
             setConnected(false);
             setMVCAddress("");
             setBTCAddress("");
             setUserBal({});
-          case 9:
+          case 11:
           case "end":
             return _context2.stop();
         }
@@ -507,16 +513,14 @@ var defaultChains = [{
           return (0,api/* getAssets */.Vh)(network);
         case 5:
           ret = _context.sent;
-          setTimeout(function () {
-            setAssetsInfo(ret.data);
-          }, 1000);
+          setAssetsInfo(ret.data);
           _context.next = 13;
           break;
         case 9:
           _context.prev = 9;
           _context.t0 = _context["catch"](2);
           console.log(_context.t0);
-          if (_context.t0.message === 'Request failed with status code 500' && retry === true) {
+          if (_context.t0.message === "Request failed with status code 500" && retry === true) {
             fetchAssets(false);
           }
         case 13:
@@ -37085,7 +37089,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"14b861d7","242":"d62fc15e","307":"c68c77ba","717":"a854053f","782":"6d83ca01","866":"6fb33101","973":"e8b534b2"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"14b861d7","242":"d62fc15e","307":"ac8fbcc3","717":"a854053f","782":"6d83ca01","866":"6fb33101","973":"e8b534b2"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
