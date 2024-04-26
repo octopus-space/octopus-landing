@@ -88,7 +88,7 @@ export default () => {
     //
     setTimeout(()=>{
       init();
-    },100)
+    },500)
   }, [init]);
   useEffect(() => {
     getBal();
