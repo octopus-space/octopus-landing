@@ -847,13 +847,16 @@ function _signPublicKey() {
           throw new Error("canceled");
         case 16:
           publicKeySign = ret.signature.signature;
+          if (typeof ret.signature === "string") {
+            publicKeySign = ret.signature;
+          }
           return _context2.abrupt("return", {
             publicKey: publicKey,
             publicKeySign: publicKeySign,
             publicKeyReceiveSign: publicKeyReceiveSign,
             publicKeyReceive: publicKeyReceive
           });
-        case 18:
+        case 19:
         case "end":
           return _context2.stop();
       }
@@ -902,14 +905,17 @@ function _signMintPublicKey() {
           throw new Error("canceled");
         case 16:
           publicKeyReceiveSign = ret.signature.signature; //2.7 {signature:{signature:'xxx'}}
-          //3.0 {signature:''}
+          //3.0 {signature:''}；
+          if (typeof ret.signature === "string") {
+            publicKeyReceiveSign = ret.signature;
+          }
           return _context3.abrupt("return", {
             publicKey: publicKey,
             publicKeySign: publicKeySign,
             publicKeyReceiveSign: publicKeyReceiveSign,
             publicKeyReceive: publicKeyReceive
           });
-        case 18:
+        case 19:
         case "end":
           return _context3.stop();
       }
