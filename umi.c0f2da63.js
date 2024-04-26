@@ -377,7 +377,7 @@ var checkExtension = function checkExtension() {
       window.metaidwallet.on("networkChanged", handleNetChange);
     }
     return function () {
-      if (walletName === "metalet" && window.metaidwallet) {
+      if (walletName === "metalet" && window.metaidwallet && connected) {
         window.metaidwallet.removeListener("accountsChanged", handleAccountChange);
         window.metaidwallet.removeListener("networkChanged", handleNetChange);
       }
