@@ -125,14 +125,14 @@ var message = __webpack_require__(68872);
 var segmented = __webpack_require__(92783);
 // EXTERNAL MODULE: ./node_modules/antd/es/card/index.js + 4 modules
 var card = __webpack_require__(4393);
+// EXTERNAL MODULE: ./node_modules/antd/es/spin/index.js + 2 modules
+var spin = __webpack_require__(75081);
 // EXTERNAL MODULE: ./node_modules/antd/es/dropdown/index.js + 36 modules
 var dropdown = __webpack_require__(84819);
 // EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 15 modules
 var es_button = __webpack_require__(45093);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/index.js + 2 modules
 var space = __webpack_require__(42075);
-// EXTERNAL MODULE: ./node_modules/antd/es/spin/index.js + 2 modules
-var spin = __webpack_require__(75081);
 // EXTERNAL MODULE: ./node_modules/antd/es/flex/index.js + 2 modules
 var flex = __webpack_require__(86250);
 // EXTERNAL MODULE: ./node_modules/antd/es/input-number/index.js + 17 modules
@@ -334,7 +334,7 @@ var size = 10;
             }
             item.timestamp = (0,utils/* prettyTimestamp */.Wt)(Number(item.timestamp), true);
             var currentToken = AssetsInfo.assetList.find(function (token) {
-              return token.originSymbol == item.symbol;
+              return token.targetName == item.symbol;
             });
             if (currentToken) {
               item.amount = String((0,utils/* formatUnitToBtc */.hq)(Number(item.amount), item.originNetwork === "BTC" || item.originNetwork === "MVC" && item.decimals <= 8 ? item.decimals : item.decimals - currentToken.trimDecimals));
@@ -1932,7 +1932,7 @@ var defalut = {
     if (connected) {
       setHistoryVisible(true);
     } else {
-      message/* default */.ZP.error("please connect wallet");
+      message/* default */.ZP.warning("please connect wallet");
     }
   };
   var bridgeType = (0,react.useMemo)(function () {
@@ -2253,198 +2253,40 @@ var defalut = {
       options: SegOptions,
       size: "large",
       block: true
-    }), /*#__PURE__*/(0,jsx_runtime.jsxs)(card/* default */.Z, {
+    }), /*#__PURE__*/(0,jsx_runtime.jsx)(card/* default */.Z, {
       style: {
         width: 520,
         maxWidth: "100vw",
         position: "relative",
-        border: "2px solid #6e66fa"
+        border: "2px solid #6e66fa",
+        height: 666
       },
       id: "warapping",
-      children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-        className: "title",
-        children: ["Wrapping", /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-          className: "imgwrap",
-          style: {
-            background: colorBgBase,
-            borderRadius: borderRadius
-          },
-          onClick: handleHistory,
-          children: /*#__PURE__*/(0,jsx_runtime.jsx)("img", {
-            src: assets_history,
-            alt: ""
-          })
-        })]
-      }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-        className: "chains",
+      loading: !AssetsInfo,
+      children: /*#__PURE__*/(0,jsx_runtime.jsxs)(spin/* default */.Z, {
+        spinning: !AssetsInfo,
         children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-          className: "from chain",
-          children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-            className: "label",
-            children: "From"
-          }), /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
-            dropdownRender: function dropdownRender() {
-              return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                style: {
-                  marginTop: -100,
-                  paddingTop: 100
-                },
-                onMouseLeave: function onMouseLeave() {
-                  return setChainType(undefined);
-                },
-                children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
-                  defalutChain: fromChain,
-                  onChange: function onChange(chain) {
-                    handleChainChange("from", chain);
-                    setChainType(undefined);
-                  }
-                })
-              });
-            },
-            open: chainType === "from",
-            children: /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
-              type: "text",
-              className: "selectWrap",
-              style: {
-                background: colorBgBase,
-                borderRadius: borderRadius
-              },
-              onClick: function onClick() {
-                setChainType("from");
-              },
-              children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                style: {
-                  display: "flex",
-                  alignItems: "center"
-                },
-                children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                  size: 30,
-                  src: fromChain.icon,
-                  symbol: fromChain.label
-                }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                  style: {
-                    margin: "0 10px 0 5px"
-                  },
-                  children: fromChain.label
-                }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                  className: chainType == "from" ? "spanRotate" : "spanReset",
-                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
-                })]
-              })
-            })
-          })]
-        }), /*#__PURE__*/(0,jsx_runtime.jsx)("img", {
-          src: assets_switch,
-          alt: "",
-          className: "switchIcon",
-          onClick: switchChain
-        }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-          className: "to chain",
-          children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-            className: "label",
-            children: "To"
-          }), /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
-            dropdownRender: function dropdownRender() {
-              return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                style: {
-                  marginTop: -100,
-                  paddingTop: 100
-                },
-                onMouseLeave: function onMouseLeave() {
-                  return setChainType(undefined);
-                },
-                children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
-                  defalutChain: toChain,
-                  onChange: function onChange(chain) {
-                    handleChainChange("to", chain);
-                    setChainType(undefined);
-                  }
-                })
-              });
-            },
-            open: chainType === "to",
-            placement: "bottomLeft",
-            autoAdjustOverflow: false,
-            children: /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
-              type: "text",
-              className: "selectWrap",
-              style: {
-                background: colorBgBase,
-                borderRadius: borderRadius
-              },
-              onClick: function onClick() {
-                setChainType("to");
-              },
-              children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                style: {
-                  display: "flex",
-                  alignItems: "center"
-                },
-                children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                  size: 30,
-                  src: toChain.icon,
-                  symbol: toChain.label
-                }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                  style: {
-                    margin: "0 10px 0 5px"
-                  },
-                  children: toChain.label
-                }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                  className: chainType == "to" ? "spanRotate" : "spanReset",
-                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
-                })]
-              })
-            })
-          })]
-        })]
-      }), asset && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-        className: "assets",
-        children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-          className: "send inputCardWrap",
-          children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-            className: "label",
-            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-              children: "You send"
-            }), !(protocolType === "brc20" && bridgeType === "mint") && /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
-              children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                className: "tag",
-                style: {
-                  background: colorBgBase,
-                  borderRadius: borderRadiusSM
-                },
-                onClick: function onClick() {
-                  return onInputChange((sendBal * 0.25).toFixed(8));
-                },
-                children: "25%"
-              }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                className: "tag",
-                style: {
-                  background: colorBgBase,
-                  borderRadius: borderRadiusSM
-                },
-                onClick: function onClick() {
-                  return onInputChange((sendBal * 0.5).toFixed(8));
-                },
-                children: "50%"
-              }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                className: "tag",
-                style: {
-                  background: colorBgBase,
-                  borderRadius: borderRadiusSM
-                },
-                onClick: function onClick() {
-                  return onInputChange(sendBal);
-                },
-                children: "Max"
-              })]
-            })]
-          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-            className: "inputCard",
+          className: "title",
+          children: ["Wrapping", /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+            className: "imgwrap",
             style: {
               background: colorBgBase,
               borderRadius: borderRadius
             },
-            children: [/*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
+            onClick: handleHistory,
+            children: /*#__PURE__*/(0,jsx_runtime.jsx)("img", {
+              src: assets_history,
+              alt: ""
+            })
+          })]
+        }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+          className: "chains",
+          children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            className: "from chain",
+            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+              className: "label",
+              children: "From"
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
               dropdownRender: function dropdownRender() {
                 return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
                   style: {
@@ -2452,188 +2294,351 @@ var defalut = {
                     paddingTop: 100
                   },
                   onMouseLeave: function onMouseLeave() {
-                    return setSelectAssetVisible(undefined);
+                    return setChainType(undefined);
                   },
-                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectAsset, {
-                    type: bridgeType === "mint" ? "origin" : "target",
-                    onChange: function onChange(_asset) {
-                      setAsset(_asset);
-                      setSelectAssetVisible(undefined);
-                      setAmount("");
-                      setErrorMsg("");
-                      setReciveAmount("");
+                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
+                    defalutChain: fromChain,
+                    onChange: function onChange(chain) {
+                      handleChainChange("from", chain);
+                      setChainType(undefined);
                     }
                   })
                 });
               },
-              open: selectAssetVisible == "send",
+              open: chainType === "from",
+              children: /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
+                type: "text",
+                className: "selectWrap",
+                style: {
+                  background: colorBgBase,
+                  borderRadius: borderRadius
+                },
+                onClick: function onClick() {
+                  setChainType("from");
+                },
+                children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                  style: {
+                    display: "flex",
+                    alignItems: "center"
+                  },
+                  children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+                    size: 30,
+                    src: fromChain.icon,
+                    symbol: fromChain.label
+                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                    style: {
+                      margin: "0 10px 0 5px"
+                    },
+                    children: fromChain.label
+                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                    className: chainType == "from" ? "spanRotate" : "spanReset",
+                    children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
+                  })]
+                })
+              })
+            })]
+          }), /*#__PURE__*/(0,jsx_runtime.jsx)("img", {
+            src: assets_switch,
+            alt: "",
+            className: "switchIcon",
+            onClick: switchChain
+          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            className: "to chain",
+            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+              className: "label",
+              children: "To"
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
+              dropdownRender: function dropdownRender() {
+                return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                  style: {
+                    marginTop: -100,
+                    paddingTop: 100
+                  },
+                  onMouseLeave: function onMouseLeave() {
+                    return setChainType(undefined);
+                  },
+                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
+                    defalutChain: toChain,
+                    onChange: function onChange(chain) {
+                      handleChainChange("to", chain);
+                      setChainType(undefined);
+                    }
+                  })
+                });
+              },
+              open: chainType === "to",
               placement: "bottomLeft",
               autoAdjustOverflow: false,
-              children: /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                onClick: function onClick() {
-                  setSelectAssetVisible("send");
-                },
+              children: /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
+                type: "text",
+                className: "selectWrap",
                 style: {
-                  cursor: "pointer"
+                  background: colorBgBase,
+                  borderRadius: borderRadius
                 },
-                children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+                onClick: function onClick() {
+                  setChainType("to");
+                },
+                children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                   style: {
-                    height: 50
+                    display: "flex",
+                    alignItems: "center"
+                  },
+                  children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+                    size: 30,
+                    src: toChain.icon,
+                    symbol: toChain.label
+                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                    style: {
+                      margin: "0 10px 0 5px"
+                    },
+                    children: toChain.label
+                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                    className: chainType == "to" ? "spanRotate" : "spanReset",
+                    children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
+                  })]
+                })
+              })
+            })]
+          })]
+        }), asset && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+          className: "assets",
+          children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            className: "send inputCardWrap",
+            children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+              className: "label",
+              children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                children: "You send"
+              }), !(protocolType === "brc20" && bridgeType === "mint") && /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+                children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  className: "tag",
+                  style: {
+                    background: colorBgBase,
+                    borderRadius: borderRadiusSM
+                  },
+                  onClick: function onClick() {
+                    return onInputChange((sendBal * 0.25).toFixed(8));
+                  },
+                  children: "25%"
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  className: "tag",
+                  style: {
+                    background: colorBgBase,
+                    borderRadius: borderRadiusSM
+                  },
+                  onClick: function onClick() {
+                    return onInputChange((sendBal * 0.5).toFixed(8));
+                  },
+                  children: "50%"
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  className: "tag",
+                  style: {
+                    background: colorBgBase,
+                    borderRadius: borderRadiusSM
+                  },
+                  onClick: function onClick() {
+                    return onInputChange(sendBal);
+                  },
+                  children: "Max"
+                })]
+              })]
+            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+              className: "inputCard",
+              style: {
+                background: colorBgBase,
+                borderRadius: borderRadius
+              },
+              children: [/*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
+                dropdownRender: function dropdownRender() {
+                  return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                    style: {
+                      marginTop: -100,
+                      paddingTop: 100
+                    },
+                    onMouseLeave: function onMouseLeave() {
+                      return setSelectAssetVisible(undefined);
+                    },
+                    children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectAsset, {
+                      type: bridgeType === "mint" ? "origin" : "target",
+                      onChange: function onChange(_asset) {
+                        setAsset(_asset);
+                        setSelectAssetVisible(undefined);
+                        setAmount("");
+                        setErrorMsg("");
+                        setReciveAmount("");
+                      }
+                    })
+                  });
+                },
+                open: selectAssetVisible == "send",
+                placement: "bottomLeft",
+                autoAdjustOverflow: false,
+                children: /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                  onClick: function onClick() {
+                    setSelectAssetVisible("send");
+                  },
+                  style: {
+                    cursor: "pointer"
+                  },
+                  children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+                    style: {
+                      height: 50
+                    },
+                    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+                      size: 40,
+                      src: "",
+                      symbol: asset.originSymbol
+                    }), bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                      children: [asset.originSymbol, " "]
+                    }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                      children: [asset.targetSymbol, " "]
+                    }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                      className: selectAssetVisible == "send" ? "spanRotate" : "spanReset",
+                      children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
+                    })]
+                  })
+                })
+              }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                className: "inputWrap",
+                children: protocolType === "brc20" && bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsx)(spin/* default */.Z, {
+                  spinning: loadingBrc20,
+                  children: /*#__PURE__*/(0,jsx_runtime.jsxs)(flex/* default */.Z, {
+                    wrap: "wrap",
+                    gap: "small",
+                    justify: "flex-end",
+                    children: [brc20Info && brc20Info.message && brc20Info.message, brc20Info && brc20Info.transferBalanceList.map(function (item) {
+                      return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                        className: "brcItem ".concat(inscription && inscription.inscriptionId === item.inscriptionId ? "active" : ""),
+                        onClick: function onClick() {
+                          setInscription(item);
+                          onInputChange(item.amount);
+                        },
+                        children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                          className: "tick",
+                          children: bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                            children: [asset.originSymbol, " "]
+                          }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                            children: [asset.targetSymbol, " "]
+                          })
+                        }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                          className: "amount",
+                          children: item.amount
+                        }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+                          className: "number",
+                          children: ["#", item.inscriptionNumber]
+                        })]
+                      }, item.inscriptionId);
+                    }), brc20Info && brc20Info.transferBalanceList.length === 0 && !brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                      children: ["No transferable", /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
+                        type: "text",
+                        className: "inscribeBtn",
+                        onClick: Inscribe,
+                        style: {
+                          color: "#6E66FA"
+                        },
+                        disabled: Number(brc20Info.balance) === 0,
+                        children: "Inscribe"
+                      })]
+                    })]
+                  })
+                }) : /*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.Z, {
+                  className: "input",
+                  onChange: onInputChange,
+                  value: amount,
+                  max: sendBal,
+                  variant: "borderless",
+                  controls: false
+                })
+              })]
+            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+              className: "bal",
+              children: ["Balance:", protocolType === "brc20" && bridgeType === "mint" ? brc20Info ? brc20Info.balance : "..." : sendBal, bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
+            })]
+          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            className: "recive inputCardWrap",
+            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+              className: "label",
+              children: /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                children: "You recive"
+              })
+            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+              className: "inputCard",
+              style: {
+                background: colorBgBase,
+                borderRadius: borderRadius
+              },
+              children: [/*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
+                dropdownRender: function dropdownRender() {
+                  return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                    style: {
+                      marginTop: -100,
+                      paddingTop: 100
+                    },
+                    onMouseLeave: function onMouseLeave() {
+                      return setSelectAssetVisible(undefined);
+                    },
+                    children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectAsset, {
+                      type: bridgeType === "redeem" ? "origin" : "target",
+                      onChange: function onChange(_asset) {
+                        setAsset(_asset);
+                        setSelectAssetVisible(undefined);
+                        setAmount("");
+                        setErrorMsg("");
+                        setReciveAmount("");
+                      }
+                    })
+                  });
+                },
+                open: selectAssetVisible == "recive",
+                placement: "bottomLeft",
+                autoAdjustOverflow: false,
+                children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+                  onClick: function onClick() {
+                    setSelectAssetVisible("recive");
+                  },
+                  style: {
+                    cursor: "pointer"
                   },
                   children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
                     size: 40,
                     src: "",
                     symbol: asset.originSymbol
-                  }), bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                  }), bridgeType === "redeem" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                     children: [asset.originSymbol, " "]
                   }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                     children: [asset.targetSymbol, " "]
-                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                    className: selectAssetVisible == "send" ? "spanRotate" : "spanReset",
-                    children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
+                  }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                    className: selectAssetVisible == "recive" ? "spanRotate" : "spanReset",
+                    children: [" ", /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
                   })]
                 })
-              })
-            }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-              className: "inputWrap",
-              children: protocolType === "brc20" && bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsx)(spin/* default */.Z, {
-                spinning: loadingBrc20,
-                children: /*#__PURE__*/(0,jsx_runtime.jsxs)(flex/* default */.Z, {
-                  wrap: "wrap",
-                  gap: "small",
-                  justify: "flex-end",
-                  children: [brc20Info && brc20Info.message && brc20Info.message, brc20Info && brc20Info.transferBalanceList.map(function (item) {
-                    return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                      className: "brcItem ".concat(inscription && inscription.inscriptionId === item.inscriptionId ? "active" : ""),
-                      onClick: function onClick() {
-                        setInscription(item);
-                        onInputChange(item.amount);
-                      },
-                      children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                        className: "tick",
-                        children: bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                          children: [asset.originSymbol, " "]
-                        }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                          children: [asset.targetSymbol, " "]
-                        })
-                      }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                        className: "amount",
-                        children: item.amount
-                      }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
-                        className: "number",
-                        children: ["#", item.inscriptionNumber]
-                      })]
-                    }, item.inscriptionId);
-                  }), brc20Info && brc20Info.transferBalanceList.length === 0 && !brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                    children: ["No transferable", /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
-                      type: "text",
-                      className: "inscribeBtn",
-                      onClick: Inscribe,
-                      style: {
-                        color: "#6E66FA"
-                      },
-                      disabled: Number(brc20Info.balance) === 0,
-                      children: "Inscribe"
-                    })]
-                  })]
+              }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                className: "inputWrap",
+                children: /*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.Z, {
+                  className: "input",
+                  onChange: onInputChange,
+                  value: reciveAmount,
+                  variant: "borderless",
+                  controls: false,
+                  disabled: true
                 })
-              }) : /*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.Z, {
-                className: "input",
-                onChange: onInputChange,
-                value: amount,
-                max: sendBal,
-                variant: "borderless",
-                controls: false
-              })
-            })]
-          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-            className: "bal",
-            children: ["Balance:", protocolType === "brc20" && bridgeType === "mint" ? brc20Info ? brc20Info.balance : "..." : sendBal, bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
-          })]
-        }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-          className: "recive inputCardWrap",
-          children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-            className: "label",
-            children: /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-              children: "You recive"
-            })
-          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-            className: "inputCard",
-            style: {
-              background: colorBgBase,
-              borderRadius: borderRadius
-            },
-            children: [/*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
-              dropdownRender: function dropdownRender() {
-                return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                  style: {
-                    marginTop: -100,
-                    paddingTop: 100
-                  },
-                  onMouseLeave: function onMouseLeave() {
-                    return setSelectAssetVisible(undefined);
-                  },
-                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectAsset, {
-                    type: bridgeType === "redeem" ? "origin" : "target",
-                    onChange: function onChange(_asset) {
-                      setAsset(_asset);
-                      setSelectAssetVisible(undefined);
-                      setAmount("");
-                      setErrorMsg("");
-                      setReciveAmount("");
-                    }
-                  })
-                });
-              },
-              open: selectAssetVisible == "recive",
-              placement: "bottomLeft",
-              autoAdjustOverflow: false,
-              children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
-                onClick: function onClick() {
-                  setSelectAssetVisible("recive");
-                },
-                style: {
-                  cursor: "pointer"
-                },
-                children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                  size: 40,
-                  src: "",
-                  symbol: asset.originSymbol
-                }), bridgeType === "redeem" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                  children: [asset.originSymbol, " "]
-                }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                  children: [asset.targetSymbol, " "]
-                }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                  className: selectAssetVisible == "recive" ? "spanRotate" : "spanReset",
-                  children: [" ", /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
-                })]
-              })
-            }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-              className: "inputWrap",
-              children: /*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.Z, {
-                className: "input",
-                onChange: onInputChange,
-                value: reciveAmount,
-                variant: "borderless",
-                controls: false,
-                disabled: true
-              })
+              })]
             })]
           })]
+        }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+          className: "submitWrap",
+          children: /*#__PURE__*/(0,jsx_runtime.jsx)(components_FormButton, {
+            conditions: conditions,
+            onClick: handleConfirm,
+            children: "Bridge"
+          })
+        }), /*#__PURE__*/(0,jsx_runtime.jsx)(History, {
+          show: historyVisible,
+          onClose: function onClose() {
+            return setHistoryVisible(false);
+          }
         })]
-      }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-        className: "submitWrap",
-        children: /*#__PURE__*/(0,jsx_runtime.jsx)(components_FormButton, {
-          conditions: conditions,
-          onClick: handleConfirm,
-          children: "Bridge"
-        })
-      }), /*#__PURE__*/(0,jsx_runtime.jsx)(History, {
-        show: historyVisible,
-        onClose: function onClose() {
-          return setHistoryVisible(false);
-        }
-      })]
+      })
     }), /*#__PURE__*/(0,jsx_runtime.jsx)(Summary, objectSpread2_default()(objectSpread2_default()({}, confrimProps), {}, {
       submitting: submitting
     })), /*#__PURE__*/(0,jsx_runtime.jsx)(SuccessModel, {
