@@ -69,6 +69,7 @@ export default () => {
   const init = useCallback(async () => {
     if (walletName === "metalet" && window.metaidwallet) {
       const isConnected = await window.metaidwallet.isConnected();
+      console.log('init',isConnected)
 
       if (isConnected === true) {
         const _mvc = await window.metaidwallet.getAddress();

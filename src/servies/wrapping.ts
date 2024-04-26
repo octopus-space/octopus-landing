@@ -492,6 +492,7 @@ export async function mintBrc(
       confirmed: true,
       inscriptions: null,
     };
+    debugger
     const psbt = await sendBRC(
       bridgeAddress,
       inscriptionUtxo,
