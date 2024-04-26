@@ -360,7 +360,7 @@ var checkExtension = function checkExtension() {
     //
     setTimeout(function () {
       init();
-    }, 100);
+    }, 500);
   }, [init]);
   (0,react.useEffect)(function () {
     getBal();
