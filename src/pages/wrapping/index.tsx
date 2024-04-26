@@ -13,7 +13,7 @@ import {
   message,
   theme,
 } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "./index.less";
 import { useModel } from "umi";
@@ -524,12 +524,15 @@ export default () => {
               >
                 <Dropdown
                   dropdownRender={() => (
-                    <div onMouseLeave={()=> setSelectAssetVisible(undefined)}>
+                    <div
+                      style={{ marginTop: -100, paddingTop: 100 }}
+                      onMouseLeave={() => setSelectAssetVisible(undefined)}
+                    >
                       <SelectAsset
                         type={bridgeType === "mint" ? "origin" : "target"}
                         onChange={(_asset) => {
                           setAsset(_asset);
-                          setSelectAssetVisible(undefined)
+                          setSelectAssetVisible(undefined);
                           setAmount("");
                           setErrorMsg("");
                           setReciveAmount("");
@@ -537,34 +540,39 @@ export default () => {
                       />
                     </div>
                   )}
-                  onOpenChange={(open) => {
-                    console.log(open);
-                  }}
                   open={selectAssetVisible == "send"}
                   placement="bottomLeft"
                   autoAdjustOverflow={false}
                 >
-                  <div onClick={() => {setSelectAssetVisible('send')}} style={{ cursor: "pointer" }}>
-                    <Space style={{height:50}}>
+                  <div
+                    onClick={() => {
+                      setSelectAssetVisible("send");
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <Space style={{ height: 50 }}>
                       <TokenIcon size={40} src="" symbol={asset.originSymbol} />
                       {bridgeType === "mint" ? (
                         <div>{asset.originSymbol} </div>
                       ) : (
                         <div>{asset.targetSymbol} </div>
                       )}
-                      <DownOutlined />
+                      <div
+                        className={
+                          selectAssetVisible == "send"
+                            ? "spanRotate"
+                            : "spanReset"
+                        }
+                      >
+                        <DownOutlined />
+                      </div>
                     </Space>
                   </div>
                 </Dropdown>
                 <div className="inputWrap">
                   {protocolType === "brc20" && bridgeType === "mint" ? (
                     <Spin spinning={loadingBrc20}>
-                      <Flex
-                        wrap="wrap"
-                        gap="small"
-                        justify="flex-end"
-                       
-                      >
+                      <Flex wrap="wrap" gap="small" justify="flex-end">
                         {brc20Info && brc20Info.message && brc20Info.message}
                         {brc20Info &&
                           brc20Info.transferBalanceList.map((item) => (
@@ -647,16 +655,21 @@ export default () => {
               >
                 <Dropdown
                   dropdownRender={() => (
-                    <SelectAsset
-                      type={bridgeType === "redeem" ? "origin" : "target"}
-                      onChange={(_asset) => {
-                        setAsset(_asset);
-                        setSelectAssetVisible(undefined);
-                        setAmount("");
-                        setErrorMsg("");
-                        setReciveAmount("");
-                      }}
-                    />
+                    <div
+                      style={{ marginTop: -100, paddingTop: 100 }}
+                      onMouseLeave={() => setSelectAssetVisible(undefined)}
+                    >
+                      <SelectAsset
+                        type={bridgeType === "redeem" ? "origin" : "target"}
+                        onChange={(_asset) => {
+                          setAsset(_asset);
+                          setSelectAssetVisible(undefined);
+                          setAmount("");
+                          setErrorMsg("");
+                          setReciveAmount("");
+                        }}
+                      />
+                    </div>
                   )}
                   open={selectAssetVisible == "recive"}
                   placement="bottomLeft"
@@ -674,7 +687,16 @@ export default () => {
                     ) : (
                       <div>{asset.targetSymbol} </div>
                     )}
-                    <DownOutlined />
+                    <div
+                      className={
+                        selectAssetVisible == "recive"
+                          ? "spanRotate"
+                          : "spanReset"
+                      }
+                    >
+                      {" "}
+                      <DownOutlined />
+                    </div>
                   </Space>
                 </Dropdown>
 
