@@ -466,7 +466,8 @@ const SvgExit = (props) => /* @__PURE__ */ React.createElement("svg", exit_sprea
     btcAddress = _useModel.btcAddress,
     loginModalShow = _useModel.loginModalShow,
     setLoginModalShow = _useModel.setLoginModalShow,
-    connected = _useModel.connected;
+    connected = _useModel.connected,
+    network = _useModel.network;
   var showAddress = (0,react.useMemo)(function () {
     if (btcAddress) return btcAddress.replace(/(\w{5})\w+(\w{3})/, "$1...$2");
   }, [btcAddress]);
@@ -489,9 +490,12 @@ const SvgExit = (props) => /* @__PURE__ */ React.createElement("svg", exit_sprea
               alt: ""
             }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
               className: "desc",
-              children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+              children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                 className: "title",
-                children: "Wrapping"
+                children: ["Wrapping ", network === 'testnet' && /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                  className: "beta",
+                  children: "BETA"
+                })]
               }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
                 className: "subTitle",
                 children: "Smartcontrat Bridging"

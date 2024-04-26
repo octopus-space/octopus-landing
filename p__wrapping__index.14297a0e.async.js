@@ -706,7 +706,6 @@ var SegOptions = [{
 
 
 
-
 /* harmony default export */ var SelectNet = (function (_ref) {
   var onChange = _ref.onChange,
     defalutChain = _ref.defalutChain;
@@ -715,9 +714,8 @@ var SegOptions = [{
   return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
     className: "selectNetWrap",
     children: chains.map(function (item) {
-      return /*#__PURE__*/(0,jsx_runtime.jsxs)(es_button/* default */.ZP, {
+      return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
         className: "item ".concat((defalutChain === null || defalutChain === void 0 ? void 0 : defalutChain.key) === item.key ? 'active' : ''),
-        type: "primary",
         onClick: function onClick() {
           return onChange(item);
         },
@@ -1933,6 +1931,8 @@ var defalut = {
   var handleHistory = function handleHistory() {
     if (connected) {
       setHistoryVisible(true);
+    } else {
+      message/* default */.ZP.error("please connect wallet");
     }
   };
   var bridgeType = (0,react.useMemo)(function () {
@@ -2284,12 +2284,21 @@ var defalut = {
             children: "From"
           }), /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
             dropdownRender: function dropdownRender() {
-              return /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
-                defalutChain: fromChain,
-                onChange: function onChange(chain) {
-                  handleChainChange("from", chain);
-                  setChainType(undefined);
-                }
+              return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                style: {
+                  marginTop: -100,
+                  paddingTop: 100
+                },
+                onMouseLeave: function onMouseLeave() {
+                  return setChainType(undefined);
+                },
+                children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
+                  defalutChain: fromChain,
+                  onChange: function onChange(chain) {
+                    handleChainChange("from", chain);
+                    setChainType(undefined);
+                  }
+                })
               });
             },
             open: chainType === "from",
@@ -2303,14 +2312,24 @@ var defalut = {
               onClick: function onClick() {
                 setChainType("from");
               },
-              children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+              children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                style: {
+                  display: "flex",
+                  alignItems: "center"
+                },
                 children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
                   size: 30,
                   src: fromChain.icon,
                   symbol: fromChain.label
                 }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  style: {
+                    margin: "0 10px 0 5px"
+                  },
                   children: fromChain.label
-                }), /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                  className: chainType == "from" ? "spanRotate" : "spanReset",
+                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
+                })]
               })
             })
           })]
@@ -2326,15 +2345,26 @@ var defalut = {
             children: "To"
           }), /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
             dropdownRender: function dropdownRender() {
-              return /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
-                defalutChain: toChain,
-                onChange: function onChange(chain) {
-                  handleChainChange("to", chain);
-                  setChainType(undefined);
-                }
+              return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                style: {
+                  marginTop: -100,
+                  paddingTop: 100
+                },
+                onMouseLeave: function onMouseLeave() {
+                  return setChainType(undefined);
+                },
+                children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
+                  defalutChain: toChain,
+                  onChange: function onChange(chain) {
+                    handleChainChange("to", chain);
+                    setChainType(undefined);
+                  }
+                })
               });
             },
             open: chainType === "to",
+            placement: "bottomLeft",
+            autoAdjustOverflow: false,
             children: /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
               type: "text",
               className: "selectWrap",
@@ -2345,14 +2375,24 @@ var defalut = {
               onClick: function onClick() {
                 setChainType("to");
               },
-              children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+              children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                style: {
+                  display: "flex",
+                  alignItems: "center"
+                },
                 children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
                   size: 30,
                   src: toChain.icon,
                   symbol: toChain.label
                 }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  style: {
+                    margin: "0 10px 0 5px"
+                  },
                   children: toChain.label
-                }), /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                  className: chainType == "to" ? "spanRotate" : "spanReset",
+                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
+                })]
               })
             })
           })]
