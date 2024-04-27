@@ -5,15 +5,12 @@ import {
   Flex,
   InputNumber,
   Segmented,
-  Select,
   Space,
   Spin,
-  Tabs,
-  TabsProps,
   message,
   theme,
 } from "antd";
-import { DownOutlined, UpOutlined } from "@ant-design/icons";
+import { DownOutlined, SyncOutlined, UpOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "./index.less";
 import { useModel } from "umi";
@@ -75,6 +72,7 @@ export default () => {
   const [chainType, setChainType] = useState<"from" | "to">();
 
   const [brc20Info, setBrc20Info] = useState<API.BRC20Info>();
+  const [refreshBrc20, setRefreshBrc20] = useState<boolean>(false);
   const [inscription, setInscription] = useState<API.TransferbleBRC20>();
   const [confrimProps, setConfirmProps] = useState<ConfirmProps>(defalut);
   const [loadingBrc20, setLoadingBrc20] = useState(false);
@@ -238,7 +236,7 @@ export default () => {
     return () => {
       didCancel = true;
     };
-  }, [protocolType, bridgeType, network, asset, btcAddress]);
+  }, [protocolType, bridgeType, network, asset, btcAddress, refreshBrc20]);
 
   const handleChainChange = (chainType: "from" | "to", chain: Chain) => {
     if (chainType === "from") {
@@ -390,7 +388,7 @@ export default () => {
           maxWidth: "100vw",
           position: "relative",
           border: "2px solid #6e66fa",
-          height:666
+          height: 666,
         }}
         id="wrapping"
         loading={!AssetsInfo}
@@ -612,7 +610,15 @@ export default () => {
                     {protocolType === "brc20" && bridgeType === "mint" ? (
                       <Spin spinning={loadingBrc20}>
                         <Flex wrap="wrap" gap="small" justify="flex-end">
-                          {brc20Info && brc20Info.message && brc20Info.message}
+                          {brc20Info && brc20Info.message && (
+                            <Button
+                              type="text"
+                              onClick={() => setRefreshBrc20(!refreshBrc20)}
+                            >
+                              {brc20Info.message} <SyncOutlined />
+                            </Button>
+                          )}
+
                           {brc20Info &&
                             brc20Info.transferBalanceList.map((item) => (
                               <div

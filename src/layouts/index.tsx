@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "umi";
+import { Link, Outlet, history, useLocation } from "umi";
 import "./index.less";
 import logo from "@/assets/logo.svg";
 import Nav from "./components/Nav";
@@ -37,7 +37,6 @@ const _themes = {
 };
 export default function Layout() {
   const location = useLocation();
-  console.log(location);
   return (
     <ConfigProvider
       theme={{
@@ -51,7 +50,7 @@ export default function Layout() {
         ) : (
           <div className="header">
             <div className="headerwrap">
-              <img src={logo} alt="" className="logo" />
+              <img src={logo} alt="" className="logo" onClick={()=>history.push('/')}/>
               <div className="navWrap">
                 <Nav />
                 <div
