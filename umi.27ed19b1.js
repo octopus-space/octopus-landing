@@ -6,9 +6,9 @@
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   f: function() { return /* binding */ createHistory; }
+/* harmony export */   f: function() { return /* binding */ createHistory; },
+/* harmony export */   m: function() { return /* binding */ history; }
 /* harmony export */ });
-/* unused harmony export history */
 /* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_typeof_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(52677);
 /* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_typeof_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_typeof_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(97857);
@@ -672,12 +672,13 @@ __webpack_require__.d(__webpack_exports__, {
   ApplyPluginsType: function() { return /* reexport */ ApplyPluginsType; },
   Outlet: function() { return /* reexport */ react_router/* Outlet */.j3; },
   PluginManager: function() { return /* reexport */ PluginManager; },
+  history: function() { return /* reexport */ core_history/* history */.m; },
   request: function() { return /* reexport */ request; },
   useLocation: function() { return /* reexport */ react_router/* useLocation */.TH; },
   useModel: function() { return /* reexport */ plugin_model/* useModel */.t; }
 });
 
-// UNUSED EXPORTS: Helmet, HelmetProvider, Link, NavLink, Navigate, Provider, UseRequestProvider, __getRoot, __useFetcher, createBrowserHistory, createHashHistory, createHistory, createMemoryHistory, createSearchParams, defineApp, generatePath, getRequestInstance, history, matchPath, matchRoutes, renderClient, resolvePath, terminal, useAppData, useClientLoaderData, useMatch, useNavigate, useOutlet, useOutletContext, useParams, useRequest, useResolvedPath, useRouteData, useRouteProps, useRoutes, useSearchParams, useSelectedRoutes, useServerInsertedHTML, useServerLoaderData, withRouter
+// UNUSED EXPORTS: Helmet, HelmetProvider, Link, NavLink, Navigate, Provider, UseRequestProvider, __getRoot, __useFetcher, createBrowserHistory, createHashHistory, createHistory, createMemoryHistory, createSearchParams, defineApp, generatePath, getRequestInstance, matchPath, matchRoutes, renderClient, resolvePath, terminal, useAppData, useClientLoaderData, useMatch, useNavigate, useOutlet, useOutletContext, useParams, useRequest, useResolvedPath, useRouteData, useRouteProps, useRoutes, useSearchParams, useSelectedRoutes, useServerInsertedHTML, useServerLoaderData, withRouter
 
 // EXTERNAL MODULE: ./src/.umi-production/plugin-model/index.tsx
 var plugin_model = __webpack_require__(44886);
@@ -37094,7 +37095,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"14b861d7","242":"d62fc15e","307":"79f0922e","717":"d34c7048","782":"6d83ca01","866":"6fb33101","973":"e8b534b2"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"14b861d7","242":"d62fc15e","307":"070d7cb0","717":"8241cc35","763":"e734a8a7","859":"a59c0f4b","866":"6fb33101"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -38734,10 +38735,10 @@ function _getRoutes() {
                 return Promise.all(/* import() | p__index */[__webpack_require__.e(208), __webpack_require__.e(242), __webpack_require__.e(866)]).then(__webpack_require__.bind(__webpack_require__, 68606));
               }),
               '2': /*#__PURE__*/react.lazy(function () {
-                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(208), __webpack_require__.e(973), __webpack_require__.e(782), __webpack_require__.e(307)]).then(__webpack_require__.bind(__webpack_require__, 9168));
+                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(208), __webpack_require__.e(859), __webpack_require__.e(763), __webpack_require__.e(307)]).then(__webpack_require__.bind(__webpack_require__, 9168));
               }),
               '@@/global-layout': /*#__PURE__*/react.lazy(function () {
-                return Promise.all(/* import() | layouts__index */[__webpack_require__.e(208), __webpack_require__.e(973), __webpack_require__.e(717)]).then(__webpack_require__.bind(__webpack_require__, 68240));
+                return Promise.all(/* import() | layouts__index */[__webpack_require__.e(208), __webpack_require__.e(859), __webpack_require__.e(717)]).then(__webpack_require__.bind(__webpack_require__, 68240));
               })
             }
           });

@@ -15,10 +15,8 @@ var objectSpread2 = __webpack_require__(97857);
 var objectSpread2_default = /*#__PURE__*/__webpack_require__.n(objectSpread2);
 // EXTERNAL MODULE: ./node_modules/antd/es/grid/index.js + 2 modules
 var grid = __webpack_require__(74250);
-// EXTERNAL MODULE: ./node_modules/antd/es/modal/index.js + 28 modules
-var modal = __webpack_require__(97280);
-// EXTERNAL MODULE: ./node_modules/antd/es/drawer/index.js + 9 modules
-var drawer = __webpack_require__(85265);
+// EXTERNAL MODULE: ./node_modules/antd/es/modal/index.js + 30 modules
+var modal = __webpack_require__(72003);
 // EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
 var react = __webpack_require__(62435);
 ;// CONCATENATED MODULE: ./src/components/ResponPopup/index.less
@@ -27,7 +25,6 @@ var react = __webpack_require__(62435);
 // EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/jsx-runtime.js
 var jsx_runtime = __webpack_require__(86074);
 ;// CONCATENATED MODULE: ./src/components/ResponPopup/index.tsx
-
 
 
 
@@ -48,46 +45,47 @@ var Popup = function Popup(_ref) {
     _ref$style = _ref.style,
     style = _ref$style === void 0 ? {} : _ref$style,
     _ref$className = _ref.className,
-    className = _ref$className === void 0 ? '' : _ref$className,
+    className = _ref$className === void 0 ? "" : _ref$className,
     _ref$bodyStyle = _ref.bodyStyle,
     bodyStyle = _ref$bodyStyle === void 0 ? {} : _ref$bodyStyle;
-  var _useBreakpoint = useBreakpoint(),
-    md = _useBreakpoint.md;
-  return /*#__PURE__*/(0,jsx_runtime.jsx)(jsx_runtime.Fragment, {
-    children: md ? /*#__PURE__*/(0,jsx_runtime.jsx)(modal/* default */.Z, {
-      open: show,
-      onCancel: onClose,
-      width: modalWidth || 420,
-      title: title,
-      footer: null,
-      closable: closable,
-      maskClosable: maskClosable,
-      style: objectSpread2_default()({
-        padding: 0
-      }, style),
-      className: 'hayPopup' + ' ' + className,
-      getContainer: false,
-      children: children
-    }) : /*#__PURE__*/(0,jsx_runtime.jsx)(drawer/* default */.Z, {
-      title: title,
-      open: show,
-      placement: "bottom",
-      onClose: onClose,
-      closable: closable,
-      maskClosable: maskClosable,
-      style: objectSpread2_default()({
-        height: 'auto'
-      }, style),
-      bodyStyle: objectSpread2_default()({
-        height: 'auto',
-        maxHeight: '90vh',
-        padding: 10
-      }, bodyStyle),
-      contentWrapperStyle: {
-        height: 'auto'
-      },
-      children: children
-    })
+  // const { md } = useBreakpoint()
+  // return (<>
+  //     {true ?
+  //         <Modal
+  //             open={show}
+  //             onCancel={onClose}
+  //             width={modalWidth || 420}
+  //             title={title}
+  //             footer={null}
+  //             closable={closable}
+  //             maskClosable={maskClosable}
+  //             style={{padding:0,...style}}
+  //             className={'hayPopup'+' '+className}
+
+  //             getContainer={false}
+  //         >
+  //             {children}
+  //         </Modal> :
+  //         <Drawer title={title} open={show} placement="bottom" onClose={onClose} closable={closable}  maskClosable={maskClosable} style={{ height: 'auto',...style }} bodyStyle={{ height: 'auto',maxHeight:'90vh',padding:10,...bodyStyle }} contentWrapperStyle={{ height: 'auto' }}>
+  //             {children}
+  //         </Drawer>
+  //     }
+
+  // </>)
+  return /*#__PURE__*/(0,jsx_runtime.jsx)(modal/* default */.Z, {
+    open: show,
+    onCancel: onClose,
+    width: modalWidth || 420,
+    title: title,
+    footer: null,
+    closable: closable,
+    maskClosable: maskClosable,
+    style: objectSpread2_default()({
+      padding: 0
+    }, style),
+    className: "hayPopup" + " " + className,
+    getContainer: false,
+    children: children
   });
 };
 /* harmony default export */ var ResponPopup = (Popup);
@@ -610,7 +608,6 @@ var _themes = {
 };
 function Layout() {
   var location = (0,_umi_production_exports.useLocation)();
-  console.log(location);
   return /*#__PURE__*/(0,jsx_runtime.jsx)(config_provider/* default */.ZP, {
     theme: objectSpread2_default()({
       algorithm: theme/* default */.Z.darkAlgorithm
@@ -624,7 +621,10 @@ function Layout() {
           children: [/*#__PURE__*/(0,jsx_runtime.jsx)("img", {
             src: logo,
             alt: "",
-            className: "logo"
+            className: "logo",
+            onClick: function onClick() {
+              return _umi_production_exports.history.push('/');
+            }
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "navWrap",
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)(Nav, {}), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {

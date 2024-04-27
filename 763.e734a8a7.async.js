@@ -1,4 +1,4 @@
-(self["webpackChunk"] = self["webpackChunk"] || []).push([[782],{
+(self["webpackChunk"] = self["webpackChunk"] || []).push([[763],{
 
 /***/ 80882:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
@@ -83,6 +83,49 @@ var SearchOutlined_SearchOutlined = function SearchOutlined(props, ref) {
 var RefIcon = /*#__PURE__*/react.forwardRef(SearchOutlined_SearchOutlined);
 if (false) {}
 /* harmony default export */ var icons_SearchOutlined = (RefIcon);
+
+/***/ }),
+
+/***/ 98165:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  Z: function() { return /* binding */ icons_SyncOutlined; }
+});
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
+var esm_extends = __webpack_require__(87462);
+// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
+var react = __webpack_require__(62435);
+;// CONCATENATED MODULE: ./node_modules/@ant-design/icons-svg/es/asn/SyncOutlined.js
+// This icon file is generated automatically.
+var SyncOutlined = { "icon": { "tag": "svg", "attrs": { "viewBox": "64 64 896 896", "focusable": "false" }, "children": [{ "tag": "path", "attrs": { "d": "M168 504.2c1-43.7 10-86.1 26.9-126 17.3-41 42.1-77.7 73.7-109.4S337 212.3 378 195c42.4-17.9 87.4-27 133.9-27s91.5 9.1 133.8 27A341.5 341.5 0 01755 268.8c9.9 9.9 19.2 20.4 27.8 31.4l-60.2 47a8 8 0 003 14.1l175.7 43c5 1.2 9.9-2.6 9.9-7.7l.8-180.9c0-6.7-7.7-10.5-12.9-6.3l-56.4 44.1C765.8 155.1 646.2 92 511.8 92 282.7 92 96.3 275.6 92 503.8a8 8 0 008 8.2h60c4.4 0 7.9-3.5 8-7.8zm756 7.8h-60c-4.4 0-7.9 3.5-8 7.8-1 43.7-10 86.1-26.9 126-17.3 41-42.1 77.8-73.7 109.4A342.45 342.45 0 01512.1 856a342.24 342.24 0 01-243.2-100.8c-9.9-9.9-19.2-20.4-27.8-31.4l60.2-47a8 8 0 00-3-14.1l-175.7-43c-5-1.2-9.9 2.6-9.9 7.7l-.7 181c0 6.7 7.7 10.5 12.9 6.3l56.4-44.1C258.2 868.9 377.8 932 512.2 932c229.2 0 415.5-183.7 419.8-411.8a8 8 0 00-8-8.2z" } }] }, "name": "sync", "theme": "outlined" };
+/* harmony default export */ var asn_SyncOutlined = (SyncOutlined);
+
+// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/components/AntdIcon.js + 3 modules
+var AntdIcon = __webpack_require__(42135);
+;// CONCATENATED MODULE: ./node_modules/@ant-design/icons/es/icons/SyncOutlined.js
+
+// GENERATE BY ./scripts/generate.ts
+// DON NOT EDIT IT MANUALLY
+
+
+
+
+var SyncOutlined_SyncOutlined = function SyncOutlined(props, ref) {
+  return /*#__PURE__*/react.createElement(AntdIcon/* default */.Z, (0,esm_extends/* default */.Z)({}, props, {
+    ref: ref,
+    icon: asn_SyncOutlined
+  }));
+};
+
+/**![sync](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIGZpbGw9IiNjYWNhY2EiIHZpZXdCb3g9IjY0IDY0IDg5NiA4OTYiIGZvY3VzYWJsZT0iZmFsc2UiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTE2OCA1MDQuMmMxLTQzLjcgMTAtODYuMSAyNi45LTEyNiAxNy4zLTQxIDQyLjEtNzcuNyA3My43LTEwOS40UzMzNyAyMTIuMyAzNzggMTk1YzQyLjQtMTcuOSA4Ny40LTI3IDEzMy45LTI3czkxLjUgOS4xIDEzMy44IDI3QTM0MS41IDM0MS41IDAgMDE3NTUgMjY4LjhjOS45IDkuOSAxOS4yIDIwLjQgMjcuOCAzMS40bC02MC4yIDQ3YTggOCAwIDAwMyAxNC4xbDE3NS43IDQzYzUgMS4yIDkuOS0yLjYgOS45LTcuN2wuOC0xODAuOWMwLTYuNy03LjctMTAuNS0xMi45LTYuM2wtNTYuNCA0NC4xQzc2NS44IDE1NS4xIDY0Ni4yIDkyIDUxMS44IDkyIDI4Mi43IDkyIDk2LjMgMjc1LjYgOTIgNTAzLjhhOCA4IDAgMDA4IDguMmg2MGM0LjQgMCA3LjktMy41IDgtNy44em03NTYgNy44aC02MGMtNC40IDAtNy45IDMuNS04IDcuOC0xIDQzLjctMTAgODYuMS0yNi45IDEyNi0xNy4zIDQxLTQyLjEgNzcuOC03My43IDEwOS40QTM0Mi40NSAzNDIuNDUgMCAwMTUxMi4xIDg1NmEzNDIuMjQgMzQyLjI0IDAgMDEtMjQzLjItMTAwLjhjLTkuOS05LjktMTkuMi0yMC40LTI3LjgtMzEuNGw2MC4yLTQ3YTggOCAwIDAwLTMtMTQuMWwtMTc1LjctNDNjLTUtMS4yLTkuOSAyLjYtOS45IDcuN2wtLjcgMTgxYzAgNi43IDcuNyAxMC41IDEyLjkgNi4zbDU2LjQtNDQuMUMyNTguMiA4NjguOSAzNzcuOCA5MzIgNTEyLjIgOTMyYzIyOS4yIDAgNDE1LjUtMTgzLjcgNDE5LjgtNDExLjhhOCA4IDAgMDAtOC04LjJ6IiAvPjwvc3ZnPg==) */
+var RefIcon = /*#__PURE__*/react.forwardRef(SyncOutlined_SyncOutlined);
+if (false) {}
+/* harmony default export */ var icons_SyncOutlined = (RefIcon);
 
 /***/ }),
 

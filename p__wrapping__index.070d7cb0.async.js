@@ -15,10 +15,8 @@ var objectSpread2 = __webpack_require__(97857);
 var objectSpread2_default = /*#__PURE__*/__webpack_require__.n(objectSpread2);
 // EXTERNAL MODULE: ./node_modules/antd/es/grid/index.js + 2 modules
 var grid = __webpack_require__(74250);
-// EXTERNAL MODULE: ./node_modules/antd/es/modal/index.js + 28 modules
-var modal = __webpack_require__(97280);
-// EXTERNAL MODULE: ./node_modules/antd/es/drawer/index.js + 9 modules
-var drawer = __webpack_require__(85265);
+// EXTERNAL MODULE: ./node_modules/antd/es/modal/index.js + 30 modules
+var modal = __webpack_require__(72003);
 // EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
 var react = __webpack_require__(62435);
 ;// CONCATENATED MODULE: ./src/components/ResponPopup/index.less
@@ -27,7 +25,6 @@ var react = __webpack_require__(62435);
 // EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/jsx-runtime.js
 var jsx_runtime = __webpack_require__(86074);
 ;// CONCATENATED MODULE: ./src/components/ResponPopup/index.tsx
-
 
 
 
@@ -48,46 +45,47 @@ var Popup = function Popup(_ref) {
     _ref$style = _ref.style,
     style = _ref$style === void 0 ? {} : _ref$style,
     _ref$className = _ref.className,
-    className = _ref$className === void 0 ? '' : _ref$className,
+    className = _ref$className === void 0 ? "" : _ref$className,
     _ref$bodyStyle = _ref.bodyStyle,
     bodyStyle = _ref$bodyStyle === void 0 ? {} : _ref$bodyStyle;
-  var _useBreakpoint = useBreakpoint(),
-    md = _useBreakpoint.md;
-  return /*#__PURE__*/(0,jsx_runtime.jsx)(jsx_runtime.Fragment, {
-    children: md ? /*#__PURE__*/(0,jsx_runtime.jsx)(modal/* default */.Z, {
-      open: show,
-      onCancel: onClose,
-      width: modalWidth || 420,
-      title: title,
-      footer: null,
-      closable: closable,
-      maskClosable: maskClosable,
-      style: objectSpread2_default()({
-        padding: 0
-      }, style),
-      className: 'hayPopup' + ' ' + className,
-      getContainer: false,
-      children: children
-    }) : /*#__PURE__*/(0,jsx_runtime.jsx)(drawer/* default */.Z, {
-      title: title,
-      open: show,
-      placement: "bottom",
-      onClose: onClose,
-      closable: closable,
-      maskClosable: maskClosable,
-      style: objectSpread2_default()({
-        height: 'auto'
-      }, style),
-      bodyStyle: objectSpread2_default()({
-        height: 'auto',
-        maxHeight: '90vh',
-        padding: 10
-      }, bodyStyle),
-      contentWrapperStyle: {
-        height: 'auto'
-      },
-      children: children
-    })
+  // const { md } = useBreakpoint()
+  // return (<>
+  //     {true ?
+  //         <Modal
+  //             open={show}
+  //             onCancel={onClose}
+  //             width={modalWidth || 420}
+  //             title={title}
+  //             footer={null}
+  //             closable={closable}
+  //             maskClosable={maskClosable}
+  //             style={{padding:0,...style}}
+  //             className={'hayPopup'+' '+className}
+
+  //             getContainer={false}
+  //         >
+  //             {children}
+  //         </Modal> :
+  //         <Drawer title={title} open={show} placement="bottom" onClose={onClose} closable={closable}  maskClosable={maskClosable} style={{ height: 'auto',...style }} bodyStyle={{ height: 'auto',maxHeight:'90vh',padding:10,...bodyStyle }} contentWrapperStyle={{ height: 'auto' }}>
+  //             {children}
+  //         </Drawer>
+  //     }
+
+  // </>)
+  return /*#__PURE__*/(0,jsx_runtime.jsx)(modal/* default */.Z, {
+    open: show,
+    onCancel: onClose,
+    width: modalWidth || 420,
+    title: title,
+    footer: null,
+    closable: closable,
+    maskClosable: maskClosable,
+    style: objectSpread2_default()({
+      padding: 0
+    }, style),
+    className: "hayPopup" + " " + className,
+    getContainer: false,
+    children: children
   });
 };
 /* harmony default export */ var ResponPopup = (Popup);
@@ -139,6 +137,8 @@ var flex = __webpack_require__(86250);
 var input_number = __webpack_require__(10418);
 // EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/DownOutlined.js + 1 modules
 var DownOutlined = __webpack_require__(80882);
+// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/SyncOutlined.js + 1 modules
+var SyncOutlined = __webpack_require__(98165);
 // EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
 var react = __webpack_require__(62435);
 ;// CONCATENATED MODULE: ./src/pages/wrapping/index.less
@@ -1917,36 +1917,40 @@ var defalut = {
     _useState16 = slicedToArray_default()(_useState15, 2),
     brc20Info = _useState16[0],
     setBrc20Info = _useState16[1];
-  var _useState17 = (0,react.useState)(),
+  var _useState17 = (0,react.useState)(false),
     _useState18 = slicedToArray_default()(_useState17, 2),
-    inscription = _useState18[0],
-    setInscription = _useState18[1];
-  var _useState19 = (0,react.useState)(defalut),
+    refreshBrc20 = _useState18[0],
+    setRefreshBrc20 = _useState18[1];
+  var _useState19 = (0,react.useState)(),
     _useState20 = slicedToArray_default()(_useState19, 2),
-    confrimProps = _useState20[0],
-    setConfirmProps = _useState20[1];
-  var _useState21 = (0,react.useState)(false),
+    inscription = _useState20[0],
+    setInscription = _useState20[1];
+  var _useState21 = (0,react.useState)(defalut),
     _useState22 = slicedToArray_default()(_useState21, 2),
-    loadingBrc20 = _useState22[0],
-    setLoadingBrc20 = _useState22[1];
+    confrimProps = _useState22[0],
+    setConfirmProps = _useState22[1];
   var _useState23 = (0,react.useState)(false),
     _useState24 = slicedToArray_default()(_useState23, 2),
-    submitting = _useState24[0],
-    setSubmitting = _useState24[1];
-  var _useState25 = (0,react.useState)(""),
+    loadingBrc20 = _useState24[0],
+    setLoadingBrc20 = _useState24[1];
+  var _useState25 = (0,react.useState)(false),
     _useState26 = slicedToArray_default()(_useState25, 2),
-    ErrorMsg = _useState26[0],
-    setErrorMsg = _useState26[1];
-  var _useState27 = (0,react.useState)({
+    submitting = _useState26[0],
+    setSubmitting = _useState26[1];
+  var _useState27 = (0,react.useState)(""),
+    _useState28 = slicedToArray_default()(_useState27, 2),
+    ErrorMsg = _useState28[0],
+    setErrorMsg = _useState28[1];
+  var _useState29 = (0,react.useState)({
       minerFee: "",
       bridgeFee: "",
       receiveAmount: "",
       totalFee: "",
       confirmNumber: ""
     }),
-    _useState28 = slicedToArray_default()(_useState27, 2),
-    feeInfo = _useState28[0],
-    setFeeInfo = _useState28[1];
+    _useState30 = slicedToArray_default()(_useState29, 2),
+    feeInfo = _useState30[0],
+    setFeeInfo = _useState30[1];
   var _useModel2 = (0,_umi_production_exports.useModel)("wrapping"),
     chains = _useModel2.chains,
     fromChain = _useModel2.fromChain,
@@ -2085,7 +2089,7 @@ var defalut = {
     return function () {
       didCancel = true;
     };
-  }, [protocolType, bridgeType, network, asset, btcAddress]);
+  }, [protocolType, bridgeType, network, asset, btcAddress, refreshBrc20]);
   var handleChainChange = function handleChainChange(chainType, chain) {
     if (chainType === "from") {
       if (fromChain.key !== chain.key) {
@@ -2542,7 +2546,13 @@ var defalut = {
                     wrap: "wrap",
                     gap: "small",
                     justify: "flex-end",
-                    children: [brc20Info && brc20Info.message && brc20Info.message, brc20Info && brc20Info.transferBalanceList.map(function (item) {
+                    children: [brc20Info && brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)(es_button/* default */.ZP, {
+                      type: "text",
+                      onClick: function onClick() {
+                        return setRefreshBrc20(!refreshBrc20);
+                      },
+                      children: [brc20Info.message, " ", /*#__PURE__*/(0,jsx_runtime.jsx)(SyncOutlined/* default */.Z, {})]
+                    }), brc20Info && brc20Info.transferBalanceList.map(function (item) {
                       return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                         className: "brcItem ".concat(inscription && inscription.inscriptionId === item.inscriptionId ? "active" : ""),
                         onClick: function onClick() {
