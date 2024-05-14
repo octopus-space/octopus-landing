@@ -39,11 +39,19 @@ export default ({ type }: { type: HistoryType }) => {
         setIsEnd(true);
       }
       const _list = txList.map((item) => {
-        if (type === "btcToMvc" || type === "brc20ToMvc") {
+        if (
+          type === "btcToMvc" ||
+          type === "brc20ToMvc" ||
+          type === "runesToMvc"
+        ) {
           item.originNetwork = "BTC";
           item.targetNetwork = "MVC";
         }
-        if (type === "mvcToBtc" || type === "mvcToBrc20") {
+        if (
+          type === "mvcToBtc" ||
+          type === "mvcToBrc20" ||
+          type === "mvcToRunes"
+        ) {
           item.originNetwork = "MVC";
           item.targetNetwork = "BTC";
         }
@@ -126,7 +134,7 @@ export default ({ type }: { type: HistoryType }) => {
           <div className="bottom">
             <div className="left">
               <TokenIcon src="" size={24} symbol={item.symbol} />
-              <span className="info">
+              <span className="info" >
                 {item.amount} {item.symbol}{" "}
               </span>
             </div>

@@ -52,11 +52,15 @@
     .left {
       display: flex;
       align-items: center;
-      justify-content: center;
+      
       .info {
         margin-left: 8px;
         font-size: 18px;
+        max-width: 250px;
         font-weight: bold;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
     }
     .right {

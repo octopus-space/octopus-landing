@@ -145,14 +145,23 @@ export default () => {
       if (bridgeType === "redeem")
         return userBal[asset.targetTokenGenesis] || "0";
       if (bridgeType === "mint")
-        return (brc20Info && brc20Info.balance) || "...";
+        return (brc20Info && brc20Info.balance) || "--";
     }
 
     if (asset && protocolType == "runes") {
       if (bridgeType === "redeem")
         return userBal[asset.targetTokenGenesis] || "0";
-      if (bridgeType === "mint")
-        return (runesInfo && runesInfo.amount) || "...";
+      if (bridgeType === "mint" && runesInfo) {
+        console.log();
+        return Number(
+          (
+            Number(runesInfo.amount) /
+            10 ** Number(runesInfo.divisibility)
+          ).toFixed(2)
+        );
+      } else {
+        return "--";
+      }
     }
   }, [protocolType, bridgeType, asset, userBal, brc20Info, runesInfo]);
 
@@ -722,7 +731,7 @@ export default () => {
                 </div>
                 <div className="bal">
                   Balance:
-                  <span> {sendBal} </span>
+                  <span> {loadingBrc20 ? "--" : sendBal} </span>
                   {bridgeType === "mint"
                     ? asset.originSymbol
                     : asset.targetSymbol}

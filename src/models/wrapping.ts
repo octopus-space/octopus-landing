@@ -54,42 +54,32 @@ export default () => {
 
   useEffect(() => {
     if (AssetsInfo) {
+      let assets: API.AssetItem[] = [];
       if (protocolType === "btc") {
-        const find = AssetsInfo.assetList.find(
-          (item) => item.network === "BTC"
-        );
-        const assets = AssetsInfo.assetList.filter(
-          (item) => item.network === "BTC"
-        );
-        setAssets(assets);
-        if (find) {
-          setAsset(find);
-        }
+        assets = AssetsInfo.assetList.filter((item) => item.network === "BTC");
       }
       if (protocolType === "brc20") {
-        const find = AssetsInfo.assetList.find(
+        assets = AssetsInfo.assetList.filter(
           (item) => item.network === "BRC20"
         );
-        const assets = AssetsInfo.assetList.filter(
-          (item) => item.network === "BRC20"
-        );
-        setAssets(assets);
-        if (find) {
-          setAsset(find);
-        }
       }
 
       if (protocolType === "runes") {
-        const find = AssetsInfo.assetList.find(
+        assets = AssetsInfo.assetList.filter(
           (item) => item.network === "RUNES"
         );
-        const assets = AssetsInfo.assetList.filter(
-          (item) => item.network === "RUNES"
-        );
+      }
+      if (assets.length > 0) {
         setAssets(assets);
-        if (find) {
-          setAsset(find);
-        }
+        setAsset((prev) => {
+          if (prev) {
+            const find = assets.find(
+              (item) => item.targetTokenId === prev.targetTokenId
+            );
+            if (find) return find;
+          }
+          return assets[0];
+        });
       }
     }
   }, [AssetsInfo, protocolType]);

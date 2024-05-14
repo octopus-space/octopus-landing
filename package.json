@@ -21,6 +21,9 @@
     "rc-scroll-anim": "^2.7.6",
     "rc-tween-one": "^3.0.6",
     "runelib": "^1.0.6",
+    "buffer": "^6.0.3",
+    "buffer-compare": "^1.1.1",
+    "uint8array-tools": "^0.0.7",
     "umi": "^4.1.5"
   },
   "devDependencies": {

@@ -9,6 +9,8 @@ specifiers:
   antd: ^5.15.4
   bignumber.js: ^9.1.2
   bitcoinjs-lib: ^6.1.5
+  buffer: ^6.0.3
+  buffer-compare: ^1.1.1
   dayjs: ^1.11.10
   decimal.js: ^10.4.3
   rc-animate: ^3.1.1
@@ -17,6 +19,7 @@ specifiers:
   rc-tween-one: ^3.0.6
   runelib: ^1.0.6
   typescript: ^5.0.3
+  uint8array-tools: ^0.0.7
   umi: ^4.1.5
 
 dependencies:
@@ -25,6 +28,8 @@ dependencies:
   antd: registry.npmjs.org/antd/5.15.4
   bignumber.js: registry.npmjs.org/bignumber.js/9.1.2
   bitcoinjs-lib: registry.npmjs.org/bitcoinjs-lib/6.1.5
+  buffer: registry.npmjs.org/buffer/6.0.3
+  buffer-compare: registry.npmjs.org/buffer-compare/1.1.1
   dayjs: registry.npmjs.org/dayjs/1.11.10
   decimal.js: registry.npmjs.org/decimal.js/10.4.3
   rc-animate: registry.npmjs.org/rc-animate/3.1.1
@@ -32,6 +37,7 @@ dependencies:
   rc-scroll-anim: registry.npmjs.org/rc-scroll-anim/2.7.6
   rc-tween-one: registry.npmjs.org/rc-tween-one/3.0.6
   runelib: registry.npmjs.org/runelib/1.0.6
+  uint8array-tools: registry.npmjs.org/uint8array-tools/0.0.7
   umi: registry.npmjs.org/umi/4.1.5_v5v6symhdmuefffg73kkwehwqq
 
 devDependencies:
@@ -4030,6 +4036,12 @@ packages:
       node-int64: registry.npmjs.org/node-int64/0.4.0
     dev: false
 
+  registry.npmjs.org/buffer-compare/1.1.1:
+    resolution: {integrity: sha512-O6NvNiHZMd3mlIeMDjP6t/gPG75OqGPeiRZXoMQZJ6iy9GofCls4Ijs5YkPZZwoysizLiedhticmdyx/GyHghA==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/buffer-compare/-/buffer-compare-1.1.1.tgz}
+    name: buffer-compare
+    version: 1.1.1
+    dev: false
+
   registry.npmjs.org/buffer-from/1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.2.tgz}
     name: buffer-from
@@ -4050,6 +4062,15 @@ packages:
       base64-js: registry.npmjs.org/base64-js/1.5.1
       ieee754: registry.npmjs.org/ieee754/1.2.1
       isarray: registry.npmjs.org/isarray/1.0.0
+    dev: false
+
+  registry.npmjs.org/buffer/6.0.3:
+    resolution: {integrity: sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/buffer/-/buffer-6.0.3.tgz}
+    name: buffer
+    version: 6.0.3
+    dependencies:
+      base64-js: registry.npmjs.org/base64-js/1.5.1
+      ieee754: registry.npmjs.org/ieee754/1.2.1
     dev: false
 
   registry.npmjs.org/builtin-status-codes/3.0.0:

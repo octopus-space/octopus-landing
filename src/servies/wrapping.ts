@@ -288,8 +288,6 @@ export async function redeemRunes(
   }
 }
 
-
-
 async function buildTx(parmas: {
   toAddress: string;
   satoshis: number;
@@ -321,7 +319,6 @@ export async function mintBtc(
     publicKeyReceive,
     publicKeyReceiveSign: publicKeyReceiveSign,
   };
-  debugger;
   try {
     const { data: createResp } = await createPrepayOrderMintBtc(
       network,
@@ -466,7 +463,6 @@ async function sendBRC(
   }
 
   utxos.sort((a, b) => b.satoshi - a.satoshi);
-  debugger;
   const buildPsbt = async (selectedUtxos: UTXO[], change: Decimal) => {
     const psbt = new Psbt({ network: btcNetwork });
 
@@ -496,10 +492,10 @@ async function sendBRC(
       });
       psbt.addInput(payInput);
     }
-    debugger;
     const _signPsbt = await window.metaidwallet.btc.signPsbt({
       psbtHex: psbt.toHex(),
     });
+    if (_signPsbt.status === "canceled") throw new Error("canceled");
     const signPsbt = Psbt.fromHex(_signPsbt);
     return signPsbt;
   };
@@ -641,8 +637,6 @@ async function sendRunes(
   for (let i = 0; i < runesUtxoNumber; i++) {
     const runesUtxo = runesUtxoList[i];
     const satoshi = runesUtxo.satoshi || 546;
-    let tapInternalKey = undefined;
-    debugger;
     psbt.addInput({
       hash: runesUtxo.txId,
       index: runesUtxo.vout,
@@ -700,6 +694,8 @@ async function sendRunes(
   const _signPsbt = await window.metaidwallet.btc.signPsbt({
     psbtHex: psbt.toHex(),
   });
+  if (_signPsbt.status === "canceled") throw new Error("canceled");
+
   const signPsbt = Psbt.fromHex(_signPsbt);
   return signPsbt;
 }
@@ -740,7 +736,6 @@ export async function mintBrc(
       confirmed: true,
       inscriptions: null,
     };
-    debugger;
     const psbt = await sendBRC(
       bridgeAddress,
       inscriptionUtxo,
@@ -798,13 +793,14 @@ export async function mintRunes(
       bridgeAddress,
       btcAsset.originTokenId,
       new Decimal(mintAmount).mul(10 ** btcAsset.decimals).toFixed(0),
-      assetInfo.feeBtc,
+      assetInfo.feeBtc+20,
       network
     );
     const submitPrepayOrderMintDto = {
       orderId,
       txHex: psbt.extractTransaction().toHex(),
     };
+    debugger;
     const submitRes = await submitPrepayOrderMintRunes(
       network,
       submitPrepayOrderMintDto
