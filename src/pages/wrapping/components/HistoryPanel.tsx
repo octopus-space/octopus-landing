@@ -8,8 +8,14 @@ import mvc from "@/assets/mvc.png";
 import arrow from "@/assets/arrowRight.png";
 import { Button, Divider, Empty, Skeleton, Space } from "antd";
 import "./index.less";
-import empty from '@/assets/empty.png'
-type HistoryType = "btcToMvc" | "brc20ToMvc" | "mvcToBtc" | "mvcToBrc20";
+import empty from "@/assets/empty.png";
+type HistoryType =
+  | "btcToMvc"
+  | "brc20ToMvc"
+  | "mvcToBtc"
+  | "mvcToBrc20"
+  | "runesToMvc"
+  | "mvcToRunes";
 const size = 10;
 export default ({ type }: { type: HistoryType }) => {
   const { connect, mvcAddress, network } = useModel("wallet");
@@ -71,8 +77,19 @@ export default ({ type }: { type: HistoryType }) => {
     fetchHistory();
   }, [fetchHistory]);
   return (
-    <div style={{ minHeight: 500,height: 500,overflowY:'scroll' }} className="historyPanel">
-      {list.length === 0 && !loading && <Empty description='No Transfers yet' image={empty} imageStyle={{width:60,height:60,margin:'0 auto'}}> </Empty>}
+    <div
+      style={{ minHeight: 500, height: 500, overflowY: "scroll" }}
+      className="historyPanel"
+    >
+      {list.length === 0 && !loading && (
+        <Empty
+          description="No Transfers yet"
+          image={empty}
+          imageStyle={{ width: 60, height: 60, margin: "0 auto" }}
+        >
+          {" "}
+        </Empty>
+      )}
 
       {list.map((item) => (
         <div className="historyCard" key={item.originTxid}>
@@ -117,9 +134,18 @@ export default ({ type }: { type: HistoryType }) => {
           </div>
         </div>
       ))}
-      {loading&&<Skeleton active />}
-      {list.length>0&&isEnd&&<span>no More</span>}
-      {list.length>0&&!isEnd&&<Button type='link' onClick={()=>{setPage(prev=>prev+1)}}>load More</Button>}
+      {loading && <Skeleton active />}
+      {list.length > 0 && isEnd && <span>no More</span>}
+      {list.length > 0 && !isEnd && (
+        <Button
+          type="link"
+          onClick={() => {
+            setPage((prev) => prev + 1);
+          }}
+        >
+          load More
+        </Button>
+      )}
     </div>
   );
 };

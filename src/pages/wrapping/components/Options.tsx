@@ -4,7 +4,7 @@ import metaid from "@/assets/metaid_b_y.png";
 import BRC20 from "@/assets/brc20.png";
 import arc20 from "@/assets/arc20.png";
 import runes from "@/assets/runes.png";
-import {  SegmentedOptions } from "antd/es/segmented";
+import { SegmentedOptions } from "antd/es/segmented";
 
 export const SegOptions: SegmentedOptions<any> = [
   {
@@ -28,6 +28,16 @@ export const SegOptions: SegmentedOptions<any> = [
   {
     label: (
       <div style={{ padding: 4 }} className="SegmentedItem">
+        <TokenIcon symbol="Runes" src={runes} size={28} />
+        <span>Runes</span>
+      </div>
+    ),
+    value: "runes",
+    disabled: false,
+  },
+  {
+    label: (
+      <div style={{ padding: 4 }} className="SegmentedItem">
         <TokenIcon symbol="BRC20" src={arc20} size={28} />
         <span>ARC20</span>
       </div>
@@ -35,16 +45,7 @@ export const SegOptions: SegmentedOptions<any> = [
     value: "arc20",
     disabled: true,
   },
-  {
-    label: (
-      <div style={{ padding: 4 }} className="SegmentedItem">
-        <TokenIcon symbol="Runes" src={runes} size={28} />
-        <span>Runes</span>
-      </div>
-    ),
-    value: "runes",
-    disabled: true,
-  },
+
   {
     label: (
       <div style={{ padding: 4 }} className="SegmentedItem">
@@ -56,5 +57,3 @@ export const SegOptions: SegmentedOptions<any> = [
     disabled: true,
   },
 ];
-
-

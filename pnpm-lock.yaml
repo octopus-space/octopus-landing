@@ -15,6 +15,7 @@ specifiers:
   rc-queue-anim: ^2.0.0
   rc-scroll-anim: ^2.7.6
   rc-tween-one: ^3.0.6
+  runelib: ^1.0.6
   typescript: ^5.0.3
   umi: ^4.1.5
 
@@ -30,6 +31,7 @@ dependencies:
   rc-queue-anim: registry.npmjs.org/rc-queue-anim/2.0.0
   rc-scroll-anim: registry.npmjs.org/rc-scroll-anim/2.7.6
   rc-tween-one: registry.npmjs.org/rc-tween-one/3.0.6
+  runelib: registry.npmjs.org/runelib/1.0.6
   umi: registry.npmjs.org/umi/4.1.5_v5v6symhdmuefffg73kkwehwqq
 
 devDependencies:
@@ -9588,6 +9590,14 @@ packages:
     version: 1.2.0
     dependencies:
       queue-microtask: registry.npmjs.org/queue-microtask/1.2.3
+    dev: false
+
+  registry.npmjs.org/runelib/1.0.6:
+    resolution: {integrity: sha512-/cQKVT+f3Qzh1iC45ce5gvhB/rnKK8g/m1SxSBQaE98gwHMDuqj4V3AgBMtzmpCANmmU/TkoOH/urk2EPClmSw==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/runelib/-/runelib-1.0.6.tgz}
+    name: runelib
+    version: 1.0.6
+    dependencies:
+      bitcoinjs-lib: registry.npmjs.org/bitcoinjs-lib/6.1.5
     dev: false
 
   registry.npmjs.org/safe-array-concat/1.1.2:

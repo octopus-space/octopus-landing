@@ -9,17 +9,23 @@ import {
 import Decimal from "decimal.js";
 import { Network } from "@/models/wallet";
 import * as ecc from "@bitcoin-js/tiny-secp256k1-asmjs";
+import { Edict, none, RuneId, Runestone } from "runelib";
 
 import {
   createPrepayOrderMintBRC20,
   createPrepayOrderMintBtc,
+  createPrepayOrderMintRunes,
   createPrepayOrderRedeemBrc20,
   createPrepayOrderRedeemBtc,
+  createPrepayOrderRedeemRunes,
+  fetchRunesUtxos,
   getRawTx,
   submitPrepayOrderMintBrc20,
   submitPrepayOrderMintBtc,
+  submitPrepayOrderMintRunes,
   submitPrepayOrderRedeemBrc20,
   submitPrepayOrderRedeemBtc,
+  submitPrepayOrderRedeemRunes,
 } from "./api";
 import { determineAddressInfo } from "@/utils/utils";
 
@@ -110,7 +116,7 @@ async function signMintPublicKey(): Promise<{
     encoding: "base64",
   });
   if (ret.status === "canceled") throw new Error("canceled");
-  console.log(ret,'signMessage')
+  console.log(ret, "signMessage");
   let {
     signature: { signature: publicKeyReceiveSign },
   } = ret;
@@ -230,6 +236,59 @@ export async function redeemBrc20(
     throw new Error(error as any);
   }
 }
+
+export async function redeemRunes(
+  redeemAmount: number,
+  asset: API.AssetItem,
+  addressType: SupportRedeemAddressType,
+  network: Network
+): Promise<{ orderId: string; txid: string }> {
+  try {
+    const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
+      await signPublicKey();
+    const createPrepayOrderDto = {
+      amount: redeemAmount,
+      originTokenId: asset.originTokenId,
+      addressType,
+      publicKey,
+      publicKeySign,
+      publicKeyReceive,
+      publicKeyReceiveSign,
+    };
+    const { data: createResp } = await createPrepayOrderRedeemRunes(
+      network,
+      createPrepayOrderDto
+    );
+    const { orderId, bridgeAddress } = createResp;
+    const { targetTokenCodeHash, targetTokenGenesis } = asset;
+    const txid = await sendToken(
+      String(redeemAmount),
+      bridgeAddress,
+      targetTokenCodeHash,
+      targetTokenGenesis
+    );
+    const submitPrepayOrderRedeemDto = {
+      orderId,
+      txid: txid,
+    };
+    await sleep(3000);
+    const ret = await submitPrepayOrderRedeemRunes(
+      network,
+      submitPrepayOrderRedeemDto
+    );
+    if (!ret.success) {
+      throw new Error(ret.msg);
+    }
+    return {
+      orderId,
+      txid,
+    };
+  } catch (error) {
+    throw new Error(error as any);
+  }
+}
+
+
 
 async function buildTx(parmas: {
   toAddress: string;
@@ -437,7 +496,7 @@ async function sendBRC(
       });
       psbt.addInput(payInput);
     }
-    debugger
+    debugger;
     const _signPsbt = await window.metaidwallet.btc.signPsbt({
       psbtHex: psbt.toHex(),
     });
@@ -462,6 +521,187 @@ async function sendBRC(
 
   psbt = await buildPsbt(selecedtUTXOs, total.minus(amount).minus(fee));
   return psbt;
+}
+
+export const getOutput = (
+  pubkey: string,
+  _network: Network = "mainnet",
+  _addressType: SupportRedeemAddressType = "P2PKH"
+) => {
+  const publicKeyBuffer = Buffer.from(pubkey, "hex");
+  let _output;
+  const network = _network === "mainnet" ? networks.bitcoin : networks.testnet;
+  if (_addressType === "P2PKH") {
+    _output = payments.p2pkh({
+      pubkey: publicKeyBuffer,
+      network,
+    }).output;
+  } else {
+    _output = payments.p2wpkh({
+      pubkey: publicKeyBuffer,
+      network,
+    }).output;
+  }
+
+  return _output;
+};
+
+function getVariableSize(n: number) {
+  if (n < 0xfd) {
+    return 1;
+  } else if (n < 0x10000) {
+    return 2 + 1;
+  } else if (n < 0x100000000) {
+    return 3 + 1;
+  } else if (n < 0x10000000000000000) {
+    return 4 + 1;
+  }
+  throw new Error("");
+}
+
+export function getBtcTxSizeByOutputType(
+  segWitInputNumber: number,
+  tapRootInputNumber: number,
+  insNumber: number,
+  outputTypeList: SupportRedeemAddressType[]
+) {
+  let sizeSum = 0;
+  sizeSum += 4;
+  sizeSum += 1;
+  for (let i = 0; i < segWitInputNumber; i++) {
+    sizeSum += 91;
+  }
+  for (let i = 0; i < tapRootInputNumber; i++) {
+    sizeSum += (4 * (32 + 4 + 1 + 4) + 1 + 1 + 64) / 4;
+  }
+  sizeSum += insNumber * 33;
+  sizeSum += 1;
+  for (const outputTypeListElement of outputTypeList) {
+    sizeSum += 8;
+    if (outputTypeListElement === "P2PKH") {
+      sizeSum += getVariableSize(25);
+      sizeSum += 25;
+    } else if (outputTypeListElement === "P2WPKH") {
+      sizeSum += getVariableSize(22);
+      sizeSum += 22;
+    } else if (outputTypeListElement === "P2TR") {
+      sizeSum += getVariableSize(34);
+      sizeSum += 34;
+    }
+  }
+  sizeSum += 4; //nLockTime
+  return Math.ceil(sizeSum);
+}
+
+async function sendRunes(
+  publicKey: string,
+  addressType: SupportRedeemAddressType,
+  sendAddressType: SupportRedeemAddressType,
+  recipient: string,
+  runeId: string,
+  amount: string,
+  feeRate: number,
+  net: Network
+) {
+  const btcNetwork = net === "mainnet" ? networks.bitcoin : networks.testnet;
+  const address = await window.metaidwallet.btc.getAddress();
+  const {
+    data: { list: runesUtxoList },
+  } = await fetchRunesUtxos(address, runeId, net);
+  const runesBalance = new Map<string, bigint>();
+  for (const runesUtxoListElement of runesUtxoList) {
+    for (const rune of runesUtxoListElement.runes) {
+      runesBalance.set(
+        rune.runeId,
+        (runesBalance.get(rune.runeId) || 0n) + BigInt(rune.amount)
+      );
+    }
+  }
+  const [blockNumber, idx] = runeId.split(":");
+  const runeIdObj = new RuneId(Number(blockNumber), Number(idx));
+  const edicts: Edict[] = [];
+  let totalOutput = BigInt(amount);
+  const edictStone = new Runestone(edicts, none(), none(), none());
+  const changeAmount = (runesBalance.get(runeId) || 0n) - totalOutput;
+  const haveChangeOutput = changeAmount > 0n || runesBalance.size > 1;
+  if (changeAmount < 0n) {
+    throw Error(`changeAmount lt 0`);
+  }
+
+  let output = 1;
+  if (haveChangeOutput) {
+    output += 1;
+  }
+  edicts.push(new Edict(runeIdObj, BigInt(amount), output));
+  const utxos = await window.metaidwallet.btc.getUtxos(address);
+
+  const psbt = new Psbt({ network: btcNetwork });
+  const runesUtxoNumber = runesUtxoList.length;
+  let totalInputSatoshi = 0;
+  for (let i = 0; i < runesUtxoNumber; i++) {
+    const runesUtxo = runesUtxoList[i];
+    const satoshi = runesUtxo.satoshi || 546;
+    let tapInternalKey = undefined;
+    debugger;
+    psbt.addInput({
+      hash: runesUtxo.txId,
+      index: runesUtxo.vout,
+      witnessUtxo: {
+        value: satoshi,
+        script: getOutput(publicKey, net, addressType) as Buffer,
+      },
+    });
+    totalInputSatoshi += satoshi;
+  }
+  for (let i = 0; i < utxos.length; i++) {
+    const utxo = utxos[i];
+    psbt.addInput(await _createPayInput({ utxo, addressType, network: net }));
+    totalInputSatoshi += utxo.satoshi;
+  }
+  psbt.addOutput({
+    script: edictStone.encipher(),
+    value: 0,
+  });
+  if (haveChangeOutput) {
+    psbt.addOutput({
+      address,
+      value: 546,
+    });
+  }
+  psbt.addOutput({
+    address: recipient,
+    value: 546,
+  });
+  const typeList = [sendAddressType, addressType];
+  if (haveChangeOutput) {
+    typeList.push(addressType);
+  }
+  let segWitInputNumber = 0;
+  let tapRootInputNumber = 0;
+  if (addressType === "P2WPKH") {
+    segWitInputNumber = psbt.inputCount;
+  } else {
+    throw Error(`unsupported addressType ${addressType}`);
+  }
+  const fee =
+    feeRate *
+    getBtcTxSizeByOutputType(
+      segWitInputNumber,
+      tapRootInputNumber,
+      0,
+      typeList
+    );
+  const changeSatoshi = totalInputSatoshi - fee;
+  psbt.addOutput({
+    address,
+    value: changeSatoshi,
+  });
+
+  const _signPsbt = await window.metaidwallet.btc.signPsbt({
+    psbtHex: psbt.toHex(),
+  });
+  const signPsbt = Psbt.fromHex(_signPsbt);
+  return signPsbt;
 }
 
 export async function mintBrc(
@@ -518,6 +758,60 @@ export async function mintBrc(
     if (!submitRes.success) throw new Error(submitRes.msg);
     return submitRes;
     //成功
+  } catch (error) {
+    throw new Error((error as any).message || (error as any).msg);
+  }
+}
+
+export async function mintRunes(
+  mintAmount: number,
+  btcAsset: API.AssetItem,
+  addressType: SupportRedeemAddressType,
+  network: Network,
+  assetInfo: API.AssetsData
+) {
+  const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
+    await signMintPublicKey();
+
+  const createPrepayOrderDto = {
+    amount: String(mintAmount),
+    originTokenId: btcAsset.originTokenId,
+    addressType: addressType,
+    publicKey: publicKey,
+    publicKeySign: publicKeySign,
+    publicKeyReceive,
+    publicKeyReceiveSign: publicKeyReceiveSign,
+  };
+
+  try {
+    const { data: createResp } = await createPrepayOrderMintRunes(
+      network,
+      createPrepayOrderDto
+    );
+
+    const { orderId, bridgeAddress } = createResp;
+
+    const psbt = await sendRunes(
+      publicKey,
+      "P2WPKH",
+      addressType,
+      bridgeAddress,
+      btcAsset.originTokenId,
+      new Decimal(mintAmount).mul(10 ** btcAsset.decimals).toFixed(0),
+      assetInfo.feeBtc,
+      network
+    );
+    const submitPrepayOrderMintDto = {
+      orderId,
+      txHex: psbt.extractTransaction().toHex(),
+    };
+    const submitRes = await submitPrepayOrderMintRunes(
+      network,
+      submitPrepayOrderMintDto
+    );
+    if (!submitRes.success) throw new Error(submitRes.msg);
+    return submitRes;
+    //success
   } catch (error) {
     throw new Error((error as any).message || (error as any).msg);
   }

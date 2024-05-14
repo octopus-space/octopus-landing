@@ -7,6 +7,8 @@ const getHost = (network: Network) => {
     return "https://api.orders.exchange/api-bridge-testnet";
 };
 
+const ApiHost = "https://www.orders.exchange/api-book/common";
+
 export async function getAssets(
   network: Network,
   options?: { [key: string]: any }
@@ -26,7 +28,7 @@ export async function getUserBRC20(
   const url = `https://www.orders.exchange/api-book/brc20/address/${address}/${tick}`;
   return request<API.Ret<API.BRC20Info>>(url, {
     method: "GET",
-    params: { net:network },
+    params: { net: network },
     ...(options || {}),
   });
 }
@@ -40,12 +42,10 @@ export async function getRawTx(
   const url = `https://www.orders.exchange/api-book/common/tx/raw`;
   return request<API.Ret<{ rawTx: string }>>(url, {
     method: "GET",
-    params: { net:network,txId:txid },
+    params: { net: network, txId: txid },
     ...(options || {}),
   });
 }
-
-
 
 export async function createPrepayOrderRedeemBtc(
   network: Network,
@@ -183,20 +183,128 @@ export async function submitPrepayOrderMintBrc20(
   });
 }
 
-export async function getBridgeHistory(network: Network,
+export async function getBridgeHistory(
+  network: Network,
   params: {
-    type:string,
-    cursor:number;
-    size:number;
-    order:string;
-    address:string
+    type: string;
+    cursor: number;
+    size: number;
+    order: string;
+    address: string;
   },
-  options?: { [key: string]: any }){
-    return request<
-      {txList:API.HsitoryDetail[]}
-    >(`${getHost(network)}/queryTransactionsByAddress`, {
+  options?: { [key: string]: any }
+) {
+  return request<{ txList: API.HsitoryDetail[] }>(
+    `${getHost(network)}/queryTransactionsByAddress`,
+    {
       method: "GET",
       params,
       ...(options || {}),
-    });
-  }
+    }
+  );
+}
+
+export async function createPrepayOrderMintRunes(
+  network: Network,
+  data: any,
+  options?: { [key: string]: any }
+) {
+  return request<
+    API.Ret<{
+      orderId: string;
+      bridgeAddress: string;
+    }>
+  >(`${getHost(network)}/createPrepayOrderMintRunes`, {
+    method: "POST",
+    data,
+    ...(options || {}),
+  });
+}
+
+export async function submitPrepayOrderMintRunes(
+  network: Network,
+  data: any,
+  options?: { [key: string]: any }
+) {
+  return request<
+    API.Ret<{
+      orderId: string;
+      bridgeAddress: string;
+    }>
+  >(`${getHost(network)}/submitPrepayOrderMintRunes`, {
+    method: "POST",
+    data,
+    ...(options || {}),
+  });
+}
+
+export async function createPrepayOrderRedeemRunes(
+  network: Network,
+  data: any,
+  options?: { [key: string]: any }
+) {
+  return request<
+    API.Ret<{
+      orderId: string;
+      bridgeAddress: string;
+    }>
+  >(`${getHost(network)}/createPrepayOrderRedeemRunes`, {
+    method: "POST",
+    data,
+    ...(options || {}),
+  });
+}
+
+export async function submitPrepayOrderRedeemRunes(
+  network: Network,
+  data: any,
+  options?: { [key: string]: any }
+) {
+  return request<
+    API.Ret<{
+      orderId: string;
+      bridgeAddress: string;
+    }>
+  >(`${getHost(network)}/submitPrepayOrderRedeemRunes`, {
+    method: "POST",
+    data,
+    ...(options || {}),
+  });
+}
+
+export async function fetchRunesUtxos(
+  address: string,
+  runeId: string,
+  network: Network,
+  offset: number = 0,
+  limit: number = 50
+) {
+  return request(ApiHost + "/runes/address/utxo", {
+    method: "GET",
+    params: {
+      address: address,
+      runeId: runeId,
+      offset: offset,
+      limit: limit,
+      net: network === "mainnet" ? "livenet" : "testnet",
+    },
+  });
+}
+
+export async function getUserRunesBalance(
+  address: string,
+  network: Network,
+  runeId:string
+) {
+  return request<API.Ret<API.RUNESItem>>(
+    ApiHost + "/runes/address/balance-info",
+    {
+      method: "GET",
+      params: {
+        address,
+        runeId,
+        net: network === "mainnet" ? "livenet" : "testnet",
+      },
+    }
+  );
+}

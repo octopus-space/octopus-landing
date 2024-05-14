@@ -1,36 +1,80 @@
 import Popup from "@/components/ResponPopup";
 import { Tabs, TabsProps } from "antd";
 import HistoryPanel from "./HistoryPanel";
+import { useEffect, useMemo, useState } from "react";
+import { Protocol } from "@/models/wrapping";
 type Props = {
   show: boolean;
   onClose: () => void;
+  protocolType: Protocol;
+  bridgeType: "mint" | "redeem";
 };
-export default ({ show, onClose }: Props) => {
-  const items: TabsProps["items"] = [
-    {
-      key: "btcToMvc",
-      label: "BTC",
-      children: <HistoryPanel type="btcToMvc" />,
-    },
-    {
-      key: "brc20ToMvc",
-      label: "BRC20",
-      children: <HistoryPanel type="brc20ToMvc" />,
-    },
-    {
-      key: "mvcToBtc",
-      label: "Redeem BTC",
-      children: <HistoryPanel type="mvcToBtc" />,
-    },
-    {
-      key: "mvcToBrc20",
-      label: "Redeem BRC20",
-      children: <HistoryPanel type="mvcToBrc20" />,
-    },
-  ];
+
+const items: TabsProps["items"] = [
+  {
+    key: "btcToMvc",
+    label: "BTC",
+    children: <HistoryPanel type="btcToMvc" />,
+    destroyInactiveTabPane:true
+  },
+  {
+    key: "brc20ToMvc",
+    label: "BRC20",
+    children: <HistoryPanel type="brc20ToMvc" />,
+    destroyInactiveTabPane:true
+  },
+  {
+    key: "runesToMvc",
+    label: "RUNES",
+    children: <HistoryPanel type="runesToMvc" />,
+    destroyInactiveTabPane:true
+  },
+  {
+    key: "mvcToBtc",
+    label: "Redeem BTC",
+    children: <HistoryPanel type="mvcToBtc" />,
+    destroyInactiveTabPane:true
+  },
+  {
+    key: "mvcToBrc20",
+    label: "Redeem BRC20",
+    children: <HistoryPanel type="mvcToBrc20" />,
+    destroyInactiveTabPane:true
+  },
+  {
+    key: "mvcToRunes",
+    label: "Redeem RUNES",
+    children: <HistoryPanel type="mvcToRunes" />,
+    destroyInactiveTabPane:true
+  },
+];
+export default ({ show, onClose, protocolType, bridgeType }: Props) => {
+  const [activeKey, setActiveKey] = useState<string>("btcToMvc");
   const onChange = (key: string) => {
-    console.log(key);
+    setActiveKey(key);
   };
+  useEffect(() => {
+    let key = "";
+    if (bridgeType === "redeem") {
+      key += "mvcTo";
+      if (protocolType === "btc") {
+        key += "Btc";
+      }
+      if (protocolType === "brc20") {
+        key += "Brc20";
+      }
+      if (protocolType === "runes") {
+        key += "Runes";
+      }
+    }
+
+    if (bridgeType === "mint") {
+      key += protocolType;
+      key += "ToMvc";
+    }
+    setActiveKey(key);
+  }, [protocolType, bridgeType]);
+
   return (
     <Popup
       title="History"
@@ -40,7 +84,7 @@ export default ({ show, onClose }: Props) => {
       closable
       className="historyWrap"
     >
-      <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+      <Tabs activeKey={activeKey} items={items} onChange={onChange} />
     </Popup>
   );
 };

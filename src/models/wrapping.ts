@@ -9,7 +9,7 @@ export type Chain = {
   label: string;
   icon: string;
 };
-type Protocol = "btc" | "brc20" | "arc20" | "runes" | "mrc20";
+export type Protocol = "btc" | "brc20" | "arc20" | "runes" | "mrc20";
 const defaultChains: Chain[] = [
   {
     key: "btc",
@@ -72,6 +72,19 @@ export default () => {
         );
         const assets = AssetsInfo.assetList.filter(
           (item) => item.network === "BRC20"
+        );
+        setAssets(assets);
+        if (find) {
+          setAsset(find);
+        }
+      }
+
+      if (protocolType === "runes") {
+        const find = AssetsInfo.assetList.find(
+          (item) => item.network === "RUNES"
+        );
+        const assets = AssetsInfo.assetList.filter(
+          (item) => item.network === "RUNES"
         );
         setAssets(assets);
         if (find) {

@@ -21,8 +21,10 @@ import {
   amountRaw,
   calcMintBrc20Info,
   calcMintBtcInfo,
+  calcMintRunesInfo,
   calcRedeemBrc20Info,
   calcRedeemBtcInfo,
+  calcRedeemRunesInfo,
   determineAddressInfo,
   formatSat,
 } from "@/utils/utils";
@@ -36,11 +38,13 @@ import {
   SupportRedeemAddressType,
   mintBrc,
   mintBtc,
+  mintRunes,
   redeemBrc20,
   redeemBtc,
+  redeemRunes,
   supportRedeemAddressType,
 } from "@/servies/wrapping";
-import { getUserBRC20 } from "@/servies/api";
+import { getUserBRC20, getUserRunesBalance } from "@/servies/api";
 import SelectAsset from "@/components/SelectAsset";
 import Summary, { ConfirmProps } from "./components/Summary";
 import SuccessModel from "@/components/SuccessModel";
@@ -72,6 +76,7 @@ export default () => {
   const [chainType, setChainType] = useState<"from" | "to">();
 
   const [brc20Info, setBrc20Info] = useState<API.BRC20Info>();
+  const [runesInfo, setRunesInfo] = useState<API.RUNESItem>();
   const [refreshBrc20, setRefreshBrc20] = useState<boolean>(false);
   const [inscription, setInscription] = useState<API.TransferbleBRC20>();
   const [confrimProps, setConfirmProps] = useState<ConfirmProps>(defalut);
@@ -102,7 +107,23 @@ export default () => {
     const _to = toChain;
     setToChain(_from);
     setFromChain(_to);
+    resetInput();
   };
+
+  const resetInput = () => {
+    setAmount("");
+    setReciveAmount("");
+    setFeeInfo({
+      minerFee: "",
+      bridgeFee: "",
+      receiveAmount: "",
+      totalFee: "",
+      confirmNumber: "",
+    });
+    setErrorMsg("");
+    setInscription(undefined);
+  };
+
   const handleHistory = () => {
     if (connected) {
       setHistoryVisible(true);
@@ -123,83 +144,67 @@ export default () => {
     if (asset && protocolType == "brc20") {
       if (bridgeType === "redeem")
         return userBal[asset.targetTokenGenesis] || "0";
+      if (bridgeType === "mint")
+        return (brc20Info && brc20Info.balance) || "...";
     }
-  }, [protocolType, bridgeType, asset, userBal]);
+
+    if (asset && protocolType == "runes") {
+      if (bridgeType === "redeem")
+        return userBal[asset.targetTokenGenesis] || "0";
+      if (bridgeType === "mint")
+        return (runesInfo && runesInfo.amount) || "...";
+    }
+  }, [protocolType, bridgeType, asset, userBal, brc20Info, runesInfo]);
 
   const onInputChange = (value: string | number) => {
     setAmount(value);
-    if (
-      AssetsInfo &&
-      asset &&
-      protocolType === "btc" &&
-      bridgeType === "redeem"
-    ) {
+    if (AssetsInfo && asset) {
+      let info: FeeInfo;
       try {
-        const info = calcRedeemBtcInfo(
-          amountRaw(String(value), asset.decimals),
-          AssetsInfo
-        );
+        switch (bridgeType + protocolType) {
+          case "redeembtc":
+            info = calcRedeemBtcInfo(
+              amountRaw(String(value), asset.decimals),
+              AssetsInfo
+            );
+            break;
+          case "redeembrc20":
+            info = info = calcRedeemBrc20Info(
+              amountRaw(value, asset.decimals - asset.trimDecimals),
+              AssetsInfo,
+              asset
+            );
+            break;
+          case "mintbtc":
+            info = info = calcMintBtcInfo(amountRaw(value, 8), AssetsInfo);
+            break;
+          case "mintbrc20":
+            info = calcMintBrc20Info(value, AssetsInfo, asset);
+            break;
+          case "mintrunes":
+            info = calcMintRunesInfo(Number(value), AssetsInfo, asset);
+            break;
+          case "redeemrunes":
+            info = calcRedeemRunesInfo(
+              amountRaw(value, asset.decimals - asset.trimDecimals),
+              AssetsInfo,
+              asset
+            );
+            break;
+          default:
+            throw new Error("unsupport protocol");
+        }
+        if (Number(info.receiveAmount) < 0) {
+          throw new Error("low send amount");
+        }
         setErrorMsg("");
+
         setReciveAmount(info.receiveAmount);
         setFeeInfo(info);
       } catch (err: any) {
         console.log(err);
         message.error(err.message || "unknown error");
         setReciveAmount("");
-        setErrorMsg(err.message || "unknown error");
-      }
-    }
-    if (
-      AssetsInfo &&
-      asset &&
-      protocolType === "brc20" &&
-      bridgeType === "redeem"
-    ) {
-      try {
-        const info = calcRedeemBrc20Info(
-          amountRaw(value, asset.decimals - asset.trimDecimals),
-          AssetsInfo,
-          asset
-        );
-        setErrorMsg("");
-        setReciveAmount(info.receiveAmount);
-        setFeeInfo(info);
-      } catch (err) {
-        console.log(err);
-        setReciveAmount("");
-        message.error(err.message || "unknown error");
-        setErrorMsg(err.message || "unknown error");
-      }
-    }
-    if (AssetsInfo && protocolType === "btc" && bridgeType === "mint") {
-      try {
-        const info = calcMintBtcInfo(amountRaw(value, 8), AssetsInfo);
-        setErrorMsg("");
-        setReciveAmount(info.receiveAmount);
-        setFeeInfo(info);
-      } catch (err) {
-        console.log(err);
-        setReciveAmount("");
-        message.error(err.message || "unknown error");
-        setErrorMsg(err.message || "unknown error");
-      }
-    }
-
-    if (
-      AssetsInfo &&
-      asset &&
-      protocolType === "brc20" &&
-      bridgeType === "mint"
-    ) {
-      try {
-        const info = calcMintBrc20Info(value, AssetsInfo, asset);
-        setErrorMsg("");
-        setReciveAmount(info.receiveAmount);
-        setFeeInfo(info);
-      } catch (err) {
-        console.log(err);
-        setReciveAmount("");
-        message.error(err.message || "unknown error");
         setErrorMsg(err.message || "unknown error");
       }
     }
@@ -229,6 +234,26 @@ export default () => {
             transferBalanceList: [],
           }
         );
+        setLoadingBrc20(false);
+      }
+
+      if (
+        network &&
+        asset &&
+        btcAddress &&
+        bridgeType === "mint" &&
+        protocolType === "runes" &&
+        asset.network === "RUNES"
+      ) {
+        setLoadingBrc20(true);
+        const ret = await getUserRunesBalance(
+          btcAddress,
+          network,
+          asset.originTokenId
+        );
+        if (didCancel) return;
+        console.log(ret, "rrrr");
+        setRunesInfo(ret.data);
         setLoadingBrc20(false);
       }
     };
@@ -279,6 +304,14 @@ export default () => {
           network
         );
       }
+      if (asset && bridgeType === "redeem" && protocolType === "runes") {
+        await redeemRunes(
+          amountRaw(String(amount), asset.decimals - asset.trimDecimals),
+          asset,
+          addressType,
+          network
+        );
+      }
       setSuccessVisible(true);
       await getBal();
     } catch (err) {
@@ -314,6 +347,16 @@ export default () => {
           network,
           AssetsInfo,
           inscription
+        );
+      }
+
+      if (bridgeType === "mint" && protocolType === "runes") {
+        const ret = await mintRunes(
+          amount,
+          asset,
+          addressType,
+          network,
+          AssetsInfo
         );
       }
       setSuccessVisible(true);
@@ -368,6 +411,7 @@ export default () => {
       onClose: () => setConfirmProps(defalut),
     });
   };
+
   return (
     <div className="wrapPage">
       <Segmented
@@ -566,9 +610,7 @@ export default () => {
                           onChange={(_asset) => {
                             setAsset(_asset);
                             setSelectAssetVisible(undefined);
-                            setAmount("");
-                            setErrorMsg("");
-                            setReciveAmount("");
+                            resetInput();
                           }}
                         />
                       </div>
@@ -671,7 +713,7 @@ export default () => {
                         className="input"
                         onChange={onInputChange}
                         value={amount}
-                        max={sendBal}
+                        // max={sendBal}
                         variant={"borderless"}
                         controls={false}
                       />
@@ -680,11 +722,7 @@ export default () => {
                 </div>
                 <div className="bal">
                   Balance:
-                  {protocolType === "brc20" && bridgeType === "mint"
-                    ? brc20Info
-                      ? brc20Info.balance
-                      : "..."
-                    : sendBal}
+                  <span> {sendBal} </span>
                   {bridgeType === "mint"
                     ? asset.originSymbol
                     : asset.targetSymbol}
@@ -710,9 +748,7 @@ export default () => {
                           onChange={(_asset) => {
                             setAsset(_asset);
                             setSelectAssetVisible(undefined);
-                            setAmount("");
-                            setErrorMsg("");
-                            setReciveAmount("");
+                            resetInput();
                           }}
                         />
                       </div>
@@ -769,6 +805,8 @@ export default () => {
           <History
             show={historyVisible}
             onClose={() => setHistoryVisible(false)}
+            protocolType={protocolType}
+            bridgeType={bridgeType}
           />
         </Spin>
       </Card>

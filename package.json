@@ -20,6 +20,7 @@
     "rc-queue-anim": "^2.0.0",
     "rc-scroll-anim": "^2.7.6",
     "rc-tween-one": "^3.0.6",
+    "runelib": "^1.0.6",
     "umi": "^4.1.5"
   },
   "devDependencies": {

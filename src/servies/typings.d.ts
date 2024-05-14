@@ -69,4 +69,12 @@ declare namespace API {
     decimals: number
     blockHeight: number
   }
+  type RUNESItem = {
+    amount: string;
+    runeId: string;
+    rune: string;
+    spacedRune: string;
+    symbol: string;
+    divisibility: string;
+  };
 }

@@ -32,7 +32,7 @@ export function amountRaw(
 const confirmNumberBySeqAndAmount = function (
   amount: number,
   seq: number[][],
-  network: "BTC" | "BRC20" | "MVC"
+  network: "BTC" | "BRC20" | "RUNES" | "MVC"
 ) {
   for (const item of seq) {
     const [start, end, confirmBtc, confirmMvc] = item;
@@ -98,10 +98,10 @@ export const calcRedeemBtcInfo = (
   const receiveAmount = redeemAmount - totalFee;
   debugger;
   return {
-    receiveAmount:formatSat(receiveAmount),
-    minerFee:formatSat(minerFee),
-    bridgeFee:formatSat(bridgeFee),
-    totalFee:formatSat(totalFee),
+    receiveAmount: formatSat(receiveAmount),
+    minerFee: formatSat(minerFee),
+    bridgeFee: formatSat(bridgeFee),
+    totalFee: formatSat(totalFee),
     confirmNumber,
   };
 };
@@ -110,7 +110,7 @@ export const calcRedeemBrc20Info = (
   redeemAmount: number,
   assetInfo: API.AssetsData,
   asset: API.AssetItem
-):FeeInfo => {
+): FeeInfo => {
   const {
     btcPrice,
     feeBtc,
@@ -156,10 +156,16 @@ export const calcRedeemBrc20Info = (
   const totalFee = bridgeFee + minerFee;
   const receiveAmount = BigInt(redeemAmount) - totalFee;
   return {
-    receiveAmount:formatSat(String(receiveAmount),asset.decimals-asset.trimDecimals),
-    minerFee:formatSat(String(minerFee),asset.decimals-asset.trimDecimals),
-    bridgeFee:formatSat(String(bridgeFee),asset.decimals-asset.trimDecimals),
-    totalFee:formatSat(String(totalFee),asset.decimals-asset.trimDecimals),
+    receiveAmount: formatSat(
+      String(receiveAmount),
+      asset.decimals - asset.trimDecimals
+    ),
+    minerFee: formatSat(String(minerFee), asset.decimals - asset.trimDecimals),
+    bridgeFee: formatSat(
+      String(bridgeFee),
+      asset.decimals - asset.trimDecimals
+    ),
+    totalFee: formatSat(String(totalFee), asset.decimals - asset.trimDecimals),
     confirmNumber,
   };
 };
@@ -167,7 +173,7 @@ export const calcRedeemBrc20Info = (
 export const calcMintBtcInfo = (
   mintAmount: number,
   assetInfo: API.AssetsData
-):FeeInfo => {
+): FeeInfo => {
   const {
     btcPrice,
     mvcPrice,
@@ -205,10 +211,10 @@ export const calcMintBtcInfo = (
   const receiveAmount = mintAmount - totalFee;
 
   return {
-    receiveAmount:formatSat(receiveAmount),
-    minerFee:formatSat(minerFee),
-    bridgeFee:formatSat(bridgeFee),
-    totalFee:formatSat(totalFee),
+    receiveAmount: formatSat(receiveAmount),
+    minerFee: formatSat(minerFee),
+    bridgeFee: formatSat(bridgeFee),
+    totalFee: formatSat(totalFee),
     confirmNumber,
   };
 };
@@ -217,7 +223,7 @@ export const calcMintBrc20Info = (
   mintAmount: number,
   assetInfo: API.AssetsData,
   asset: API.AssetItem
-):FeeInfo => {
+): FeeInfo => {
   const {
     btcPrice,
     mvcPrice,
@@ -328,4 +334,135 @@ export const formatUnitToBtc = (
     return 0;
   }
   return new Decimal(value).div(10 ** decimal).toNumber();
+};
+
+export const calcMintRunesInfo = (
+  mintAmount: number,
+  assetInfo: API.AssetsData,
+  asset: API.AssetItem
+): FeeInfo => {
+  const {
+    btcPrice,
+    mvcPrice,
+    feeBtc,
+    feeMvc,
+    amountLimitMaximum,
+    amountLimitMinimum,
+    confirmSequence,
+    transactionSize,
+    assetList,
+  } = assetInfo;
+  console.log("asset:", asset);
+ 
+  console.log(new Decimal(mintAmount).mul(10 ** asset.decimals));
+
+  // // 转换成btc价值
+  const mintRunesEqualBtcAmount =
+    ((asset.price * Number(mintAmount)) / btcPrice) * 10 ** 8;
+  console.log("mintRunesEqualBtcAmount:", mintRunesEqualBtcAmount);
+  console.log(
+    "mintRunesEqualBtcAmount:",
+    amountLimitMinimum,
+    amountLimitMaximum
+  );
+
+  if (Number(mintRunesEqualBtcAmount) < Number(amountLimitMinimum)) {
+    throw new Error("amount less than minimum amount");
+  }
+  if (Number(mintRunesEqualBtcAmount) > Number(amountLimitMaximum)) {
+    throw new Error("amount greater than maximum amount");
+  }
+
+  const confirmNumber = confirmNumberBySeqAndAmount(
+    mintRunesEqualBtcAmount,
+    confirmSequence,
+    // mint btc -> mvc, get mvc confirm number
+    "RUNES"
+  );
+  let bridgeFee: number = 0;
+  let minerFee: number = 0;
+  if (asset.feeRateNumeratorMint > 0 || asset.feeRateConstMint > 0) {
+    bridgeFee =
+      (Number(mintAmount) * asset.feeRateNumeratorMint) / 10000 +
+      ((asset.feeRateConstMint / 10 ** 8) * btcPrice) / asset.price;
+    minerFee =
+      (transactionSize.BTC_MINT * feeMvc * mvcPrice) / 10 ** 8 / asset.price;
+  }
+  const totalFee = bridgeFee + minerFee;
+  const receiveAmount = Number(mintAmount) - totalFee;
+  const receiveAmountFixed = receiveAmount.toFixed(
+    asset.decimals - asset.trimDecimals
+  );
+  return {
+    receiveAmount: receiveAmountFixed,
+    minerFee,
+    bridgeFee,
+    totalFee,
+    confirmNumber,
+  };
+};
+
+export const calcRedeemRunesInfo = (
+  redeemAmount: number,
+  assetInfo: API.AssetsData,
+  asset: API.AssetItem
+): FeeInfo => {
+  const {
+    btcPrice,
+    feeBtc,
+    amountLimitMaximum,
+    amountLimitMinimum,
+    confirmSequence,
+    transactionSize,
+  } = assetInfo;
+
+  const runesAmount =
+  redeemAmount / 10 ** (asset.decimals - asset.trimDecimals);
+  const redeemBrc20EqualBtcAmount =
+  ((asset.price * Number(runesAmount)) / btcPrice) * 10 ** 8;
+
+  if (redeemBrc20EqualBtcAmount < Number(amountLimitMinimum)) {
+    throw new Error("amount less than minimum amount");
+  }
+  if (redeemBrc20EqualBtcAmount > Number(amountLimitMaximum)) {
+    throw new Error("amount greater than maximum amount");
+  }
+
+  const confirmNumber = confirmNumberBySeqAndAmount(
+    redeemBrc20EqualBtcAmount,
+    confirmSequence,
+    // mint btc -> mvc, get mvc confirm number
+    "MVC"
+  );
+  const bridgeFeeConst = BigInt(
+    Math.floor(
+      (((asset.feeRateConstRedeem / 10 ** 8) * btcPrice) / asset.price) *
+        10 ** (asset.decimals - asset.trimDecimals)
+    )
+  );
+  const bridgeFeePercent =
+    (BigInt(redeemAmount) * BigInt(asset.feeRateNumeratorRedeem)) / 10000n;
+  const bridgeFee = bridgeFeeConst + bridgeFeePercent;
+  const minerFee = BigInt(
+    Math.floor(
+      (((transactionSize.BRC20_REDEEM / 10 ** 8) * feeBtc * btcPrice) /
+        asset.price) *
+        10 ** (asset.decimals - asset.trimDecimals)
+    )
+  );
+  const totalFee = bridgeFee + minerFee;
+  const receiveAmount = BigInt(redeemAmount) - totalFee;
+  return {
+    receiveAmount: formatSat(
+      String(receiveAmount),
+      asset.decimals - asset.trimDecimals
+    ),
+    minerFee: formatSat(String(minerFee), asset.decimals - asset.trimDecimals),
+    bridgeFee: formatSat(
+      String(bridgeFee),
+      asset.decimals - asset.trimDecimals
+    ),
+    totalFee: formatSat(String(totalFee), asset.decimals - asset.trimDecimals),
+    confirmNumber,
+  };
 };
