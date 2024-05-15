@@ -3354,8 +3354,8 @@ style.className = 'style';
 /* harmony default export */ var StylePlugin = (style);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
 var assertThisInitialized = __webpack_require__(97326);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js + 1 modules
-var inherits = __webpack_require__(32531);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
+var inherits = __webpack_require__(60136);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js
 var createSuper = __webpack_require__(29388);
 ;// CONCATENATED MODULE: ./node_modules/tween-one/es/plugins/PluginMixins.js

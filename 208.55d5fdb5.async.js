@@ -3065,7 +3065,7 @@ var svgBaseProps = {
   'aria-hidden': 'true',
   focusable: 'false'
 };
-var iconStyles = "\n.anticon {\n  display: inline-flex;\n  alignItems: center;\n  color: inherit;\n  font-style: normal;\n  line-height: 0;\n  text-align: center;\n  text-transform: none;\n  vertical-align: -0.125em;\n  text-rendering: optimizeLegibility;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n\n.anticon > * {\n  line-height: 1;\n}\n\n.anticon svg {\n  display: inline-block;\n}\n\n.anticon::before {\n  display: none;\n}\n\n.anticon .anticon-icon {\n  display: block;\n}\n\n.anticon[tabindex] {\n  cursor: pointer;\n}\n\n.anticon-spin::before,\n.anticon-spin {\n  display: inline-block;\n  -webkit-animation: loadingCircle 1s infinite linear;\n  animation: loadingCircle 1s infinite linear;\n}\n\n@-webkit-keyframes loadingCircle {\n  100% {\n    -webkit-transform: rotate(360deg);\n    transform: rotate(360deg);\n  }\n}\n\n@keyframes loadingCircle {\n  100% {\n    -webkit-transform: rotate(360deg);\n    transform: rotate(360deg);\n  }\n}\n";
+var iconStyles = "\n.anticon {\n  display: inline-flex;\n  align-items: center;\n  color: inherit;\n  font-style: normal;\n  line-height: 0;\n  text-align: center;\n  text-transform: none;\n  vertical-align: -0.125em;\n  text-rendering: optimizeLegibility;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n\n.anticon > * {\n  line-height: 1;\n}\n\n.anticon svg {\n  display: inline-block;\n}\n\n.anticon::before {\n  display: none;\n}\n\n.anticon .anticon-icon {\n  display: block;\n}\n\n.anticon[tabindex] {\n  cursor: pointer;\n}\n\n.anticon-spin::before,\n.anticon-spin {\n  display: inline-block;\n  -webkit-animation: loadingCircle 1s infinite linear;\n  animation: loadingCircle 1s infinite linear;\n}\n\n@-webkit-keyframes loadingCircle {\n  100% {\n    -webkit-transform: rotate(360deg);\n    transform: rotate(360deg);\n  }\n}\n\n@keyframes loadingCircle {\n  100% {\n    -webkit-transform: rotate(360deg);\n    transform: rotate(360deg);\n  }\n}\n";
 var useInsertStyles = function useInsertStyles(eleRef) {
   var _useContext = (0,react.useContext)(Context/* default */.Z),
     csp = _useContext.csp,
@@ -5625,6 +5625,7 @@ const ProviderChildren = props => {
     tour,
     floatButtonGroup
   };
+  if (false) {}
   const config = Object.assign({}, parentContext);
   Object.keys(baseConfig).forEach(key => {
     if (baseConfig[key] !== undefined) {
@@ -5639,6 +5640,12 @@ const ProviderChildren = props => {
       config[propName] = propValue;
     }
   });
+  if (typeof autoInsertSpaceInButton !== 'undefined') {
+    // merge deprecated api
+    config.button = Object.assign({
+      autoInsertSpace: autoInsertSpaceInButton
+    }, config.button);
+  }
   // https://github.com/ant-design/ant-design/issues/27617
   const memoedConfig = (0,useMemo/* default */.Z)(() => config, config, (prevConfig, currentConfig) => {
     const prevKeys = Object.keys(prevConfig);
@@ -7921,6 +7928,7 @@ function genColorMapToken(seed, _ref) {
     colorSuccessTextActive: successColors[10],
     colorErrorBg: errorColors[1],
     colorErrorBgHover: errorColors[2],
+    colorErrorBgActive: errorColors[3],
     colorErrorBorder: errorColors[3],
     colorErrorBorderHover: errorColors[4],
     colorErrorHover: errorColors[5],
@@ -8068,7 +8076,7 @@ var react = __webpack_require__(62435);
 // EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 35 modules
 var es = __webpack_require__(54548);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/version/version.js
-/* harmony default export */ var version = ('5.16.4');
+/* harmony default export */ var version = ('5.17.2');
 ;// CONCATENATED MODULE: ./node_modules/antd/es/version/index.js
 "use client";
 
@@ -8484,8 +8492,8 @@ var possibleConstructorReturn = __webpack_require__(82963);
 function _callSuper(t, o, e) {
   return o = (0,getPrototypeOf/* default */.Z)(o), (0,possibleConstructorReturn/* default */.Z)(t, (0,isNativeReflectConstruct/* default */.Z)() ? Reflect.construct(o, e || [], (0,getPrototypeOf/* default */.Z)(t).constructor) : o.apply(t, e));
 }
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js + 1 modules
-var inherits = __webpack_require__(32531);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
+var inherits = __webpack_require__(60136);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/theme/util/calc/calculator.js
 
 
@@ -8770,6 +8778,9 @@ function genComponentStyleHook(componentName, styleFn, getDefaultToken) {
       hashId,
       nonce: () => csp === null || csp === void 0 ? void 0 : csp.nonce,
       clientOnly: options.clientOnly,
+      layer: {
+        name: 'antd'
+      },
       // antd is always at top of styles
       order: options.order || -999
     };
@@ -9002,7 +9013,10 @@ const useResetIconStyle = (iconPrefixCls, csp) => {
     token,
     hashId: '',
     path: ['ant-design-icons', iconPrefixCls],
-    nonce: () => csp === null || csp === void 0 ? void 0 : csp.nonce
+    nonce: () => csp === null || csp === void 0 ? void 0 : csp.nonce,
+    layer: {
+      name: 'antd'
+    }
   }, () => [{
     [`.${iconPrefixCls}`]: Object.assign(Object.assign({}, (0,_style__WEBPACK_IMPORTED_MODULE_2__/* .resetIcon */ .Ro)()), {
       [`.${iconPrefixCls} .${iconPrefixCls}-icon`]: {
@@ -9062,8 +9076,8 @@ function MotionProvider(_ref) {
 var classCallCheck = __webpack_require__(15671);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
 var createClass = __webpack_require__(43144);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js + 1 modules
-var inherits = __webpack_require__(32531);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
+var inherits = __webpack_require__(60136);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js
 var createSuper = __webpack_require__(29388);
 ;// CONCATENATED MODULE: ./node_modules/rc-motion/es/DomWrapper.js
@@ -11298,29 +11312,25 @@ if (false) {}
 /* harmony import */ var react_is__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11805);
 /* harmony import */ var _hooks_useMemo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(56982);
 
-/* eslint-disable no-param-reassign */
 
 
 
-
-function fillRef(ref, node) {
+var fillRef = function fillRef(ref, node) {
   if (typeof ref === 'function') {
     ref(node);
   } else if ((0,_babel_runtime_helpers_esm_typeof__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(ref) === 'object' && ref && 'current' in ref) {
     ref.current = node;
   }
-}
+};
 
 /**
  * Merge refs into one ref function to support ref passing.
  */
-function composeRef() {
+var composeRef = function composeRef() {
   for (var _len = arguments.length, refs = new Array(_len), _key = 0; _key < _len; _key++) {
     refs[_key] = arguments[_key];
   }
-  var refList = refs.filter(function (ref) {
-    return ref;
-  });
+  var refList = refs.filter(Boolean);
   if (refList.length <= 1) {
     return refList[0];
   }
@@ -11329,8 +11339,8 @@ function composeRef() {
       fillRef(ref, node);
     });
   };
-}
-function useComposeRef() {
+};
+var useComposeRef = function useComposeRef() {
   for (var _len2 = arguments.length, refs = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
     refs[_key2] = arguments[_key2];
   }
@@ -11341,8 +11351,8 @@ function useComposeRef() {
       return ref !== next[i];
     });
   });
-}
-function supportRef(nodeOrComponent) {
+};
+var supportRef = function supportRef(nodeOrComponent) {
   var _type$prototype, _nodeOrComponent$prot;
   var type = (0,react_is__WEBPACK_IMPORTED_MODULE_1__.isMemo)(nodeOrComponent) ? nodeOrComponent.type.type : nodeOrComponent.type;
 
@@ -11356,8 +11366,8 @@ function supportRef(nodeOrComponent) {
     return false;
   }
   return true;
-}
-function supportNodeRef(node) {
+};
+var supportNodeRef = function supportNodeRef(node) {
   if (! /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.isValidElement)(node)) {
     return false;
   }
@@ -11365,8 +11375,7 @@ function supportNodeRef(node) {
     return false;
   }
   return supportRef(node);
-}
-/* eslint-enable */
+};
 
 /***/ }),
 
@@ -11895,25 +11904,14 @@ function _getPrototypeOf(o) {
 
 /***/ }),
 
-/***/ 32531:
+/***/ 60136:
 /***/ (function(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  Z: function() { return /* binding */ _inherits; }
-});
-
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
-function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-  return _setPrototypeOf(o, p);
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Z: function() { return /* binding */ _inherits; }
+/* harmony export */ });
+/* harmony import */ var _setPrototypeOf_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(89611);
 
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
@@ -11929,7 +11927,7 @@ function _inherits(subClass, superClass) {
   Object.defineProperty(subClass, "prototype", {
     writable: false
   });
-  if (superClass) _setPrototypeOf(subClass, superClass);
+  if (superClass) (0,_setPrototypeOf_js__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(subClass, superClass);
 }
 
 /***/ }),
@@ -12025,12 +12023,11 @@ __webpack_require__.d(__webpack_exports__, {
 function _objectWithoutPropertiesLoose(source, excluded) {
   if (source == null) return {};
   var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
+  for (var key in source) {
+    if (Object.prototype.hasOwnProperty.call(source, key)) {
+      if (excluded.indexOf(key) >= 0) continue;
+      target[key] = source[key];
+    }
   }
   return target;
 }
@@ -12386,6 +12383,23 @@ function _regeneratorRuntime() {
       }, "next" === this.method && (this.arg = t), y;
     }
   }, e;
+}
+
+/***/ }),
+
+/***/ 89611:
+/***/ (function(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Z: function() { return /* binding */ _setPrototypeOf; }
+/* harmony export */ });
+function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+  return _setPrototypeOf(o, p);
 }
 
 /***/ }),

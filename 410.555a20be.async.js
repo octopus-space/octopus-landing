@@ -1,4 +1,4 @@
-(self["webpackChunk"] = self["webpackChunk"] || []).push([[763],{
+(self["webpackChunk"] = self["webpackChunk"] || []).push([[410],{
 
 /***/ 80882:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
@@ -1250,7 +1250,7 @@ const genCardStyle = token => {
       }
     },
     [`${componentCls}-contain-tabs`]: {
-      [`> ${componentCls}-head`]: {
+      [`> div${componentCls}-head`]: {
         minHeight: 0,
         [`${componentCls}-head-title, ${componentCls}-extra`]: {
           paddingTop: cardHeadPadding
@@ -1887,11 +1887,10 @@ const flexWrapValues = ['wrap', 'nowrap', 'wrap-reverse'];
 const justifyContentValues = ['flex-start', 'flex-end', 'start', 'end', 'center', 'space-between', 'space-around', 'space-evenly', 'stretch', 'normal', 'left', 'right'];
 const alignItemsValues = ['center', 'start', 'end', 'flex-start', 'flex-end', 'self-start', 'self-end', 'baseline', 'normal', 'stretch'];
 const genClsWrap = (prefixCls, props) => {
-  const wrapCls = {};
-  flexWrapValues.forEach(cssKey => {
-    wrapCls[`${prefixCls}-wrap-${cssKey}`] = props.wrap === cssKey;
-  });
-  return wrapCls;
+  const wrap = props.wrap === true ? 'wrap' : props.wrap;
+  return {
+    [`${prefixCls}-wrap-${wrap}`]: wrap && flexWrapValues.includes(wrap)
+  };
 };
 const genClsAlign = (prefixCls, props) => {
   const alignCls = {};
@@ -2074,7 +2073,7 @@ if (false) {}
 "use strict";
 /* unused harmony export Variants */
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62435);
-/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(52706);
+/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(60566);
 
 
 const Variants = ['outlined', 'borderless', 'filled'];
@@ -3419,8 +3418,8 @@ var DisabledContext = __webpack_require__(98866);
 var useCSSVarCls = __webpack_require__(35792);
 // EXTERNAL MODULE: ./node_modules/antd/es/config-provider/hooks/useSize.js
 var useSize = __webpack_require__(98675);
-// EXTERNAL MODULE: ./node_modules/antd/es/form/context.js + 16 modules
-var form_context = __webpack_require__(52706);
+// EXTERNAL MODULE: ./node_modules/antd/es/form/context.js + 45 modules
+var form_context = __webpack_require__(60566);
 // EXTERNAL MODULE: ./node_modules/antd/es/form/hooks/useVariants.js
 var useVariants = __webpack_require__(27833);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/Compact.js
@@ -4025,8 +4024,8 @@ var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
 // EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
 var context = __webpack_require__(53124);
-// EXTERNAL MODULE: ./node_modules/antd/es/form/context.js + 16 modules
-var form_context = __webpack_require__(52706);
+// EXTERNAL MODULE: ./node_modules/antd/es/form/context.js + 45 modules
+var form_context = __webpack_require__(60566);
 // EXTERNAL MODULE: ./node_modules/antd/es/input/style/index.js
 var input_style = __webpack_require__(47673);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/input/Group.js
@@ -4387,9 +4386,11 @@ const OTPInput = /*#__PURE__*/react.forwardRef((props, ref) => {
       value,
       onChange,
       onActiveChange,
-      index
+      index,
+      mask
     } = props,
-    restProps = OTPInput_rest(props, ["value", "onChange", "onActiveChange", "index"]);
+    restProps = OTPInput_rest(props, ["value", "onChange", "onActiveChange", "index", "mask"]);
+  const internalValue = value && typeof mask === 'string' ? mask : value;
   const onInternalChange = e => {
     onChange(index, e.target.value);
   };
@@ -4427,13 +4428,14 @@ const OTPInput = /*#__PURE__*/react.forwardRef((props, ref) => {
   // ========================= Render =========================
   return /*#__PURE__*/react.createElement(input_Input, Object.assign({}, restProps, {
     ref: inputRef,
-    value: value,
+    value: internalValue,
     onInput: onInternalChange,
     onFocus: syncSelection,
     onKeyDown: onInternalKeyDown,
     onKeyUp: onInternalKeyUp,
     onMouseDown: syncSelection,
-    onMouseUp: syncSelection
+    onMouseUp: syncSelection,
+    type: mask === true ? 'password' : 'text'
   }));
 });
 /* harmony default export */ var OTP_OTPInput = (OTPInput);
@@ -4460,6 +4462,7 @@ var OTP_rest = undefined && undefined.__rest || function (s, e) {
 
 
 
+
 function strToArr(str) {
   return (str || '').split('');
 }
@@ -4475,9 +4478,11 @@ const OTP = /*#__PURE__*/react.forwardRef((props, ref) => {
       variant,
       disabled,
       status: customStatus,
-      autoFocus
+      autoFocus,
+      mask
     } = props,
-    restProps = OTP_rest(props, ["prefixCls", "length", "size", "defaultValue", "value", "onChange", "formatter", "variant", "disabled", "status", "autoFocus"]);
+    restProps = OTP_rest(props, ["prefixCls", "length", "size", "defaultValue", "value", "onChange", "formatter", "variant", "disabled", "status", "autoFocus", "mask"]);
+  if (false) {}
   const {
     getPrefixCls,
     direction
@@ -4583,7 +4588,8 @@ const OTP = /*#__PURE__*/react.forwardRef((props, ref) => {
   const inputSharedProps = {
     variant,
     disabled,
-    status: mergedStatus
+    status: mergedStatus,
+    mask
   };
   return wrapCSSVar( /*#__PURE__*/react.createElement("div", Object.assign({}, domAttrs, {
     ref: containerRef,
@@ -4594,7 +4600,9 @@ const OTP = /*#__PURE__*/react.forwardRef((props, ref) => {
     }, cssVarCls, hashId)
   }), /*#__PURE__*/react.createElement(form_context/* FormItemInputContext */.aM.Provider, {
     value: proxyFormContext
-  }, new Array(length).fill(0).map((_, index) => {
+  }, Array.from({
+    length
+  }).map((_, index) => {
     const key = `otp-${index}`;
     const singleValue = valueCells[index] || '';
     return /*#__PURE__*/react.createElement(OTP_OTPInput, Object.assign({
@@ -4696,7 +4704,10 @@ const actionMap = {
 };
 const Password = /*#__PURE__*/react.forwardRef((props, ref) => {
   const {
-    visibilityToggle = true
+    disabled,
+    action = 'click',
+    visibilityToggle = true,
+    iconRender = defaultIconRender
   } = props;
   const visibilityControlled = typeof visibilityToggle === 'object' && visibilityToggle.visible !== undefined;
   const [visible, setVisible] = (0,react.useState)(() => visibilityControlled ? visibilityToggle.visible : false);
@@ -4709,9 +4720,6 @@ const Password = /*#__PURE__*/react.forwardRef((props, ref) => {
   // Remove Password value
   const removePasswordTimeout = useRemovePasswordTimeout(inputRef);
   const onVisibleChange = () => {
-    const {
-      disabled
-    } = props;
     if (disabled) {
       return;
     }
@@ -4728,10 +4736,6 @@ const Password = /*#__PURE__*/react.forwardRef((props, ref) => {
     });
   };
   const getIcon = prefixCls => {
-    const {
-      action = 'click',
-      iconRender = defaultIconRender
-    } = props;
     const iconTrigger = actionMap[action] || '';
     const icon = iconRender(visible);
     const iconProps = {
@@ -6468,7 +6472,10 @@ const genOutlinedStatusStyle = (token, options) => ({
     [`${token.componentCls}-prefix, ${token.componentCls}-suffix`]: {
       color: options.affixColor
     }
-  })
+  }),
+  [`&${token.componentCls}-status-${options.status}${token.componentCls}-disabled`]: {
+    borderColor: options.borderColor
+  }
 });
 const genOutlinedStyle = (token, extraStyles) => ({
   '&-outlined': Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, genBaseOutlinedStyle(token, {
@@ -9188,15 +9195,15 @@ var KeyCode = __webpack_require__(15105);
 
 
 
+
 var OperationNode = /*#__PURE__*/react.forwardRef(function (props, ref) {
   var prefixCls = props.prefixCls,
     id = props.id,
     tabs = props.tabs,
     locale = props.locale,
     mobile = props.mobile,
-    _props$moreIcon = props.moreIcon,
-    moreIcon = _props$moreIcon === void 0 ? 'More' : _props$moreIcon,
-    moreTransitionName = props.moreTransitionName,
+    _props$more = props.more,
+    moreProps = _props$more === void 0 ? {} : _props$more,
     style = props.style,
     className = props.className,
     editable = props.editable,
@@ -9215,6 +9222,8 @@ var OperationNode = /*#__PURE__*/react.forwardRef(function (props, ref) {
     _useState4 = (0,slicedToArray/* default */.Z)(_useState3, 2),
     selectedKey = _useState4[0],
     setSelectedKey = _useState4[1];
+  var _moreProps$icon = moreProps.icon,
+    moreIcon = _moreProps$icon === void 0 ? 'More' : _moreProps$icon;
   var popupId = "".concat(id, "-more-popup");
   var dropdownPrefix = "".concat(prefixCls, "-dropdown");
   var selectedItemId = selectedKey !== null ? "".concat(popupId, "-").concat(selectedKey) : null;
@@ -9333,18 +9342,16 @@ var OperationNode = /*#__PURE__*/react.forwardRef(function (props, ref) {
     moreStyle.order = 1;
   }
   var overlayClassName = classnames_default()((0,defineProperty/* default */.Z)({}, "".concat(dropdownPrefix, "-rtl"), rtl));
-  var moreNode = mobile ? null : /*#__PURE__*/react.createElement(rc_dropdown_es/* default */.Z, {
+  var moreNode = mobile ? null : /*#__PURE__*/react.createElement(rc_dropdown_es/* default */.Z, (0,esm_extends/* default */.Z)({
     prefixCls: dropdownPrefix,
     overlay: menu,
-    trigger: ['hover'],
     visible: tabs.length ? open : false,
-    transitionName: moreTransitionName,
     onVisibleChange: setOpen,
     overlayClassName: classnames_default()(overlayClassName, popupClassName),
     mouseEnterDelay: 0.1,
     mouseLeaveDelay: 0.1,
     getPopupContainer: getPopupContainer
-  }, /*#__PURE__*/react.createElement("button", {
+  }, moreProps), /*#__PURE__*/react.createElement("button", {
     type: "button",
     className: "".concat(prefixCls, "-nav-more"),
     style: moreStyle,
@@ -10092,7 +10099,7 @@ function useAnimateConfig() {
 
 
 
-var Tabs_excluded = ["id", "prefixCls", "className", "items", "direction", "activeKey", "defaultActiveKey", "editable", "animated", "tabPosition", "tabBarGutter", "tabBarStyle", "tabBarExtraContent", "locale", "moreIcon", "moreTransitionName", "destroyInactiveTabPane", "renderTabBar", "onChange", "onTabClick", "onTabScroll", "getPopupContainer", "popupClassName", "indicator"];
+var Tabs_excluded = ["id", "prefixCls", "className", "items", "direction", "activeKey", "defaultActiveKey", "editable", "animated", "tabPosition", "tabBarGutter", "tabBarStyle", "tabBarExtraContent", "locale", "more", "destroyInactiveTabPane", "renderTabBar", "onChange", "onTabClick", "onTabScroll", "getPopupContainer", "popupClassName", "indicator"];
 // Accessibility https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Tab_Role
 
 
@@ -10132,8 +10139,7 @@ var Tabs = /*#__PURE__*/react.forwardRef(function (props, ref) {
     tabBarStyle = props.tabBarStyle,
     tabBarExtraContent = props.tabBarExtraContent,
     locale = props.locale,
-    moreIcon = props.moreIcon,
-    moreTransitionName = props.moreTransitionName,
+    more = props.more,
     destroyInactiveTabPane = props.destroyInactiveTabPane,
     renderTabBar = props.renderTabBar,
     onChange = props.onChange,
@@ -10234,8 +10240,7 @@ var Tabs = /*#__PURE__*/react.forwardRef(function (props, ref) {
   var tabNavBarProps = (0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({}, sharedProps), {}, {
     editable: editable,
     locale: locale,
-    moreIcon: moreIcon,
-    moreTransitionName: moreTransitionName,
+    more: more,
     tabBarGutter: tabBarGutter,
     onTabClick: onInternalTabClick,
     onTabScroll: onTabScroll,
@@ -11265,7 +11270,7 @@ var tabs_rest = undefined && undefined.__rest || function (s, e) {
 
 
 const tabs_Tabs = props => {
-  var _a, _b, _c, _d, _e, _f, _g, _h;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
   const {
       type,
       className,
@@ -11277,6 +11282,7 @@ const tabs_Tabs = props => {
       addIcon,
       removeIcon,
       moreIcon,
+      more,
       popupClassName,
       children,
       items,
@@ -11285,7 +11291,7 @@ const tabs_Tabs = props => {
       indicatorSize,
       indicator
     } = props,
-    otherProps = tabs_rest(props, ["type", "className", "rootClassName", "size", "onEdit", "hideAdd", "centered", "addIcon", "removeIcon", "moreIcon", "popupClassName", "children", "items", "animated", "style", "indicatorSize", "indicator"]);
+    otherProps = tabs_rest(props, ["type", "className", "rootClassName", "size", "onEdit", "hideAdd", "centered", "addIcon", "removeIcon", "moreIcon", "more", "popupClassName", "children", "items", "animated", "style", "indicatorSize", "indicator"]);
   const {
     prefixCls: customizePrefixCls
   } = otherProps;
@@ -11325,8 +11331,7 @@ const tabs_Tabs = props => {
   };
   return wrapCSSVar( /*#__PURE__*/react.createElement(rc_tabs_es, Object.assign({
     direction: direction,
-    getPopupContainer: getPopupContainer,
-    moreTransitionName: `${rootPrefixCls}-slide-up`
+    getPopupContainer: getPopupContainer
   }, otherProps, {
     items: mergedItems,
     className: classnames_default()({
@@ -11338,7 +11343,10 @@ const tabs_Tabs = props => {
     popupClassName: classnames_default()(popupClassName, hashId, cssVarCls, rootCls),
     style: mergedStyle,
     editable: editable,
-    moreIcon: (_h = moreIcon !== null && moreIcon !== void 0 ? moreIcon : tabs === null || tabs === void 0 ? void 0 : tabs.moreIcon) !== null && _h !== void 0 ? _h : /*#__PURE__*/react.createElement(EllipsisOutlined/* default */.Z, null),
+    more: Object.assign({
+      icon: (_l = (_k = (_j = (_h = tabs === null || tabs === void 0 ? void 0 : tabs.more) === null || _h === void 0 ? void 0 : _h.icon) !== null && _j !== void 0 ? _j : tabs === null || tabs === void 0 ? void 0 : tabs.moreIcon) !== null && _k !== void 0 ? _k : moreIcon) !== null && _l !== void 0 ? _l : /*#__PURE__*/react.createElement(EllipsisOutlined/* default */.Z, null),
+      transitionName: `${rootPrefixCls}-slide-up`
+    }, more),
     prefixCls: prefixCls,
     animated: mergedAnimated,
     indicator: mergedIndicator
@@ -14832,60 +14840,59 @@ const tweakAddVectors = [
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
-var __webpack_unused_export__;
 
-__webpack_unused_export__ = ({ value: true });
-exports.Wi =
-  exports.YW =
-  __webpack_unused_export__ =
-  exports._B =
-  __webpack_unused_export__ =
-  __webpack_unused_export__ =
-  exports.PP =
-  exports.QW =
-  __webpack_unused_export__ =
-  __webpack_unused_export__ =
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.initEccLib =
+  exports.Transaction =
+  exports.opcodes =
+  exports.Psbt =
+  exports.Block =
+  exports.script =
+  exports.payments =
+  exports.networks =
+  exports.crypto =
+  exports.address =
     void 0;
 const address = __webpack_require__(95488);
-__webpack_unused_export__ = address;
+exports.address = address;
 const crypto = __webpack_require__(5525);
-__webpack_unused_export__ = crypto;
+exports.crypto = crypto;
 const networks = __webpack_require__(74378);
-exports.QW = networks;
+exports.networks = networks;
 const payments = __webpack_require__(84972);
-exports.PP = payments;
+exports.payments = payments;
 const script = __webpack_require__(73357);
-__webpack_unused_export__ = script;
+exports.script = script;
 var block_1 = __webpack_require__(87949);
-__webpack_unused_export__ = ({
+Object.defineProperty(exports, "Block", ({
   enumerable: true,
   get: function () {
     return block_1.Block;
   },
-});
+}));
 var psbt_1 = __webpack_require__(99930);
-Object.defineProperty(exports, "_B", ({
+Object.defineProperty(exports, "Psbt", ({
   enumerable: true,
   get: function () {
     return psbt_1.Psbt;
   },
 }));
 var ops_1 = __webpack_require__(47334);
-__webpack_unused_export__ = ({
+Object.defineProperty(exports, "opcodes", ({
   enumerable: true,
   get: function () {
     return ops_1.OPS;
   },
-});
+}));
 var transaction_1 = __webpack_require__(82737);
-Object.defineProperty(exports, "YW", ({
+Object.defineProperty(exports, "Transaction", ({
   enumerable: true,
   get: function () {
     return transaction_1.Transaction;
   },
 }));
 var ecc_lib_1 = __webpack_require__(66379);
-Object.defineProperty(exports, "Wi", ({
+Object.defineProperty(exports, "initEccLib", ({
   enumerable: true,
   get: function () {
     return ecc_lib_1.initEccLib;
@@ -20639,6 +20646,956 @@ function triggerFocus(element, option) {
     }
   }
 }
+
+/***/ }),
+
+/***/ 51049:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.base26Decode = exports.base26Encode = void 0;
+function base26Encode(input) {
+    let result = 0n;
+    for (let i = 0; i < input.length; i++) {
+        const charCode = BigInt(input.charCodeAt(i) - 'A'.charCodeAt(0));
+        const iInv = BigInt(input.length) - 1n - BigInt(i);
+        if (iInv == 0n) {
+            result += charCode;
+        }
+        else {
+            const base = 26n ** iInv;
+            result += base * (charCode + 1n);
+        }
+    }
+    return result;
+}
+exports.base26Encode = base26Encode;
+function base26Decode(s) {
+    if (s === 340282366920938463463374607431768211455n) {
+        return "BCGDENLQRQWDSLRUGSNLBTMFIJAV";
+    }
+    s += 1n;
+    let symbol = [];
+    while (s > 0) {
+        const i = (s - 1n) % 26n;
+        symbol.push("ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Number(i)));
+        s = (s - 1n) / 26n;
+    }
+    return symbol.reverse().join('');
+}
+exports.base26Decode = base26Decode;
+
+
+/***/ }),
+
+/***/ 85006:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.none = exports.some = void 0;
+class None {
+    constructor() { }
+    isSome() {
+        return false;
+    }
+    map(f) {
+        return new None();
+    }
+    value() {
+        return null;
+    }
+}
+class Some {
+    constructor(value) {
+        this._value = value;
+    }
+    isSome() {
+        return true;
+    }
+    map(f) {
+        return new Some(f(this.value()));
+    }
+    value() {
+        return this._value;
+    }
+}
+function some(t) {
+    return new Some(t);
+}
+exports.some = some;
+function none() {
+    return new None();
+}
+exports.none = none;
+
+
+/***/ }),
+
+/***/ 55659:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.removeSpacers = exports.getSpacersVal = exports.applySpacers = exports.some = exports.none = void 0;
+__exportStar(__webpack_require__(54366), exports);
+var fts_1 = __webpack_require__(85006);
+Object.defineProperty(exports, "none", ({ enumerable: true, get: function () { return fts_1.none; } }));
+Object.defineProperty(exports, "some", ({ enumerable: true, get: function () { return fts_1.some; } }));
+var spacers_1 = __webpack_require__(15193);
+Object.defineProperty(exports, "applySpacers", ({ enumerable: true, get: function () { return spacers_1.applySpacers; } }));
+Object.defineProperty(exports, "getSpacersVal", ({ enumerable: true, get: function () { return spacers_1.getSpacersVal; } }));
+Object.defineProperty(exports, "removeSpacers", ({ enumerable: true, get: function () { return spacers_1.removeSpacers; } }));
+
+
+/***/ }),
+
+/***/ 17576:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.decodeLEB128 = exports.encodeLEB128 = void 0;
+function encodeLEB128(value) {
+    const bytes = [];
+    let more = true;
+    while (more) {
+        let byte = Number(value & BigInt(0x7F)); // Get the lowest 7 bits
+        value >>= BigInt(7);
+        if (value === BigInt(0)) { // No more data to encode
+            more = false;
+        }
+        else { // More bytes to come
+            byte |= 0x80; // Set the continuation bit
+        }
+        bytes.push(byte);
+    }
+    // Convert array to Buffer
+    return bytes;
+}
+exports.encodeLEB128 = encodeLEB128;
+function decodeLEB128(buf) {
+    let n = BigInt(0);
+    for (let i = 0; i < buf.length; i++) {
+        const byte = BigInt(buf[i]);
+        if (i > 18) {
+            throw new Error("Overlong");
+        }
+        let value = byte & BigInt(127);
+        if ((i == 18) && ((value & BigInt(124)) != BigInt(0))) {
+            throw new Error("Overflow");
+        }
+        n |= value << (BigInt(7) * BigInt(i));
+        if ((byte & BigInt(128)) == BigInt(0)) {
+            return {
+                n,
+                len: i + 1
+            };
+        }
+    }
+    throw new Error("Unterminated");
+}
+exports.decodeLEB128 = decodeLEB128;
+
+
+/***/ }),
+
+/***/ 54366:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+/* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.EtchInscription = exports.Message = exports.Runestone = exports.Etching = exports.Rune = exports.Terms = exports.Range = exports.Flaw = exports.Tag = exports.Flag = exports.Edict = exports.RuneId = void 0;
+const bitcoinjs_lib_1 = __webpack_require__(17656);
+const base26_1 = __webpack_require__(51049);
+const fts_1 = __webpack_require__(85006);
+const leb128_1 = __webpack_require__(17576);
+const utils_1 = __webpack_require__(31046);
+const spacers_1 = __webpack_require__(15193);
+class RuneId {
+    constructor(block, idx) {
+        this.block = block;
+        this.idx = idx;
+    }
+    next(block, idx) {
+        if (block > BigInt(Number.MAX_SAFE_INTEGER)) {
+            return (0, fts_1.none)();
+        }
+        if (idx > BigInt(Number.MAX_SAFE_INTEGER)) {
+            return (0, fts_1.none)();
+        }
+        let b = BigInt(this.block) + block;
+        if (b > BigInt(Number.MAX_SAFE_INTEGER)) {
+            return (0, fts_1.none)();
+        }
+        let i = block === 0n ? BigInt(this.idx) + idx : idx;
+        if (i > BigInt(Number.MAX_SAFE_INTEGER)) {
+            return (0, fts_1.none)();
+        }
+        return (0, fts_1.some)(new RuneId(Number(b), Number(i)));
+    }
+}
+exports.RuneId = RuneId;
+class Edict {
+    constructor(id, amount, output) {
+        this.id = id;
+        this.amount = amount;
+        this.output = output;
+    }
+    static from_integers(tx, id, amount, output) {
+        if (output > 4294967295n || output < 0n) {
+            return (0, fts_1.none)();
+        }
+        if (Number(output) > tx.outs.length) {
+            return (0, fts_1.none)();
+        }
+        return (0, fts_1.some)(new Edict(id, amount, Number(output)));
+    }
+}
+exports.Edict = Edict;
+var Flag;
+(function (Flag) {
+    Flag[Flag["Etching"] = 0] = "Etching";
+    Flag[Flag["Terms"] = 1] = "Terms";
+    Flag[Flag["Turbo"] = 2] = "Turbo";
+    Flag[Flag["Cenotaph"] = 127] = "Cenotaph";
+})(Flag || (exports.Flag = Flag = {}));
+var Tag;
+(function (Tag) {
+    Tag[Tag["Body"] = 0] = "Body";
+    Tag[Tag["Flags"] = 2] = "Flags";
+    Tag[Tag["Rune"] = 4] = "Rune";
+    Tag[Tag["Premine"] = 6] = "Premine";
+    Tag[Tag["Cap"] = 8] = "Cap";
+    Tag[Tag["Amount"] = 10] = "Amount";
+    Tag[Tag["HeightStart"] = 12] = "HeightStart";
+    Tag[Tag["HeightEnd"] = 14] = "HeightEnd";
+    Tag[Tag["OffsetStart"] = 16] = "OffsetStart";
+    Tag[Tag["OffsetEnd"] = 18] = "OffsetEnd";
+    Tag[Tag["Mint"] = 20] = "Mint";
+    Tag[Tag["Pointer"] = 22] = "Pointer";
+    Tag[Tag["Cenotaph"] = 126] = "Cenotaph";
+    Tag[Tag["Divisibility"] = 1] = "Divisibility";
+    Tag[Tag["Spacers"] = 3] = "Spacers";
+    Tag[Tag["Symbol"] = 5] = "Symbol";
+    Tag[Tag["Nop"] = 127] = "Nop";
+})(Tag || (exports.Tag = Tag = {}));
+var Flaw;
+(function (Flaw) {
+    Flaw[Flaw["EdictOutput"] = 0] = "EdictOutput";
+    Flaw[Flaw["EdictRuneId"] = 1] = "EdictRuneId";
+    Flaw[Flaw["InvalidScript"] = 2] = "InvalidScript";
+    Flaw[Flaw["Opcode"] = 3] = "Opcode";
+    Flaw[Flaw["SupplyOverflow"] = 4] = "SupplyOverflow";
+    Flaw[Flaw["TrailingIntegers"] = 5] = "TrailingIntegers";
+    Flaw[Flaw["TruncatedField"] = 6] = "TruncatedField";
+    Flaw[Flaw["UnrecognizedEvenTag"] = 7] = "UnrecognizedEvenTag";
+    Flaw[Flaw["UnrecognizedFlag"] = 8] = "UnrecognizedFlag";
+    Flaw[Flaw["Varint"] = 9] = "Varint";
+})(Flaw || (exports.Flaw = Flaw = {}));
+class Range {
+    constructor(start, end) {
+        this.start = start;
+        this.end = end;
+    }
+}
+exports.Range = Range;
+class Terms {
+    constructor(amount, cap, height, offset) {
+        this.amount = amount;
+        this.cap = cap;
+        this.height = height;
+        this.offset = offset;
+    }
+}
+exports.Terms = Terms;
+class Rune {
+    constructor(value) {
+        this.value = value;
+    }
+    get name() {
+        return Rune.toName(this.value);
+    }
+    static toName(s) {
+        return (0, base26_1.base26Decode)(s);
+    }
+    static fromName(name) {
+        return new Rune((0, base26_1.base26Encode)((0, spacers_1.removeSpacers)(name)));
+    }
+    toString() {
+        return this.name;
+    }
+}
+exports.Rune = Rune;
+class Etching {
+    constructor(divisibility, premine, rune, spacers, symbol, terms, turbo) {
+        this.divisibility = divisibility;
+        this.premine = premine;
+        this.rune = rune;
+        this.spacers = spacers;
+        this.symbol = symbol;
+        this.terms = terms;
+        this.turbo = turbo;
+    }
+}
+exports.Etching = Etching;
+Etching.MAX_DIVISIBILITY = 38;
+Etching.MAX_SPACERS = 134217727;
+class Runestone {
+    constructor(edicts = [], etching, mint, pointer) {
+        this.edicts = edicts;
+        this.etching = etching;
+        this.mint = mint;
+        this.pointer = pointer;
+    }
+    static create(json, type = 'etch') {
+        if (type === 'etch') {
+            json = json;
+            const runename = Rune.fromName(json.name);
+            const terms = new Terms(json.amount, json.cap, new Range(json.startHeight ? (0, fts_1.some)(json.startHeight) : (0, fts_1.none)(), json.endHeight ? (0, fts_1.some)(json.endHeight) : (0, fts_1.none)()), new Range(json.startOffset ? (0, fts_1.some)(json.startOffset) : (0, fts_1.none)(), json.endOffset ? (0, fts_1.some)(json.endOffset) : (0, fts_1.none)()));
+            const divisibility = json.divisibility ? (0, fts_1.some)(json.divisibility) : (0, fts_1.none)();
+            const premine = json.premine ? (0, fts_1.some)(json.premine) : (0, fts_1.none)();
+            const spacers = json.name.indexOf('•') > -1 ? (0, fts_1.some)((0, spacers_1.getSpacersVal)(json.name)) : (0, fts_1.none)();
+            const symbol = json.symbol ? (0, fts_1.some)(json.symbol) : (0, fts_1.none)();
+            const pointer = typeof json.pointer === 'number' ? (0, fts_1.some)(json.pointer) : (0, fts_1.none)();
+            const etching = new Etching(divisibility, premine, (0, fts_1.some)(runename), spacers, symbol, (0, fts_1.some)(terms), true);
+            return new Runestone([], (0, fts_1.some)(etching), (0, fts_1.none)(), pointer);
+        }
+        else if (type === 'mint') {
+            json = json;
+            const pointer = typeof json.pointer === 'number' ? (0, fts_1.some)(json.pointer) : (0, fts_1.none)();
+            return new Runestone([], (0, fts_1.none)(), (0, fts_1.some)(new RuneId(json.block, json.txIdx)), pointer);
+        }
+        else {
+            throw new Error(`not ${type} support now`);
+        }
+    }
+    static decipher(rawTx) {
+        const tx = bitcoinjs_lib_1.Transaction.fromHex(rawTx);
+        const payload = Runestone.payload(tx);
+        if (payload.isSome()) {
+            const integers = Runestone.integers(payload.value());
+            const message = Message.from_integers(tx, integers.value());
+            const etching = message.getEtching();
+            const mint = message.getMint();
+            const pointer = message.getPointer();
+            return (0, fts_1.some)(new Runestone(message.edicts, etching, mint, pointer));
+        }
+        return (0, fts_1.none)();
+    }
+    encipher() {
+        const msg = this.toMessage();
+        const msgBuff = msg.toBuffer();
+        const prefix = Buffer.from('6a5d', 'hex'); // OP_RETURN OP_13
+        const pushNum = Buffer.alloc(1);
+        pushNum.writeUint8(msgBuff.length);
+        return Buffer.concat([prefix, pushNum, msgBuff]);
+    }
+    static payload(tx) {
+        for (const output of tx.outs) {
+            //script.fromASM
+            const ls = bitcoinjs_lib_1.script.decompile(output.script);
+            if (ls[0] !== bitcoinjs_lib_1.script.OPS.OP_RETURN) {
+                continue;
+            }
+            if (ls[1] !== Runestone.MAGIC_NUMBER) {
+                continue;
+            }
+            for (let i = 2; i < ls.length; i++) {
+                const element = ls[i];
+                if (element instanceof Uint8Array) {
+                    return (0, fts_1.some)(Array.from(element));
+                }
+                return (0, fts_1.none)();
+            }
+            return (0, fts_1.none)();
+        }
+        return (0, fts_1.none)();
+    }
+    static integers(payload) {
+        let integers = [];
+        let i = 0;
+        while (i < payload.length) {
+            let { n, len } = (0, leb128_1.decodeLEB128)(payload.slice(i));
+            integers.push(n);
+            i += len;
+        }
+        return (0, fts_1.some)(integers);
+    }
+    toMessage() {
+        let fields = new Map();
+        const etching = this.etching.value();
+        if (etching) {
+            let flags = 1;
+            if (etching.terms.isSome()) {
+                let mask = 1 << Flag.Terms;
+                flags |= mask;
+            }
+            if (etching.turbo) {
+                let mask = 1 << Flag.Turbo;
+                flags |= mask;
+            }
+            fields.set(Tag.Flags, [BigInt(flags)]);
+            const rune = etching.rune.value();
+            if (rune !== null) {
+                fields.set(Tag.Rune, [BigInt(rune.value)]);
+            }
+            const divisibility = etching.divisibility.value();
+            if (divisibility !== null) {
+                fields.set(Tag.Divisibility, [BigInt(divisibility)]);
+            }
+            const spacers = etching.spacers.value();
+            if (spacers !== null) {
+                fields.set(Tag.Spacers, [BigInt(spacers)]);
+            }
+            const symbol = etching.symbol.value();
+            if (symbol !== null) {
+                fields.set(Tag.Symbol, [BigInt(symbol.charCodeAt(0))]);
+            }
+            const premine = etching.premine.value();
+            if (premine !== null) {
+                fields.set(Tag.Premine, [BigInt(premine)]);
+            }
+            const terms = etching.terms.value();
+            if (terms !== null) {
+                fields.set(Tag.Amount, [BigInt(terms.amount)]);
+                fields.set(Tag.Cap, [BigInt(terms.cap)]);
+                const heightStart = terms.height.start.value();
+                if (heightStart) {
+                    fields.set(Tag.HeightStart, [BigInt(heightStart)]);
+                }
+                const heightEnd = terms.height.end.value();
+                if (heightEnd) {
+                    fields.set(Tag.HeightEnd, [BigInt(heightEnd)]);
+                }
+                const offsetStart = terms.offset.start.value();
+                if (offsetStart) {
+                    fields.set(Tag.OffsetStart, [BigInt(offsetStart)]);
+                }
+                const offsetEnd = terms.offset.end.value();
+                if (offsetEnd) {
+                    fields.set(Tag.OffsetEnd, [BigInt(offsetEnd)]);
+                }
+            }
+        }
+        const mint = this.mint.value();
+        if (mint !== null) {
+            fields.set(Tag.Mint, [BigInt(mint.block), BigInt(mint.idx)]);
+        }
+        const pointer = this.pointer.value();
+        if (pointer !== null) {
+            fields.set(Tag.Pointer, [BigInt(pointer)]);
+        }
+        return new Message(fields, this.edicts, 0);
+    }
+}
+exports.Runestone = Runestone;
+Runestone.MAGIC_NUMBER = 93;
+class Message {
+    constructor(fields = new Map(), edicts = [], flaws = 0) {
+        this.fields = fields;
+        this.edicts = edicts;
+        this.flaws = flaws;
+    }
+    static from_integers(tx, integers) {
+        let fields = new Map();
+        let edicts = [];
+        let flaws = 0;
+        let isBody = false;
+        for (let i = 0; i < integers.length;) {
+            let tag = integers[i];
+            if (Number(tag) === Tag.Body) {
+                isBody = true;
+                i += 1;
+                continue;
+            }
+            if (!isBody) {
+                // Fields:
+                let val = integers[i + 1];
+                const vals = fields.get(Number(tag)) || [];
+                vals.push(val);
+                fields.set(Number(tag), vals);
+                i += 2;
+            }
+            else {
+                // Edicts:
+                let id = new RuneId(0, 0);
+                for (const chunk of (0, utils_1.chunks)(integers.slice(i), 4)) {
+                    if (chunk.length != 4) {
+                        flaws |= Flaw.TrailingIntegers;
+                        break;
+                    }
+                    let next = id.next(chunk[0], chunk[1]);
+                    if (!next.isSome()) {
+                        flaws |= Flaw.EdictRuneId;
+                        break;
+                    }
+                    const edict = Edict.from_integers(tx, next.value(), chunk[2], chunk[3]);
+                    if (!edict.isSome()) {
+                        flaws |= Flaw.EdictOutput;
+                        break;
+                    }
+                    id = next.value();
+                    edicts.push(edict.value());
+                }
+                i += 4;
+            }
+        }
+        return new Message(fields, edicts, flaws);
+    }
+    addFieldVal(tag, val) {
+        const vals = this.fields.get(Number(tag)) || [];
+        vals.push(val);
+        this.fields.set(Number(tag), vals);
+    }
+    addEdict(edict) {
+        this.edicts.push(edict);
+    }
+    toBuffer() {
+        const buffArr = [];
+        // Serialize fields.
+        for (const [tag, vals] of this.fields) {
+            for (const val of vals) {
+                const tagBuff = Buffer.alloc(1);
+                tagBuff.writeUInt8(tag);
+                buffArr.push(tagBuff);
+                buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(val)));
+            }
+        }
+        // Serialize edicts.
+        if (this.edicts.length > 0) {
+            buffArr.push(Buffer.from('00', 'hex'));
+            // 1) Sort by block height
+            // 2) Sort by tx idx
+            this.edicts.sort((a, b) => {
+                if (a.id.block == b.id.block) {
+                    return a.id.idx - b.id.idx;
+                }
+                return a.id.block - b.id.block;
+            });
+            // 3) Delta encode
+            let lastBlockHeight = 0n;
+            let lastTxIdx = 0n;
+            for (let i = 0; i < this.edicts.length; i++) {
+                const edict = this.edicts[i];
+                if (i == 0) {
+                    lastBlockHeight = BigInt(edict.id.block);
+                    lastTxIdx = BigInt(edict.id.idx);
+                    buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(lastBlockHeight)));
+                    buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(lastTxIdx)));
+                }
+                else {
+                    const currBlockHeight = BigInt(edict.id.block);
+                    const currTxIdx = BigInt(edict.id.idx);
+                    if (currBlockHeight == lastBlockHeight) {
+                        const deltaTxIdx = currTxIdx - lastTxIdx;
+                        lastTxIdx = currTxIdx;
+                        buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(0n)));
+                        buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(deltaTxIdx)));
+                    }
+                    else {
+                        const deltaBlockHeight = currBlockHeight - lastBlockHeight;
+                        lastBlockHeight = currBlockHeight;
+                        lastTxIdx = currTxIdx;
+                        buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(deltaBlockHeight)));
+                        buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(currTxIdx)));
+                    }
+                }
+                buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(BigInt(edict.amount))));
+                buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(BigInt(edict.output))));
+            }
+        }
+        return Buffer.concat(buffArr);
+    }
+    getFlags() {
+        return Number(this.fields.get(Tag.Flags));
+    }
+    hasFlags(flag) {
+        const flags = this.getFlags();
+        const mask = 1 << flag;
+        return (flags & mask) != 0;
+    }
+    getMint() {
+        if (!this.fields.has(Tag.Mint)) {
+            return (0, fts_1.none)();
+        }
+        const [block, tx] = this.fields.get(Tag.Mint);
+        return (0, fts_1.some)(new RuneId(Number(block), Number(tx)));
+    }
+    getEtching() {
+        if (!this.hasFlags(Flag.Etching)) {
+            return (0, fts_1.none)();
+        }
+        const divisibility = this.getDivisibility();
+        const premine = this.getPremine();
+        const rune = this.getRune();
+        const spacers = this.getSpacers();
+        const symbol = this.getSymbol();
+        const terms = this.getTerms();
+        const turbo = this.hasFlags(Flag.Turbo);
+        return (0, fts_1.some)(new Etching(divisibility, premine, rune, spacers, symbol, terms, turbo));
+    }
+    getDivisibility() {
+        if (!this.fields.has(Tag.Divisibility)) {
+            return (0, fts_1.none)();
+        }
+        const [divisibility] = this.fields.get(Tag.Divisibility);
+        if (divisibility > Etching.MAX_DIVISIBILITY) {
+            throw new Error("invalid divisibility");
+        }
+        return (0, fts_1.some)(Number(divisibility));
+    }
+    getPremine() {
+        if (!this.fields.has(Tag.Premine)) {
+            return (0, fts_1.none)();
+        }
+        const [premine] = this.fields.get(Tag.Premine);
+        return (0, fts_1.some)(Number(premine));
+    }
+    getRune() {
+        if (!this.fields.has(Tag.Rune)) {
+            return (0, fts_1.none)();
+        }
+        const [rune] = this.fields.get(Tag.Rune);
+        return (0, fts_1.some)(new Rune(rune));
+    }
+    getSpacers() {
+        if (!this.fields.has(Tag.Spacers)) {
+            return (0, fts_1.none)();
+        }
+        const [spacers] = this.fields.get(Tag.Spacers);
+        if (spacers > Etching.MAX_SPACERS) {
+            throw new Error("invalid spacers");
+        }
+        return (0, fts_1.some)(Number(spacers));
+    }
+    getHeightStart() {
+        if (!this.fields.has(Tag.HeightStart)) {
+            return (0, fts_1.none)();
+        }
+        const [heightStart] = this.fields.get(Tag.HeightStart);
+        return (0, fts_1.some)(Number(heightStart));
+    }
+    getHeightEnd() {
+        if (!this.fields.has(Tag.HeightEnd)) {
+            return (0, fts_1.none)();
+        }
+        const [heightEnd] = this.fields.get(Tag.HeightEnd);
+        return (0, fts_1.some)(Number(heightEnd));
+    }
+    getOffsetStart() {
+        if (!this.fields.has(Tag.OffsetStart)) {
+            return (0, fts_1.none)();
+        }
+        const [offsetStart] = this.fields.get(Tag.OffsetStart);
+        return (0, fts_1.some)(Number(offsetStart));
+    }
+    getOffsetEnd() {
+        if (!this.fields.has(Tag.OffsetEnd)) {
+            return (0, fts_1.none)();
+        }
+        const [offsetEnd] = this.fields.get(Tag.OffsetEnd);
+        return (0, fts_1.some)(Number(offsetEnd));
+    }
+    getCap() {
+        if (!this.fields.has(Tag.Cap)) {
+            return (0, fts_1.none)();
+        }
+        const [cap] = this.fields.get(Tag.Cap);
+        return (0, fts_1.some)(Number(cap));
+    }
+    getAmount() {
+        if (!this.fields.has(Tag.Amount)) {
+            return (0, fts_1.none)();
+        }
+        const [amount] = this.fields.get(Tag.Amount);
+        return (0, fts_1.some)(Number(amount));
+    }
+    getSymbol() {
+        if (!this.fields.has(Tag.Symbol)) {
+            return (0, fts_1.none)();
+        }
+        const [symbol] = this.fields.get(Tag.Symbol);
+        return (0, fts_1.some)(String.fromCharCode(Number(symbol)));
+    }
+    getTerms() {
+        if (!this.hasFlags(Flag.Terms)) {
+            return (0, fts_1.none)();
+        }
+        const cap = this.getCap();
+        if (!cap.isSome()) {
+            throw new Error("no cap field");
+        }
+        const amount = this.getAmount();
+        if (!amount.isSome()) {
+            throw new Error("no amount field");
+        }
+        const heightStart = this.getHeightStart();
+        const heightEnd = this.getHeightEnd();
+        const offsetStart = this.getOffsetStart();
+        const offsetEnd = this.getOffsetEnd();
+        const height = new Range(heightStart, heightEnd);
+        const offset = new Range(offsetStart, offsetEnd);
+        return (0, fts_1.some)(new Terms(amount.value(), cap.value(), height, offset));
+    }
+    getPointer() {
+        if (!this.fields.has(Tag.Pointer)) {
+            return (0, fts_1.none)();
+        }
+        const [pointer] = this.fields.get(Tag.Pointer);
+        return (0, fts_1.some)(Number(pointer));
+    }
+}
+exports.Message = Message;
+class EtchInscription {
+    constructor(fields = new Map(), data = Buffer.alloc(0)) {
+        this.fields = fields;
+        this.data = data;
+    }
+    setContent(contentType, data) {
+        this.fields.set(1, Buffer.from(contentType, 'utf8'));
+        this.data = data;
+    }
+    setRune(rune) {
+        const n = (0, base26_1.base26Encode)((0, spacers_1.removeSpacers)(rune));
+        let nstr = n.toString(16);
+        if (nstr.length % 2 === 1) {
+            nstr = '0' + nstr;
+        }
+        this.setField(EtchInscription.Tag.RUNE, Buffer.from(nstr, 'hex').reverse());
+    }
+    setField(field, val) {
+        this.fields.set(field, val);
+    }
+    static decipher(rawTx, inputIdx) {
+        const tx = bitcoinjs_lib_1.Transaction.fromHex(rawTx);
+        const witness = tx.ins[inputIdx].witness;
+        const tapscript = witness[1];
+        const ls = bitcoinjs_lib_1.script.decompile(tapscript);
+        const fields = new Map();
+        const dataChunks = [];
+        let isData = false;
+        for (let i = 5; i < ls.length - 1;) {
+            const chunk = ls[i];
+            if (chunk === 0) {
+                isData = true;
+                i++;
+                continue;
+            }
+            else if (isData) {
+                // Data
+                dataChunks.push(chunk);
+                i++;
+            }
+            else {
+                // Fields
+                const tag = chunk - 80;
+                const val = ls[i + 1];
+                if (typeof val == 'number') {
+                    const buff = Buffer.alloc(1);
+                    buff.writeUint8(val);
+                    fields.set(tag, buff);
+                }
+                else {
+                    fields.set(tag, val);
+                }
+                i += 2;
+            }
+        }
+        return new EtchInscription(fields, Buffer.concat(dataChunks));
+    }
+    encipher() {
+        const res = [
+            Buffer.from('0063036f7264', 'hex') // 0 OP_IF "ord"
+        ];
+        Array.from(this.fields.entries())
+            .sort((a, b) => a[0] - b[0]) // Sorting by tag in ascending order
+            .forEach(([tag, val]) => {
+            const tagBuff = Buffer.alloc(1);
+            tagBuff.writeUInt8(tag);
+            res.push(Buffer.from('01', 'hex'));
+            res.push(tagBuff);
+            if (val.length != 1 || val[0] != 0x00) {
+                res.push((0, utils_1.toPushData)(val));
+            }
+            else {
+                res.push(val);
+            }
+        });
+        if (this.data && this.data.length > 0) {
+            res.push(Buffer.from('00', 'hex'));
+            const dataChunks = (0, utils_1.chunks)(Array.from(this.data), 520);
+            for (const chunk of dataChunks) {
+                res.push((0, utils_1.toPushData)(Buffer.from(chunk)));
+            }
+        }
+        res.push(Buffer.from('68', 'hex')); // OP_ENDIF
+        return Buffer.concat(res);
+    }
+}
+exports.EtchInscription = EtchInscription;
+EtchInscription.Tag = {
+    CONTENT_TYPE: 1,
+    POINTER: 2,
+    PARENT: 3,
+    METADATA: 5,
+    METAPROTOCOL: 7,
+    CONTENT_ENCODING: 9,
+    DELEGATE: 11,
+    RUNE: 13
+};
+
+
+/***/ }),
+
+/***/ 15193:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.removeSpacers = exports.getSpacersVal = exports.applySpacers = void 0;
+function applySpacers(str, spacers) {
+    let res = '';
+    for (let i = 0; i < str.length; i++) {
+        res += str.charAt(i);
+        if (spacers > 0) {
+            // Get the least significant bit
+            let bit = spacers & 1;
+            if (bit === 1) {
+                res += '•';
+            }
+            // Right shift the number to process the next bit
+            spacers >>= 1;
+        }
+    }
+    return res;
+}
+exports.applySpacers = applySpacers;
+function getSpacersVal(str) {
+    let res = 0;
+    let spacersCnt = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charAt(i);
+        if (char === '•') {
+            res += 1 << (i - 1 - spacersCnt);
+            spacersCnt++;
+        }
+    }
+    return res;
+}
+exports.getSpacersVal = getSpacersVal;
+function removeSpacers(rune) {
+    return rune.replace(/[•]+/g, "");
+}
+exports.removeSpacers = removeSpacers;
+
+
+/***/ }),
+
+/***/ 31046:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+/* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.toPushData = exports.chunks = exports.toHex = exports.zero2 = void 0;
+/**
+ * Prepends a '0' to an odd character length word to ensure it has an even number of characters.
+ * @param {string} word - The input word.
+ * @returns {string} - The word with a leading '0' if it's an odd character length; otherwise, the original word.
+ */
+const zero2 = (word) => {
+    if (word.length % 2 === 1) {
+        return '0' + word;
+    }
+    else {
+        return word;
+    }
+};
+exports.zero2 = zero2;
+/**
+ * Converts an array of numbers to a hexadecimal string representation.
+ * @param {number[]} msg - The input array of numbers.
+ * @returns {string} - The hexadecimal string representation of the input array.
+ */
+const toHex = (msg) => {
+    let res = '';
+    for (let i = 0; i < msg.length; i++) {
+        res += (0, exports.zero2)(msg[i].toString(16));
+    }
+    return res;
+};
+exports.toHex = toHex;
+function chunks(bin, chunkSize) {
+    const chunks = [];
+    let offset = 0;
+    while (offset < bin.length) {
+        // Use Buffer.slice to create a chunk. This method does not copy the memory;
+        // it creates a new Buffer that references the original memory.
+        const chunk = bin.slice(offset, offset + chunkSize);
+        chunks.push(chunk);
+        offset += chunkSize;
+    }
+    return chunks;
+}
+exports.chunks = chunks;
+function toPushData(data) {
+    const res = [];
+    const dLen = data.length;
+    if (dLen < 0x4c) {
+        const dLenBuff = Buffer.alloc(1);
+        dLenBuff.writeUInt8(dLen);
+        res.push(dLenBuff);
+    }
+    else if (dLen <= 0xff) {
+        // OP_PUSHDATA1
+        res.push(Buffer.from('4c', 'hex'));
+        const dLenBuff = Buffer.alloc(1);
+        dLenBuff.writeUInt8(dLen);
+        res.push(dLenBuff);
+    }
+    else if (dLen <= 0xffff) {
+        // OP_PUSHDATA2
+        res.push(Buffer.from('4d', 'hex'));
+        const dLenBuff = Buffer.alloc(2);
+        dLenBuff.writeUint16LE(dLen);
+        res.push(dLenBuff);
+    }
+    else {
+        // OP_PUSHDATA4
+        res.push(Buffer.from('4e', 'hex'));
+        const dLenBuff = Buffer.alloc(4);
+        dLenBuff.writeUint32LE(dLen);
+        res.push(dLenBuff);
+    }
+    res.push(data);
+    return Buffer.concat(res);
+}
+exports.toPushData = toPushData;
+
 
 /***/ }),
 
