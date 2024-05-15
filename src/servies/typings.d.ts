@@ -34,6 +34,8 @@ declare namespace API {
       BRC20_REDEEM: number;
       BTC_MINT: number;
       BTC_REDEEM: number;
+      RUNES_REDEEM: number;
+      RUNES_MINT: number;
     };
   };
   interface Ret<T> {
@@ -49,26 +51,26 @@ declare namespace API {
   type BRC20Info = {
     balance: string;
     transferBalanceList: TransferbleBRC20[];
-    message?:string
+    message?: string;
   };
   enum PrepayOrderStatus {
-    doing = 'doing',
-    success = 'success',
-    cancel = 'cancel',
-    failed = 'failed',
+    doing = "doing",
+    success = "success",
+    cancel = "cancel",
+    failed = "failed",
   }
   type HsitoryDetail = {
-    amount: string
-    timestamp: string
-    status: PrepayOrderStatus
-    symbol: string
-    originTxid: string
-    targetTxid: string
-    originNetwork: 'BTC' | 'MVC'
-    targetNetwork: 'BTC' | 'MVC'
-    decimals: number
-    blockHeight: number
-  }
+    amount: string;
+    timestamp: string;
+    status: PrepayOrderStatus;
+    symbol: string;
+    originTxid: string;
+    targetTxid: string;
+    originNetwork: "BTC" | "MVC";
+    targetNetwork: "BTC" | "MVC";
+    decimals: number;
+    blockHeight: number;
+  };
   type RUNESItem = {
     amount: string;
     runeId: string;

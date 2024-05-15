@@ -445,7 +445,7 @@ export const calcRedeemRunesInfo = (
   const bridgeFee = bridgeFeeConst + bridgeFeePercent;
   const minerFee = BigInt(
     Math.floor(
-      (((transactionSize.BRC20_REDEEM / 10 ** 8) * feeBtc * btcPrice) /
+      (((transactionSize.RUNES_REDEEM / 10 ** 8) * feeBtc * btcPrice) /
         asset.price) *
         10 ** (asset.decimals - asset.trimDecimals)
     )

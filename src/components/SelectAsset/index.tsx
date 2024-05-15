@@ -19,10 +19,10 @@ export default ({ onChange, type }: Props) => {
     if (searchWord) {
       const _list = assets.filter(
         (item) =>
-          item.targetSymbol
+          item.targetName
             .toUpperCase()
             .includes(searchWord.trim().toUpperCase()) ||
-          item.originSymbol
+          item.targetName
             .toUpperCase()
             .includes(searchWord.trim().toUpperCase())
       );
@@ -59,12 +59,12 @@ export default ({ onChange, type }: Props) => {
                 size={30}
                 src=""
                 symbol={
-                  type === "origin" ? item.originSymbol : item.targetSymbol
+                  type === "origin" ? item.originName : item.targetName
                 }
               />
 
               <span className="symbol">
-                {type === "origin" ? item.originSymbol : item.targetSymbol}
+                {type === "origin" ? item.originName : item.targetName}
               </span>
             </div>
           ))}

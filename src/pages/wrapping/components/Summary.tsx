@@ -40,9 +40,9 @@ export default ({
     >
       <Spin spinning={submitting}>
         <div className="summaryWrap">
-          <TokenIcon symbol={asset?.originSymbol} src="" size={80}></TokenIcon>
+          <TokenIcon symbol={asset?.originName} src="" size={80}></TokenIcon>
           <span className="symbol">
-            {asset.originSymbol}-{asset.targetSymbol}
+            {asset.originName}-{asset.targetName}
           </span>
           <div className="netWrap">
             <div className="item">

@@ -638,12 +638,12 @@ export default () => {
                         <TokenIcon
                           size={40}
                           src=""
-                          symbol={asset.originSymbol}
+                          symbol={asset.originName}
                         />
                         {bridgeType === "mint" ? (
-                          <div>{asset.originSymbol} </div>
+                          <div className="assetName">{asset.originName} </div>
                         ) : (
-                          <div>{asset.targetSymbol} </div>
+                          <div className="assetName">{asset.originName} </div>
                         )}
                         <div
                           className={
@@ -772,11 +772,11 @@ export default () => {
                       }}
                       style={{ cursor: "pointer" }}
                     >
-                      <TokenIcon size={40} src="" symbol={asset.originSymbol} />
+                      <TokenIcon size={40} src="" symbol={asset.originName} />
                       {bridgeType === "redeem" ? (
-                        <div>{asset.originSymbol} </div>
+                        <div className="assetName">{asset.originName} </div>
                       ) : (
-                        <div>{asset.targetSymbol} </div>
+                        <div className="assetName">{asset.originName} </div>
                       )}
                       <div
                         className={
