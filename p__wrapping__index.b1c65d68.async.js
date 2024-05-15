@@ -1569,14 +1569,14 @@ var getOutput = function getOutput(pubkey) {
   var _addressType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "P2PKH";
   var publicKeyBuffer = Buffer.from(pubkey, "hex");
   var _output;
-  var network = _network === "mainnet" ? src.networks.bitcoin : src.networks.testnet;
+  var network = _network === "mainnet" ? networks.bitcoin : networks.testnet;
   if (_addressType === "P2PKH") {
-    _output = src.payments.p2pkh({
+    _output = payments.p2pkh({
       pubkey: publicKeyBuffer,
       network: network
     }).output;
   } else {
-    _output = src.payments.p2wpkh({
+    _output = payments.p2wpkh({
       pubkey: publicKeyBuffer,
       network: network
     }).output;
@@ -1700,46 +1700,58 @@ function _sendRunes() {
           });
           runesUtxoNumber = runesUtxoList.length;
           totalInputSatoshi = 0;
-          for (i = 0; i < runesUtxoNumber; i++) {
-            runesUtxo = runesUtxoList[i];
-            satoshi = runesUtxo.satoshi || 546;
-            psbt.addInput({
-              hash: runesUtxo.txId,
-              index: runesUtxo.vout,
-              witnessUtxo: {
-                value: satoshi,
-                script: getOutput(publicKey, net, addressType)
-              }
-            });
-            totalInputSatoshi += satoshi;
-          }
-          _i2 = 0;
-        case 31:
-          if (!(_i2 < utxos.length)) {
+          i = 0;
+        case 30:
+          if (!(i < runesUtxoNumber)) {
             _context13.next = 42;
             break;
           }
-          utxo = utxos[_i2];
+          runesUtxo = runesUtxoList[i];
+          satoshi = runesUtxo.satoshi || 546;
           _context13.t0 = psbt;
           _context13.next = 36;
           return _createPayInput({
-            utxo: utxo,
-            addressType: addressType,
+            utxo: runesUtxo,
+            addressType: sendAddressType,
             network: net
           });
         case 36:
           _context13.t1 = _context13.sent;
           _context13.t0.addInput.call(_context13.t0, _context13.t1);
-          totalInputSatoshi += utxo.satoshi;
+          totalInputSatoshi += satoshi;
         case 39:
-          _i2++;
-          _context13.next = 31;
+          i++;
+          _context13.next = 30;
           break;
         case 42:
+          _i2 = 0;
+        case 43:
+          if (!(_i2 < utxos.length)) {
+            _context13.next = 54;
+            break;
+          }
+          utxo = utxos[_i2];
+          _context13.t2 = psbt;
+          _context13.next = 48;
+          return _createPayInput({
+            utxo: utxo,
+            addressType: sendAddressType,
+            network: net
+          });
+        case 48:
+          _context13.t3 = _context13.sent;
+          _context13.t2.addInput.call(_context13.t2, _context13.t3);
+          totalInputSatoshi += utxo.satoshi;
+        case 51:
+          _i2++;
+          _context13.next = 43;
+          break;
+        case 54:
           psbt.addOutput({
             script: edictStone.encipher(),
             value: 0
           });
+          debugger;
           if (haveChangeOutput) {
             psbt.addOutput({
               address: address,
@@ -1757,36 +1769,38 @@ function _sendRunes() {
           segWitInputNumber = 0;
           tapRootInputNumber = 0;
           if (!(addressType === "P2WPKH")) {
-            _context13.next = 53;
+            _context13.next = 66;
             break;
           }
           segWitInputNumber = psbt.inputCount;
-          _context13.next = 54;
+          _context13.next = 67;
           break;
-        case 53:
+        case 66:
           throw Error("unsupported addressType ".concat(addressType));
-        case 54:
+        case 67:
           fee = feeRate * getBtcTxSizeByOutputType(segWitInputNumber, tapRootInputNumber, 0, typeList);
           changeSatoshi = totalInputSatoshi - fee;
           psbt.addOutput({
             address: address,
             value: changeSatoshi
           });
-          _context13.next = 59;
+          _context13.next = 72;
           return window.metaidwallet.btc.signPsbt({
             psbtHex: psbt.toHex()
+          })["catch"](function (err) {
+            console.log(err, "eeeeeee");
           });
-        case 59:
+        case 72:
           _signPsbt = _context13.sent;
           if (!(_signPsbt.status === "canceled")) {
-            _context13.next = 62;
+            _context13.next = 75;
             break;
           }
           throw new Error("canceled");
-        case 62:
+        case 75:
           signPsbt = src.Psbt.fromHex(_signPsbt);
           return _context13.abrupt("return", signPsbt);
-        case 64:
+        case 77:
         case "end":
           return _context13.stop();
       }
