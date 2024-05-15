@@ -630,82 +630,80 @@ async function sendRunes(
   }
   edicts.push(new Edict(runeIdObj, BigInt(amount), output));
   const utxos = await window.metaidwallet.btc.getUtxos(address);
-
-  const psbt = new Psbt({ network: btcNetwork });
-  const runesUtxoNumber = runesUtxoList.length;
-  let totalInputSatoshi = 0;
-  for (let i = 0; i < runesUtxoNumber; i++) {
-    const runesUtxo = runesUtxoList[i];
-    const satoshi = runesUtxo.satoshi || 546;
-    psbt.addInput(await _createPayInput({
-      utxo:runesUtxo,
-      addressType: sendAddressType,
-      network: net,
-    }));
-    totalInputSatoshi += satoshi;
-  }
-  for (let i = 0; i < utxos.length; i++) {
-    const utxo = utxos[i];
-    psbt.addInput(
-      await _createPayInput({
-        utxo,
-        addressType: sendAddressType,
-        network: net,
-      })
-    );
-    totalInputSatoshi += utxo.satoshi;
-  }
-  psbt.addOutput({
-    script: edictStone.encipher(),
-    value: 0,
-  });
-  debugger;
-  if (haveChangeOutput) {
+  const buildPsbt = async (
+    _runesUtxoList: UTXO[],
+    _selectedUtxos: UTXO[],
+    change: number
+  ) => {
+    let totalInputSatoshi = 0;
+    const psbt = new Psbt({ network: btcNetwork });
+    const runesUtxoNumber = _runesUtxoList.length;
+    for (let i = 0; i < runesUtxoNumber; i++) {
+      const runesUtxo = _runesUtxoList[i];
+      const satoshi = runesUtxo.satoshi || 546;
+      psbt.addInput(
+        await _createPayInput({
+          utxo: runesUtxo,
+          addressType: sendAddressType,
+          network: net,
+        })
+      );
+      totalInputSatoshi += satoshi;
+    }
+    for (let i = 0; i < _selectedUtxos.length; i++) {
+      const utxo = _selectedUtxos[i];
+      psbt.addInput(
+        await _createPayInput({
+          utxo,
+          addressType: sendAddressType,
+          network: net,
+        })
+      );
+      totalInputSatoshi += utxo.satoshi;
+    }
     psbt.addOutput({
-      address,
+      script: edictStone.encipher(),
+      value: 0,
+    });
+    if (haveChangeOutput) {
+      psbt.addOutput({
+        address,
+        value: 546,
+      });
+    }
+    psbt.addOutput({
+      address: recipient,
       value: 546,
     });
-  }
-  psbt.addOutput({
-    address: recipient,
-    value: 546,
-  });
-  const typeList = [sendAddressType, addressType];
-  if (haveChangeOutput) {
-    typeList.push(addressType);
-  }
-  let segWitInputNumber = 0;
-  let tapRootInputNumber = 0;
-  if (addressType === "P2WPKH") {
-    segWitInputNumber = psbt.inputCount;
-  } else {
-    throw Error(`unsupported addressType ${addressType}`);
-  }
-  const fee =
-    feeRate *
-    getBtcTxSizeByOutputType(
-      segWitInputNumber,
-      tapRootInputNumber,
-      0,
-      typeList
-    );
-  const changeSatoshi = totalInputSatoshi - fee;
-  psbt.addOutput({
-    address,
-    value: changeSatoshi,
-  });
-
-  const _signPsbt = await window.metaidwallet.btc
-    .signPsbt({
-      psbtHex: psbt.toHex(),
-    })
-    .catch((err) => {
-      console.log(err, "eeeeeee");
+    psbt.addOutput({
+      address,
+      value: change,
     });
-  if (_signPsbt.status === "canceled") throw new Error("canceled");
+    const _signPsbt = await window.metaidwallet.btc.signPsbt({
+      psbtHex: psbt.toHex(),
+    });
 
-  const signPsbt = Psbt.fromHex(_signPsbt);
-  return signPsbt;
+    if (_signPsbt.status === "canceled") throw new Error("canceled");
+
+    const signPsbt = Psbt.fromHex(_signPsbt);
+    return { signPsbt, totalInputSatoshi };
+  };
+  utxos.sort((a, b) => b.satoshi - a.satoshi);
+  let selecedtUTXOs = selectUTXOs(utxos, new Decimal(0));
+  let total = getTotalSatoshi(selecedtUTXOs);
+  let { signPsbt, totalInputSatoshi } = await buildPsbt(
+    runesUtxoList,
+    selecedtUTXOs,
+    total.minus(546).toNumber()
+  );
+  let fee = _calculateFee(signPsbt, feeRate);
+
+  const { signPsbt: psbt } = await buildPsbt(
+    runesUtxoList,
+    utxos,
+    total.minus(546).minus(fee).toNumber()
+  );
+  return psbt;
 }
 
 export async function mintBrc(
