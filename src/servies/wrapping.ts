@@ -637,25 +637,29 @@ async function sendRunes(
   for (let i = 0; i < runesUtxoNumber; i++) {
     const runesUtxo = runesUtxoList[i];
     const satoshi = runesUtxo.satoshi || 546;
-    psbt.addInput({
-      hash: runesUtxo.txId,
-      index: runesUtxo.vout,
-      witnessUtxo: {
-        value: satoshi,
-        script: getOutput(publicKey, net, addressType) as Buffer,
-      },
-    });
+    psbt.addInput(await _createPayInput({
+      utxo:runesUtxo,
+      addressType: sendAddressType,
+      network: net,
+    }));
     totalInputSatoshi += satoshi;
   }
   for (let i = 0; i < utxos.length; i++) {
     const utxo = utxos[i];
-    psbt.addInput(await _createPayInput({ utxo, addressType, network: net }));
+    psbt.addInput(
+      await _createPayInput({
+        utxo,
+        addressType: sendAddressType,
+        network: net,
+      })
+    );
     totalInputSatoshi += utxo.satoshi;
   }
   psbt.addOutput({
     script: edictStone.encipher(),
     value: 0,
   });
+  debugger;
   if (haveChangeOutput) {
     psbt.addOutput({
       address,
@@ -691,9 +695,13 @@ async function sendRunes(
     value: changeSatoshi,
   });
 
-  const _signPsbt = await window.metaidwallet.btc.signPsbt({
-    psbtHex: psbt.toHex(),
-  });
+  const _signPsbt = await window.metaidwallet.btc
+    .signPsbt({
+      psbtHex: psbt.toHex(),
+    })
+    .catch((err) => {
+      console.log(err, "eeeeeee");
+    });
   if (_signPsbt.status === "canceled") throw new Error("canceled");
 
   const signPsbt = Psbt.fromHex(_signPsbt);
@@ -793,7 +801,7 @@ export async function mintRunes(
       bridgeAddress,
       btcAsset.originTokenId,
       new Decimal(mintAmount).mul(10 ** btcAsset.decimals).toFixed(0),
-      assetInfo.feeBtc+20,
+      assetInfo.feeBtc + 20,
       network
     );
     const submitPrepayOrderMintDto = {
