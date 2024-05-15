@@ -1607,7 +1607,7 @@ function getBtcTxSizeByOutputType(segWitInputNumber, tapRootInputNumber, insNumb
   }
   sizeSum += insNumber * 33;
   sizeSum += 1;
-  var _iterator2 = createForOfIteratorHelper_default()(outputTypeList),
+  var _iterator2 = _createForOfIteratorHelper(outputTypeList),
     _step2;
   try {
     for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
@@ -1636,20 +1636,20 @@ function sendRunes(_x30, _x31, _x32, _x33, _x34, _x35, _x36, _x37) {
   return _sendRunes.apply(this, arguments);
 }
 function _sendRunes() {
-  _sendRunes = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee13(publicKey, addressType, sendAddressType, recipient, runeId, amount, feeRate, net) {
-    var btcNetwork, address, _yield$fetchRunesUtxo, runesUtxoList, runesBalance, _iterator4, _step4, runesUtxoListElement, _iterator5, _step5, rune, _runeId$split, _runeId$split2, blockNumber, idx, runeIdObj, edicts, totalOutput, edictStone, changeAmount, haveChangeOutput, output, utxos, psbt, runesUtxoNumber, totalInputSatoshi, i, runesUtxo, satoshi, _i2, utxo, typeList, segWitInputNumber, tapRootInputNumber, fee, changeSatoshi, _signPsbt, signPsbt;
-    return regeneratorRuntime_default()().wrap(function _callee13$(_context13) {
-      while (1) switch (_context13.prev = _context13.next) {
+  _sendRunes = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee14(publicKey, addressType, sendAddressType, recipient, runeId, amount, feeRate, net) {
+    var btcNetwork, address, _yield$fetchRunesUtxo, runesUtxoList, runesBalance, _iterator4, _step4, runesUtxoListElement, _iterator5, _step5, rune, _runeId$split, _runeId$split2, blockNumber, idx, runeIdObj, edicts, totalOutput, edictStone, changeAmount, haveChangeOutput, output, utxos, buildPsbt, selecedtUTXOs, total, _yield$buildPsbt, signPsbt, totalInputSatoshi, fee, _yield$buildPsbt2, psbt;
+    return regeneratorRuntime_default()().wrap(function _callee14$(_context14) {
+      while (1) switch (_context14.prev = _context14.next) {
         case 0:
           btcNetwork = net === "mainnet" ? src.networks.bitcoin : src.networks.testnet;
-          _context13.next = 3;
+          _context14.next = 3;
           return window.metaidwallet.btc.getAddress();
         case 3:
-          address = _context13.sent;
-          _context13.next = 6;
+          address = _context14.sent;
+          _context14.next = 6;
           return (0,api/* fetchRunesUtxos */._N)(address, runeId, net);
         case 6:
-          _yield$fetchRunesUtxo = _context13.sent;
+          _yield$fetchRunesUtxo = _context14.sent;
           runesUtxoList = _yield$fetchRunesUtxo.data.list;
           runesBalance = new Map();
           _iterator4 = createForOfIteratorHelper_default()(runesUtxoList);
@@ -1681,7 +1681,7 @@ function _sendRunes() {
           changeAmount = (runesBalance.get(runeId) || 0n) - totalOutput;
           haveChangeOutput = changeAmount > 0n || runesBalance.size > 1;
           if (!(changeAmount < 0n)) {
-            _context13.next = 20;
+            _context14.next = 20;
             break;
           }
           throw Error("changeAmount lt 0");
@@ -1691,120 +1691,136 @@ function _sendRunes() {
             output += 1;
           }
           edicts.push(new dist.Edict(runeIdObj, BigInt(amount), output));
-          _context13.next = 25;
+          _context14.next = 25;
           return window.metaidwallet.btc.getUtxos(address);
         case 25:
-          utxos = _context13.sent;
-          psbt = new src.Psbt({
-            network: btcNetwork
+          utxos = _context14.sent;
+          buildPsbt = /*#__PURE__*/function () {
+            var _ref3 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee13(_runesUtxoList, _selectedUtxos, change) {
+              var totalInputSatoshi, psbt, runesUtxoNumber, i, runesUtxo, satoshi, _i2, utxo, _signPsbt, signPsbt;
+              return regeneratorRuntime_default()().wrap(function _callee13$(_context13) {
+                while (1) switch (_context13.prev = _context13.next) {
+                  case 0:
+                    totalInputSatoshi = 0;
+                    psbt = new src.Psbt({
+                      network: btcNetwork
+                    });
+                    runesUtxoNumber = _runesUtxoList.length;
+                    i = 0;
+                  case 4:
+                    if (!(i < runesUtxoNumber)) {
+                      _context13.next = 16;
+                      break;
+                    }
+                    runesUtxo = _runesUtxoList[i];
+                    satoshi = runesUtxo.satoshi || 546;
+                    _context13.t0 = psbt;
+                    _context13.next = 10;
+                    return _createPayInput({
+                      utxo: runesUtxo,
+                      addressType: sendAddressType,
+                      network: net
+                    });
+                  case 10:
+                    _context13.t1 = _context13.sent;
+                    _context13.t0.addInput.call(_context13.t0, _context13.t1);
+                    totalInputSatoshi += satoshi;
+                  case 13:
+                    i++;
+                    _context13.next = 4;
+                    break;
+                  case 16:
+                    _i2 = 0;
+                  case 17:
+                    if (!(_i2 < _selectedUtxos.length)) {
+                      _context13.next = 28;
+                      break;
+                    }
+                    utxo = _selectedUtxos[_i2];
+                    _context13.t2 = psbt;
+                    _context13.next = 22;
+                    return _createPayInput({
+                      utxo: utxo,
+                      addressType: sendAddressType,
+                      network: net
+                    });
+                  case 22:
+                    _context13.t3 = _context13.sent;
+                    _context13.t2.addInput.call(_context13.t2, _context13.t3);
+                    totalInputSatoshi += utxo.satoshi;
+                  case 25:
+                    _i2++;
+                    _context13.next = 17;
+                    break;
+                  case 28:
+                    psbt.addOutput({
+                      script: edictStone.encipher(),
+                      value: 0
+                    });
+                    if (haveChangeOutput) {
+                      psbt.addOutput({
+                        address: address,
+                        value: 546
+                      });
+                    }
+                    psbt.addOutput({
+                      address: recipient,
+                      value: 546
+                    });
+                    psbt.addOutput({
+                      address: address,
+                      value: change
+                    });
+                    _context13.next = 34;
+                    return window.metaidwallet.btc.signPsbt({
+                      psbtHex: psbt.toHex()
+                    });
+                  case 34:
+                    _signPsbt = _context13.sent;
+                    if (!(_signPsbt.status === "canceled")) {
+                      _context13.next = 37;
+                      break;
+                    }
+                    throw new Error("canceled");
+                  case 37:
+                    signPsbt = src.Psbt.fromHex(_signPsbt);
+                    return _context13.abrupt("return", {
+                      signPsbt: signPsbt,
+                      totalInputSatoshi: totalInputSatoshi
+                    });
+                  case 39:
+                  case "end":
+                    return _context13.stop();
+                }
+              }, _callee13);
+            }));
+            return function buildPsbt(_x51, _x52, _x53) {
+              return _ref3.apply(this, arguments);
+            };
+          }();
+          utxos.sort(function (a, b) {
+            return b.satoshi - a.satoshi;
           });
-          runesUtxoNumber = runesUtxoList.length;
-          totalInputSatoshi = 0;
-          i = 0;
-        case 30:
-          if (!(i < runesUtxoNumber)) {
-            _context13.next = 42;
-            break;
-          }
-          runesUtxo = runesUtxoList[i];
-          satoshi = runesUtxo.satoshi || 546;
-          _context13.t0 = psbt;
-          _context13.next = 36;
-          return _createPayInput({
-            utxo: runesUtxo,
-            addressType: sendAddressType,
-            network: net
-          });
-        case 36:
-          _context13.t1 = _context13.sent;
-          _context13.t0.addInput.call(_context13.t0, _context13.t1);
-          totalInputSatoshi += satoshi;
-        case 39:
-          i++;
-          _context13.next = 30;
-          break;
-        case 42:
-          _i2 = 0;
-        case 43:
-          if (!(_i2 < utxos.length)) {
-            _context13.next = 54;
-            break;
-          }
-          utxo = utxos[_i2];
-          _context13.t2 = psbt;
-          _context13.next = 48;
-          return _createPayInput({
-            utxo: utxo,
-            addressType: sendAddressType,
-            network: net
-          });
-        case 48:
-          _context13.t3 = _context13.sent;
-          _context13.t2.addInput.call(_context13.t2, _context13.t3);
-          totalInputSatoshi += utxo.satoshi;
-        case 51:
-          _i2++;
-          _context13.next = 43;
-          break;
-        case 54:
-          psbt.addOutput({
-            script: edictStone.encipher(),
-            value: 0
-          });
-          debugger;
-          if (haveChangeOutput) {
-            psbt.addOutput({
-              address: address,
-              value: 546
-            });
-          }
-          psbt.addOutput({
-            address: recipient,
-            value: 546
-          });
-          typeList = [sendAddressType, addressType];
-          if (haveChangeOutput) {
-            typeList.push(addressType);
-          }
-          segWitInputNumber = 0;
-          tapRootInputNumber = 0;
-          if (!(addressType === "P2WPKH")) {
-            _context13.next = 66;
-            break;
-          }
-          segWitInputNumber = psbt.inputCount;
-          _context13.next = 67;
-          break;
-        case 66:
-          throw Error("unsupported addressType ".concat(addressType));
-        case 67:
-          fee = feeRate * getBtcTxSizeByOutputType(segWitInputNumber, tapRootInputNumber, 0, typeList);
-          changeSatoshi = totalInputSatoshi - fee;
-          psbt.addOutput({
-            address: address,
-            value: changeSatoshi
-          });
-          _context13.next = 72;
-          return window.metaidwallet.btc.signPsbt({
-            psbtHex: psbt.toHex()
-          })["catch"](function (err) {
-            console.log(err, "eeeeeee");
-          });
-        case 72:
-          _signPsbt = _context13.sent;
-          if (!(_signPsbt.status === "canceled")) {
-            _context13.next = 75;
-            break;
-          }
-          throw new Error("canceled");
-        case 75:
-          signPsbt = src.Psbt.fromHex(_signPsbt);
-          return _context13.abrupt("return", signPsbt);
-        case 77:
+          selecedtUTXOs = selectUTXOs(utxos, new decimal/* default */.Z(0));
+          total = getTotalSatoshi(selecedtUTXOs);
+          _context14.next = 32;
+          return buildPsbt(runesUtxoList, selecedtUTXOs, total.minus(546).toNumber());
+        case 32:
+          _yield$buildPsbt = _context14.sent;
+          signPsbt = _yield$buildPsbt.signPsbt;
+          totalInputSatoshi = _yield$buildPsbt.totalInputSatoshi;
+          fee = _calculateFee(signPsbt, feeRate);
+          _context14.next = 38;
+          return buildPsbt(runesUtxoList, utxos, total.minus(546).minus(fee).toNumber());
+        case 38:
+          _yield$buildPsbt2 = _context14.sent;
+          psbt = _yield$buildPsbt2.signPsbt;
+          return _context14.abrupt("return", psbt);
+        case 41:
         case "end":
-          return _context13.stop();
+          return _context14.stop();
       }
-    }, _callee13);
+    }, _callee14);
   }));
   return _sendRunes.apply(this, arguments);
 }
@@ -1812,15 +1828,15 @@ function mintBrc(_x38, _x39, _x40, _x41, _x42, _x43) {
   return _mintBrc.apply(this, arguments);
 }
 function _mintBrc() {
-  _mintBrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee14(mintAmount, btcAsset, addressType, network, assetInfo, inscription) {
+  _mintBrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee15(mintAmount, btcAsset, addressType, network, assetInfo, inscription) {
     var _yield$signMintPublic2, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _inscriptionId, _inscriptionId2, _yield$createPrepayOr5, createResp, orderId, bridgeAddress, inscriptionUtxo, psbt, submitPrepayOrderMintDto, submitRes;
-    return regeneratorRuntime_default()().wrap(function _callee14$(_context14) {
-      while (1) switch (_context14.prev = _context14.next) {
+    return regeneratorRuntime_default()().wrap(function _callee15$(_context15) {
+      while (1) switch (_context15.prev = _context15.next) {
         case 0:
-          _context14.next = 2;
+          _context15.next = 2;
           return signMintPublicKey();
         case 2:
-          _yield$signMintPublic2 = _context14.sent;
+          _yield$signMintPublic2 = _context15.sent;
           publicKey = _yield$signMintPublic2.publicKey;
           publicKeySign = _yield$signMintPublic2.publicKeySign;
           publicKeyReceiveSign = _yield$signMintPublic2.publicKeyReceiveSign;
@@ -1834,11 +1850,11 @@ function _mintBrc() {
             publicKeyReceive: publicKeyReceive,
             publicKeyReceiveSign: publicKeyReceiveSign
           };
-          _context14.prev = 8;
-          _context14.next = 11;
+          _context15.prev = 8;
+          _context15.next = 11;
           return (0,api/* createPrepayOrderMintBRC20 */.k8)(network, createPrepayOrderDto);
         case 11:
-          _yield$createPrepayOr5 = _context14.sent;
+          _yield$createPrepayOr5 = _context15.sent;
           createResp = _yield$createPrepayOr5.data;
           orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
           inscriptionUtxo = {
@@ -1848,81 +1864,16 @@ function _mintBrc() {
             confirmed: true,
             inscriptions: null
           };
-          _context14.next = 17;
+          _context15.next = 17;
           return sendBRC(bridgeAddress, inscriptionUtxo, assetInfo.feeBtc, network);
         case 17:
-          psbt = _context14.sent;
-          submitPrepayOrderMintDto = {
-            orderId: orderId,
-            txHex: psbt.extractTransaction().toHex()
-          };
-          _context14.next = 21;
-          return (0,api/* submitPrepayOrderMintBrc20 */.nc)(network, submitPrepayOrderMintDto);
-        case 21:
-          submitRes = _context14.sent;
-          if (submitRes.success) {
-            _context14.next = 24;
-            break;
-          }
-          throw new Error(submitRes.msg);
-        case 24:
-          return _context14.abrupt("return", submitRes);
-        case 27:
-          _context14.prev = 27;
-          _context14.t0 = _context14["catch"](8);
-          throw new Error(_context14.t0.message || _context14.t0.msg);
-        case 30:
-        case "end":
-          return _context14.stop();
-      }
-    }, _callee14, null, [[8, 27]]);
-  }));
-  return _mintBrc.apply(this, arguments);
-}
-function mintRunes(_x44, _x45, _x46, _x47, _x48) {
-  return _mintRunes.apply(this, arguments);
-}
-function _mintRunes() {
-  _mintRunes = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee15(mintAmount, btcAsset, addressType, network, assetInfo) {
-    var _yield$signMintPublic3, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr6, createResp, orderId, bridgeAddress, psbt, submitPrepayOrderMintDto, submitRes;
-    return regeneratorRuntime_default()().wrap(function _callee15$(_context15) {
-      while (1) switch (_context15.prev = _context15.next) {
-        case 0:
-          _context15.next = 2;
-          return signMintPublicKey();
-        case 2:
-          _yield$signMintPublic3 = _context15.sent;
-          publicKey = _yield$signMintPublic3.publicKey;
-          publicKeySign = _yield$signMintPublic3.publicKeySign;
-          publicKeyReceiveSign = _yield$signMintPublic3.publicKeyReceiveSign;
-          publicKeyReceive = _yield$signMintPublic3.publicKeyReceive;
-          createPrepayOrderDto = {
-            amount: String(mintAmount),
-            originTokenId: btcAsset.originTokenId,
-            addressType: addressType,
-            publicKey: publicKey,
-            publicKeySign: publicKeySign,
-            publicKeyReceive: publicKeyReceive,
-            publicKeyReceiveSign: publicKeyReceiveSign
-          };
-          _context15.prev = 8;
-          _context15.next = 11;
-          return (0,api/* createPrepayOrderMintRunes */.MF)(network, createPrepayOrderDto);
-        case 11:
-          _yield$createPrepayOr6 = _context15.sent;
-          createResp = _yield$createPrepayOr6.data;
-          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
-          _context15.next = 16;
-          return sendRunes(publicKey, "P2WPKH", addressType, bridgeAddress, btcAsset.originTokenId, new decimal/* default */.Z(mintAmount).mul(Math.pow(10, btcAsset.decimals)).toFixed(0), assetInfo.feeBtc + 20, network);
-        case 16:
           psbt = _context15.sent;
           submitPrepayOrderMintDto = {
             orderId: orderId,
             txHex: psbt.extractTransaction().toHex()
           };
-          debugger;
           _context15.next = 21;
-          return (0,api/* submitPrepayOrderMintRunes */.C5)(network, submitPrepayOrderMintDto);
+          return (0,api/* submitPrepayOrderMintBrc20 */.nc)(network, submitPrepayOrderMintDto);
         case 21:
           submitRes = _context15.sent;
           if (submitRes.success) {
@@ -1941,6 +1892,71 @@ function _mintRunes() {
           return _context15.stop();
       }
     }, _callee15, null, [[8, 27]]);
+  }));
+  return _mintBrc.apply(this, arguments);
+}
+function mintRunes(_x44, _x45, _x46, _x47, _x48) {
+  return _mintRunes.apply(this, arguments);
+}
+function _mintRunes() {
+  _mintRunes = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee16(mintAmount, btcAsset, addressType, network, assetInfo) {
+    var _yield$signMintPublic3, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr6, createResp, orderId, bridgeAddress, psbt, submitPrepayOrderMintDto, submitRes;
+    return regeneratorRuntime_default()().wrap(function _callee16$(_context16) {
+      while (1) switch (_context16.prev = _context16.next) {
+        case 0:
+          _context16.next = 2;
+          return signMintPublicKey();
+        case 2:
+          _yield$signMintPublic3 = _context16.sent;
+          publicKey = _yield$signMintPublic3.publicKey;
+          publicKeySign = _yield$signMintPublic3.publicKeySign;
+          publicKeyReceiveSign = _yield$signMintPublic3.publicKeyReceiveSign;
+          publicKeyReceive = _yield$signMintPublic3.publicKeyReceive;
+          createPrepayOrderDto = {
+            amount: String(mintAmount),
+            originTokenId: btcAsset.originTokenId,
+            addressType: addressType,
+            publicKey: publicKey,
+            publicKeySign: publicKeySign,
+            publicKeyReceive: publicKeyReceive,
+            publicKeyReceiveSign: publicKeyReceiveSign
+          };
+          _context16.prev = 8;
+          _context16.next = 11;
+          return (0,api/* createPrepayOrderMintRunes */.MF)(network, createPrepayOrderDto);
+        case 11:
+          _yield$createPrepayOr6 = _context16.sent;
+          createResp = _yield$createPrepayOr6.data;
+          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
+          _context16.next = 16;
+          return sendRunes(publicKey, "P2WPKH", addressType, bridgeAddress, btcAsset.originTokenId, new decimal/* default */.Z(mintAmount).mul(Math.pow(10, btcAsset.decimals)).toFixed(0), assetInfo.feeBtc + 20, network);
+        case 16:
+          psbt = _context16.sent;
+          submitPrepayOrderMintDto = {
+            orderId: orderId,
+            txHex: psbt.extractTransaction().toHex()
+          };
+          debugger;
+          _context16.next = 21;
+          return (0,api/* submitPrepayOrderMintRunes */.C5)(network, submitPrepayOrderMintDto);
+        case 21:
+          submitRes = _context16.sent;
+          if (submitRes.success) {
+            _context16.next = 24;
+            break;
+          }
+          throw new Error(submitRes.msg);
+        case 24:
+          return _context16.abrupt("return", submitRes);
+        case 27:
+          _context16.prev = 27;
+          _context16.t0 = _context16["catch"](8);
+          throw new Error(_context16.t0.message || _context16.t0.msg);
+        case 30:
+        case "end":
+          return _context16.stop();
+      }
+    }, _callee16, null, [[8, 27]]);
   }));
   return _mintRunes.apply(this, arguments);
 }
