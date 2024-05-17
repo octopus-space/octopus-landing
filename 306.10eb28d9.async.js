@@ -1,4 +1,4 @@
-(self["webpackChunk"] = self["webpackChunk"] || []).push([[410],{
+(self["webpackChunk"] = self["webpackChunk"] || []).push([[306],{
 
 /***/ 80882:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
@@ -126,6 +126,2524 @@ var SyncOutlined_SyncOutlined = function SyncOutlined(props, ref) {
 var RefIcon = /*#__PURE__*/react.forwardRef(SyncOutlined_SyncOutlined);
 if (false) {}
 /* harmony default export */ var icons_SyncOutlined = (RefIcon);
+
+/***/ }),
+
+/***/ 35268:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+var __webpack_unused_export__;
+
+__webpack_unused_export__ = ({ value: true });
+__webpack_unused_export__ = __webpack_unused_export__ = exports.L6 = __webpack_unused_export__ = __webpack_unused_export__ = __webpack_unused_export__ = __webpack_unused_export__ = void 0;
+const artifact_1 = __webpack_require__(54236);
+const constants_1 = __webpack_require__(35852);
+const etching_1 = __webpack_require__(26545);
+const flaw_1 = __webpack_require__(81646);
+const integer_1 = __webpack_require__(77096);
+const monads_1 = __webpack_require__(20928);
+const runeid_1 = __webpack_require__(95906);
+const runestone_1 = __webpack_require__(23592);
+const spacedrune_1 = __webpack_require__(55340);
+var indexer_1 = __webpack_require__(54520);
+__webpack_unused_export__ = ({ enumerable: true, get: function () { return indexer_1.RuneLocation; } });
+__webpack_unused_export__ = ({ enumerable: true, get: function () { return indexer_1.RuneUpdater; } });
+__webpack_unused_export__ = ({ enumerable: true, get: function () { return indexer_1.RunestoneIndexer; } });
+var network_1 = __webpack_require__(11678);
+__webpack_unused_export__ = ({ enumerable: true, get: function () { return network_1.Network; } });
+function getFlawString(flaw) {
+    switch (flaw) {
+        case flaw_1.Flaw.EDICT_OUTPUT:
+            return 'edict_output';
+        case flaw_1.Flaw.EDICT_RUNE_ID:
+            return 'edict_rune_id';
+        case flaw_1.Flaw.INVALID_SCRIPT:
+            return 'invalid_script';
+        case flaw_1.Flaw.OPCODE:
+            return 'opcode';
+        case flaw_1.Flaw.SUPPLY_OVERFLOW:
+            return 'supply_overflow';
+        case flaw_1.Flaw.TRAILING_INTEGERS:
+            return 'trailing_integers';
+        case flaw_1.Flaw.TRUNCATED_FIELD:
+            return 'truncated_field';
+        case flaw_1.Flaw.UNRECOGNIZED_EVEN_TAG:
+            return 'unrecognized_even_tag';
+        case flaw_1.Flaw.UNRECOGNIZED_FLAG:
+            return 'unrecognized_flag';
+        case flaw_1.Flaw.VARINT:
+            return 'varint';
+    }
+}
+// Helper functions to ensure numbers fit the desired type correctly
+const u8Strict = (n) => {
+    const bigN = BigInt(n);
+    if (bigN < 0n || bigN > integer_1.u8.MAX) {
+        throw Error('u8 overflow');
+    }
+    return (0, integer_1.u8)(bigN);
+};
+const u32Strict = (n) => {
+    const bigN = BigInt(n);
+    if (bigN < 0n || bigN > integer_1.u32.MAX) {
+        throw Error('u32 overflow');
+    }
+    return (0, integer_1.u32)(bigN);
+};
+const u64Strict = (n) => {
+    const bigN = BigInt(n);
+    if (bigN < 0n || bigN > integer_1.u64.MAX) {
+        throw Error('u64 overflow');
+    }
+    return (0, integer_1.u64)(bigN);
+};
+const u128Strict = (n) => {
+    const bigN = BigInt(n);
+    if (bigN < 0n || bigN > integer_1.u128.MAX) {
+        throw Error('u128 overflow');
+    }
+    return (0, integer_1.u128)(bigN);
+};
+// TODO: Add unit tests
+/**
+ * Low level function to allow for encoding runestones without any indexer and transaction checks.
+ *
+ * @param runestone runestone spec to encode as runestone
+ * @returns encoded runestone bytes
+ * @throws Error if encoding is detected to be considered a cenotaph
+ */
+function encodeRunestone(runestone) {
+    const mint = runestone.mint
+        ? (0, monads_1.Some)(new runeid_1.RuneId(u64Strict(runestone.mint.block), u32Strict(runestone.mint.tx)))
+        : monads_1.None;
+    const pointer = runestone.pointer !== undefined ? (0, monads_1.Some)(runestone.pointer).map(u32Strict) : monads_1.None;
+    const edicts = (runestone.edicts ?? []).map((edict) => ({
+        id: new runeid_1.RuneId(u64Strict(edict.id.block), u32Strict(edict.id.tx)),
+        amount: u128Strict(edict.amount),
+        output: u32Strict(edict.output),
+    }));
+    let etching = monads_1.None;
+    let etchingCommitment = undefined;
+    if (runestone.etching) {
+        const etchingSpec = runestone.etching;
+        const spacedRune = etchingSpec.runeName
+            ? spacedrune_1.SpacedRune.fromString(etchingSpec.runeName)
+            : undefined;
+        const rune = spacedRune?.rune !== undefined ? (0, monads_1.Some)(spacedRune.rune) : monads_1.None;
+        if (etchingSpec.symbol &&
+            !(etchingSpec.symbol.length === 1 ||
+                (etchingSpec.symbol.length === 2 && etchingSpec.symbol.codePointAt(0) >= 0x10000))) {
+            throw Error('Symbol must be one code point');
+        }
+        const divisibility = etchingSpec.divisibility !== undefined ? (0, monads_1.Some)(etchingSpec.divisibility).map(u8Strict) : monads_1.None;
+        const premine = etchingSpec.premine !== undefined ? (0, monads_1.Some)(etchingSpec.premine).map(u128Strict) : monads_1.None;
+        const spacers = spacedRune?.spacers !== undefined && spacedRune.spacers !== 0
+            ? (0, monads_1.Some)(u32Strict(spacedRune.spacers))
+            : monads_1.None;
+        const symbol = etchingSpec.symbol ? (0, monads_1.Some)(etchingSpec.symbol) : monads_1.None;
+        if (divisibility.isSome() && divisibility.unwrap() > constants_1.MAX_DIVISIBILITY) {
+            throw Error(`Divisibility is greater than protocol max ${constants_1.MAX_DIVISIBILITY}`);
+        }
+        let terms = monads_1.None;
+        if (etchingSpec.terms) {
+            const termsSpec = etchingSpec.terms;
+            const amount = termsSpec.amount !== undefined ? (0, monads_1.Some)(termsSpec.amount).map(u128Strict) : monads_1.None;
+            const cap = termsSpec.cap !== undefined ? (0, monads_1.Some)(termsSpec.cap).map(u128Strict) : monads_1.None;
+            const height = termsSpec.height
+                ? [
+                    termsSpec.height.start !== undefined
+                        ? (0, monads_1.Some)(termsSpec.height.start).map(u64Strict)
+                        : monads_1.None,
+                    termsSpec.height.end !== undefined ? (0, monads_1.Some)(termsSpec.height.end).map(u64Strict) : monads_1.None,
+                ]
+                : [monads_1.None, monads_1.None];
+            const offset = termsSpec.offset
+                ? [
+                    termsSpec.offset.start !== undefined
+                        ? (0, monads_1.Some)(termsSpec.offset.start).map(u64Strict)
+                        : monads_1.None,
+                    termsSpec.offset.end !== undefined ? (0, monads_1.Some)(termsSpec.offset.end).map(u64Strict) : monads_1.None,
+                ]
+                : [monads_1.None, monads_1.None];
+            if (amount.isSome() && cap.isSome() && amount.unwrap() * cap.unwrap() > integer_1.u128.MAX) {
+                throw Error('Terms overflow with amount times cap');
+            }
+            terms = (0, monads_1.Some)({ amount, cap, height, offset });
+        }
+        const turbo = etchingSpec.turbo ?? false;
+        etching = (0, monads_1.Some)(new etching_1.Etching(divisibility, rune, spacers, symbol, terms, premine, turbo));
+        etchingCommitment = rune.isSome() ? rune.unwrap().commitment : undefined;
+    }
+    return {
+        encodedRunestone: new runestone_1.Runestone(mint, pointer, edicts, etching).encipher(),
+        etchingCommitment,
+    };
+}
+exports.L6 = encodeRunestone;
+function isRunestone(artifact) {
+    return !('flaws' in artifact);
+}
+__webpack_unused_export__ = isRunestone;
+function tryDecodeRunestone(tx) {
+    const optionArtifact = runestone_1.Runestone.decipher(tx);
+    if (optionArtifact.isNone()) {
+        return null;
+    }
+    const artifact = optionArtifact.unwrap();
+    if ((0, artifact_1.isRunestone)(artifact)) {
+        const runestone = artifact;
+        const etching = () => runestone.etching.unwrap();
+        const terms = () => etching().terms.unwrap();
+        return {
+            ...(runestone.etching.isSome()
+                ? {
+                    etching: {
+                        ...(etching().divisibility.isSome()
+                            ? { divisibility: etching().divisibility.map(Number).unwrap() }
+                            : {}),
+                        ...(etching().premine.isSome() ? { premine: etching().premine.unwrap() } : {}),
+                        ...(etching().rune.isSome()
+                            ? {
+                                runeName: new spacedrune_1.SpacedRune(etching().rune.unwrap(), etching().spacers.map(Number).unwrapOr(0)).toString(),
+                            }
+                            : {}),
+                        ...(etching().symbol.isSome() ? { symbol: etching().symbol.unwrap() } : {}),
+                        ...(etching().terms.isSome()
+                            ? {
+                                terms: {
+                                    ...(terms().amount.isSome() ? { amount: terms().amount.unwrap() } : {}),
+                                    ...(terms().cap.isSome() ? { cap: terms().cap.unwrap() } : {}),
+                                    ...(terms().height.find((option) => option.isSome())
+                                        ? {
+                                            height: {
+                                                ...(terms().height[0].isSome()
+                                                    ? { start: terms().height[0].unwrap() }
+                                                    : {}),
+                                                ...(terms().height[1].isSome()
+                                                    ? { end: terms().height[1].unwrap() }
+                                                    : {}),
+                                            },
+                                        }
+                                        : {}),
+                                    ...(terms().offset.find((option) => option.isSome())
+                                        ? {
+                                            offset: {
+                                                ...(terms().offset[0].isSome()
+                                                    ? { start: terms().offset[0].unwrap() }
+                                                    : {}),
+                                                ...(terms().offset[1].isSome()
+                                                    ? { end: terms().offset[1].unwrap() }
+                                                    : {}),
+                                            },
+                                        }
+                                        : {}),
+                                },
+                            }
+                            : {}),
+                        turbo: etching().turbo,
+                    },
+                }
+                : {}),
+            ...(runestone.mint.isSome()
+                ? {
+                    mint: {
+                        block: runestone.mint.unwrap().block,
+                        tx: Number(runestone.mint.unwrap().tx),
+                    },
+                }
+                : {}),
+            ...(runestone.pointer.isSome() ? { pointer: Number(runestone.pointer.unwrap()) } : {}),
+            ...(runestone.edicts.length
+                ? {
+                    edicts: runestone.edicts.map((edict) => ({
+                        id: {
+                            block: edict.id.block,
+                            tx: Number(edict.id.tx),
+                        },
+                        amount: edict.amount,
+                        output: Number(edict.output),
+                    })),
+                }
+                : {}),
+        };
+    }
+    else {
+        const cenotaph = artifact;
+        return {
+            flaws: cenotaph.flaws.map(getFlawString),
+            ...(cenotaph.etching.isSome() ? { etching: cenotaph.etching.unwrap().toString() } : {}),
+            ...(cenotaph.mint.isSome()
+                ? { mint: { block: cenotaph.mint.unwrap().block, tx: Number(cenotaph.mint.unwrap().tx) } }
+                : {}),
+        };
+    }
+}
+__webpack_unused_export__ = tryDecodeRunestone;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 54236:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.isRunestone = void 0;
+function isRunestone(artifact) {
+    return !('flaws' in artifact);
+}
+exports.isRunestone = isRunestone;
+//# sourceMappingURL=artifact.js.map
+
+/***/ }),
+
+/***/ 65244:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Cenotaph = void 0;
+const monads_1 = __webpack_require__(20928);
+class Cenotaph {
+    constructor(flaws, etching = monads_1.None, mint = monads_1.None) {
+        this.flaws = flaws;
+        this.etching = etching;
+        this.mint = mint;
+    }
+}
+exports.Cenotaph = Cenotaph;
+//# sourceMappingURL=cenotaph.js.map
+
+/***/ }),
+
+/***/ 35852:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TAPROOT_SCRIPT_PUBKEY_TYPE = exports.COMMIT_CONFIRMATIONS = exports.TAPROOT_ANNEX_PREFIX = exports.MAGIC_NUMBER = exports.OP_RETURN = exports.MAX_SCRIPT_ELEMENT_SIZE = exports.SUBSIDY_HALVING_INTERVAL = exports.RESERVED = exports.MAX_DIVISIBILITY = void 0;
+const integer_1 = __webpack_require__(77096);
+const script_1 = __webpack_require__(41447);
+exports.MAX_DIVISIBILITY = (0, integer_1.u8)(38);
+exports.RESERVED = (0, integer_1.u128)(6402364363415443603228541259936211926n);
+exports.SUBSIDY_HALVING_INTERVAL = 210000;
+exports.MAX_SCRIPT_ELEMENT_SIZE = 520;
+exports.OP_RETURN = script_1.opcodes.OP_RETURN;
+exports.MAGIC_NUMBER = script_1.opcodes.OP_13;
+exports.TAPROOT_ANNEX_PREFIX = 0x50;
+exports.COMMIT_CONFIRMATIONS = 6;
+exports.TAPROOT_SCRIPT_PUBKEY_TYPE = 'witness_v1_taproot';
+//# sourceMappingURL=constants.js.map
+
+/***/ }),
+
+/***/ 40059:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Edict = void 0;
+const monads_1 = __webpack_require__(20928);
+const integer_1 = __webpack_require__(77096);
+var Edict;
+(function (Edict) {
+    function fromIntegers(numOutputs, id, amount, output) {
+        if (id.block === 0n && id.tx > 0n) {
+            return monads_1.None;
+        }
+        const optionOutputU32 = integer_1.u128.tryIntoU32(output);
+        if (optionOutputU32.isNone()) {
+            return monads_1.None;
+        }
+        const outputU32 = optionOutputU32.unwrap();
+        if (outputU32 > numOutputs) {
+            return monads_1.None;
+        }
+        return (0, monads_1.Some)({ id, amount, output: outputU32 });
+    }
+    Edict.fromIntegers = fromIntegers;
+})(Edict || (exports.Edict = Edict = {}));
+//# sourceMappingURL=edict.js.map
+
+/***/ }),
+
+/***/ 26545:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Etching = void 0;
+const monads_1 = __webpack_require__(20928);
+const integer_1 = __webpack_require__(77096);
+class Etching {
+    constructor(divisibility, rune, spacers, symbol, terms, premine, turbo) {
+        this.divisibility = divisibility;
+        this.rune = rune;
+        this.spacers = spacers;
+        this.terms = terms;
+        this.premine = premine;
+        this.turbo = turbo;
+        this.symbol = symbol.andThen((value) => {
+            const codePoint = value.codePointAt(0);
+            return codePoint !== undefined ? (0, monads_1.Some)(String.fromCodePoint(codePoint)) : monads_1.None;
+        });
+    }
+    get supply() {
+        const premine = this.premine.unwrapOr((0, integer_1.u128)(0));
+        const cap = this.terms.andThen((terms) => terms.cap).unwrapOr((0, integer_1.u128)(0));
+        const amount = this.terms.andThen((terms) => terms.amount).unwrapOr((0, integer_1.u128)(0));
+        return integer_1.u128
+            .checkedMultiply(cap, amount)
+            .andThen((multiplyResult) => integer_1.u128.checkedAdd(premine, multiplyResult));
+    }
+}
+exports.Etching = Etching;
+//# sourceMappingURL=etching.js.map
+
+/***/ }),
+
+/***/ 72707:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Flag = void 0;
+const integer_1 = __webpack_require__(77096);
+var Flag;
+(function (Flag) {
+    Flag[Flag["ETCHING"] = 0] = "ETCHING";
+    Flag[Flag["TERMS"] = 1] = "TERMS";
+    Flag[Flag["TURBO"] = 2] = "TURBO";
+    Flag[Flag["CENOTAPH"] = 127] = "CENOTAPH";
+})(Flag || (exports.Flag = Flag = {}));
+(function (Flag) {
+    function mask(flag) {
+        return (0, integer_1.u128)(1n << BigInt(flag));
+    }
+    Flag.mask = mask;
+    function take(flags, flag) {
+        const mask = Flag.mask(flag);
+        const set = (flags & mask) !== 0n;
+        return { set, flags: set ? (0, integer_1.u128)(flags - mask) : flags };
+    }
+    Flag.take = take;
+    function set(flags, flag) {
+        return (0, integer_1.u128)(flags | Flag.mask(flag));
+    }
+    Flag.set = set;
+})(Flag || (exports.Flag = Flag = {}));
+//# sourceMappingURL=flag.js.map
+
+/***/ }),
+
+/***/ 81646:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Flaw = void 0;
+var Flaw;
+(function (Flaw) {
+    Flaw[Flaw["EDICT_OUTPUT"] = 0] = "EDICT_OUTPUT";
+    Flaw[Flaw["EDICT_RUNE_ID"] = 1] = "EDICT_RUNE_ID";
+    Flaw[Flaw["INVALID_SCRIPT"] = 2] = "INVALID_SCRIPT";
+    Flaw[Flaw["OPCODE"] = 3] = "OPCODE";
+    Flaw[Flaw["SUPPLY_OVERFLOW"] = 4] = "SUPPLY_OVERFLOW";
+    Flaw[Flaw["TRAILING_INTEGERS"] = 5] = "TRAILING_INTEGERS";
+    Flaw[Flaw["TRUNCATED_FIELD"] = 6] = "TRUNCATED_FIELD";
+    Flaw[Flaw["UNRECOGNIZED_EVEN_TAG"] = 7] = "UNRECOGNIZED_EVEN_TAG";
+    Flaw[Flaw["UNRECOGNIZED_FLAG"] = 8] = "UNRECOGNIZED_FLAG";
+    Flaw[Flaw["VARINT"] = 9] = "VARINT";
+})(Flaw || (exports.Flaw = Flaw = {}));
+//# sourceMappingURL=flaw.js.map
+
+/***/ }),
+
+/***/ 54520:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RunestoneIndexer = exports.RuneUpdater = void 0;
+const network_1 = __webpack_require__(11678);
+const updater_1 = __webpack_require__(51574);
+const integer_1 = __webpack_require__(77096);
+__exportStar(__webpack_require__(38246), exports);
+var updater_2 = __webpack_require__(51574);
+Object.defineProperty(exports, "RuneUpdater", ({ enumerable: true, get: function () { return updater_2.RuneUpdater; } }));
+class RunestoneIndexer {
+    constructor(options) {
+        this._started = false;
+        this._updateInProgress = false;
+        this._rpc = options.bitcoinRpcClient;
+        this._storage = options.storage;
+        this._network = options.network;
+    }
+    async start() {
+        if (this._started) {
+            return;
+        }
+        await this._storage.connect();
+        this._started = true;
+        if (this._network === network_1.Network.MAINNET) {
+            this._storage.seedEtchings([
+                {
+                    runeTicker: 'UNCOMMONGOODS',
+                    runeName: 'UNCOMMON•GOODS',
+                    runeId: { block: 1, tx: 0 },
+                    txid: '0000000000000000000000000000000000000000000000000000000000000000',
+                    valid: true,
+                    symbol: '⧉',
+                    terms: { amount: 1n, cap: integer_1.u128.MAX, height: { start: 840000n, end: 1050000n } },
+                },
+            ]);
+        }
+    }
+    async stop() {
+        if (!this._started) {
+            return;
+        }
+        await this._storage.disconnect();
+        this._started = false;
+    }
+    async updateRuneUtxoBalances() {
+        if (!this._started) {
+            throw new Error('Runestone indexer is not started');
+        }
+        if (this._updateInProgress) {
+            return;
+        }
+        this._updateInProgress = true;
+        try {
+            await this.updateRuneUtxoBalancesImpl();
+        }
+        finally {
+            this._updateInProgress = false;
+        }
+    }
+    async updateRuneUtxoBalancesImpl() {
+        const currentStorageBlock = await this._storage.getCurrentBlock();
+        if (currentStorageBlock) {
+            // walk down until matching hash is found
+            const reorgBlockhashesToIndex = [];
+            let blockheight = currentStorageBlock.height;
+            let blockhash = (await this._rpc.getblockhash({ height: blockheight })).result;
+            let storageBlockHash = currentStorageBlock.hash;
+            while (storageBlockHash !== blockhash) {
+                if (blockhash) {
+                    reorgBlockhashesToIndex.push(blockhash);
+                }
+                blockheight--;
+                blockhash = (await this._rpc.getblockhash({ height: blockheight })).result;
+                storageBlockHash = await this._storage.getBlockhash(blockheight);
+            }
+            reorgBlockhashesToIndex.reverse();
+            // process blocks that are reorgs
+            for (const blockhash of reorgBlockhashesToIndex) {
+                const blockResult = await this._rpc.getblock({ blockhash, verbosity: 2 });
+                if (blockResult.error !== null) {
+                    throw blockResult.error;
+                }
+                const block = blockResult.result;
+                const runeUpdater = new updater_1.RuneUpdater(this._network, block, true, this._storage, this._rpc);
+                for (const [txIndex, tx] of block.tx.entries()) {
+                    await runeUpdater.indexRunes(tx, txIndex);
+                }
+                await this._storage.saveBlockIndex(runeUpdater);
+            }
+        }
+        // start from first rune height or next block height, whichever is greater
+        let blockheight = Math.max(network_1.Network.getFirstRuneHeight(this._network), currentStorageBlock ? currentStorageBlock.height + 1 : 0);
+        let blockhash = (await this._rpc.getblockhash({ height: blockheight })).result;
+        while (blockhash !== null) {
+            const blockResult = await this._rpc.getblock({ blockhash, verbosity: 2 });
+            if (blockResult.error !== null) {
+                throw blockResult.error;
+            }
+            const block = blockResult.result;
+            const runeUpdater = new updater_1.RuneUpdater(this._network, block, false, this._storage, this._rpc);
+            for (const [txIndex, tx] of block.tx.entries()) {
+                await runeUpdater.indexRunes(tx, txIndex);
+            }
+            await this._storage.saveBlockIndex(runeUpdater);
+            blockheight++;
+            blockhash = (await this._rpc.getblockhash({ height: blockheight })).result;
+        }
+    }
+}
+exports.RunestoneIndexer = RunestoneIndexer;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 38246:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RuneLocation = void 0;
+var RuneLocation;
+(function (RuneLocation) {
+    function toString(runeId) {
+        return `${runeId.block}:${runeId.tx}`;
+    }
+    RuneLocation.toString = toString;
+})(RuneLocation || (exports.RuneLocation = RuneLocation = {}));
+//# sourceMappingURL=types.js.map
+
+/***/ }),
+
+/***/ 51574:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+/* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RuneUpdater = void 0;
+const artifact_1 = __webpack_require__(54236);
+const constants_1 = __webpack_require__(35852);
+const integer_1 = __webpack_require__(77096);
+const monads_1 = __webpack_require__(20928);
+const rune_1 = __webpack_require__(45845);
+const runestone_1 = __webpack_require__(23592);
+const script_1 = __webpack_require__(41447);
+const spacedrune_1 = __webpack_require__(55340);
+const types_1 = __webpack_require__(38246);
+function isScriptPubKeyHexOpReturn(scriptPubKeyHex) {
+    return scriptPubKeyHex && Buffer.from(scriptPubKeyHex, 'hex')[0] === constants_1.OP_RETURN;
+}
+class RuneUpdater {
+    constructor(network, block, reorg, _storage, _rpc) {
+        this.reorg = reorg;
+        this._storage = _storage;
+        this._rpc = _rpc;
+        this.etchings = [];
+        this.utxoBalances = [];
+        this.spentBalances = [];
+        this._mintCountsByRuneLocation = new Map();
+        this._burnedBalancesByRuneLocation = new Map();
+        this.block = {
+            height: block.height,
+            hash: block.hash,
+            previousblockhash: block.previousblockhash,
+            time: block.time,
+        };
+        this._minimum = rune_1.Rune.getMinimumAtHeight(network, (0, integer_1.u128)(block.height));
+    }
+    get mintCounts() {
+        return [...this._mintCountsByRuneLocation.values()];
+    }
+    get burnedBalances() {
+        return [...this._burnedBalancesByRuneLocation.values()];
+    }
+    async indexRunes(tx, txIndex) {
+        const optionArtifact = runestone_1.Runestone.decipher(tx);
+        const unallocated = await this.unallocated(tx);
+        const allocated = [...new Array(tx.vout.length)].map(() => new Map());
+        function getUnallocatedRuneBalance(runeId) {
+            const key = types_1.RuneLocation.toString(runeId);
+            const balance = unallocated.get(key) ?? { runeId, amount: 0n };
+            unallocated.set(key, balance);
+            return balance;
+        }
+        function getAllocatedRuneBalance(vout, runeId) {
+            const key = types_1.RuneLocation.toString(runeId);
+            const balance = allocated[vout].get(key) ?? { runeId, amount: 0n };
+            allocated[vout].set(key, balance);
+            return balance;
+        }
+        if (optionArtifact.isSome()) {
+            const artifact = optionArtifact.unwrap();
+            const optionMint = artifact.mint;
+            if (optionMint.isSome()) {
+                const runeId = optionMint.unwrap();
+                const runeLocation = {
+                    block: Number(runeId.block),
+                    tx: Number(runeId.tx),
+                };
+                const optionAmount = await this.mint(runeLocation, tx.txid);
+                if (optionAmount.isSome()) {
+                    const amount = optionAmount.unwrap();
+                    const unallocatedBalance = getUnallocatedRuneBalance(runeLocation);
+                    unallocatedBalance.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(unallocatedBalance.amount), (0, integer_1.u128)(amount));
+                }
+            }
+            const optionEtched = await this.etched(txIndex, tx, artifact);
+            if ((0, artifact_1.isRunestone)(artifact)) {
+                const runestone = artifact;
+                if (optionEtched.isSome()) {
+                    const etched = optionEtched.unwrap();
+                    const unallocatedBalance = getUnallocatedRuneBalance(etched.runeId);
+                    unallocatedBalance.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(unallocatedBalance.amount), runestone.etching.unwrap().premine.unwrapOr((0, integer_1.u128)(0)));
+                }
+                for (const { id, amount, output } of [...runestone.edicts]) {
+                    // edicts with output values greater than the number of outputs
+                    // should never be produced by the edict parser
+                    if (output > tx.vout.length) {
+                        throw new Error('Runestone edict output should never exceed transaction output size');
+                    }
+                    if (id.block === 0n && id.tx === 0n && optionEtched.isNone()) {
+                        continue;
+                    }
+                    const runeLocation = id.block === 0n && id.tx === 0n
+                        ? optionEtched.unwrap().runeId
+                        : { block: Number(id.block), tx: Number(id.tx) };
+                    const runeLocationString = types_1.RuneLocation.toString(runeLocation);
+                    const maybeBalance = unallocated.get(runeLocationString);
+                    if (maybeBalance === undefined) {
+                        continue;
+                    }
+                    let allocate = (amount, output) => {
+                        if (amount > 0n) {
+                            const currentAllocated = getAllocatedRuneBalance(output, runeLocation);
+                            maybeBalance.amount = integer_1.u128.checkedSubThrow((0, integer_1.u128)(maybeBalance.amount), amount);
+                            currentAllocated.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(currentAllocated.amount), amount);
+                        }
+                    };
+                    if (Number(output) === tx.vout.length) {
+                        // find non-OP_RETURN outputs
+                        const destinations = [...tx.vout.entries()]
+                            .filter(([_, vout]) => !isScriptPubKeyHexOpReturn(vout.scriptPubKey.hex))
+                            .map(([index]) => index);
+                        if (destinations.length !== 0) {
+                            if (amount === 0n) {
+                                // if amount is zero, divide balance between eligible outputs
+                                const amount = (0, integer_1.u128)((0, integer_1.u128)(maybeBalance.amount) / (0, integer_1.u128)(destinations.length));
+                                const remainder = (0, integer_1.u128)(maybeBalance.amount) % (0, integer_1.u128)(destinations.length);
+                                for (const [i, output] of destinations.entries()) {
+                                    allocate(i < remainder ? integer_1.u128.checkedAddThrow(amount, (0, integer_1.u128)(1)) : amount, output);
+                                }
+                            }
+                            else {
+                                // if amount is non-zero, distribute amount to eligible outputs
+                                for (const output of destinations) {
+                                    allocate(amount < maybeBalance.amount ? amount : (0, integer_1.u128)(maybeBalance.amount), output);
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        // Get the allocatable amount
+                        allocate(amount !== 0n && amount < (0, integer_1.u128)(maybeBalance.amount)
+                            ? amount
+                            : (0, integer_1.u128)(maybeBalance.amount), Number(output));
+                    }
+                }
+            }
+            if (optionEtched.isSome()) {
+                const { runeId, rune } = optionEtched.unwrap();
+                this.createEtching(tx.txid, artifact, runeId, rune);
+            }
+        }
+        const burned = new Map();
+        function getBurnedRuneBalance(runeId) {
+            const key = types_1.RuneLocation.toString(runeId);
+            const balance = burned.get(key) ?? { runeId, amount: 0n };
+            burned.set(key, balance);
+            return balance;
+        }
+        if (optionArtifact.isSome() && !(0, artifact_1.isRunestone)(optionArtifact.unwrap())) {
+            for (const balance of unallocated.values()) {
+                const currentBalance = getBurnedRuneBalance(balance.runeId);
+                currentBalance.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(currentBalance.amount), (0, integer_1.u128)(balance.amount));
+            }
+        }
+        else {
+            const pointer = optionArtifact
+                .map((artifact) => {
+                if (!(0, artifact_1.isRunestone)(artifact)) {
+                    throw new Error('unreachable');
+                }
+                return artifact.pointer;
+            })
+                .unwrapOr(monads_1.None);
+            const optionVout = pointer
+                .map((pointer) => Number(pointer))
+                .inspect((pointer) => {
+                if (pointer < 0 || pointer >= allocated.length)
+                    throw new Error('Pointer is invalid');
+            })
+                .orElse(() => {
+                const entry = [...tx.vout.entries()].find(([_, txOut]) => !isScriptPubKeyHexOpReturn(txOut.scriptPubKey.hex));
+                return entry !== undefined ? (0, monads_1.Some)(entry[0]) : monads_1.None;
+            });
+            if (optionVout.isSome()) {
+                const vout = optionVout.unwrap();
+                for (const balance of unallocated.values()) {
+                    if (balance.amount > 0) {
+                        const currentBalance = getAllocatedRuneBalance(vout, balance.runeId);
+                        currentBalance.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(currentBalance.amount), (0, integer_1.u128)(balance.amount));
+                    }
+                }
+            }
+            else {
+                for (const [id, balance] of unallocated) {
+                    if (balance.amount > 0) {
+                        const currentBalance = getBurnedRuneBalance(balance.runeId);
+                        burned.set(id, {
+                            runeId: balance.runeId,
+                            amount: integer_1.u128.checkedAddThrow((0, integer_1.u128)(currentBalance.amount), (0, integer_1.u128)(balance.amount)),
+                        });
+                    }
+                }
+            }
+        }
+        // update outpoint balances
+        for (const [vout, balances] of allocated.entries()) {
+            if (balances.size === 0) {
+                continue;
+            }
+            // increment burned balances
+            const output = tx.vout[vout];
+            if (isScriptPubKeyHexOpReturn(output.scriptPubKey.hex)) {
+                for (const [id, balance] of balances) {
+                    const currentBurned = getBurnedRuneBalance(balance.runeId);
+                    currentBurned.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(currentBurned.amount), (0, integer_1.u128)(balance.amount));
+                }
+                continue;
+            }
+            const etchingByRuneId = new Map(this.etchings.map((etching) => [types_1.RuneLocation.toString(etching.runeId), etching]));
+            for (const balance of balances.values()) {
+                const runeIdString = types_1.RuneLocation.toString(balance.runeId);
+                const etching = etchingByRuneId.get(runeIdString) ?? (await this._storage.getEtching(runeIdString));
+                if (etching === null) {
+                    throw new Error('Rune should exist at this point');
+                }
+                this.utxoBalances.push({
+                    runeId: balance.runeId,
+                    runeTicker: etching.runeTicker,
+                    amount: balance.amount,
+                    scriptPubKey: Buffer.from(output.scriptPubKey.hex),
+                    txid: tx.txid,
+                    vout,
+                    address: output.scriptPubKey.address,
+                });
+            }
+        }
+        // update entries with burned runes
+        for (const [id, balance] of burned) {
+            this._burnedBalancesByRuneLocation.set(id, balance);
+        }
+        return;
+    }
+    async etched(txIndex, tx, artifact) {
+        let optionRune;
+        if ((0, artifact_1.isRunestone)(artifact)) {
+            const runestone = artifact;
+            if (runestone.etching.isNone()) {
+                return monads_1.None;
+            }
+            optionRune = runestone.etching.unwrap().rune;
+        }
+        else {
+            const cenotaph = artifact;
+            if (cenotaph.etching.isNone()) {
+                return monads_1.None;
+            }
+            optionRune = cenotaph.etching;
+        }
+        let rune;
+        if (optionRune.isSome()) {
+            rune = optionRune.unwrap();
+            if (rune.value < this._minimum.value) {
+                return monads_1.None;
+            }
+            if (rune.reserved) {
+                return monads_1.None;
+            }
+            if (this.etchings.find((etching) => spacedrune_1.SpacedRune.fromString(etching.runeName).rune.toString() === rune.toString())) {
+                return monads_1.None;
+            }
+            const runeLocation = await this._storage.getRuneLocation(rune.toString());
+            if (runeLocation && runeLocation.block < this.block.height) {
+                return monads_1.None;
+            }
+            const txCommitsToRune = await this.txCommitsToRune(tx, rune);
+            if (!txCommitsToRune) {
+                return monads_1.None;
+            }
+        }
+        else {
+            rune = rune_1.Rune.getReserved((0, integer_1.u64)(this.block.height), (0, integer_1.u32)(txIndex));
+        }
+        return (0, monads_1.Some)({
+            runeId: {
+                block: this.block.height,
+                tx: txIndex,
+            },
+            rune,
+        });
+    }
+    async mint(id, txid) {
+        const runeLocation = types_1.RuneLocation.toString(id);
+        const etchingByRuneId = new Map(this.etchings.map((etching) => [types_1.RuneLocation.toString(etching.runeId), etching]));
+        const etching = etchingByRuneId.get(runeLocation) ?? (await this._storage.getEtching(runeLocation));
+        if (etching === null || !etching.valid || !etching.terms) {
+            return monads_1.None;
+        }
+        const terms = etching.terms;
+        const startRelative = terms.offset?.start !== undefined ? etching.runeId.block + Number(terms.offset.start) : null;
+        const startAbsolute = terms.height?.start !== undefined ? Number(terms.height.start) : null;
+        const start = startRelative !== null || startAbsolute !== null
+            ? Math.max(startRelative ?? -Infinity, startAbsolute ?? -Infinity)
+            : null;
+        if (start !== null && this.block.height < start) {
+            return monads_1.None;
+        }
+        const endRelative = terms.offset?.end !== undefined ? etching.runeId.block + Number(terms.offset.end) : null;
+        const endAbsolute = terms.height?.end !== undefined ? Number(terms.height.end) : null;
+        const end = endRelative !== null || endAbsolute !== null
+            ? Math.max(endRelative ?? -Infinity, endAbsolute ?? -Infinity)
+            : null;
+        if (end !== null && this.block.height >= end) {
+            return monads_1.None;
+        }
+        const cap = terms.cap ?? 0n;
+        const currentBlockMints = this._mintCountsByRuneLocation.get(runeLocation) ?? {
+            mint: id,
+            count: 0,
+        };
+        this._mintCountsByRuneLocation.set(runeLocation, currentBlockMints);
+        const totalMints = currentBlockMints.count +
+            (await this._storage.getValidMintCount(runeLocation, this.block.height - 1));
+        if (totalMints >= cap) {
+            return monads_1.None;
+        }
+        const amount = terms.amount ?? 0n;
+        currentBlockMints.count++;
+        return (0, monads_1.Some)(amount);
+    }
+    async unallocated(tx) {
+        const unallocated = new Map();
+        const utxoBalancesByOutputLocation = new Map();
+        for (const utxoBalance of this.utxoBalances) {
+            const location = `${utxoBalance.txid}:${utxoBalance.vout}`;
+            const balances = utxoBalancesByOutputLocation.get(location) ?? [];
+            balances.push(utxoBalance);
+            utxoBalancesByOutputLocation.set(location, balances);
+        }
+        for (const input of tx.vin) {
+            if ('coinbase' in input) {
+                continue;
+            }
+            const utxoBalance = utxoBalancesByOutputLocation.get(`${input.txid}:${input.vout}`) ??
+                (await this._storage.getUtxoBalance(input.txid, input.vout));
+            for (const additionalBalance of utxoBalance) {
+                const runeId = additionalBalance.runeId;
+                const runeLocation = types_1.RuneLocation.toString(runeId);
+                const balance = unallocated.get(runeLocation) ?? { runeId, amount: 0n };
+                unallocated.set(runeLocation, balance);
+                balance.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(balance.amount), (0, integer_1.u128)(additionalBalance.amount));
+                this.spentBalances.push({
+                    txid: input.txid,
+                    vout: input.vout,
+                    address: additionalBalance.address,
+                    scriptPubKey: additionalBalance.scriptPubKey,
+                    runeId: additionalBalance.runeId,
+                    runeTicker: additionalBalance.runeTicker,
+                    amount: additionalBalance.amount,
+                    spentTxid: tx.txid,
+                });
+            }
+        }
+        return unallocated;
+    }
+    async txCommitsToRune(tx, rune) {
+        const commitment = rune.commitment;
+        for (const input of tx.vin) {
+            if ('coinbase' in input) {
+                continue;
+            }
+            const witnessStack = input.txinwitness.map((item) => Buffer.from(item, 'hex'));
+            const lastWitnessElement = witnessStack[witnessStack.length - 1];
+            const offset = witnessStack.length >= 2 && lastWitnessElement[0] === constants_1.TAPROOT_ANNEX_PREFIX ? 3 : 2;
+            if (offset > witnessStack.length) {
+                continue;
+            }
+            const potentiallyTapscript = witnessStack[witnessStack.length - offset];
+            if (potentiallyTapscript === undefined) {
+                continue;
+            }
+            const instructions = script_1.script.decompile(potentiallyTapscript);
+            for (const instruction of instructions) {
+                if (!Buffer.isBuffer(instruction)) {
+                    continue;
+                }
+                if (Buffer.compare(instruction, commitment) !== 0) {
+                    continue;
+                }
+                // rpc client
+                const inputTxResult = await this._rpc.getrawtransaction({
+                    txid: input.txid,
+                    verbose: true,
+                });
+                if (inputTxResult.error !== null) {
+                    throw inputTxResult.error;
+                }
+                const inputTx = inputTxResult.result;
+                const isTaproot = inputTx.vout[input.vout].scriptPubKey.type === constants_1.TAPROOT_SCRIPT_PUBKEY_TYPE;
+                if (!isTaproot) {
+                    continue;
+                }
+                const commitTxHeightResult = await this._rpc.getblock({ blockhash: inputTx.blockhash });
+                if (commitTxHeightResult.error !== null) {
+                    throw commitTxHeightResult.error;
+                }
+                const commitTxHeight = commitTxHeightResult.result.height;
+                const confirmations = integer_1.u128.checkedSubThrow((0, integer_1.u128)(this.block.height), (0, integer_1.u128)(commitTxHeight)) + 1n;
+                if (confirmations >= constants_1.COMMIT_CONFIRMATIONS) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    createEtching(txid, artifact, runeId, rune) {
+        if ((0, artifact_1.isRunestone)(artifact)) {
+            const { divisibility, terms, premine, spacers, symbol } = artifact.etching.unwrap();
+            this.etchings.push({
+                valid: true,
+                runeTicker: rune.toString(),
+                runeName: new spacedrune_1.SpacedRune(rune, Number(spacers.map(Number).unwrapOr(0))).toString(),
+                runeId,
+                txid,
+                ...(divisibility.isSome() ? { divisibility: divisibility.map(Number).unwrap() } : {}),
+                ...(premine.isSome() ? { premine: premine.unwrap() } : {}),
+                ...(symbol.isSome() ? { symbol: symbol.unwrap() } : {}),
+                ...(terms.isSome()
+                    ? {
+                        terms: (() => {
+                            const unwrappedTerms = terms.unwrap();
+                            return {
+                                ...(unwrappedTerms.amount.isSome()
+                                    ? { amount: unwrappedTerms.amount.unwrap() }
+                                    : {}),
+                                ...(unwrappedTerms.cap.isSome() ? { cap: unwrappedTerms.cap.unwrap() } : {}),
+                                ...(unwrappedTerms.height.filter((option) => option.isSome()).length
+                                    ? {
+                                        height: {
+                                            ...(unwrappedTerms.height[0].isSome()
+                                                ? { start: unwrappedTerms.height[0].unwrap() }
+                                                : {}),
+                                            ...(unwrappedTerms.height[1].isSome()
+                                                ? { end: unwrappedTerms.height[1].unwrap() }
+                                                : {}),
+                                        },
+                                    }
+                                    : {}),
+                                ...(unwrappedTerms.offset.filter((option) => option.isSome()).length
+                                    ? {
+                                        offset: {
+                                            ...(unwrappedTerms.offset[0].isSome()
+                                                ? { start: unwrappedTerms.offset[0].unwrap() }
+                                                : {}),
+                                            ...(unwrappedTerms.offset[1].isSome()
+                                                ? { end: unwrappedTerms.offset[1].unwrap() }
+                                                : {}),
+                                        },
+                                    }
+                                    : {}),
+                            };
+                        })(),
+                    }
+                    : {}),
+            });
+        }
+        else {
+            // save failed entry
+            this.etchings.push({
+                valid: false,
+                runeId,
+                txid,
+                runeTicker: rune.toString(),
+                runeName: rune.toString(),
+            });
+        }
+    }
+}
+exports.RuneUpdater = RuneUpdater;
+//# sourceMappingURL=updater.js.map
+
+/***/ }),
+
+/***/ 77096:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.u128 = exports.u64 = exports.u32 = exports.u8 = void 0;
+var u8_1 = __webpack_require__(10141);
+Object.defineProperty(exports, "u8", ({ enumerable: true, get: function () { return u8_1.u8; } }));
+var u32_1 = __webpack_require__(57157);
+Object.defineProperty(exports, "u32", ({ enumerable: true, get: function () { return u32_1.u32; } }));
+var u64_1 = __webpack_require__(69162);
+Object.defineProperty(exports, "u64", ({ enumerable: true, get: function () { return u64_1.u64; } }));
+var u128_1 = __webpack_require__(1718);
+Object.defineProperty(exports, "u128", ({ enumerable: true, get: function () { return u128_1.u128; } }));
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 1718:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+/* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getAllU128 = exports.u128 = exports.U128_MAX_BIGINT = void 0;
+const monads_1 = __webpack_require__(20928);
+const seekbuffer_1 = __webpack_require__(87208);
+const u64_1 = __webpack_require__(69162);
+const u32_1 = __webpack_require__(57157);
+const u8_1 = __webpack_require__(10141);
+exports.U128_MAX_BIGINT = 0xffffffffffffffffffffffffffffffffn;
+/**
+ * Convert Number or BigInt to 128-bit unsigned integer.
+ * @param num - The Number or BigInt to convert.
+ * @returns - The resulting 128-bit unsigned integer (BigInt).
+ */
+function u128(num) {
+    const bigNum = typeof num == 'bigint' ? num : BigInt(num);
+    return (bigNum & exports.U128_MAX_BIGINT);
+}
+exports.u128 = u128;
+(function (u128) {
+    u128.MAX = u128(exports.U128_MAX_BIGINT);
+    function checkedAdd(x, y) {
+        const result = x + y;
+        if (result > u128.MAX) {
+            return monads_1.None;
+        }
+        return (0, monads_1.Some)(u128(result));
+    }
+    u128.checkedAdd = checkedAdd;
+    function checkedAddThrow(x, y) {
+        const option = u128.checkedAdd(x, y);
+        if (option.isNone()) {
+            throw new Error('checked add overflow');
+        }
+        return option.unwrap();
+    }
+    u128.checkedAddThrow = checkedAddThrow;
+    function checkedSub(x, y) {
+        const result = x - y;
+        if (result < 0n) {
+            return monads_1.None;
+        }
+        return (0, monads_1.Some)(u128(result));
+    }
+    u128.checkedSub = checkedSub;
+    function checkedSubThrow(x, y) {
+        const option = u128.checkedSub(x, y);
+        if (option.isNone()) {
+            throw new Error('checked sub overflow');
+        }
+        return option.unwrap();
+    }
+    u128.checkedSubThrow = checkedSubThrow;
+    function checkedMultiply(x, y) {
+        const result = x * y;
+        if (result > u128.MAX) {
+            return monads_1.None;
+        }
+        return (0, monads_1.Some)(u128(result));
+    }
+    u128.checkedMultiply = checkedMultiply;
+    function saturatingAdd(x, y) {
+        const result = x + y;
+        return result > u128.MAX ? u128.MAX : u128(result);
+    }
+    u128.saturatingAdd = saturatingAdd;
+    function saturatingMultiply(x, y) {
+        const result = x * y;
+        return result > u128.MAX ? u128.MAX : u128(result);
+    }
+    u128.saturatingMultiply = saturatingMultiply;
+    function saturatingSub(x, y) {
+        return u128(x < y ? 0 : x - y);
+    }
+    u128.saturatingSub = saturatingSub;
+    function decodeVarInt(seekBuffer) {
+        try {
+            return (0, monads_1.Some)(tryDecodeVarInt(seekBuffer));
+        }
+        catch (e) {
+            return monads_1.None;
+        }
+    }
+    u128.decodeVarInt = decodeVarInt;
+    function tryDecodeVarInt(seekBuffer) {
+        let result = u128(0);
+        for (let i = 0; i <= 18; i++) {
+            const byte = seekBuffer.readUInt8();
+            if (byte === undefined) {
+                throw new Error('Unterminated');
+            }
+            const value = u128(byte) & 127n;
+            if (i === 18 && (value & 124n) !== 0n) {
+                throw new Error('Overflow');
+            }
+            result = u128(result | (value << u128(7 * i)));
+            if ((byte & 128) === 0) {
+                return result;
+            }
+        }
+        throw new Error('Overlong');
+    }
+    u128.tryDecodeVarInt = tryDecodeVarInt;
+    function encodeVarInt(value) {
+        const v = [];
+        while (value >> 7n > 0n) {
+            v.push(Number(value & 0xffn) | 128);
+            value = u128(value >> 7n);
+        }
+        v.push(Number(value & 0xffn));
+        return Buffer.from(v);
+    }
+    u128.encodeVarInt = encodeVarInt;
+    function tryIntoU64(n) {
+        return n > u64_1.u64.MAX ? monads_1.None : (0, monads_1.Some)((0, u64_1.u64)(n));
+    }
+    u128.tryIntoU64 = tryIntoU64;
+    function tryIntoU32(n) {
+        return n > u32_1.u32.MAX ? monads_1.None : (0, monads_1.Some)((0, u32_1.u32)(n));
+    }
+    u128.tryIntoU32 = tryIntoU32;
+    function tryIntoU8(n) {
+        return n > u8_1.u8.MAX ? monads_1.None : (0, monads_1.Some)((0, u8_1.u8)(n));
+    }
+    u128.tryIntoU8 = tryIntoU8;
+})(u128 || (exports.u128 = u128 = {}));
+function* getAllU128(buffer) {
+    const seekBuffer = new seekbuffer_1.SeekBuffer(buffer);
+    while (!seekBuffer.isFinished()) {
+        const nextValue = u128.tryDecodeVarInt(seekBuffer);
+        if (nextValue === undefined) {
+            return;
+        }
+        yield nextValue;
+    }
+}
+exports.getAllU128 = getAllU128;
+//# sourceMappingURL=u128.js.map
+
+/***/ }),
+
+/***/ 57157:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.u32 = exports.U32_MAX_BIGINT = void 0;
+const monads_1 = __webpack_require__(20928);
+exports.U32_MAX_BIGINT = 0xffffffffn;
+function u32(num) {
+    const bigNum = typeof num == 'bigint' ? num : BigInt(num);
+    return (bigNum & exports.U32_MAX_BIGINT);
+}
+exports.u32 = u32;
+(function (u32) {
+    u32.MAX = u32(exports.U32_MAX_BIGINT);
+    function checkedAdd(x, y) {
+        const result = x + y;
+        if (result > u32.MAX) {
+            return monads_1.None;
+        }
+        return (0, monads_1.Some)(u32(result));
+    }
+    u32.checkedAdd = checkedAdd;
+    function checkedSub(x, y) {
+        const result = x - y;
+        if (result < 0n) {
+            return monads_1.None;
+        }
+        return (0, monads_1.Some)(u32(result));
+    }
+    u32.checkedSub = checkedSub;
+})(u32 || (exports.u32 = u32 = {}));
+//# sourceMappingURL=u32.js.map
+
+/***/ }),
+
+/***/ 69162:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.u64 = exports.U64_MAX_BIGINT = void 0;
+const monads_1 = __webpack_require__(20928);
+exports.U64_MAX_BIGINT = 0xffffffffffffffffn;
+function u64(num) {
+    const bigNum = typeof num == 'bigint' ? num : BigInt(num);
+    return (bigNum & exports.U64_MAX_BIGINT);
+}
+exports.u64 = u64;
+(function (u64) {
+    u64.MAX = u64(exports.U64_MAX_BIGINT);
+    function checkedAdd(x, y) {
+        const result = x + y;
+        if (result > u64.MAX) {
+            return monads_1.None;
+        }
+        return (0, monads_1.Some)(u64(result));
+    }
+    u64.checkedAdd = checkedAdd;
+    function checkedSub(x, y) {
+        const result = x - y;
+        if (result < 0n) {
+            return monads_1.None;
+        }
+        return (0, monads_1.Some)(u64(result));
+    }
+    u64.checkedSub = checkedSub;
+})(u64 || (exports.u64 = u64 = {}));
+//# sourceMappingURL=u64.js.map
+
+/***/ }),
+
+/***/ 10141:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.u8 = exports.U8_MAX_BIGINT = void 0;
+const monads_1 = __webpack_require__(20928);
+exports.U8_MAX_BIGINT = 0xffn;
+function u8(num) {
+    const bigNum = typeof num == 'bigint' ? num : BigInt(num);
+    return (bigNum & exports.U8_MAX_BIGINT);
+}
+exports.u8 = u8;
+(function (u8) {
+    u8.MAX = u8(exports.U8_MAX_BIGINT);
+    function checkedAdd(x, y) {
+        const result = x + y;
+        if (result > u8.MAX) {
+            return monads_1.None;
+        }
+        return (0, monads_1.Some)(u8(result));
+    }
+    u8.checkedAdd = checkedAdd;
+    function checkedSub(x, y) {
+        const result = x - y;
+        if (result < 0n) {
+            return monads_1.None;
+        }
+        return (0, monads_1.Some)(u8(result));
+    }
+    u8.checkedSub = checkedSub;
+})(u8 || (exports.u8 = u8 = {}));
+//# sourceMappingURL=u8.js.map
+
+/***/ }),
+
+/***/ 42788:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Message = void 0;
+const edict_1 = __webpack_require__(40059);
+const flaw_1 = __webpack_require__(81646);
+const integer_1 = __webpack_require__(77096);
+const runeid_1 = __webpack_require__(95906);
+const tag_1 = __webpack_require__(97757);
+class Message {
+    constructor(flaws, edicts, fields) {
+        this.flaws = flaws;
+        this.edicts = edicts;
+        this.fields = fields;
+    }
+    static fromIntegers(numOutputs, payload) {
+        const edicts = [];
+        const fields = new Map();
+        const flaws = [];
+        for (const i of [...Array(Math.ceil(payload.length / 2)).keys()].map((n) => n * 2)) {
+            const tag = payload[i];
+            if ((0, integer_1.u128)(tag_1.Tag.BODY) === tag) {
+                let id = new runeid_1.RuneId((0, integer_1.u64)(0), (0, integer_1.u32)(0));
+                const chunkSize = 4;
+                const body = payload.slice(i + 1);
+                for (let j = 0; j < body.length; j += chunkSize) {
+                    const chunk = body.slice(j, j + chunkSize);
+                    if (chunk.length !== chunkSize) {
+                        flaws.push(flaw_1.Flaw.TRAILING_INTEGERS);
+                        break;
+                    }
+                    const optionNext = id.next(chunk[0], chunk[1]);
+                    if (optionNext.isNone()) {
+                        flaws.push(flaw_1.Flaw.EDICT_RUNE_ID);
+                        break;
+                    }
+                    const next = optionNext.unwrap();
+                    const optionEdict = edict_1.Edict.fromIntegers(numOutputs, next, chunk[2], chunk[3]);
+                    if (optionEdict.isNone()) {
+                        flaws.push(flaw_1.Flaw.EDICT_OUTPUT);
+                        break;
+                    }
+                    const edict = optionEdict.unwrap();
+                    id = next;
+                    edicts.push(edict);
+                }
+                break;
+            }
+            const value = payload[i + 1];
+            if (value === undefined) {
+                flaws.push(flaw_1.Flaw.TRUNCATED_FIELD);
+                break;
+            }
+            const values = fields.get(tag) ?? [];
+            values.push(value);
+            fields.set(tag, values);
+        }
+        return new Message(flaws, edicts, fields);
+    }
+}
+exports.Message = Message;
+//# sourceMappingURL=message.js.map
+
+/***/ }),
+
+/***/ 20928:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+// Copied with MIT License from link below:
+// https://github.com/thames-technology/monads/blob/de957d3d68449d659518d99be4ea74bbb70dfc8e/src/option/option.ts
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.isNone = exports.isSome = exports.None = exports.Some = exports.OptionType = void 0;
+/**
+ * Enum-like object to represent the type of an Option (Some or None).
+ */
+exports.OptionType = {
+    Some: Symbol(':some'),
+    None: Symbol(':none'),
+};
+/**
+ * Represents a Some value of Option.
+ */
+class SomeImpl {
+    constructor(val) {
+        this.val = val;
+    }
+    get type() {
+        return exports.OptionType.Some;
+    }
+    isSome() {
+        return true;
+    }
+    isNone() {
+        return false;
+    }
+    match(fn) {
+        return fn.some(this.val);
+    }
+    map(fn) {
+        return Some(fn(this.val));
+    }
+    inspect(fn) {
+        fn(this.val);
+        return this;
+    }
+    andThen(fn) {
+        return fn(this.val);
+    }
+    or(_optb) {
+        return this;
+    }
+    orElse(optb) {
+        return this;
+    }
+    and(optb) {
+        return optb;
+    }
+    unwrapOr(_def) {
+        return this.val;
+    }
+    unwrap() {
+        return this.val;
+    }
+}
+/**
+ * Represents a None value of Option.
+ */
+class NoneImpl {
+    get type() {
+        return exports.OptionType.None;
+    }
+    isSome() {
+        return false;
+    }
+    isNone() {
+        return true;
+    }
+    match({ none }) {
+        if (typeof none === 'function') {
+            return none();
+        }
+        return none;
+    }
+    map(_fn) {
+        return new NoneImpl();
+    }
+    inspect(fn) {
+        return this;
+    }
+    andThen(_fn) {
+        return new NoneImpl();
+    }
+    or(optb) {
+        return optb;
+    }
+    orElse(optb) {
+        return optb();
+    }
+    and(_optb) {
+        return new NoneImpl();
+    }
+    unwrapOr(def) {
+        return def;
+    }
+    unwrap() {
+        throw new ReferenceError('Trying to unwrap None.');
+    }
+}
+/**
+ * Creates a Some instance of Option containing the given value.
+ * This function is used to represent the presence of a value in an operation that may not always produce a value.
+ *
+ * @param val The value to be wrapped in a Some Option.
+ * @returns An Option instance representing the presence of a value.
+ *
+ * #### Example
+ *
+ * ```ts
+ * const option = Some(42);
+ * console.log(option.unwrap()); // Outputs: 42
+ * ```
+ */
+function Some(val) {
+    return new SomeImpl(val);
+}
+exports.Some = Some;
+/**
+ * The singleton instance representing None, an Option with no value.
+ * This constant is used to represent the absence of a value in operations that may not always produce a value.
+ *
+ * #### Example
+ *
+ * ```ts
+ * const option = None;
+ * console.log(option.isNone()); // Outputs: true
+ * ```
+ */
+exports.None = new NoneImpl(); // eslint-disable-line @typescript-eslint/no-explicit-any
+/**
+ * Type guard to check if an Option is a Some value.
+ * This function is used to narrow down the type of an Option to SomeOption in TypeScript's type system.
+ *
+ * @param val The Option to be checked.
+ * @returns true if the provided Option is a SomeOption, false otherwise.
+ *
+ * #### Example
+ *
+ * ```ts
+ * const option = Some('Success');
+ * if (isSome(option)) {
+ *   console.log('Option has a value:', option.unwrap());
+ * }
+ * ```
+ */
+function isSome(val) {
+    return val.isSome();
+}
+exports.isSome = isSome;
+/**
+ * Type guard to check if an Option is a None value.
+ * This function is used to narrow down the type of an Option to NoneOption in TypeScript's type system.
+ *
+ * @param val The Option to be checked.
+ * @returns true if the provided Option is a NoneOption, false otherwise.
+ *
+ * #### Example
+ *
+ * ```ts
+ * const option = None;
+ * if (isNone(option)) {
+ *   console.log('Option does not have a value.');
+ * }
+ * ```
+ */
+function isNone(val) {
+    return val.isNone();
+}
+exports.isNone = isNone;
+//# sourceMappingURL=monads.js.map
+
+/***/ }),
+
+/***/ 11678:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Network = void 0;
+const constants_1 = __webpack_require__(35852);
+var Network;
+(function (Network) {
+    Network[Network["MAINNET"] = 0] = "MAINNET";
+    Network[Network["SIGNET"] = 1] = "SIGNET";
+    Network[Network["TESTNET"] = 2] = "TESTNET";
+    Network[Network["REGTEST"] = 3] = "REGTEST";
+})(Network || (exports.Network = Network = {}));
+(function (Network) {
+    function getFirstRuneHeight(chain) {
+        switch (chain) {
+            case Network.MAINNET:
+                return constants_1.SUBSIDY_HALVING_INTERVAL * 4;
+            case Network.REGTEST:
+                return constants_1.SUBSIDY_HALVING_INTERVAL * 0;
+            case Network.SIGNET:
+                return constants_1.SUBSIDY_HALVING_INTERVAL * 0;
+            case Network.TESTNET:
+                return constants_1.SUBSIDY_HALVING_INTERVAL * 12;
+        }
+    }
+    Network.getFirstRuneHeight = getFirstRuneHeight;
+})(Network || (exports.Network = Network = {}));
+//# sourceMappingURL=network.js.map
+
+/***/ }),
+
+/***/ 45845:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+/* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Rune = void 0;
+const network_1 = __webpack_require__(11678);
+const constants_1 = __webpack_require__(35852);
+const integer_1 = __webpack_require__(77096);
+class Rune {
+    constructor(value) {
+        this.value = value;
+    }
+    static getMinimumAtHeight(chain, height) {
+        let offset = integer_1.u128.saturatingAdd(height, (0, integer_1.u128)(1));
+        const INTERVAL = (0, integer_1.u128)(constants_1.SUBSIDY_HALVING_INTERVAL / 12);
+        let startSubsidyInterval = (0, integer_1.u128)(network_1.Network.getFirstRuneHeight(chain));
+        let endSubsidyInterval = integer_1.u128.saturatingAdd(startSubsidyInterval, (0, integer_1.u128)(constants_1.SUBSIDY_HALVING_INTERVAL));
+        if (offset < startSubsidyInterval) {
+            return new Rune(Rune.STEPS[12]);
+        }
+        if (offset >= endSubsidyInterval) {
+            return new Rune((0, integer_1.u128)(0));
+        }
+        let progress = integer_1.u128.saturatingSub(offset, startSubsidyInterval);
+        let length = integer_1.u128.saturatingSub((0, integer_1.u128)(12n), (0, integer_1.u128)(progress / INTERVAL));
+        let lengthNumber = Number(length & (0, integer_1.u128)(integer_1.u32.MAX));
+        let endStepInterval = Rune.STEPS[lengthNumber];
+        let startStepInterval = Rune.STEPS[lengthNumber - 1];
+        let remainder = (0, integer_1.u128)(progress % INTERVAL);
+        return new Rune((0, integer_1.u128)(endStepInterval - ((endStepInterval - startStepInterval) * remainder) / INTERVAL));
+    }
+    get reserved() {
+        return this.value >= constants_1.RESERVED;
+    }
+    get commitment() {
+        const bytes = Buffer.alloc(16);
+        bytes.writeBigUInt64LE(0xffffffffffffffffn & this.value, 0);
+        bytes.writeBigUInt64LE(this.value >> 64n, 8);
+        let end = bytes.length;
+        while (end > 0 && bytes.at(end - 1) === 0) {
+            end--;
+        }
+        return bytes.subarray(0, end);
+    }
+    static getReserved(block, tx) {
+        return new Rune(integer_1.u128.checkedAdd(constants_1.RESERVED, (0, integer_1.u128)((block << 32n) | tx)).unwrap());
+    }
+    toString() {
+        let n = this.value;
+        if (n === integer_1.u128.MAX) {
+            return 'BCGDENLQRQWDSLRUGSNLBTMFIJAV';
+        }
+        n = (0, integer_1.u128)(n + 1n);
+        let symbol = '';
+        while (n > 0) {
+            symbol = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Number((n - 1n) % 26n)] + symbol;
+            n = (0, integer_1.u128)((n - 1n) / 26n);
+        }
+        return symbol;
+    }
+    static fromString(s) {
+        let x = (0, integer_1.u128)(0);
+        for (const i of [...Array(s.length).keys()]) {
+            const c = s[i];
+            if (i > 0) {
+                x = (0, integer_1.u128)(x + 1n);
+            }
+            x = integer_1.u128.checkedMultiply(x, (0, integer_1.u128)(26)).unwrap();
+            if ('A' <= c && c <= 'Z') {
+                x = integer_1.u128.checkedAdd(x, (0, integer_1.u128)(c.charCodeAt(0) - 'A'.charCodeAt(0))).unwrap();
+            }
+            else {
+                throw new Error(`invalid character in rune name: ${c}`);
+            }
+        }
+        return new Rune(x);
+    }
+}
+exports.Rune = Rune;
+Rune.STEPS = [
+    (0, integer_1.u128)(0n),
+    (0, integer_1.u128)(26n),
+    (0, integer_1.u128)(702n),
+    (0, integer_1.u128)(18278n),
+    (0, integer_1.u128)(475254n),
+    (0, integer_1.u128)(12356630n),
+    (0, integer_1.u128)(321272406n),
+    (0, integer_1.u128)(8353082582n),
+    (0, integer_1.u128)(217180147158n),
+    (0, integer_1.u128)(5646683826134n),
+    (0, integer_1.u128)(146813779479510n),
+    (0, integer_1.u128)(3817158266467286n),
+    (0, integer_1.u128)(99246114928149462n),
+    (0, integer_1.u128)(2580398988131886038n),
+    (0, integer_1.u128)(67090373691429037014n),
+    (0, integer_1.u128)(1744349715977154962390n),
+    (0, integer_1.u128)(45353092615406029022166n),
+    (0, integer_1.u128)(1179180408000556754576342n),
+    (0, integer_1.u128)(30658690608014475618984918n),
+    (0, integer_1.u128)(797125955808376366093607894n),
+    (0, integer_1.u128)(20725274851017785518433805270n),
+    (0, integer_1.u128)(538857146126462423479278937046n),
+    (0, integer_1.u128)(14010285799288023010461252363222n),
+    (0, integer_1.u128)(364267430781488598271992561443798n),
+    (0, integer_1.u128)(9470953200318703555071806597538774n),
+    (0, integer_1.u128)(246244783208286292431866971536008150n),
+    (0, integer_1.u128)(6402364363415443603228541259936211926n),
+    (0, integer_1.u128)(166461473448801533683942072758341510102n),
+];
+//# sourceMappingURL=rune.js.map
+
+/***/ }),
+
+/***/ 95906:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RuneId = void 0;
+const monads_1 = __webpack_require__(20928);
+const integer_1 = __webpack_require__(77096);
+class RuneId {
+    constructor(block, tx) {
+        this.block = block;
+        this.tx = tx;
+    }
+    static new(block, tx) {
+        const id = new RuneId(block, tx);
+        if (id.block === 0n && id.tx > 0) {
+            return monads_1.None;
+        }
+        return (0, monads_1.Some)(id);
+    }
+    static sort(runeIds) {
+        return [...runeIds].sort((x, y) => Number(x.block - y.block || x.tx - y.tx));
+    }
+    delta(next) {
+        const optionBlock = integer_1.u64.checkedSub(next.block, this.block);
+        if (optionBlock.isNone()) {
+            return monads_1.None;
+        }
+        const block = optionBlock.unwrap();
+        let tx;
+        if (block === 0n) {
+            const optionTx = integer_1.u32.checkedSub(next.tx, this.tx);
+            if (optionTx.isNone()) {
+                return monads_1.None;
+            }
+            tx = optionTx.unwrap();
+        }
+        else {
+            tx = next.tx;
+        }
+        return (0, monads_1.Some)([(0, integer_1.u128)(block), (0, integer_1.u128)(tx)]);
+    }
+    next(block, tx) {
+        const optionBlock = integer_1.u128.tryIntoU64(block);
+        const optionTx = integer_1.u128.tryIntoU32(tx);
+        if (optionBlock.isNone() || optionTx.isNone()) {
+            return monads_1.None;
+        }
+        const blockU64 = optionBlock.unwrap();
+        const txU32 = optionTx.unwrap();
+        const nextBlock = integer_1.u64.checkedAdd(this.block, blockU64);
+        if (nextBlock.isNone()) {
+            return monads_1.None;
+        }
+        let nextTx;
+        if (blockU64 === 0n) {
+            const optionAdd = integer_1.u32.checkedAdd(this.tx, txU32);
+            if (optionAdd.isNone()) {
+                return monads_1.None;
+            }
+            nextTx = optionAdd.unwrap();
+        }
+        else {
+            nextTx = txU32;
+        }
+        return RuneId.new(nextBlock.unwrap(), nextTx);
+    }
+    toString() {
+        return `${this.block}:${this.tx}`;
+    }
+    static fromString(s) {
+        const parts = s.split(':');
+        if (parts.length !== 2) {
+            throw new Error(`invalid rune ID: ${s}`);
+        }
+        const [block, tx] = parts;
+        if (!/^\d+$/.test(block) || !/^\d+$/.test(tx)) {
+            throw new Error(`invalid rune ID: ${s}`);
+        }
+        return new RuneId((0, integer_1.u64)(BigInt(block)), (0, integer_1.u32)(BigInt(tx)));
+    }
+}
+exports.RuneId = RuneId;
+//# sourceMappingURL=runeid.js.map
+
+/***/ }),
+
+/***/ 23592:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+/* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Runestone = exports.isValidPayload = exports.MAX_SPACERS = void 0;
+const constants_1 = __webpack_require__(35852);
+const etching_1 = __webpack_require__(26545);
+const seekbuffer_1 = __webpack_require__(87208);
+const tag_1 = __webpack_require__(97757);
+const integer_1 = __webpack_require__(77096);
+const monads_1 = __webpack_require__(20928);
+const rune_1 = __webpack_require__(45845);
+const flag_1 = __webpack_require__(72707);
+const utils_1 = __webpack_require__(814);
+const runeid_1 = __webpack_require__(95906);
+const script_1 = __webpack_require__(41447);
+const message_1 = __webpack_require__(42788);
+const flaw_1 = __webpack_require__(81646);
+const cenotaph_1 = __webpack_require__(65244);
+exports.MAX_SPACERS = 134217727;
+function isValidPayload(payload) {
+    return Buffer.isBuffer(payload);
+}
+exports.isValidPayload = isValidPayload;
+class Runestone {
+    constructor(mint, pointer, edicts, etching) {
+        this.mint = mint;
+        this.pointer = pointer;
+        this.edicts = edicts;
+        this.etching = etching;
+    }
+    static decipher(transaction) {
+        const optionPayload = Runestone.payload(transaction);
+        if (optionPayload.isNone()) {
+            return monads_1.None;
+        }
+        const payload = optionPayload.unwrap();
+        if (!isValidPayload(payload)) {
+            return (0, monads_1.Some)(new cenotaph_1.Cenotaph([payload]));
+        }
+        const optionIntegers = Runestone.integers(payload);
+        if (optionIntegers.isNone()) {
+            return (0, monads_1.Some)(new cenotaph_1.Cenotaph([flaw_1.Flaw.VARINT]));
+        }
+        const { flaws, edicts, fields } = message_1.Message.fromIntegers(transaction.vout.length, optionIntegers.unwrap());
+        let flags = tag_1.Tag.take(tag_1.Tag.FLAGS, fields, 1, ([value]) => (0, monads_1.Some)(value)).unwrapOr((0, integer_1.u128)(0));
+        const etchingResult = flag_1.Flag.take(flags, flag_1.Flag.ETCHING);
+        const etchingFlag = etchingResult.set;
+        flags = etchingResult.flags;
+        const etching = etchingFlag
+            ? (() => {
+                const divisibility = tag_1.Tag.take(tag_1.Tag.DIVISIBILITY, fields, 1, ([value]) => integer_1.u128
+                    .tryIntoU8(value)
+                    .andThen((value) => (value <= constants_1.MAX_DIVISIBILITY ? (0, monads_1.Some)(value) : monads_1.None)));
+                const rune = tag_1.Tag.take(tag_1.Tag.RUNE, fields, 1, ([value]) => (0, monads_1.Some)(new rune_1.Rune(value)));
+                const spacers = tag_1.Tag.take(tag_1.Tag.SPACERS, fields, 1, ([value]) => integer_1.u128.tryIntoU32(value).andThen((value) => (value <= exports.MAX_SPACERS ? (0, monads_1.Some)(value) : monads_1.None)));
+                const symbol = tag_1.Tag.take(tag_1.Tag.SYMBOL, fields, 1, ([value]) => integer_1.u128.tryIntoU32(value).andThen((value) => {
+                    try {
+                        return (0, monads_1.Some)(String.fromCodePoint(Number(value)));
+                    }
+                    catch (e) {
+                        return monads_1.None;
+                    }
+                }));
+                const termsResult = flag_1.Flag.take(flags, flag_1.Flag.TERMS);
+                const termsFlag = termsResult.set;
+                flags = termsResult.flags;
+                const terms = termsFlag
+                    ? (() => {
+                        const amount = tag_1.Tag.take(tag_1.Tag.AMOUNT, fields, 1, ([value]) => (0, monads_1.Some)(value));
+                        const cap = tag_1.Tag.take(tag_1.Tag.CAP, fields, 1, ([value]) => (0, monads_1.Some)(value));
+                        const offset = [
+                            tag_1.Tag.take(tag_1.Tag.OFFSET_START, fields, 1, ([value]) => integer_1.u128.tryIntoU64(value)),
+                            tag_1.Tag.take(tag_1.Tag.OFFSET_END, fields, 1, ([value]) => integer_1.u128.tryIntoU64(value)),
+                        ];
+                        const height = [
+                            tag_1.Tag.take(tag_1.Tag.HEIGHT_START, fields, 1, ([value]) => integer_1.u128.tryIntoU64(value)),
+                            tag_1.Tag.take(tag_1.Tag.HEIGHT_END, fields, 1, ([value]) => integer_1.u128.tryIntoU64(value)),
+                        ];
+                        return (0, monads_1.Some)({ amount, cap, offset, height });
+                    })()
+                    : monads_1.None;
+                const premine = tag_1.Tag.take(tag_1.Tag.PREMINE, fields, 1, ([value]) => (0, monads_1.Some)(value));
+                const turboResult = flag_1.Flag.take(flags, flag_1.Flag.TURBO);
+                const turbo = etchingResult.set;
+                flags = turboResult.flags;
+                return (0, monads_1.Some)(new etching_1.Etching(divisibility, rune, spacers, symbol, terms, premine, turbo));
+            })()
+            : monads_1.None;
+        const mint = tag_1.Tag.take(tag_1.Tag.MINT, fields, 2, ([block, tx]) => {
+            const optionBlockU64 = integer_1.u128.tryIntoU64(block);
+            const optionTxU32 = integer_1.u128.tryIntoU32(tx);
+            if (optionBlockU64.isNone() || optionTxU32.isNone()) {
+                return monads_1.None;
+            }
+            return runeid_1.RuneId.new(optionBlockU64.unwrap(), optionTxU32.unwrap());
+        });
+        const pointer = tag_1.Tag.take(tag_1.Tag.POINTER, fields, 1, ([value]) => integer_1.u128
+            .tryIntoU32(value)
+            .andThen((value) => (value < transaction.vout.length ? (0, monads_1.Some)(value) : monads_1.None)));
+        if (etching.map((etching) => etching.supply.isNone()).unwrapOr(false)) {
+            flaws.push(flaw_1.Flaw.SUPPLY_OVERFLOW);
+        }
+        if (flags !== 0n) {
+            flaws.push(flaw_1.Flaw.UNRECOGNIZED_FLAG);
+        }
+        if ([...fields.keys()].find((tag) => tag % 2n === 0n) !== undefined) {
+            flaws.push(flaw_1.Flaw.UNRECOGNIZED_EVEN_TAG);
+        }
+        if (flaws.length !== 0) {
+            return (0, monads_1.Some)(new cenotaph_1.Cenotaph(flaws, etching.andThen((etching) => etching.rune), mint));
+        }
+        return (0, monads_1.Some)(new Runestone(mint, pointer, edicts, etching));
+    }
+    encipher() {
+        const payloads = [];
+        if (this.etching.isSome()) {
+            const etching = this.etching.unwrap();
+            let flags = (0, integer_1.u128)(0);
+            flags = flag_1.Flag.set(flags, flag_1.Flag.ETCHING);
+            if (etching.terms.isSome()) {
+                flags = flag_1.Flag.set(flags, flag_1.Flag.TERMS);
+            }
+            if (etching.turbo) {
+                flags = flag_1.Flag.set(flags, flag_1.Flag.TURBO);
+            }
+            payloads.push(tag_1.Tag.encode(tag_1.Tag.FLAGS, [flags]));
+            payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.RUNE, etching.rune.map((rune) => rune.value)));
+            payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.DIVISIBILITY, etching.divisibility.map(integer_1.u128)));
+            payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.SPACERS, etching.spacers.map(integer_1.u128)));
+            payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.SYMBOL, etching.symbol.map((symbol) => (0, integer_1.u128)(symbol.codePointAt(0)))));
+            payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.PREMINE, etching.premine));
+            if (etching.terms.isSome()) {
+                const terms = etching.terms.unwrap();
+                payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.AMOUNT, terms.amount));
+                payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.CAP, terms.cap));
+                payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.HEIGHT_START, terms.height[0]));
+                payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.HEIGHT_END, terms.height[1]));
+                payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.OFFSET_START, terms.offset[0]));
+                payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.OFFSET_END, terms.offset[1]));
+            }
+        }
+        if (this.mint.isSome()) {
+            const claim = this.mint.unwrap();
+            payloads.push(tag_1.Tag.encode(tag_1.Tag.MINT, [claim.block, claim.tx].map(integer_1.u128)));
+        }
+        payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.POINTER, this.pointer.map(integer_1.u128)));
+        if (this.edicts.length) {
+            payloads.push(integer_1.u128.encodeVarInt((0, integer_1.u128)(tag_1.Tag.BODY)));
+            const edicts = [...this.edicts].sort((x, y) => Number(x.id.block - y.id.block || x.id.tx - y.id.tx));
+            let previous = new runeid_1.RuneId((0, integer_1.u64)(0), (0, integer_1.u32)(0));
+            for (const edict of edicts) {
+                const [block, tx] = previous.delta(edict.id).unwrap();
+                payloads.push(integer_1.u128.encodeVarInt(block));
+                payloads.push(integer_1.u128.encodeVarInt(tx));
+                payloads.push(integer_1.u128.encodeVarInt(edict.amount));
+                payloads.push(integer_1.u128.encodeVarInt((0, integer_1.u128)(edict.output)));
+                previous = edict.id;
+            }
+        }
+        const stack = [];
+        stack.push(constants_1.OP_RETURN);
+        stack.push(constants_1.MAGIC_NUMBER);
+        const payload = Buffer.concat(payloads);
+        let i = 0;
+        for (let i = 0; i < payload.length; i += constants_1.MAX_SCRIPT_ELEMENT_SIZE) {
+            stack.push(payload.subarray(i, i + constants_1.MAX_SCRIPT_ELEMENT_SIZE));
+        }
+        return script_1.script.compile(stack);
+    }
+    static payload(transaction) {
+        // search transaction outputs for payload
+        for (const output of transaction.vout) {
+            const instructions = script_1.script.decompile(Buffer.from(output.scriptPubKey.hex, 'hex'));
+            if (instructions === null) {
+                throw new Error('unable to decompile');
+            }
+            // payload starts with OP_RETURN
+            let nextInstructionResult = instructions.next();
+            if (nextInstructionResult.done || nextInstructionResult.value !== constants_1.OP_RETURN) {
+                continue;
+            }
+            // followed by the protocol identifier
+            nextInstructionResult = instructions.next();
+            if (nextInstructionResult.done ||
+                utils_1.Instruction.isBuffer(nextInstructionResult.value) ||
+                nextInstructionResult.value !== constants_1.MAGIC_NUMBER) {
+                continue;
+            }
+            // construct the payload by concatinating remaining data pushes
+            let payloads = [];
+            do {
+                nextInstructionResult = instructions.next();
+                if (nextInstructionResult.done) {
+                    const decodedSuccessfully = nextInstructionResult.value;
+                    if (!decodedSuccessfully) {
+                        return (0, monads_1.Some)(flaw_1.Flaw.INVALID_SCRIPT);
+                    }
+                    break;
+                }
+                const instruction = nextInstructionResult.value;
+                if (utils_1.Instruction.isBuffer(instruction)) {
+                    payloads.push(instruction);
+                }
+                else {
+                    return (0, monads_1.Some)(flaw_1.Flaw.OPCODE);
+                }
+            } while (true);
+            return (0, monads_1.Some)(Buffer.concat(payloads));
+        }
+        return monads_1.None;
+    }
+    static integers(payload) {
+        const integers = [];
+        const seekBuffer = new seekbuffer_1.SeekBuffer(payload);
+        while (!seekBuffer.isFinished()) {
+            const optionInt = integer_1.u128.decodeVarInt(seekBuffer);
+            if (optionInt.isNone()) {
+                return monads_1.None;
+            }
+            integers.push(optionInt.unwrap());
+        }
+        return (0, monads_1.Some)(integers);
+    }
+}
+exports.Runestone = Runestone;
+//# sourceMappingURL=runestone.js.map
+
+/***/ }),
+
+/***/ 41447:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+/* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.script = exports.opcodes = void 0;
+var pushdata;
+(function (pushdata) {
+    /**
+     * Calculates the encoding length of a number used for push data in Bitcoin transactions.
+     * @param i The number to calculate the encoding length for.
+     * @returns The encoding length of the number.
+     */
+    function encodingLength(i) {
+        return i < OPS.OP_PUSHDATA1 ? 1 : i <= 0xff ? 2 : i <= 0xffff ? 3 : 5;
+    }
+    pushdata.encodingLength = encodingLength;
+    /**
+     * Encodes a number into a buffer using a variable-length encoding scheme.
+     * The encoded buffer is written starting at the specified offset.
+     * Returns the size of the encoded buffer.
+     *
+     * @param buffer - The buffer to write the encoded data into.
+     * @param num - The number to encode.
+     * @param offset - The offset at which to start writing the encoded buffer.
+     * @returns The size of the encoded buffer.
+     */
+    function encode(buffer, num, offset) {
+        const size = encodingLength(num);
+        // ~6 bit
+        if (size === 1) {
+            buffer.writeUInt8(num, offset);
+            // 8 bit
+        }
+        else if (size === 2) {
+            buffer.writeUInt8(OPS.OP_PUSHDATA1, offset);
+            buffer.writeUInt8(num, offset + 1);
+            // 16 bit
+        }
+        else if (size === 3) {
+            buffer.writeUInt8(OPS.OP_PUSHDATA2, offset);
+            buffer.writeUInt16LE(num, offset + 1);
+            // 32 bit
+        }
+        else {
+            buffer.writeUInt8(OPS.OP_PUSHDATA4, offset);
+            buffer.writeUInt32LE(num, offset + 1);
+        }
+        return size;
+    }
+    pushdata.encode = encode;
+    /**
+     * Decodes a buffer and returns information about the opcode, number, and size.
+     * @param buffer - The buffer to decode.
+     * @param offset - The offset within the buffer to start decoding.
+     * @returns An object containing the opcode, number, and size, or null if decoding fails.
+     */
+    function decode(buffer, offset) {
+        const opcode = buffer.readUInt8(offset);
+        let num;
+        let size;
+        // ~6 bit
+        if (opcode < OPS.OP_PUSHDATA1) {
+            num = opcode;
+            size = 1;
+            // 8 bit
+        }
+        else if (opcode === OPS.OP_PUSHDATA1) {
+            if (offset + 2 > buffer.length)
+                return null;
+            num = buffer.readUInt8(offset + 1);
+            size = 2;
+            // 16 bit
+        }
+        else if (opcode === OPS.OP_PUSHDATA2) {
+            if (offset + 3 > buffer.length)
+                return null;
+            num = buffer.readUInt16LE(offset + 1);
+            size = 3;
+            // 32 bit
+        }
+        else {
+            if (offset + 5 > buffer.length)
+                return null;
+            if (opcode !== OPS.OP_PUSHDATA4)
+                throw new Error('Unexpected opcode');
+            num = buffer.readUInt32LE(offset + 1);
+            size = 5;
+        }
+        return {
+            opcode,
+            number: num,
+            size,
+        };
+    }
+    pushdata.decode = decode;
+})(pushdata || (pushdata = {}));
+const OPS = {
+    OP_FALSE: 0,
+    OP_0: 0,
+    OP_PUSHDATA1: 76,
+    OP_PUSHDATA2: 77,
+    OP_PUSHDATA4: 78,
+    OP_1NEGATE: 79,
+    OP_RESERVED: 80,
+    OP_TRUE: 81,
+    OP_1: 81,
+    OP_2: 82,
+    OP_3: 83,
+    OP_4: 84,
+    OP_5: 85,
+    OP_6: 86,
+    OP_7: 87,
+    OP_8: 88,
+    OP_9: 89,
+    OP_10: 90,
+    OP_11: 91,
+    OP_12: 92,
+    OP_13: 93,
+    OP_14: 94,
+    OP_15: 95,
+    OP_16: 96,
+    OP_NOP: 97,
+    OP_VER: 98,
+    OP_IF: 99,
+    OP_NOTIF: 100,
+    OP_VERIF: 101,
+    OP_VERNOTIF: 102,
+    OP_ELSE: 103,
+    OP_ENDIF: 104,
+    OP_VERIFY: 105,
+    OP_RETURN: 106,
+    OP_TOALTSTACK: 107,
+    OP_FROMALTSTACK: 108,
+    OP_2DROP: 109,
+    OP_2DUP: 110,
+    OP_3DUP: 111,
+    OP_2OVER: 112,
+    OP_2ROT: 113,
+    OP_2SWAP: 114,
+    OP_IFDUP: 115,
+    OP_DEPTH: 116,
+    OP_DROP: 117,
+    OP_DUP: 118,
+    OP_NIP: 119,
+    OP_OVER: 120,
+    OP_PICK: 121,
+    OP_ROLL: 122,
+    OP_ROT: 123,
+    OP_SWAP: 124,
+    OP_TUCK: 125,
+    OP_CAT: 126,
+    OP_SUBSTR: 127,
+    OP_LEFT: 128,
+    OP_RIGHT: 129,
+    OP_SIZE: 130,
+    OP_INVERT: 131,
+    OP_AND: 132,
+    OP_OR: 133,
+    OP_XOR: 134,
+    OP_EQUAL: 135,
+    OP_EQUALVERIFY: 136,
+    OP_RESERVED1: 137,
+    OP_RESERVED2: 138,
+    OP_1ADD: 139,
+    OP_1SUB: 140,
+    OP_2MUL: 141,
+    OP_2DIV: 142,
+    OP_NEGATE: 143,
+    OP_ABS: 144,
+    OP_NOT: 145,
+    OP_0NOTEQUAL: 146,
+    OP_ADD: 147,
+    OP_SUB: 148,
+    OP_MUL: 149,
+    OP_DIV: 150,
+    OP_MOD: 151,
+    OP_LSHIFT: 152,
+    OP_RSHIFT: 153,
+    OP_BOOLAND: 154,
+    OP_BOOLOR: 155,
+    OP_NUMEQUAL: 156,
+    OP_NUMEQUALVERIFY: 157,
+    OP_NUMNOTEQUAL: 158,
+    OP_LESSTHAN: 159,
+    OP_GREATERTHAN: 160,
+    OP_LESSTHANOREQUAL: 161,
+    OP_GREATERTHANOREQUAL: 162,
+    OP_MIN: 163,
+    OP_MAX: 164,
+    OP_WITHIN: 165,
+    OP_RIPEMD160: 166,
+    OP_SHA1: 167,
+    OP_SHA256: 168,
+    OP_HASH160: 169,
+    OP_HASH256: 170,
+    OP_CODESEPARATOR: 171,
+    OP_CHECKSIG: 172,
+    OP_CHECKSIGVERIFY: 173,
+    OP_CHECKMULTISIG: 174,
+    OP_CHECKMULTISIGVERIFY: 175,
+    OP_NOP1: 176,
+    OP_NOP2: 177,
+    OP_CHECKLOCKTIMEVERIFY: 177,
+    OP_NOP3: 178,
+    OP_CHECKSEQUENCEVERIFY: 178,
+    OP_NOP4: 179,
+    OP_NOP5: 180,
+    OP_NOP6: 181,
+    OP_NOP7: 182,
+    OP_NOP8: 183,
+    OP_NOP9: 184,
+    OP_NOP10: 185,
+    OP_CHECKSIGADD: 186,
+    OP_PUBKEYHASH: 253,
+    OP_PUBKEY: 254,
+    OP_INVALIDOPCODE: 255,
+};
+exports.opcodes = OPS;
+const OP_INT_BASE = OPS.OP_RESERVED; // OP_1 - 1
+function singleChunkIsBuffer(buf) {
+    return Buffer.isBuffer(buf);
+}
+var script;
+(function (script) {
+    function compile(chunks) {
+        const bufferSize = chunks.reduce((accum, chunk) => {
+            // data chunk
+            if (singleChunkIsBuffer(chunk)) {
+                return accum + pushdata.encodingLength(chunk.length) + chunk.length;
+            }
+            // opcode
+            return accum + 1;
+        }, 0.0);
+        const buffer = Buffer.allocUnsafe(bufferSize);
+        let offset = 0;
+        chunks.forEach((chunk) => {
+            // data chunk
+            if (singleChunkIsBuffer(chunk)) {
+                offset += pushdata.encode(buffer, chunk.length, offset);
+                chunk.copy(buffer, offset);
+                offset += chunk.length;
+                // opcode
+            }
+            else {
+                buffer.writeUInt8(chunk, offset);
+                offset += 1;
+            }
+        });
+        if (offset !== buffer.length)
+            throw new Error('Could not decode chunks');
+        return buffer;
+    }
+    script.compile = compile;
+    function* decompile(buffer) {
+        let i = 0;
+        while (i < buffer.length) {
+            const opcode = buffer[i];
+            // data chunk
+            if (opcode >= OPS.OP_0 && opcode <= OPS.OP_PUSHDATA4) {
+                const d = pushdata.decode(buffer, i);
+                // did reading a pushDataInt fail?
+                if (d === null)
+                    return false;
+                i += d.size;
+                // attempt to read too much data?
+                if (i + d.number > buffer.length)
+                    return false;
+                const data = buffer.slice(i, i + d.number);
+                i += d.number;
+                yield data;
+                // opcode
+            }
+            else {
+                yield opcode;
+                i += 1;
+            }
+        }
+        return true;
+    }
+    script.decompile = decompile;
+})(script || (exports.script = script = {}));
+//# sourceMappingURL=script.js.map
+
+/***/ }),
+
+/***/ 87208:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SeekBuffer = void 0;
+class SeekBuffer {
+    constructor(buffer) {
+        this.buffer = buffer;
+        this.seekIndex = 0;
+    }
+    readUInt8() {
+        if (this.isFinished()) {
+            return undefined;
+        }
+        return this.buffer.readUInt8(this.seekIndex++);
+    }
+    isFinished() {
+        return this.seekIndex >= this.buffer.length;
+    }
+}
+exports.SeekBuffer = SeekBuffer;
+//# sourceMappingURL=seekbuffer.js.map
+
+/***/ }),
+
+/***/ 55340:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SpacedRune = void 0;
+const rune_1 = __webpack_require__(45845);
+class SpacedRune {
+    constructor(rune, spacers) {
+        this.rune = rune;
+        this.spacers = spacers;
+    }
+    static fromString(s) {
+        let rune = '';
+        let spacers = 0;
+        for (const c of s) {
+            if ('A' <= c && c <= 'Z') {
+                rune += c;
+            }
+            else if ('.' === c || '•' === c) {
+                if (rune.length === 0) {
+                    throw new Error('leading spacer');
+                }
+                const flag = 1 << (rune.length - 1);
+                if ((spacers & flag) !== 0) {
+                    throw new Error('double spacer');
+                }
+                spacers |= flag;
+            }
+            else {
+                throw new Error('invalid character');
+            }
+        }
+        if (spacers >= 1 << (rune.length - 1)) {
+            throw new Error('trailing spacer');
+        }
+        return new SpacedRune(rune_1.Rune.fromString(rune), spacers);
+    }
+    toString() {
+        const rune = this.rune.toString();
+        let i = 0;
+        let result = '';
+        for (const c of rune) {
+            result += c;
+            if (i < rune.length - 1 && (this.spacers & (1 << i)) !== 0) {
+                result += '•';
+            }
+            i++;
+        }
+        return result;
+    }
+}
+exports.SpacedRune = SpacedRune;
+//# sourceMappingURL=spacedrune.js.map
+
+/***/ }),
+
+/***/ 97757:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+/* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Tag = void 0;
+const monads_1 = __webpack_require__(20928);
+const integer_1 = __webpack_require__(77096);
+var Tag;
+(function (Tag) {
+    Tag[Tag["BODY"] = 0] = "BODY";
+    Tag[Tag["FLAGS"] = 2] = "FLAGS";
+    Tag[Tag["RUNE"] = 4] = "RUNE";
+    Tag[Tag["PREMINE"] = 6] = "PREMINE";
+    Tag[Tag["CAP"] = 8] = "CAP";
+    Tag[Tag["AMOUNT"] = 10] = "AMOUNT";
+    Tag[Tag["HEIGHT_START"] = 12] = "HEIGHT_START";
+    Tag[Tag["HEIGHT_END"] = 14] = "HEIGHT_END";
+    Tag[Tag["OFFSET_START"] = 16] = "OFFSET_START";
+    Tag[Tag["OFFSET_END"] = 18] = "OFFSET_END";
+    Tag[Tag["MINT"] = 20] = "MINT";
+    Tag[Tag["POINTER"] = 22] = "POINTER";
+    Tag[Tag["CENOTAPH"] = 126] = "CENOTAPH";
+    Tag[Tag["DIVISIBILITY"] = 1] = "DIVISIBILITY";
+    Tag[Tag["SPACERS"] = 3] = "SPACERS";
+    Tag[Tag["SYMBOL"] = 5] = "SYMBOL";
+    Tag[Tag["NOP"] = 127] = "NOP";
+})(Tag || (exports.Tag = Tag = {}));
+(function (Tag) {
+    function take(tag, fields, n, withFn) {
+        const field = fields.get((0, integer_1.u128)(tag));
+        if (field === undefined) {
+            return monads_1.None;
+        }
+        const values = [];
+        for (const i of [...Array(n).keys()]) {
+            if (field[i] === undefined) {
+                return monads_1.None;
+            }
+            values[i] = field[i];
+        }
+        const optionValue = withFn(values);
+        if (optionValue.isNone()) {
+            return monads_1.None;
+        }
+        field.splice(0, n);
+        if (field.length === 0) {
+            fields.delete((0, integer_1.u128)(tag));
+        }
+        return (0, monads_1.Some)(optionValue.unwrap());
+    }
+    Tag.take = take;
+    function encode(tag, values) {
+        return Buffer.concat(values.map((value) => [integer_1.u128.encodeVarInt((0, integer_1.u128)(tag)), integer_1.u128.encodeVarInt(value)]).flat());
+    }
+    Tag.encode = encode;
+    function encodeOptionInt(tag, value) {
+        return value.map((value) => Tag.encode(tag, [(0, integer_1.u128)(value)])).unwrapOr(Buffer.alloc(0));
+    }
+    Tag.encodeOptionInt = encodeOptionInt;
+})(Tag || (exports.Tag = Tag = {}));
+//# sourceMappingURL=tag.js.map
+
+/***/ }),
+
+/***/ 814:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Instruction = void 0;
+var Instruction;
+(function (Instruction) {
+    function isNumber(instruction) {
+        return typeof instruction === 'number';
+    }
+    Instruction.isNumber = isNumber;
+    function isBuffer(instruction) {
+        return typeof instruction !== 'number';
+    }
+    Instruction.isBuffer = isBuffer;
+})(Instruction || (exports.Instruction = Instruction = {}));
+//# sourceMappingURL=utils.js.map
 
 /***/ }),
 
@@ -14840,59 +17358,60 @@ const tweakAddVectors = [
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
+var __webpack_unused_export__;
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.initEccLib =
-  exports.Transaction =
-  exports.opcodes =
-  exports.Psbt =
-  exports.Block =
-  exports.script =
-  exports.payments =
-  exports.networks =
-  exports.crypto =
-  exports.address =
+__webpack_unused_export__ = ({ value: true });
+exports.Wi =
+  exports.YW =
+  __webpack_unused_export__ =
+  exports._B =
+  __webpack_unused_export__ =
+  __webpack_unused_export__ =
+  exports.PP =
+  exports.QW =
+  __webpack_unused_export__ =
+  __webpack_unused_export__ =
     void 0;
 const address = __webpack_require__(95488);
-exports.address = address;
+__webpack_unused_export__ = address;
 const crypto = __webpack_require__(5525);
-exports.crypto = crypto;
+__webpack_unused_export__ = crypto;
 const networks = __webpack_require__(74378);
-exports.networks = networks;
+exports.QW = networks;
 const payments = __webpack_require__(84972);
-exports.payments = payments;
+exports.PP = payments;
 const script = __webpack_require__(73357);
-exports.script = script;
+__webpack_unused_export__ = script;
 var block_1 = __webpack_require__(87949);
-Object.defineProperty(exports, "Block", ({
+__webpack_unused_export__ = ({
   enumerable: true,
   get: function () {
     return block_1.Block;
   },
-}));
+});
 var psbt_1 = __webpack_require__(99930);
-Object.defineProperty(exports, "Psbt", ({
+Object.defineProperty(exports, "_B", ({
   enumerable: true,
   get: function () {
     return psbt_1.Psbt;
   },
 }));
 var ops_1 = __webpack_require__(47334);
-Object.defineProperty(exports, "opcodes", ({
+__webpack_unused_export__ = ({
   enumerable: true,
   get: function () {
     return ops_1.OPS;
   },
-}));
+});
 var transaction_1 = __webpack_require__(82737);
-Object.defineProperty(exports, "Transaction", ({
+Object.defineProperty(exports, "YW", ({
   enumerable: true,
   get: function () {
     return transaction_1.Transaction;
   },
 }));
 var ecc_lib_1 = __webpack_require__(66379);
-Object.defineProperty(exports, "initEccLib", ({
+Object.defineProperty(exports, "Wi", ({
   enumerable: true,
   get: function () {
     return ecc_lib_1.initEccLib;
@@ -20646,956 +23165,6 @@ function triggerFocus(element, option) {
     }
   }
 }
-
-/***/ }),
-
-/***/ 51049:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.base26Decode = exports.base26Encode = void 0;
-function base26Encode(input) {
-    let result = 0n;
-    for (let i = 0; i < input.length; i++) {
-        const charCode = BigInt(input.charCodeAt(i) - 'A'.charCodeAt(0));
-        const iInv = BigInt(input.length) - 1n - BigInt(i);
-        if (iInv == 0n) {
-            result += charCode;
-        }
-        else {
-            const base = 26n ** iInv;
-            result += base * (charCode + 1n);
-        }
-    }
-    return result;
-}
-exports.base26Encode = base26Encode;
-function base26Decode(s) {
-    if (s === 340282366920938463463374607431768211455n) {
-        return "BCGDENLQRQWDSLRUGSNLBTMFIJAV";
-    }
-    s += 1n;
-    let symbol = [];
-    while (s > 0) {
-        const i = (s - 1n) % 26n;
-        symbol.push("ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Number(i)));
-        s = (s - 1n) / 26n;
-    }
-    return symbol.reverse().join('');
-}
-exports.base26Decode = base26Decode;
-
-
-/***/ }),
-
-/***/ 85006:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.none = exports.some = void 0;
-class None {
-    constructor() { }
-    isSome() {
-        return false;
-    }
-    map(f) {
-        return new None();
-    }
-    value() {
-        return null;
-    }
-}
-class Some {
-    constructor(value) {
-        this._value = value;
-    }
-    isSome() {
-        return true;
-    }
-    map(f) {
-        return new Some(f(this.value()));
-    }
-    value() {
-        return this._value;
-    }
-}
-function some(t) {
-    return new Some(t);
-}
-exports.some = some;
-function none() {
-    return new None();
-}
-exports.none = none;
-
-
-/***/ }),
-
-/***/ 55659:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.removeSpacers = exports.getSpacersVal = exports.applySpacers = exports.some = exports.none = void 0;
-__exportStar(__webpack_require__(54366), exports);
-var fts_1 = __webpack_require__(85006);
-Object.defineProperty(exports, "none", ({ enumerable: true, get: function () { return fts_1.none; } }));
-Object.defineProperty(exports, "some", ({ enumerable: true, get: function () { return fts_1.some; } }));
-var spacers_1 = __webpack_require__(15193);
-Object.defineProperty(exports, "applySpacers", ({ enumerable: true, get: function () { return spacers_1.applySpacers; } }));
-Object.defineProperty(exports, "getSpacersVal", ({ enumerable: true, get: function () { return spacers_1.getSpacersVal; } }));
-Object.defineProperty(exports, "removeSpacers", ({ enumerable: true, get: function () { return spacers_1.removeSpacers; } }));
-
-
-/***/ }),
-
-/***/ 17576:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.decodeLEB128 = exports.encodeLEB128 = void 0;
-function encodeLEB128(value) {
-    const bytes = [];
-    let more = true;
-    while (more) {
-        let byte = Number(value & BigInt(0x7F)); // Get the lowest 7 bits
-        value >>= BigInt(7);
-        if (value === BigInt(0)) { // No more data to encode
-            more = false;
-        }
-        else { // More bytes to come
-            byte |= 0x80; // Set the continuation bit
-        }
-        bytes.push(byte);
-    }
-    // Convert array to Buffer
-    return bytes;
-}
-exports.encodeLEB128 = encodeLEB128;
-function decodeLEB128(buf) {
-    let n = BigInt(0);
-    for (let i = 0; i < buf.length; i++) {
-        const byte = BigInt(buf[i]);
-        if (i > 18) {
-            throw new Error("Overlong");
-        }
-        let value = byte & BigInt(127);
-        if ((i == 18) && ((value & BigInt(124)) != BigInt(0))) {
-            throw new Error("Overflow");
-        }
-        n |= value << (BigInt(7) * BigInt(i));
-        if ((byte & BigInt(128)) == BigInt(0)) {
-            return {
-                n,
-                len: i + 1
-            };
-        }
-    }
-    throw new Error("Unterminated");
-}
-exports.decodeLEB128 = decodeLEB128;
-
-
-/***/ }),
-
-/***/ 54366:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-/* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.EtchInscription = exports.Message = exports.Runestone = exports.Etching = exports.Rune = exports.Terms = exports.Range = exports.Flaw = exports.Tag = exports.Flag = exports.Edict = exports.RuneId = void 0;
-const bitcoinjs_lib_1 = __webpack_require__(17656);
-const base26_1 = __webpack_require__(51049);
-const fts_1 = __webpack_require__(85006);
-const leb128_1 = __webpack_require__(17576);
-const utils_1 = __webpack_require__(31046);
-const spacers_1 = __webpack_require__(15193);
-class RuneId {
-    constructor(block, idx) {
-        this.block = block;
-        this.idx = idx;
-    }
-    next(block, idx) {
-        if (block > BigInt(Number.MAX_SAFE_INTEGER)) {
-            return (0, fts_1.none)();
-        }
-        if (idx > BigInt(Number.MAX_SAFE_INTEGER)) {
-            return (0, fts_1.none)();
-        }
-        let b = BigInt(this.block) + block;
-        if (b > BigInt(Number.MAX_SAFE_INTEGER)) {
-            return (0, fts_1.none)();
-        }
-        let i = block === 0n ? BigInt(this.idx) + idx : idx;
-        if (i > BigInt(Number.MAX_SAFE_INTEGER)) {
-            return (0, fts_1.none)();
-        }
-        return (0, fts_1.some)(new RuneId(Number(b), Number(i)));
-    }
-}
-exports.RuneId = RuneId;
-class Edict {
-    constructor(id, amount, output) {
-        this.id = id;
-        this.amount = amount;
-        this.output = output;
-    }
-    static from_integers(tx, id, amount, output) {
-        if (output > 4294967295n || output < 0n) {
-            return (0, fts_1.none)();
-        }
-        if (Number(output) > tx.outs.length) {
-            return (0, fts_1.none)();
-        }
-        return (0, fts_1.some)(new Edict(id, amount, Number(output)));
-    }
-}
-exports.Edict = Edict;
-var Flag;
-(function (Flag) {
-    Flag[Flag["Etching"] = 0] = "Etching";
-    Flag[Flag["Terms"] = 1] = "Terms";
-    Flag[Flag["Turbo"] = 2] = "Turbo";
-    Flag[Flag["Cenotaph"] = 127] = "Cenotaph";
-})(Flag || (exports.Flag = Flag = {}));
-var Tag;
-(function (Tag) {
-    Tag[Tag["Body"] = 0] = "Body";
-    Tag[Tag["Flags"] = 2] = "Flags";
-    Tag[Tag["Rune"] = 4] = "Rune";
-    Tag[Tag["Premine"] = 6] = "Premine";
-    Tag[Tag["Cap"] = 8] = "Cap";
-    Tag[Tag["Amount"] = 10] = "Amount";
-    Tag[Tag["HeightStart"] = 12] = "HeightStart";
-    Tag[Tag["HeightEnd"] = 14] = "HeightEnd";
-    Tag[Tag["OffsetStart"] = 16] = "OffsetStart";
-    Tag[Tag["OffsetEnd"] = 18] = "OffsetEnd";
-    Tag[Tag["Mint"] = 20] = "Mint";
-    Tag[Tag["Pointer"] = 22] = "Pointer";
-    Tag[Tag["Cenotaph"] = 126] = "Cenotaph";
-    Tag[Tag["Divisibility"] = 1] = "Divisibility";
-    Tag[Tag["Spacers"] = 3] = "Spacers";
-    Tag[Tag["Symbol"] = 5] = "Symbol";
-    Tag[Tag["Nop"] = 127] = "Nop";
-})(Tag || (exports.Tag = Tag = {}));
-var Flaw;
-(function (Flaw) {
-    Flaw[Flaw["EdictOutput"] = 0] = "EdictOutput";
-    Flaw[Flaw["EdictRuneId"] = 1] = "EdictRuneId";
-    Flaw[Flaw["InvalidScript"] = 2] = "InvalidScript";
-    Flaw[Flaw["Opcode"] = 3] = "Opcode";
-    Flaw[Flaw["SupplyOverflow"] = 4] = "SupplyOverflow";
-    Flaw[Flaw["TrailingIntegers"] = 5] = "TrailingIntegers";
-    Flaw[Flaw["TruncatedField"] = 6] = "TruncatedField";
-    Flaw[Flaw["UnrecognizedEvenTag"] = 7] = "UnrecognizedEvenTag";
-    Flaw[Flaw["UnrecognizedFlag"] = 8] = "UnrecognizedFlag";
-    Flaw[Flaw["Varint"] = 9] = "Varint";
-})(Flaw || (exports.Flaw = Flaw = {}));
-class Range {
-    constructor(start, end) {
-        this.start = start;
-        this.end = end;
-    }
-}
-exports.Range = Range;
-class Terms {
-    constructor(amount, cap, height, offset) {
-        this.amount = amount;
-        this.cap = cap;
-        this.height = height;
-        this.offset = offset;
-    }
-}
-exports.Terms = Terms;
-class Rune {
-    constructor(value) {
-        this.value = value;
-    }
-    get name() {
-        return Rune.toName(this.value);
-    }
-    static toName(s) {
-        return (0, base26_1.base26Decode)(s);
-    }
-    static fromName(name) {
-        return new Rune((0, base26_1.base26Encode)((0, spacers_1.removeSpacers)(name)));
-    }
-    toString() {
-        return this.name;
-    }
-}
-exports.Rune = Rune;
-class Etching {
-    constructor(divisibility, premine, rune, spacers, symbol, terms, turbo) {
-        this.divisibility = divisibility;
-        this.premine = premine;
-        this.rune = rune;
-        this.spacers = spacers;
-        this.symbol = symbol;
-        this.terms = terms;
-        this.turbo = turbo;
-    }
-}
-exports.Etching = Etching;
-Etching.MAX_DIVISIBILITY = 38;
-Etching.MAX_SPACERS = 134217727;
-class Runestone {
-    constructor(edicts = [], etching, mint, pointer) {
-        this.edicts = edicts;
-        this.etching = etching;
-        this.mint = mint;
-        this.pointer = pointer;
-    }
-    static create(json, type = 'etch') {
-        if (type === 'etch') {
-            json = json;
-            const runename = Rune.fromName(json.name);
-            const terms = new Terms(json.amount, json.cap, new Range(json.startHeight ? (0, fts_1.some)(json.startHeight) : (0, fts_1.none)(), json.endHeight ? (0, fts_1.some)(json.endHeight) : (0, fts_1.none)()), new Range(json.startOffset ? (0, fts_1.some)(json.startOffset) : (0, fts_1.none)(), json.endOffset ? (0, fts_1.some)(json.endOffset) : (0, fts_1.none)()));
-            const divisibility = json.divisibility ? (0, fts_1.some)(json.divisibility) : (0, fts_1.none)();
-            const premine = json.premine ? (0, fts_1.some)(json.premine) : (0, fts_1.none)();
-            const spacers = json.name.indexOf('•') > -1 ? (0, fts_1.some)((0, spacers_1.getSpacersVal)(json.name)) : (0, fts_1.none)();
-            const symbol = json.symbol ? (0, fts_1.some)(json.symbol) : (0, fts_1.none)();
-            const pointer = typeof json.pointer === 'number' ? (0, fts_1.some)(json.pointer) : (0, fts_1.none)();
-            const etching = new Etching(divisibility, premine, (0, fts_1.some)(runename), spacers, symbol, (0, fts_1.some)(terms), true);
-            return new Runestone([], (0, fts_1.some)(etching), (0, fts_1.none)(), pointer);
-        }
-        else if (type === 'mint') {
-            json = json;
-            const pointer = typeof json.pointer === 'number' ? (0, fts_1.some)(json.pointer) : (0, fts_1.none)();
-            return new Runestone([], (0, fts_1.none)(), (0, fts_1.some)(new RuneId(json.block, json.txIdx)), pointer);
-        }
-        else {
-            throw new Error(`not ${type} support now`);
-        }
-    }
-    static decipher(rawTx) {
-        const tx = bitcoinjs_lib_1.Transaction.fromHex(rawTx);
-        const payload = Runestone.payload(tx);
-        if (payload.isSome()) {
-            const integers = Runestone.integers(payload.value());
-            const message = Message.from_integers(tx, integers.value());
-            const etching = message.getEtching();
-            const mint = message.getMint();
-            const pointer = message.getPointer();
-            return (0, fts_1.some)(new Runestone(message.edicts, etching, mint, pointer));
-        }
-        return (0, fts_1.none)();
-    }
-    encipher() {
-        const msg = this.toMessage();
-        const msgBuff = msg.toBuffer();
-        const prefix = Buffer.from('6a5d', 'hex'); // OP_RETURN OP_13
-        const pushNum = Buffer.alloc(1);
-        pushNum.writeUint8(msgBuff.length);
-        return Buffer.concat([prefix, pushNum, msgBuff]);
-    }
-    static payload(tx) {
-        for (const output of tx.outs) {
-            //script.fromASM
-            const ls = bitcoinjs_lib_1.script.decompile(output.script);
-            if (ls[0] !== bitcoinjs_lib_1.script.OPS.OP_RETURN) {
-                continue;
-            }
-            if (ls[1] !== Runestone.MAGIC_NUMBER) {
-                continue;
-            }
-            for (let i = 2; i < ls.length; i++) {
-                const element = ls[i];
-                if (element instanceof Uint8Array) {
-                    return (0, fts_1.some)(Array.from(element));
-                }
-                return (0, fts_1.none)();
-            }
-            return (0, fts_1.none)();
-        }
-        return (0, fts_1.none)();
-    }
-    static integers(payload) {
-        let integers = [];
-        let i = 0;
-        while (i < payload.length) {
-            let { n, len } = (0, leb128_1.decodeLEB128)(payload.slice(i));
-            integers.push(n);
-            i += len;
-        }
-        return (0, fts_1.some)(integers);
-    }
-    toMessage() {
-        let fields = new Map();
-        const etching = this.etching.value();
-        if (etching) {
-            let flags = 1;
-            if (etching.terms.isSome()) {
-                let mask = 1 << Flag.Terms;
-                flags |= mask;
-            }
-            if (etching.turbo) {
-                let mask = 1 << Flag.Turbo;
-                flags |= mask;
-            }
-            fields.set(Tag.Flags, [BigInt(flags)]);
-            const rune = etching.rune.value();
-            if (rune !== null) {
-                fields.set(Tag.Rune, [BigInt(rune.value)]);
-            }
-            const divisibility = etching.divisibility.value();
-            if (divisibility !== null) {
-                fields.set(Tag.Divisibility, [BigInt(divisibility)]);
-            }
-            const spacers = etching.spacers.value();
-            if (spacers !== null) {
-                fields.set(Tag.Spacers, [BigInt(spacers)]);
-            }
-            const symbol = etching.symbol.value();
-            if (symbol !== null) {
-                fields.set(Tag.Symbol, [BigInt(symbol.charCodeAt(0))]);
-            }
-            const premine = etching.premine.value();
-            if (premine !== null) {
-                fields.set(Tag.Premine, [BigInt(premine)]);
-            }
-            const terms = etching.terms.value();
-            if (terms !== null) {
-                fields.set(Tag.Amount, [BigInt(terms.amount)]);
-                fields.set(Tag.Cap, [BigInt(terms.cap)]);
-                const heightStart = terms.height.start.value();
-                if (heightStart) {
-                    fields.set(Tag.HeightStart, [BigInt(heightStart)]);
-                }
-                const heightEnd = terms.height.end.value();
-                if (heightEnd) {
-                    fields.set(Tag.HeightEnd, [BigInt(heightEnd)]);
-                }
-                const offsetStart = terms.offset.start.value();
-                if (offsetStart) {
-                    fields.set(Tag.OffsetStart, [BigInt(offsetStart)]);
-                }
-                const offsetEnd = terms.offset.end.value();
-                if (offsetEnd) {
-                    fields.set(Tag.OffsetEnd, [BigInt(offsetEnd)]);
-                }
-            }
-        }
-        const mint = this.mint.value();
-        if (mint !== null) {
-            fields.set(Tag.Mint, [BigInt(mint.block), BigInt(mint.idx)]);
-        }
-        const pointer = this.pointer.value();
-        if (pointer !== null) {
-            fields.set(Tag.Pointer, [BigInt(pointer)]);
-        }
-        return new Message(fields, this.edicts, 0);
-    }
-}
-exports.Runestone = Runestone;
-Runestone.MAGIC_NUMBER = 93;
-class Message {
-    constructor(fields = new Map(), edicts = [], flaws = 0) {
-        this.fields = fields;
-        this.edicts = edicts;
-        this.flaws = flaws;
-    }
-    static from_integers(tx, integers) {
-        let fields = new Map();
-        let edicts = [];
-        let flaws = 0;
-        let isBody = false;
-        for (let i = 0; i < integers.length;) {
-            let tag = integers[i];
-            if (Number(tag) === Tag.Body) {
-                isBody = true;
-                i += 1;
-                continue;
-            }
-            if (!isBody) {
-                // Fields:
-                let val = integers[i + 1];
-                const vals = fields.get(Number(tag)) || [];
-                vals.push(val);
-                fields.set(Number(tag), vals);
-                i += 2;
-            }
-            else {
-                // Edicts:
-                let id = new RuneId(0, 0);
-                for (const chunk of (0, utils_1.chunks)(integers.slice(i), 4)) {
-                    if (chunk.length != 4) {
-                        flaws |= Flaw.TrailingIntegers;
-                        break;
-                    }
-                    let next = id.next(chunk[0], chunk[1]);
-                    if (!next.isSome()) {
-                        flaws |= Flaw.EdictRuneId;
-                        break;
-                    }
-                    const edict = Edict.from_integers(tx, next.value(), chunk[2], chunk[3]);
-                    if (!edict.isSome()) {
-                        flaws |= Flaw.EdictOutput;
-                        break;
-                    }
-                    id = next.value();
-                    edicts.push(edict.value());
-                }
-                i += 4;
-            }
-        }
-        return new Message(fields, edicts, flaws);
-    }
-    addFieldVal(tag, val) {
-        const vals = this.fields.get(Number(tag)) || [];
-        vals.push(val);
-        this.fields.set(Number(tag), vals);
-    }
-    addEdict(edict) {
-        this.edicts.push(edict);
-    }
-    toBuffer() {
-        const buffArr = [];
-        // Serialize fields.
-        for (const [tag, vals] of this.fields) {
-            for (const val of vals) {
-                const tagBuff = Buffer.alloc(1);
-                tagBuff.writeUInt8(tag);
-                buffArr.push(tagBuff);
-                buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(val)));
-            }
-        }
-        // Serialize edicts.
-        if (this.edicts.length > 0) {
-            buffArr.push(Buffer.from('00', 'hex'));
-            // 1) Sort by block height
-            // 2) Sort by tx idx
-            this.edicts.sort((a, b) => {
-                if (a.id.block == b.id.block) {
-                    return a.id.idx - b.id.idx;
-                }
-                return a.id.block - b.id.block;
-            });
-            // 3) Delta encode
-            let lastBlockHeight = 0n;
-            let lastTxIdx = 0n;
-            for (let i = 0; i < this.edicts.length; i++) {
-                const edict = this.edicts[i];
-                if (i == 0) {
-                    lastBlockHeight = BigInt(edict.id.block);
-                    lastTxIdx = BigInt(edict.id.idx);
-                    buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(lastBlockHeight)));
-                    buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(lastTxIdx)));
-                }
-                else {
-                    const currBlockHeight = BigInt(edict.id.block);
-                    const currTxIdx = BigInt(edict.id.idx);
-                    if (currBlockHeight == lastBlockHeight) {
-                        const deltaTxIdx = currTxIdx - lastTxIdx;
-                        lastTxIdx = currTxIdx;
-                        buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(0n)));
-                        buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(deltaTxIdx)));
-                    }
-                    else {
-                        const deltaBlockHeight = currBlockHeight - lastBlockHeight;
-                        lastBlockHeight = currBlockHeight;
-                        lastTxIdx = currTxIdx;
-                        buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(deltaBlockHeight)));
-                        buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(currTxIdx)));
-                    }
-                }
-                buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(BigInt(edict.amount))));
-                buffArr.push(Buffer.from((0, leb128_1.encodeLEB128)(BigInt(edict.output))));
-            }
-        }
-        return Buffer.concat(buffArr);
-    }
-    getFlags() {
-        return Number(this.fields.get(Tag.Flags));
-    }
-    hasFlags(flag) {
-        const flags = this.getFlags();
-        const mask = 1 << flag;
-        return (flags & mask) != 0;
-    }
-    getMint() {
-        if (!this.fields.has(Tag.Mint)) {
-            return (0, fts_1.none)();
-        }
-        const [block, tx] = this.fields.get(Tag.Mint);
-        return (0, fts_1.some)(new RuneId(Number(block), Number(tx)));
-    }
-    getEtching() {
-        if (!this.hasFlags(Flag.Etching)) {
-            return (0, fts_1.none)();
-        }
-        const divisibility = this.getDivisibility();
-        const premine = this.getPremine();
-        const rune = this.getRune();
-        const spacers = this.getSpacers();
-        const symbol = this.getSymbol();
-        const terms = this.getTerms();
-        const turbo = this.hasFlags(Flag.Turbo);
-        return (0, fts_1.some)(new Etching(divisibility, premine, rune, spacers, symbol, terms, turbo));
-    }
-    getDivisibility() {
-        if (!this.fields.has(Tag.Divisibility)) {
-            return (0, fts_1.none)();
-        }
-        const [divisibility] = this.fields.get(Tag.Divisibility);
-        if (divisibility > Etching.MAX_DIVISIBILITY) {
-            throw new Error("invalid divisibility");
-        }
-        return (0, fts_1.some)(Number(divisibility));
-    }
-    getPremine() {
-        if (!this.fields.has(Tag.Premine)) {
-            return (0, fts_1.none)();
-        }
-        const [premine] = this.fields.get(Tag.Premine);
-        return (0, fts_1.some)(Number(premine));
-    }
-    getRune() {
-        if (!this.fields.has(Tag.Rune)) {
-            return (0, fts_1.none)();
-        }
-        const [rune] = this.fields.get(Tag.Rune);
-        return (0, fts_1.some)(new Rune(rune));
-    }
-    getSpacers() {
-        if (!this.fields.has(Tag.Spacers)) {
-            return (0, fts_1.none)();
-        }
-        const [spacers] = this.fields.get(Tag.Spacers);
-        if (spacers > Etching.MAX_SPACERS) {
-            throw new Error("invalid spacers");
-        }
-        return (0, fts_1.some)(Number(spacers));
-    }
-    getHeightStart() {
-        if (!this.fields.has(Tag.HeightStart)) {
-            return (0, fts_1.none)();
-        }
-        const [heightStart] = this.fields.get(Tag.HeightStart);
-        return (0, fts_1.some)(Number(heightStart));
-    }
-    getHeightEnd() {
-        if (!this.fields.has(Tag.HeightEnd)) {
-            return (0, fts_1.none)();
-        }
-        const [heightEnd] = this.fields.get(Tag.HeightEnd);
-        return (0, fts_1.some)(Number(heightEnd));
-    }
-    getOffsetStart() {
-        if (!this.fields.has(Tag.OffsetStart)) {
-            return (0, fts_1.none)();
-        }
-        const [offsetStart] = this.fields.get(Tag.OffsetStart);
-        return (0, fts_1.some)(Number(offsetStart));
-    }
-    getOffsetEnd() {
-        if (!this.fields.has(Tag.OffsetEnd)) {
-            return (0, fts_1.none)();
-        }
-        const [offsetEnd] = this.fields.get(Tag.OffsetEnd);
-        return (0, fts_1.some)(Number(offsetEnd));
-    }
-    getCap() {
-        if (!this.fields.has(Tag.Cap)) {
-            return (0, fts_1.none)();
-        }
-        const [cap] = this.fields.get(Tag.Cap);
-        return (0, fts_1.some)(Number(cap));
-    }
-    getAmount() {
-        if (!this.fields.has(Tag.Amount)) {
-            return (0, fts_1.none)();
-        }
-        const [amount] = this.fields.get(Tag.Amount);
-        return (0, fts_1.some)(Number(amount));
-    }
-    getSymbol() {
-        if (!this.fields.has(Tag.Symbol)) {
-            return (0, fts_1.none)();
-        }
-        const [symbol] = this.fields.get(Tag.Symbol);
-        return (0, fts_1.some)(String.fromCharCode(Number(symbol)));
-    }
-    getTerms() {
-        if (!this.hasFlags(Flag.Terms)) {
-            return (0, fts_1.none)();
-        }
-        const cap = this.getCap();
-        if (!cap.isSome()) {
-            throw new Error("no cap field");
-        }
-        const amount = this.getAmount();
-        if (!amount.isSome()) {
-            throw new Error("no amount field");
-        }
-        const heightStart = this.getHeightStart();
-        const heightEnd = this.getHeightEnd();
-        const offsetStart = this.getOffsetStart();
-        const offsetEnd = this.getOffsetEnd();
-        const height = new Range(heightStart, heightEnd);
-        const offset = new Range(offsetStart, offsetEnd);
-        return (0, fts_1.some)(new Terms(amount.value(), cap.value(), height, offset));
-    }
-    getPointer() {
-        if (!this.fields.has(Tag.Pointer)) {
-            return (0, fts_1.none)();
-        }
-        const [pointer] = this.fields.get(Tag.Pointer);
-        return (0, fts_1.some)(Number(pointer));
-    }
-}
-exports.Message = Message;
-class EtchInscription {
-    constructor(fields = new Map(), data = Buffer.alloc(0)) {
-        this.fields = fields;
-        this.data = data;
-    }
-    setContent(contentType, data) {
-        this.fields.set(1, Buffer.from(contentType, 'utf8'));
-        this.data = data;
-    }
-    setRune(rune) {
-        const n = (0, base26_1.base26Encode)((0, spacers_1.removeSpacers)(rune));
-        let nstr = n.toString(16);
-        if (nstr.length % 2 === 1) {
-            nstr = '0' + nstr;
-        }
-        this.setField(EtchInscription.Tag.RUNE, Buffer.from(nstr, 'hex').reverse());
-    }
-    setField(field, val) {
-        this.fields.set(field, val);
-    }
-    static decipher(rawTx, inputIdx) {
-        const tx = bitcoinjs_lib_1.Transaction.fromHex(rawTx);
-        const witness = tx.ins[inputIdx].witness;
-        const tapscript = witness[1];
-        const ls = bitcoinjs_lib_1.script.decompile(tapscript);
-        const fields = new Map();
-        const dataChunks = [];
-        let isData = false;
-        for (let i = 5; i < ls.length - 1;) {
-            const chunk = ls[i];
-            if (chunk === 0) {
-                isData = true;
-                i++;
-                continue;
-            }
-            else if (isData) {
-                // Data
-                dataChunks.push(chunk);
-                i++;
-            }
-            else {
-                // Fields
-                const tag = chunk - 80;
-                const val = ls[i + 1];
-                if (typeof val == 'number') {
-                    const buff = Buffer.alloc(1);
-                    buff.writeUint8(val);
-                    fields.set(tag, buff);
-                }
-                else {
-                    fields.set(tag, val);
-                }
-                i += 2;
-            }
-        }
-        return new EtchInscription(fields, Buffer.concat(dataChunks));
-    }
-    encipher() {
-        const res = [
-            Buffer.from('0063036f7264', 'hex') // 0 OP_IF "ord"
-        ];
-        Array.from(this.fields.entries())
-            .sort((a, b) => a[0] - b[0]) // Sorting by tag in ascending order
-            .forEach(([tag, val]) => {
-            const tagBuff = Buffer.alloc(1);
-            tagBuff.writeUInt8(tag);
-            res.push(Buffer.from('01', 'hex'));
-            res.push(tagBuff);
-            if (val.length != 1 || val[0] != 0x00) {
-                res.push((0, utils_1.toPushData)(val));
-            }
-            else {
-                res.push(val);
-            }
-        });
-        if (this.data && this.data.length > 0) {
-            res.push(Buffer.from('00', 'hex'));
-            const dataChunks = (0, utils_1.chunks)(Array.from(this.data), 520);
-            for (const chunk of dataChunks) {
-                res.push((0, utils_1.toPushData)(Buffer.from(chunk)));
-            }
-        }
-        res.push(Buffer.from('68', 'hex')); // OP_ENDIF
-        return Buffer.concat(res);
-    }
-}
-exports.EtchInscription = EtchInscription;
-EtchInscription.Tag = {
-    CONTENT_TYPE: 1,
-    POINTER: 2,
-    PARENT: 3,
-    METADATA: 5,
-    METAPROTOCOL: 7,
-    CONTENT_ENCODING: 9,
-    DELEGATE: 11,
-    RUNE: 13
-};
-
-
-/***/ }),
-
-/***/ 15193:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.removeSpacers = exports.getSpacersVal = exports.applySpacers = void 0;
-function applySpacers(str, spacers) {
-    let res = '';
-    for (let i = 0; i < str.length; i++) {
-        res += str.charAt(i);
-        if (spacers > 0) {
-            // Get the least significant bit
-            let bit = spacers & 1;
-            if (bit === 1) {
-                res += '•';
-            }
-            // Right shift the number to process the next bit
-            spacers >>= 1;
-        }
-    }
-    return res;
-}
-exports.applySpacers = applySpacers;
-function getSpacersVal(str) {
-    let res = 0;
-    let spacersCnt = 0;
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charAt(i);
-        if (char === '•') {
-            res += 1 << (i - 1 - spacersCnt);
-            spacersCnt++;
-        }
-    }
-    return res;
-}
-exports.getSpacersVal = getSpacersVal;
-function removeSpacers(rune) {
-    return rune.replace(/[•]+/g, "");
-}
-exports.removeSpacers = removeSpacers;
-
-
-/***/ }),
-
-/***/ 31046:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-/* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.toPushData = exports.chunks = exports.toHex = exports.zero2 = void 0;
-/**
- * Prepends a '0' to an odd character length word to ensure it has an even number of characters.
- * @param {string} word - The input word.
- * @returns {string} - The word with a leading '0' if it's an odd character length; otherwise, the original word.
- */
-const zero2 = (word) => {
-    if (word.length % 2 === 1) {
-        return '0' + word;
-    }
-    else {
-        return word;
-    }
-};
-exports.zero2 = zero2;
-/**
- * Converts an array of numbers to a hexadecimal string representation.
- * @param {number[]} msg - The input array of numbers.
- * @returns {string} - The hexadecimal string representation of the input array.
- */
-const toHex = (msg) => {
-    let res = '';
-    for (let i = 0; i < msg.length; i++) {
-        res += (0, exports.zero2)(msg[i].toString(16));
-    }
-    return res;
-};
-exports.toHex = toHex;
-function chunks(bin, chunkSize) {
-    const chunks = [];
-    let offset = 0;
-    while (offset < bin.length) {
-        // Use Buffer.slice to create a chunk. This method does not copy the memory;
-        // it creates a new Buffer that references the original memory.
-        const chunk = bin.slice(offset, offset + chunkSize);
-        chunks.push(chunk);
-        offset += chunkSize;
-    }
-    return chunks;
-}
-exports.chunks = chunks;
-function toPushData(data) {
-    const res = [];
-    const dLen = data.length;
-    if (dLen < 0x4c) {
-        const dLenBuff = Buffer.alloc(1);
-        dLenBuff.writeUInt8(dLen);
-        res.push(dLenBuff);
-    }
-    else if (dLen <= 0xff) {
-        // OP_PUSHDATA1
-        res.push(Buffer.from('4c', 'hex'));
-        const dLenBuff = Buffer.alloc(1);
-        dLenBuff.writeUInt8(dLen);
-        res.push(dLenBuff);
-    }
-    else if (dLen <= 0xffff) {
-        // OP_PUSHDATA2
-        res.push(Buffer.from('4d', 'hex'));
-        const dLenBuff = Buffer.alloc(2);
-        dLenBuff.writeUint16LE(dLen);
-        res.push(dLenBuff);
-    }
-    else {
-        // OP_PUSHDATA4
-        res.push(Buffer.from('4e', 'hex'));
-        const dLenBuff = Buffer.alloc(4);
-        dLenBuff.writeUint32LE(dLen);
-        res.push(dLenBuff);
-    }
-    res.push(data);
-    return Buffer.concat(res);
-}
-exports.toPushData = toPushData;
-
 
 /***/ }),
 

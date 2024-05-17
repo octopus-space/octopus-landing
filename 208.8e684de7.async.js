@@ -9038,7 +9038,7 @@ const useResetIconStyle = (iconPrefixCls, csp) => {
 __webpack_require__.d(__webpack_exports__, {
   V4: function() { return /* reexport */ CSSMotionList; },
   zt: function() { return /* reexport */ MotionProvider; },
-  ZP: function() { return /* binding */ es; }
+  ZP: function() { return /* binding */ rc_motion_es; }
 });
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
@@ -9102,6 +9102,8 @@ var DomWrapper = /*#__PURE__*/function (_React$Component) {
   return DomWrapper;
 }(react.Component);
 /* harmony default export */ var es_DomWrapper = (DomWrapper);
+// EXTERNAL MODULE: ./node_modules/rc-util/es/index.js
+var es = __webpack_require__(56790);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/hooks/useState.js
 var useState = __webpack_require__(30470);
 ;// CONCATENATED MODULE: ./node_modules/rc-motion/es/interface.js
@@ -9194,17 +9196,8 @@ function getTransitionName(transitionName, transitionType) {
 
 
 
-/* harmony default export */ var useDomMotionEvents = (function (callback) {
+/* harmony default export */ var useDomMotionEvents = (function (onInternalMotionEnd) {
   var cacheElementRef = (0,react.useRef)();
-
-  // Cache callback
-  var callbackRef = (0,react.useRef)(callback);
-  callbackRef.current = callback;
-
-  // Internal motion event handler
-  var onInternalMotionEnd = react.useCallback(function (event) {
-    callbackRef.current(event);
-  }, []);
 
   // Remove events
   function removeMotionEvents(element) {
@@ -9350,6 +9343,7 @@ function isActive(step) {
 
 
 
+
 function useStatus(supportMotion, visible, getElement, _ref) {
   var _ref$motionEnter = _ref.motionEnter,
     motionEnter = _ref$motionEnter === void 0 ? true : _ref$motionEnter,
@@ -9403,7 +9397,12 @@ function useStatus(supportMotion, visible, getElement, _ref) {
     setStatus(STATUS_NONE, true);
     setStyle(null, true);
   }
-  function onInternalMotionEnd(event) {
+  var onInternalMotionEnd = (0,es/* useEvent */.zX)(function (event) {
+    // Do nothing since not in any transition status.
+    // This may happen when `motionDeadline` trigger.
+    if (status === STATUS_NONE) {
+      return;
+    }
     var element = getDomElement();
     if (event && !event.deadline && event.target !== element) {
       // event exists
@@ -9422,24 +9421,23 @@ function useStatus(supportMotion, visible, getElement, _ref) {
     }
 
     // Only update status when `canEnd` and not destroyed
-    if (status !== STATUS_NONE && currentActive && canEnd !== false) {
+    if (currentActive && canEnd !== false) {
       updateMotionEndStatus();
     }
-  }
+  });
   var _useDomMotionEvents = useDomMotionEvents(onInternalMotionEnd),
     _useDomMotionEvents2 = (0,slicedToArray/* default */.Z)(_useDomMotionEvents, 1),
     patchMotionEvents = _useDomMotionEvents2[0];
 
   // ============================= Step =============================
   var getEventHandlers = function getEventHandlers(targetStatus) {
-    var _ref2, _ref3, _ref4;
     switch (targetStatus) {
       case STATUS_APPEAR:
-        return _ref2 = {}, (0,defineProperty/* default */.Z)(_ref2, STEP_PREPARE, onAppearPrepare), (0,defineProperty/* default */.Z)(_ref2, STEP_START, onAppearStart), (0,defineProperty/* default */.Z)(_ref2, STEP_ACTIVE, onAppearActive), _ref2;
+        return (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, STEP_PREPARE, onAppearPrepare), STEP_START, onAppearStart), STEP_ACTIVE, onAppearActive);
       case STATUS_ENTER:
-        return _ref3 = {}, (0,defineProperty/* default */.Z)(_ref3, STEP_PREPARE, onEnterPrepare), (0,defineProperty/* default */.Z)(_ref3, STEP_START, onEnterStart), (0,defineProperty/* default */.Z)(_ref3, STEP_ACTIVE, onEnterActive), _ref3;
+        return (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, STEP_PREPARE, onEnterPrepare), STEP_START, onEnterStart), STEP_ACTIVE, onEnterActive);
       case STATUS_LEAVE:
-        return _ref4 = {}, (0,defineProperty/* default */.Z)(_ref4, STEP_PREPARE, onLeavePrepare), (0,defineProperty/* default */.Z)(_ref4, STEP_START, onLeaveStart), (0,defineProperty/* default */.Z)(_ref4, STEP_ACTIVE, onLeaveActive), _ref4;
+        return (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, STEP_PREPARE, onLeavePrepare), STEP_START, onLeaveStart), STEP_ACTIVE, onLeaveActive);
       default:
         return {};
     }
@@ -9462,7 +9460,7 @@ function useStatus(supportMotion, visible, getElement, _ref) {
         var _eventHandlers$step;
         setStyle(((_eventHandlers$step = eventHandlers[step]) === null || _eventHandlers$step === void 0 ? void 0 : _eventHandlers$step.call(eventHandlers, getDomElement(), null)) || null);
       }
-      if (step === STEP_ACTIVE) {
+      if (step === STEP_ACTIVE && status !== STATUS_NONE) {
         // Patch events when motion needed
         patchMotionEvents(getDomElement());
         if (motionDeadline > 0) {
@@ -9554,7 +9552,7 @@ function useStatus(supportMotion, visible, getElement, _ref) {
     if (asyncVisible !== undefined && status === STATUS_NONE) {
       // Skip first render is invisible since it's nothing changed
       if (firstMountChangeRef.current || asyncVisible) {
-        onVisibleChanged === null || onVisibleChanged === void 0 ? void 0 : onVisibleChanged(asyncVisible);
+        onVisibleChanged === null || onVisibleChanged === void 0 || onVisibleChanged(asyncVisible);
       }
       firstMountChangeRef.current = true;
     }
@@ -9674,7 +9672,6 @@ function genCSSMotion(config) {
         motionChildren = null;
       }
     } else {
-      var _classNames;
       // In motion
       var statusSuffix;
       if (statusStep === STEP_PREPARE) {
@@ -9686,7 +9683,7 @@ function genCSSMotion(config) {
       }
       var motionCls = getTransitionName(motionName, "".concat(status, "-").concat(statusSuffix));
       motionChildren = children((0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({}, mergedProps), {}, {
-        className: classnames_default()(getTransitionName(motionName, status), (_classNames = {}, (0,defineProperty/* default */.Z)(_classNames, motionCls, motionCls && statusSuffix), (0,defineProperty/* default */.Z)(_classNames, motionName, typeof motionName === 'string'), _classNames)),
+        className: classnames_default()(getTransitionName(motionName, status), (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, motionCls, motionCls && statusSuffix), motionName, typeof motionName === 'string')),
         style: statusStyle
       }), setNodeRef);
     }
@@ -9901,7 +9898,7 @@ function genCSSMotionList(transitionSupport) {
             visible: visible,
             eventProps: eventProps,
             onVisibleChanged: function onVisibleChanged(changedVisible) {
-              _onVisibleChanged === null || _onVisibleChanged === void 0 ? void 0 : _onVisibleChanged(changedVisible, {
+              _onVisibleChanged === null || _onVisibleChanged === void 0 || _onVisibleChanged(changedVisible, {
                 key: eventProps.key
               });
               if (!changedVisible) {
@@ -9954,7 +9951,7 @@ function genCSSMotionList(transitionSupport) {
 
 
 
-/* harmony default export */ var es = (es_CSSMotion);
+/* harmony default export */ var rc_motion_es = (es_CSSMotion);
 
 /***/ }),
 
