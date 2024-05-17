@@ -79,4 +79,36 @@ declare namespace API {
     symbol: string;
     divisibility: string;
   };
+
+  type UTXO = {
+    txId: string;
+    vout: number;
+    outputIndex: number;
+    satoshis: number;
+    satoshi:number;
+    confirmed: boolean;
+    rawTx?: string;
+    inscriptions?:
+      | {
+          id: string;
+          num: number;
+        }[]
+      | null;
+    runes?: RUNESItem[];
+  };
+  type Network = "mainnet" | "testnet";
+  type RuneSendParams = {
+    runeId: string;
+    feeRate: number;
+    recipient: string;
+    runeAmount: string;
+    divisibility: number;
+    net: Network;
+    addressType: string;
+    outputValue?: number;
+  };
+  type Tx = {
+    address: string;
+    value: number;
+  };
 }

@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@ant-design/icons': ^5.3.6
   '@bitcoin-js/tiny-secp256k1-asmjs': ^2.2.3
+  '@magiceden-oss/runestone-lib': ^1.0.2
   '@types/react': ^18.0.33
   '@types/react-dom': ^18.0.11
   '@umijs/plugins': ^4.1.9
@@ -17,7 +18,6 @@ specifiers:
   rc-queue-anim: ^2.0.0
   rc-scroll-anim: ^2.7.6
   rc-tween-one: ^3.0.6
-  runelib: ^1.0.6
   typescript: ^5.0.3
   uint8array-tools: ^0.0.7
   umi: ^4.1.5
@@ -25,6 +25,7 @@ specifiers:
 dependencies:
   '@ant-design/icons': registry.npmjs.org/@ant-design/icons/5.3.6
   '@bitcoin-js/tiny-secp256k1-asmjs': registry.npmjs.org/@bitcoin-js/tiny-secp256k1-asmjs/2.2.3
+  '@magiceden-oss/runestone-lib': registry.npmjs.org/@magiceden-oss/runestone-lib/1.0.2
   antd: registry.npmjs.org/antd/5.15.4
   bignumber.js: registry.npmjs.org/bignumber.js/9.1.2
   bitcoinjs-lib: registry.npmjs.org/bitcoinjs-lib/6.1.5
@@ -36,7 +37,6 @@ dependencies:
   rc-queue-anim: registry.npmjs.org/rc-queue-anim/2.0.0
   rc-scroll-anim: registry.npmjs.org/rc-scroll-anim/2.7.6
   rc-tween-one: registry.npmjs.org/rc-tween-one/3.0.6
-  runelib: registry.npmjs.org/runelib/1.0.6
   uint8array-tools: registry.npmjs.org/uint8array-tools/0.0.7
   umi: registry.npmjs.org/umi/4.1.5_v5v6symhdmuefffg73kkwehwqq
 
@@ -1998,6 +1998,12 @@ packages:
       hoist-non-react-statics: registry.npmjs.org/hoist-non-react-statics/3.3.2
       react: registry.npmjs.org/react/18.1.0
       react-is: registry.npmjs.org/react-is/16.13.1
+    dev: false
+
+  registry.npmjs.org/@magiceden-oss/runestone-lib/1.0.2:
+    resolution: {integrity: sha512-C4XoE7tHxxaWQNzovBIEndXGrTesotshnKQA8DXlnoVDvriD6G26ezUoj9AlEb2UAPbEijSga4Dtwd86Z0a1jg==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/@magiceden-oss/runestone-lib/-/runestone-lib-1.0.2.tgz}
+    name: '@magiceden-oss/runestone-lib'
+    version: 1.0.2
     dev: false
 
   registry.npmjs.org/@nicolo-ribaudo/eslint-scope-5-internals/5.1.1-v1:
@@ -9611,14 +9617,6 @@ packages:
     version: 1.2.0
     dependencies:
       queue-microtask: registry.npmjs.org/queue-microtask/1.2.3
-    dev: false
-
-  registry.npmjs.org/runelib/1.0.6:
-    resolution: {integrity: sha512-/cQKVT+f3Qzh1iC45ce5gvhB/rnKK8g/m1SxSBQaE98gwHMDuqj4V3AgBMtzmpCANmmU/TkoOH/urk2EPClmSw==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/runelib/-/runelib-1.0.6.tgz}
-    name: runelib
-    version: 1.0.6
-    dependencies:
-      bitcoinjs-lib: registry.npmjs.org/bitcoinjs-lib/6.1.5
     dev: false
 
   registry.npmjs.org/safe-array-concat/1.1.2:

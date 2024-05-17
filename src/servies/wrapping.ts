@@ -9,7 +9,6 @@ import {
 import Decimal from "decimal.js";
 import { Network } from "@/models/wallet";
 import * as ecc from "@bitcoin-js/tiny-secp256k1-asmjs";
-import { Edict, none, RuneId, Runestone } from "runelib";
 
 import {
   createPrepayOrderMintBRC20,
@@ -28,6 +27,8 @@ import {
   submitPrepayOrderRedeemRunes,
 } from "./api";
 import { determineAddressInfo } from "@/utils/utils";
+import { NetworkType } from "@unisat/wallet-sdk/lib/network";
+import { sendRunes } from "@/utils/runes";
 
 export type SupportRedeemAddressType = "P2TR" | "P2WPKH" | "P2PKH";
 export const supportRedeemAddressType: SupportRedeemAddressType[] = [
@@ -364,7 +365,7 @@ export interface UTXO {
       }[]
     | null;
 }
-function getTotalSatoshi(utxos: UTXO[]): Decimal {
+function getTotalSatoshi(utxos: API.UTXO[]): Decimal {
   return utxos.reduce((total, utxo) => total.add(utxo.satoshi), new Decimal(0));
 }
 
@@ -398,7 +399,7 @@ async function _createPayInput({
   addressType,
   network,
 }: {
-  utxo: UTXO;
+  utxo: API.UTXO;
   network: Network;
   addressType: string;
 }) {
@@ -447,7 +448,7 @@ const selectUTXOs = (utxos: UTXO[], targetAmount: Decimal): UTXO[] => {
 };
 async function sendBRC(
   recipient: string,
-  utxo: UTXO,
+  utxo: API.UTXO,
   feeRate: number,
   net: Network
 ) {
@@ -456,14 +457,14 @@ async function sendBRC(
   const address = await window.metaidwallet.btc.getAddress();
   const addressType = determineAddressInfo(address);
   const payment = await _createPayment(net, address);
-  const utxos = await window.metaidwallet.btc.getUtxos(address);
+  const utxos = await window.metaidwallet.btc.getUtxos();
 
   if (!utxos.length) {
     throw new Error("your account currently has no available UTXO.");
   }
 
   utxos.sort((a, b) => b.satoshi - a.satoshi);
-  const buildPsbt = async (selectedUtxos: UTXO[], change: Decimal) => {
+  const buildPsbt = async (selectedUtxos: API.UTXO[], change: Decimal) => {
     const psbt = new Psbt({ network: btcNetwork });
 
     const payInput = await _createPayInput({
@@ -589,123 +590,6 @@ export function getBtcTxSizeByOutputType(
   return Math.ceil(sizeSum);
 }
 
-async function sendRunes(
-  publicKey: string,
-  addressType: SupportRedeemAddressType,
-  sendAddressType: SupportRedeemAddressType,
-  recipient: string,
-  runeId: string,
-  amount: string,
-  feeRate: number,
-  net: Network
-) {
-  const btcNetwork = net === "mainnet" ? networks.bitcoin : networks.testnet;
-  const address = await window.metaidwallet.btc.getAddress();
-  const {
-    data: { list: runesUtxoList },
-  } = await fetchRunesUtxos(address, runeId, net);
-  const runesBalance = new Map<string, bigint>();
-  for (const runesUtxoListElement of runesUtxoList) {
-    for (const rune of runesUtxoListElement.runes) {
-      runesBalance.set(
-        rune.runeId,
-        (runesBalance.get(rune.runeId) || 0n) + BigInt(rune.amount)
-      );
-    }
-  }
-  const [blockNumber, idx] = runeId.split(":");
-  const runeIdObj = new RuneId(Number(blockNumber), Number(idx));
-  const edicts: Edict[] = [];
-  let totalOutput = BigInt(amount);
-  const edictStone = new Runestone(edicts, none(), none(), none());
-  const changeAmount = (runesBalance.get(runeId) || 0n) - totalOutput;
-  const haveChangeOutput = changeAmount > 0n || runesBalance.size > 1;
-  if (changeAmount < 0n) {
-    throw Error(`changeAmount lt 0`);
-  }
-
-  let output = 1;
-  if (haveChangeOutput) {
-    output += 1;
-  }
-  edicts.push(new Edict(runeIdObj, BigInt(amount), output));
-  const utxos = await window.metaidwallet.btc.getUtxos(address);
-  const buildPsbt = async (
-    _runesUtxoList: UTXO[],
-    _selectedUtxos: UTXO[],
-    change: number
-  ) => {
-    let totalInputSatoshi = 0;
-    const psbt = new Psbt({ network: btcNetwork });
-    const runesUtxoNumber = _runesUtxoList.length;
-    for (let i = 0; i < runesUtxoNumber; i++) {
-      const runesUtxo = _runesUtxoList[i];
-      const satoshi = runesUtxo.satoshi || 546;
-      psbt.addInput(
-        await _createPayInput({
-          utxo: runesUtxo,
-          addressType: sendAddressType,
-          network: net,
-        })
-      );
-      totalInputSatoshi += satoshi;
-    }
-    for (let i = 0; i < _selectedUtxos.length; i++) {
-      const utxo = _selectedUtxos[i];
-      psbt.addInput(
-        await _createPayInput({
-          utxo,
-          addressType: sendAddressType,
-          network: net,
-        })
-      );
-      totalInputSatoshi += utxo.satoshi;
-    }
-    psbt.addOutput({
-      script: edictStone.encipher(),
-      value: 0,
-    });
-    if (haveChangeOutput) {
-      psbt.addOutput({
-        address,
-        value: 546,
-      });
-    }
-    psbt.addOutput({
-      address: recipient,
-      value: 546,
-    });
-    psbt.addOutput({
-      address,
-      value: change,
-    });
-    const _signPsbt = await window.metaidwallet.btc.signPsbt({
-      psbtHex: psbt.toHex(),
-    });
-
-    if (_signPsbt.status === "canceled") throw new Error("canceled");
-
-    const signPsbt = Psbt.fromHex(_signPsbt);
-    return { signPsbt, totalInputSatoshi };
-  };
-  utxos.sort((a, b) => b.satoshi - a.satoshi);
-  let selecedtUTXOs = selectUTXOs(utxos, new Decimal(0));
-  let total = getTotalSatoshi(selecedtUTXOs);
-  let { signPsbt, totalInputSatoshi } = await buildPsbt(
-    runesUtxoList,
-    selecedtUTXOs,
-    total.minus(546).toNumber()
-  );
-  let fee = _calculateFee(signPsbt, feeRate);
-
-  const { signPsbt: psbt } = await buildPsbt(
-    runesUtxoList,
-    utxos,
-    total.minus(546).minus(fee).toNumber()
-  );
-  return psbt;
-}
-
 export async function mintBrc(
   mintAmount: number,
   btcAsset: API.AssetItem,
@@ -792,28 +676,25 @@ export async function mintRunes(
 
     const { orderId, bridgeAddress } = createResp;
 
-    const psbt = await sendRunes(
-      publicKey,
-      "P2WPKH",
+    const { psbt } = await sendRunes({
+      runeId: btcAsset.originTokenId,
+      feeRate: assetInfo.feeBtc,
+      net: network,
+      recipient: bridgeAddress,
+      runeAmount: String(mintAmount),
+      divisibility: btcAsset.decimals,
       addressType,
-      bridgeAddress,
-      btcAsset.originTokenId,
-      new Decimal(mintAmount).mul(10 ** btcAsset.decimals).toFixed(0),
-      assetInfo.feeBtc + 20,
-      network
-    );
+    });
     const submitPrepayOrderMintDto = {
       orderId,
       txHex: psbt.extractTransaction().toHex(),
     };
-    debugger;
     const submitRes = await submitPrepayOrderMintRunes(
       network,
       submitPrepayOrderMintDto
     );
     if (!submitRes.success) throw new Error(submitRes.msg);
     return submitRes;
-    //success
   } catch (error) {
     throw new Error((error as any).message || (error as any).msg);
   }

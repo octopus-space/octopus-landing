@@ -279,22 +279,25 @@ export async function fetchRunesUtxos(
   offset: number = 0,
   limit: number = 50
 ) {
-  return request(ApiHost + "/runes/address/utxo", {
-    method: "GET",
-    params: {
-      address: address,
-      runeId: runeId,
-      offset: offset,
-      limit: limit,
-      net: network === "mainnet" ? "livenet" : "testnet",
-    },
-  });
+  return request<API.Ret<{ list: API.UTXO[] }>>(
+    ApiHost + "/runes/address/utxo",
+    {
+      method: "GET",
+      params: {
+        address: address,
+        runeId: runeId,
+        offset: offset,
+        limit: limit,
+        net: network === "mainnet" ? "livenet" : "testnet",
+      },
+    }
+  );
 }
 
 export async function getUserRunesBalance(
   address: string,
   network: Network,
-  runeId:string
+  runeId: string
 ) {
   return request<API.Ret<API.RUNESItem>>(
     ApiHost + "/runes/address/balance-info",
