@@ -55,7 +55,7 @@ export default () => {
     );
   });
   return (
-    <OverPack id="page2" className="homePage2" replay playScale="50vh">
+    <OverPack id="page2" className="homePage2"  >
       <div className="bg1">
         <img src={bgSquare} alt="" />
       </div>
@@ -80,7 +80,7 @@ export default () => {
           key="content"
           component={Row}
           type="bottom"
-          componentProps={{ gutter: 35, className: "cardwrap" }}
+          componentProps={{  className: "cardwrap" }}
         >
           {children}
         </QueueAnim>

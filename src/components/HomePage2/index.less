@@ -1,5 +1,5 @@
 .homePage2 {
-  min-height: 90vh;
+  min-height: calc(100vh - 80px);
   position: relative;
   overflow: hidden;
   background: linear-gradient(180deg, #000000 0%, #0B041E 100%);
@@ -121,11 +121,24 @@
 }
 @media screen and (max-width: 768px) {
   .homePage2 {
+    min-height: 2291px;
     .cardwrap {
       max-width: 100vw;
+      box-sizing: border-box;
       flex-wrap: wrap;
-      .card-content-wrapper {
+      align-items: center;
+      justify-content: center;
+      
+      padding: 0px;
+      .col{
         margin-bottom: 12px;
+        padding: 0px;
+        box-sizing: border-box;
+      }
+      .card-content-wrapper {
+       padding: 40px ;
+       width: 90vw;
+
       }
     }
   }

@@ -62,7 +62,7 @@ export default () => {
     );
   }
   return (
-    <OverPack id="page2" className="homePage3" replay playScale="50vh">
+    <OverPack id="page3" className="homePage3" replay playScale="50vh">
       <div className="bg1">
         <img src={bgCricle} alt="" />
       </div>

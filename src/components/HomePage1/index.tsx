@@ -13,7 +13,7 @@ export default () => {
       </div>
       <div className="contentWrap">
         <div className="left">
-          <QueueAnim delay={300} ease="easeOutQuart">
+          <QueueAnim delay={300} ease="easeOutQuart" className="leftAnmi">
             <p key="p1" className="title">
               Greater Bitcoin{" "}
             </p>
