@@ -1,5 +1,5 @@
 "use strict";
-(self["webpackChunk"] = self["webpackChunk"] || []).push([[859],{
+(self["webpackChunk"] = self["webpackChunk"] || []).push([[503],{
 
 /***/ 89705:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
@@ -12,8 +12,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
 var esm_extends = __webpack_require__(87462);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 ;// CONCATENATED MODULE: ./node_modules/@ant-design/icons-svg/es/asn/EllipsisOutlined.js
 // This icon file is generated automatically.
 var EllipsisOutlined = { "icon": { "tag": "svg", "attrs": { "viewBox": "64 64 896 896", "focusable": "false" }, "children": [{ "tag": "path", "attrs": { "d": "M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z" } }] }, "name": "ellipsis", "theme": "outlined" };
@@ -56,10 +56,10 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
 var slicedToArray = __webpack_require__(97685);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react-dom/index.js
-var react_dom = __webpack_require__(61254);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
+// EXTERNAL MODULE: ./node_modules/react-dom/index.js
+var react_dom = __webpack_require__(73935);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/Dom/canUseDom.js
 var canUseDom = __webpack_require__(98924);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/warning.js
@@ -416,12 +416,12 @@ var useId = __webpack_require__(7028);
 var useLayoutEffect = __webpack_require__(8410);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/isMobile.js
 var isMobile = __webpack_require__(31131);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
 var esm_extends = __webpack_require__(87462);
-// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 12 modules
-var rc_motion_es = __webpack_require__(82225);
+// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 13 modules
+var rc_motion_es = __webpack_require__(29372);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/ref.js
 var es_ref = __webpack_require__(42550);
 ;// CONCATENATED MODULE: ./node_modules/@rc-component/trigger/es/Popup/Arrow.js
@@ -1129,7 +1129,7 @@ function useAlign(open, popupEle, target, placement, builtinPlacements, popupAli
       var _scaleY = toNum(Math.round(popupHeight / parseFloat(height) * 1000) / 1000);
 
       // No need to align since it's not visible in view
-      if (_scaleX === 0 || _scaleY === 0 || (0,findDOMNode/* isDOM */.S)(target) && !(0,isVisible/* default */.Z)(target)) {
+      if (_scaleX === 0 || _scaleY === 0 || (0,findDOMNode/* isDOM */.Sh)(target) && !(0,isVisible/* default */.Z)(target)) {
         return;
       }
 
@@ -1384,7 +1384,15 @@ function useAlign(open, popupEle, target, placement, builtinPlacements, popupAli
       // Additional calculate right & bottom position
       var offsetX4Right = popupMirrorRect.right - popupRect.x - (nextOffsetX + popupRect.width);
       var offsetY4Bottom = popupMirrorRect.bottom - popupRect.y - (nextOffsetY + popupRect.height);
-      setOffsetInfo({
+      if (_scaleX === 1) {
+        nextOffsetX = Math.round(nextOffsetX);
+        offsetX4Right = Math.round(offsetX4Right);
+      }
+      if (_scaleY === 1) {
+        nextOffsetY = Math.round(nextOffsetY);
+        offsetY4Bottom = Math.round(offsetY4Bottom);
+      }
+      var nextOffsetInfo = {
         ready: true,
         offsetX: nextOffsetX / _scaleX,
         offsetY: nextOffsetY / _scaleY,
@@ -1395,7 +1403,8 @@ function useAlign(open, popupEle, target, placement, builtinPlacements, popupAli
         scaleX: _scaleX,
         scaleY: _scaleY,
         align: nextAlignInfo
-      });
+      };
+      setOffsetInfo(nextOffsetInfo);
     }
   });
   var triggerAlign = function triggerAlign() {
@@ -1623,7 +1632,7 @@ function generateTrigger() {
     var externalPopupRef = react.useRef(null);
     var setPopupRef = (0,useEvent/* default */.Z)(function (node) {
       externalPopupRef.current = node;
-      if ((0,findDOMNode/* isDOM */.S)(node) && popupEle !== node) {
+      if ((0,findDOMNode/* isDOM */.Sh)(node) && popupEle !== node) {
         setPopupEle(node);
       }
       parentContext === null || parentContext === void 0 || parentContext.registerSubPopup(id, node);
@@ -1639,7 +1648,7 @@ function generateTrigger() {
     // Used for forwardRef target. Not use internal
     var externalForwardRef = react.useRef(null);
     var setTargetRef = (0,useEvent/* default */.Z)(function (node) {
-      if ((0,findDOMNode/* isDOM */.S)(node) && targetEle !== node) {
+      if ((0,findDOMNode/* isDOM */.Sh)(node) && targetEle !== node) {
         setTargetEle(node);
         externalForwardRef.current = node;
       }
@@ -2047,13 +2056,49 @@ function generateTrigger() {
 
 /***/ }),
 
+/***/ 89942:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
+/* harmony import */ var _form_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(60566);
+/* harmony import */ var _space_Compact__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4173);
+"use client";
+
+
+
+
+const ContextIsolator = props => {
+  const {
+    space,
+    form,
+    children
+  } = props;
+  if (children === undefined || children === null) {
+    return null;
+  }
+  let result = children;
+  if (form) {
+    result = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_form_context__WEBPACK_IMPORTED_MODULE_1__/* .NoFormStyle */ .Ux, {
+      override: true,
+      status: true
+    }, result);
+  }
+  if (space) {
+    result = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_space_Compact__WEBPACK_IMPORTED_MODULE_2__/* .NoCompactStyle */ .BR, null, result);
+  }
+  return result;
+};
+/* harmony default export */ __webpack_exports__.Z = (ContextIsolator);
+
+/***/ }),
+
 /***/ 8745:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   i: function() { return /* binding */ withPureRenderTheme; }
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62435);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
 /* harmony import */ var rc_util_es_hooks_useMergedState__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(21770);
 /* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(88929);
 /* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(53124);
@@ -2220,7 +2265,7 @@ const getTransitionName = (rootPrefixCls, motion, transitionName) => {
 /* harmony export */   Tm: function() { return /* binding */ cloneElement; }
 /* harmony export */ });
 /* unused harmony export replaceElement */
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62435);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
 
 function isFragment(child) {
   return child && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.isValidElement(child) && child.type === react__WEBPACK_IMPORTED_MODULE_0__.Fragment;
@@ -2247,7 +2292,7 @@ function cloneElement(element, props) {
 /* harmony export */   nx: function() { return /* binding */ convertLegacyProps; }
 /* harmony export */ });
 /* unused harmony export isString */
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62435);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
 /* harmony import */ var _util_reactNode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(96159);
 "use client";
 
@@ -2323,8 +2368,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // UNUSED EXPORTS: convertLegacyProps, isString, isTwoCNChar, isUnBorderedButtonType, spaceChildren
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
@@ -2338,8 +2383,8 @@ var isVisible = __webpack_require__(5110);
 var context = __webpack_require__(53124);
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/reactNode.js
 var reactNode = __webpack_require__(96159);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/style.js
 
 const genWaveStyle = token => {
@@ -2377,16 +2422,20 @@ var es = __webpack_require__(56790);
 var raf = __webpack_require__(75164);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/useToken.js + 2 modules
 var useToken = __webpack_require__(25976);
+// EXTERNAL MODULE: ./node_modules/antd/es/config-provider/index.js + 8 modules
+var config_provider = __webpack_require__(88929);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/interface.js
-const TARGET_CLS = 'ant-wave-target';
-// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 12 modules
-var rc_motion_es = __webpack_require__(82225);
+
+const TARGET_CLS = `${config_provider/* defaultPrefixCls */.Rf}-wave-target`;
+// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 13 modules
+var rc_motion_es = __webpack_require__(29372);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/React/render.js
 var render = __webpack_require__(38135);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/util.js
 function isNotGrey(color) {
   // eslint-disable-next-line no-useless-escape
   const match = (color || '').match(/rgba?\((\d*), (\d*), (\d*)(, [\d.]*)?\)/);
+  // biome-ignore lint/complexity/useOptionalChain: this is way is more simple
   if (match && match[1] && match[2] && match[3]) {
     return !(match[1] === match[2] && match[2] === match[3]);
   }
@@ -2520,9 +2569,9 @@ const WaveEffect = props => {
     } = _ref;
     return /*#__PURE__*/react.createElement("div", {
       ref: (0,es_ref/* composeRef */.sQ)(divRef, ref),
-      className: classnames_default()(className, {
+      className: classnames_default()(className, motionClassName, {
         'wave-quick': isSmallComponent
-      }, motionClassName),
+      }),
       style: waveStyle
     });
   });
@@ -2690,7 +2739,6 @@ const ButtonGroup = props => {
     case 'small':
       sizeCls = 'sm';
       break;
-    case 'middle':
     default:
     // Do nothing
   }
@@ -2743,13 +2791,9 @@ const InnerLoadingIcon = /*#__PURE__*/(0,react.forwardRef)((props, ref) => {
     prefixCls,
     className,
     style,
-    iconClassName,
-    iconPosition = 'start'
+    iconClassName
   } = props;
-  const mergedIconCls = classnames_default()(className, {
-    [`${prefixCls}-loading-icon-end`]: iconPosition === 'end',
-    [`${prefixCls}-loading-icon`]: iconPosition === 'start'
-  });
+  const mergedIconCls = classnames_default()(`${prefixCls}-loading-icon`, className);
   return /*#__PURE__*/react.createElement(button_IconWrapper, {
     prefixCls: prefixCls,
     className: mergedIconCls,
@@ -2775,16 +2819,14 @@ const LoadingIcon = props => {
     loading,
     existIcon,
     className,
-    style,
-    iconPosition
+    style
   } = props;
   const visible = !!loading;
   if (existIcon) {
     return /*#__PURE__*/react.createElement(InnerLoadingIcon, {
       prefixCls: prefixCls,
       className: className,
-      style: style,
-      iconPosition: iconPosition
+      style: style
     });
   }
   return /*#__PURE__*/react.createElement(rc_motion_es/* default */.ZP, {
@@ -2809,14 +2851,13 @@ const LoadingIcon = props => {
       className: className,
       style: Object.assign(Object.assign({}, style), motionStyle),
       ref: ref,
-      iconClassName: motionCls,
-      iconPosition: iconPosition
+      iconClassName: motionCls
     });
   });
 };
 /* harmony default export */ var button_LoadingIcon = (LoadingIcon);
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 35 modules
-var cssinjs_es = __webpack_require__(54548);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
+var cssinjs_es = __webpack_require__(861);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/index.js
 var es_style = __webpack_require__(14747);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
@@ -2872,9 +2913,7 @@ const genGroupStyle = token => {
       [componentCls]: {
         position: 'relative',
         zIndex: 1,
-        [`&:hover,
-          &:focus,
-          &:active`]: {
+        '&:hover, &:focus, &:active': {
           zIndex: 2
         },
         '&[disabled]': {
@@ -2973,7 +3012,10 @@ const genSharedButtonStyle = token => {
     [componentCls]: {
       outline: 'none',
       position: 'relative',
-      display: 'inline-block',
+      display: 'inline-flex',
+      gap: token.marginXS,
+      alignItems: 'center',
+      justifyContent: 'center',
       fontWeight,
       whiteSpace: 'nowrap',
       textAlign: 'center',
@@ -2992,23 +3034,7 @@ const genSharedButtonStyle = token => {
         display: 'inline-block'
       },
       [`${componentCls}-icon`]: {
-        lineHeight: 0,
-        // iconPosition in end
-        [`&-end`]: {
-          marginInlineStart: token.marginXS
-        }
-      },
-      // Leave a space between icon and text.
-      [`> ${iconCls} + span, > span + ${iconCls}`]: {
-        marginInlineStart: token.marginXS
-      },
-      [`&:not(${componentCls}-icon-only) > ${componentCls}-icon`]: {
-        [`&${componentCls}-loading-icon, &:not(:last-child)`]: {
-          marginInlineEnd: token.marginXS
-        },
-        [`&${componentCls}-loading-icon-end`]: {
-          marginInlineStart: token.marginXS
-        }
+        lineHeight: 1
       },
       '> a': {
         color: 'currentColor'
@@ -3021,9 +3047,9 @@ const genSharedButtonStyle = token => {
         marginInlineEnd: '-0.34em',
         letterSpacing: '0.34em'
       },
-      // make `btn-icon-only` not too narrow
-      [`&-icon-only${componentCls}-compact-item`]: {
-        flex: 'none'
+      // iconPosition="end"
+      '&-icon-end': {
+        flexDirection: 'row-reverse'
       }
     }
   };
@@ -3216,12 +3242,12 @@ const genButtonStyle = function (token) {
       padding: `${(0,cssinjs_es/* unit */.bf)(buttonPaddingVertical)} ${(0,cssinjs_es/* unit */.bf)(buttonPaddingHorizontal)}`,
       borderRadius,
       [`&${iconOnlyCls}`]: {
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         width: controlHeight,
-        paddingInlineStart: 0,
-        paddingInlineEnd: 0,
+        paddingInline: 0,
+        // make `btn-icon-only` not too narrow
+        [`&${componentCls}-compact-item`]: {
+          flex: 'none'
+        },
         [`&${componentCls}-round`]: {
           width: 'auto'
         },
@@ -3462,7 +3488,7 @@ const InternalCompoundedButton = /*#__PURE__*/react.forwardRef((props, ref) => {
       loading = false,
       prefixCls: customizePrefixCls,
       type,
-      danger,
+      danger = false,
       shape = 'default',
       size: customizeSize,
       styles,
@@ -3570,14 +3596,12 @@ const InternalCompoundedButton = /*#__PURE__*/react.forwardRef((props, ref) => {
     [`${prefixCls}-loading`]: innerLoading,
     [`${prefixCls}-two-chinese-chars`]: hasTwoCNChar && mergedInsertSpace && !innerLoading,
     [`${prefixCls}-block`]: block,
-    [`${prefixCls}-dangerous`]: !!danger,
-    [`${prefixCls}-rtl`]: direction === 'rtl'
+    [`${prefixCls}-dangerous`]: danger,
+    [`${prefixCls}-rtl`]: direction === 'rtl',
+    [`${prefixCls}-icon-end`]: iconPosition === 'end'
   }, compactItemClassnames, className, rootClassName, button === null || button === void 0 ? void 0 : button.className);
   const fullStyle = Object.assign(Object.assign({}, button === null || button === void 0 ? void 0 : button.style), customStyle);
-  const isIconPositionEnd = iconPosition === 'end' && children && children !== 0 && iconType;
-  const iconClasses = classnames_default()(customClassNames === null || customClassNames === void 0 ? void 0 : customClassNames.icon, (_b = button === null || button === void 0 ? void 0 : button.classNames) === null || _b === void 0 ? void 0 : _b.icon, {
-    [`${prefixCls}-icon-end`]: isIconPositionEnd
-  });
+  const iconClasses = classnames_default()(customClassNames === null || customClassNames === void 0 ? void 0 : customClassNames.icon, (_b = button === null || button === void 0 ? void 0 : button.classNames) === null || _b === void 0 ? void 0 : _b.icon);
   const iconStyle = Object.assign(Object.assign({}, (styles === null || styles === void 0 ? void 0 : styles.icon) || {}), ((_c = button === null || button === void 0 ? void 0 : button.styles) === null || _c === void 0 ? void 0 : _c.icon) || {});
   const iconNode = icon && !innerLoading ? ( /*#__PURE__*/react.createElement(button_IconWrapper, {
     prefixCls: prefixCls,
@@ -3586,11 +3610,9 @@ const InternalCompoundedButton = /*#__PURE__*/react.forwardRef((props, ref) => {
   }, icon)) : ( /*#__PURE__*/react.createElement(button_LoadingIcon, {
     existIcon: !!icon,
     prefixCls: prefixCls,
-    loading: !!innerLoading,
-    iconPosition: iconPosition
+    loading: innerLoading
   }));
   const kids = children || children === 0 ? (0,buttonHelpers/* spaceChildren */.hU)(children, needInserted && mergedInsertSpace) : null;
-  const genButtonContent = (iconComponent, kidsComponent) => iconPosition === 'start' ? ( /*#__PURE__*/react.createElement(react.Fragment, null, iconComponent, kidsComponent)) : ( /*#__PURE__*/react.createElement(react.Fragment, null, kidsComponent, iconComponent));
   if (linkButtonRestProps.href !== undefined) {
     return wrapCSSVar( /*#__PURE__*/react.createElement("a", Object.assign({}, linkButtonRestProps, {
       className: classnames_default()(classes, {
@@ -3601,7 +3623,7 @@ const InternalCompoundedButton = /*#__PURE__*/react.forwardRef((props, ref) => {
       onClick: handleClick,
       ref: buttonRef,
       tabIndex: mergedDisabled ? -1 : 0
-    }), genButtonContent(iconNode, kids)));
+    }), iconNode, kids));
   }
   let buttonNode = /*#__PURE__*/react.createElement("button", Object.assign({}, rest, {
     type: htmlType,
@@ -3610,14 +3632,14 @@ const InternalCompoundedButton = /*#__PURE__*/react.forwardRef((props, ref) => {
     onClick: handleClick,
     disabled: mergedDisabled,
     ref: buttonRef
-  }), genButtonContent(iconNode, kids), !!compactItemClassnames && /*#__PURE__*/react.createElement(compactCmp, {
+  }), iconNode, kids, !!compactItemClassnames && /*#__PURE__*/react.createElement(compactCmp, {
     key: "compact",
     prefixCls: prefixCls
   }));
   if (!(0,buttonHelpers/* isUnBorderedButtonType */.Te)(mergedType)) {
     buttonNode = /*#__PURE__*/react.createElement(wave, {
       component: "Button",
-      disabled: !!innerLoading
+      disabled: innerLoading
     }, buttonNode);
   }
   return wrapCSSVar(buttonNode);
@@ -3639,7 +3661,7 @@ if (false) {}
 /***/ 98675:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62435);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
 /* harmony import */ var _SizeContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(97647);
 
 
@@ -3663,7 +3685,7 @@ const useSize = customSize => {
 
 /***/ }),
 
-/***/ 84819:
+/***/ 38872:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 
@@ -3672,8 +3694,8 @@ __webpack_require__.d(__webpack_exports__, {
   Z: function() { return /* binding */ es_dropdown; }
 });
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
 var esm_extends = __webpack_require__(87462);
 ;// CONCATENATED MODULE: ./node_modules/@ant-design/icons-svg/es/asn/RightOutlined.js
@@ -3715,8 +3737,8 @@ var useMergedState = __webpack_require__(21770);
 var es_omit = __webpack_require__(98423);
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/hooks/useZIndex.js
 var useZIndex = __webpack_require__(87263);
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 35 modules
-var cssinjs_es = __webpack_require__(54548);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
+var cssinjs_es = __webpack_require__(861);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/style/roundedArrow.js
 
 function getArrowToken(token) {
@@ -4308,6 +4330,16 @@ if (false) {}
 var EllipsisOutlined = __webpack_require__(89705);
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/motion.js
 var motion = __webpack_require__(33603);
+;// CONCATENATED MODULE: ./node_modules/antd/es/menu/MenuContext.js
+"use client";
+
+
+const MenuContext = /*#__PURE__*/(0,react.createContext)({
+  prefixCls: '',
+  firstLevel: true,
+  inlineCollapsed: false
+});
+/* harmony default export */ var menu_MenuContext = (MenuContext);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/menu/MenuDivider.js
 "use client";
 
@@ -4542,8 +4574,8 @@ var Tooltip = function Tooltip(props, ref) {
 
 
 /* harmony default export */ var rc_tooltip_es = (es_Tooltip);
-// EXTERNAL MODULE: ./node_modules/antd/es/space/Compact.js
-var Compact = __webpack_require__(4173);
+// EXTERNAL MODULE: ./node_modules/antd/es/_util/ContextIsolator.js
+var ContextIsolator = __webpack_require__(89942);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/useToken.js + 2 modules
 var useToken = __webpack_require__(25976);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/index.js
@@ -4570,8 +4602,8 @@ function genPresetColor(token, genCss) {
 }
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
 var statistic = __webpack_require__(45503);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/tooltip/style/index.js
 
 
@@ -4839,13 +4871,17 @@ const InternalTooltip = /*#__PURE__*/react.forwardRef((props, ref) => {
     var _a;
     (_a = tooltipRef.current) === null || _a === void 0 ? void 0 : _a.forceAlign();
   };
-  react.useImperativeHandle(ref, () => ({
-    forceAlign,
-    forcePopupAlign: () => {
-      warning.deprecated(false, 'forcePopupAlign', 'forceAlign');
-      forceAlign();
-    }
-  }));
+  react.useImperativeHandle(ref, () => {
+    var _a;
+    return {
+      forceAlign,
+      forcePopupAlign: () => {
+        warning.deprecated(false, 'forcePopupAlign', 'forceAlign');
+        forceAlign();
+      },
+      nativeElement: (_a = tooltipRef.current) === null || _a === void 0 ? void 0 : _a.nativeElement
+    };
+  });
   // ============================== Warn ==============================
   if (false) {}
   // ============================== Open ==============================
@@ -4883,7 +4919,9 @@ const InternalTooltip = /*#__PURE__*/react.forwardRef((props, ref) => {
     }
     return overlay || title || '';
   }, [overlay, title]);
-  const memoOverlayWrapper = /*#__PURE__*/react.createElement(Compact/* NoCompactStyle */.BR, null, typeof memoOverlay === 'function' ? memoOverlay() : memoOverlay);
+  const memoOverlayWrapper = /*#__PURE__*/react.createElement(ContextIsolator/* default */.Z, {
+    space: true
+  }, typeof memoOverlay === 'function' ? memoOverlay() : memoOverlay);
   const {
       getPopupContainer,
       placement = 'top',
@@ -4952,16 +4990,6 @@ const tooltip_Tooltip = InternalTooltip;
 if (false) {}
 tooltip_Tooltip._InternalPanelDoNotUseOrYouWillBeFired = tooltip_PurePanel;
 /* harmony default export */ var tooltip = (tooltip_Tooltip);
-;// CONCATENATED MODULE: ./node_modules/antd/es/menu/MenuContext.js
-"use client";
-
-
-const MenuContext = /*#__PURE__*/(0,react.createContext)({
-  prefixCls: '',
-  firstLevel: true,
-  inlineCollapsed: false
-});
-/* harmony default export */ var menu_MenuContext = (MenuContext);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/menu/MenuItem.js
 "use client";
 
@@ -5042,135 +5070,6 @@ const MenuItem = props => {
   return returnNode;
 };
 /* harmony default export */ var menu_MenuItem = (MenuItem);
-;// CONCATENATED MODULE: ./node_modules/antd/es/menu/SubMenu.js
-"use client";
-
-
-
-
-
-
-
-
-const SubMenu = props => {
-  var _a;
-  const {
-    popupClassName,
-    icon,
-    title,
-    theme: customTheme
-  } = props;
-  const context = react.useContext(menu_MenuContext);
-  const {
-    prefixCls,
-    inlineCollapsed,
-    theme: contextTheme
-  } = context;
-  const parentPath = (0,rc_menu_es/* useFullPath */.Xl)();
-  let titleNode;
-  if (!icon) {
-    titleNode = inlineCollapsed && !parentPath.length && title && typeof title === 'string' ? ( /*#__PURE__*/react.createElement("div", {
-      className: `${prefixCls}-inline-collapsed-noicon`
-    }, title.charAt(0))) : ( /*#__PURE__*/react.createElement("span", {
-      className: `${prefixCls}-title-content`
-    }, title));
-  } else {
-    // inline-collapsed.md demo 依赖 span 来隐藏文字,有 icon 属性，则内部包裹一个 span
-    // ref: https://github.com/ant-design/ant-design/pull/23456
-    const titleIsSpan = /*#__PURE__*/react.isValidElement(title) && title.type === 'span';
-    titleNode = /*#__PURE__*/react.createElement(react.Fragment, null, (0,reactNode/* cloneElement */.Tm)(icon, {
-      className: classnames_default()( /*#__PURE__*/react.isValidElement(icon) ? (_a = icon.props) === null || _a === void 0 ? void 0 : _a.className : '', `${prefixCls}-item-icon`)
-    }), titleIsSpan ? title : /*#__PURE__*/react.createElement("span", {
-      className: `${prefixCls}-title-content`
-    }, title));
-  }
-  const contextValue = react.useMemo(() => Object.assign(Object.assign({}, context), {
-    firstLevel: false
-  }), [context]);
-  // ============================ zIndex ============================
-  const [zIndex] = (0,useZIndex/* useZIndex */.Cn)('Menu');
-  return /*#__PURE__*/react.createElement(menu_MenuContext.Provider, {
-    value: contextValue
-  }, /*#__PURE__*/react.createElement(rc_menu_es/* SubMenu */.Wd, Object.assign({}, (0,es_omit/* default */.Z)(props, ['icon']), {
-    title: titleNode,
-    popupClassName: classnames_default()(prefixCls, popupClassName, `${prefixCls}-${customTheme || contextTheme}`),
-    popupStyle: {
-      zIndex
-    }
-  })));
-};
-/* harmony default export */ var menu_SubMenu = (SubMenu);
-;// CONCATENATED MODULE: ./node_modules/antd/es/menu/hooks/useItems.js
-"use client";
-
-var useItems_rest = undefined && undefined.__rest || function (s, e) {
-  var t = {};
-  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
-  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
-  }
-  return t;
-};
-
-
-
-
-
-function convertItemsToNodes(list) {
-  return (list || []).map((opt, index) => {
-    if (opt && typeof opt === 'object') {
-      const _a = opt,
-        {
-          label,
-          children,
-          key,
-          type
-        } = _a,
-        restProps = useItems_rest(_a, ["label", "children", "key", "type"]);
-      const mergedKey = key !== null && key !== void 0 ? key : `tmp-${index}`;
-      // MenuItemGroup & SubMenuItem
-      if (children || type === 'group') {
-        if (type === 'group') {
-          // Group
-          return /*#__PURE__*/react.createElement(rc_menu_es/* ItemGroup */.BW, Object.assign({
-            key: mergedKey
-          }, restProps, {
-            title: label
-          }), convertItemsToNodes(children));
-        }
-        // Sub Menu
-        return /*#__PURE__*/react.createElement(menu_SubMenu, Object.assign({
-          key: mergedKey
-        }, restProps, {
-          title: label
-        }), convertItemsToNodes(children));
-      }
-      // MenuItem & Divider
-      if (type === 'divider') {
-        return /*#__PURE__*/react.createElement(menu_MenuDivider, Object.assign({
-          key: mergedKey
-        }, restProps));
-      }
-      return /*#__PURE__*/react.createElement(menu_MenuItem, Object.assign({
-        key: mergedKey
-      }, restProps), label);
-    }
-    return null;
-  }).filter(opt => opt);
-}
-// FIXME: Move logic here in v5
-/**
- * We simply convert `items` to ReactNode for reuse origin component logic. But we need move all the
- * logic from component into this hooks when in v5
- */
-function useItems(items) {
-  return react.useMemo(() => {
-    if (!items) {
-      return items;
-    }
-    return convertItemsToNodes(items);
-  }, [items]);
-}
 ;// CONCATENATED MODULE: ./node_modules/antd/es/menu/OverrideContext.js
 "use client";
 
@@ -5202,7 +5101,9 @@ const OverrideProvider = /*#__PURE__*/react.forwardRef((props, ref) => {
   const mergedRef = (0,rc_util_es/* useComposeRef */.x1)(ref, canRef ? children.ref : null);
   return /*#__PURE__*/react.createElement(OverrideContext.Provider, {
     value: context
-  }, /*#__PURE__*/react.createElement(Compact/* NoCompactStyle */.BR, null, canRef ? /*#__PURE__*/react.cloneElement(children, {
+  }, /*#__PURE__*/react.createElement(ContextIsolator/* default */.Z, {
+    space: true
+  }, canRef ? /*#__PURE__*/react.cloneElement(children, {
     ref: mergedRef
   }) : children));
 });
@@ -5420,7 +5321,7 @@ const getThemeStyle = (token, themeSuffix) => {
         [`&${componentCls}-item-danger`]: {
           color: dangerItemSelectedColor
         },
-        [`a, a:hover`]: {
+        'a, a:hover': {
           color: 'inherit'
         }
       },
@@ -5460,14 +5361,14 @@ const getThemeStyle = (token, themeSuffix) => {
             transition: `border-color ${motionDurationSlow} ${motionEaseInOut}`,
             content: '""'
           },
-          [`&:hover, &-active, &-open`]: {
+          '&:hover, &-active, &-open': {
             background: horizontalItemHoverBg,
             '&::after': {
               borderBottomWidth: activeBarHeight,
               borderBottomColor: horizontalItemSelectedColor
             }
           },
-          [`&-selected`]: {
+          '&-selected': {
             color: horizontalItemSelectedColor,
             backgroundColor: horizontalItemSelectedBg,
             '&:hover': {
@@ -5592,7 +5493,7 @@ const getVerticalStyle = token => {
   };
   return [{
     [componentCls]: {
-      [`&-inline, &-vertical`]: Object.assign({
+      '&-inline, &-vertical': Object.assign({
         [`&${componentCls}-root`]: {
           boxShadow: 'none'
         }
@@ -5785,7 +5686,7 @@ const genSubMenuArrowStyle = token => {
   } = token;
   return {
     [`${componentCls}-submenu`]: {
-      [`&-expand-icon, &-arrow`]: {
+      '&-expand-icon, &-arrow': {
         position: 'absolute',
         top: '50%',
         insetInlineEnd: token.margin,
@@ -5843,7 +5744,7 @@ const getBaseStyle = token => {
     '': {
       [`${componentCls}`]: Object.assign(Object.assign({}, (0,style/* clearFix */.dF)()), {
         // Hidden
-        [`&-hidden`]: {
+        '&-hidden': {
           display: 'none'
         }
       })
@@ -5862,13 +5763,13 @@ const getBaseStyle = token => {
       outline: 'none',
       // Magic cubic here but smooth transition
       transition: `width ${motionDurationSlow} cubic-bezier(0.2, 0, 0, 1) 0s`,
-      [`ul, ol`]: {
+      'ul, ol': {
         margin: 0,
         padding: 0,
         listStyle: 'none'
       },
       // Overflow ellipsis
-      [`&-overflow`]: {
+      '&-overflow': {
         display: 'flex',
         [`${componentCls}-item`]: {
           flex: 'none'
@@ -6252,6 +6153,64 @@ const style_prepareComponentToken = token => {
   });
   return useStyle(prefixCls, rootCls);
 });
+;// CONCATENATED MODULE: ./node_modules/antd/es/menu/SubMenu.js
+"use client";
+
+
+
+
+
+
+
+
+const SubMenu = props => {
+  var _a;
+  const {
+    popupClassName,
+    icon,
+    title,
+    theme: customTheme
+  } = props;
+  const context = react.useContext(menu_MenuContext);
+  const {
+    prefixCls,
+    inlineCollapsed,
+    theme: contextTheme
+  } = context;
+  const parentPath = (0,rc_menu_es/* useFullPath */.Xl)();
+  let titleNode;
+  if (!icon) {
+    titleNode = inlineCollapsed && !parentPath.length && title && typeof title === 'string' ? ( /*#__PURE__*/react.createElement("div", {
+      className: `${prefixCls}-inline-collapsed-noicon`
+    }, title.charAt(0))) : ( /*#__PURE__*/react.createElement("span", {
+      className: `${prefixCls}-title-content`
+    }, title));
+  } else {
+    // inline-collapsed.md demo 依赖 span 来隐藏文字,有 icon 属性，则内部包裹一个 span
+    // ref: https://github.com/ant-design/ant-design/pull/23456
+    const titleIsSpan = /*#__PURE__*/react.isValidElement(title) && title.type === 'span';
+    titleNode = /*#__PURE__*/react.createElement(react.Fragment, null, (0,reactNode/* cloneElement */.Tm)(icon, {
+      className: classnames_default()( /*#__PURE__*/react.isValidElement(icon) ? (_a = icon.props) === null || _a === void 0 ? void 0 : _a.className : '', `${prefixCls}-item-icon`)
+    }), titleIsSpan ? title : /*#__PURE__*/react.createElement("span", {
+      className: `${prefixCls}-title-content`
+    }, title));
+  }
+  const contextValue = react.useMemo(() => Object.assign(Object.assign({}, context), {
+    firstLevel: false
+  }), [context]);
+  // ============================ zIndex ============================
+  const [zIndex] = (0,useZIndex/* useZIndex */.Cn)('Menu');
+  return /*#__PURE__*/react.createElement(menu_MenuContext.Provider, {
+    value: contextValue
+  }, /*#__PURE__*/react.createElement(rc_menu_es/* SubMenu */.Wd, Object.assign({}, (0,es_omit/* default */.Z)(props, ['icon']), {
+    title: titleNode,
+    popupClassName: classnames_default()(prefixCls, popupClassName, `${prefixCls}-${customTheme || contextTheme}`),
+    popupStyle: {
+      zIndex
+    }
+  })));
+};
+/* harmony default export */ var menu_SubMenu = (SubMenu);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/menu/menu.js
 "use client";
 
@@ -6279,9 +6238,16 @@ var menu_rest = undefined && undefined.__rest || function (s, e) {
 
 
 
+
+
 function isEmptyIcon(icon) {
   return icon === null || icon === false;
 }
+const MENU_COMPONENTS = {
+  item: menu_MenuItem,
+  submenu: menu_SubMenu,
+  divider: menu_MenuDivider
+};
 const InternalMenu = /*#__PURE__*/(0,react.forwardRef)((props, ref) => {
   var _a;
   const override = react.useContext(menu_OverrideContext);
@@ -6302,18 +6268,14 @@ const InternalMenu = /*#__PURE__*/(0,react.forwardRef)((props, ref) => {
       _internalDisableMenuItemTitleTooltip,
       inlineCollapsed,
       siderCollapsed,
-      items,
-      children,
       rootClassName,
       mode,
       selectable,
       onClick,
       overflowedIndicatorPopupClassName
     } = props,
-    restProps = menu_rest(props, ["prefixCls", "className", "style", "theme", "expandIcon", "_internalDisableMenuItemTitleTooltip", "inlineCollapsed", "siderCollapsed", "items", "children", "rootClassName", "mode", "selectable", "onClick", "overflowedIndicatorPopupClassName"]);
+    restProps = menu_rest(props, ["prefixCls", "className", "style", "theme", "expandIcon", "_internalDisableMenuItemTitleTooltip", "inlineCollapsed", "siderCollapsed", "rootClassName", "mode", "selectable", "onClick", "overflowedIndicatorPopupClassName"]);
   const passedProps = (0,es_omit/* default */.Z)(restProps, ['collapsedWidth']);
-  // ========================= Items ===========================
-  const mergedChildren = useItems(items) || children;
   // ======================== Warning ==========================
   if (false) {}
   (_a = overrideObj.validator) === null || _a === void 0 ? void 0 : _a.call(overrideObj, {
@@ -6399,8 +6361,9 @@ const InternalMenu = /*#__PURE__*/(0,react.forwardRef)((props, ref) => {
     defaultMotions: defaultMotions,
     expandIcon: mergedExpandIcon,
     ref: ref,
-    rootClassName: classnames_default()(rootClassName, hashId, overrideObj.rootClassName, cssVarCls, rootCls)
-  }), mergedChildren))));
+    rootClassName: classnames_default()(rootClassName, hashId, overrideObj.rootClassName, cssVarCls, rootCls),
+    _internalComponents: MENU_COMPONENTS
+  })))));
 });
 /* harmony default export */ var menu = (InternalMenu);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/menu/index.js
@@ -6627,7 +6590,7 @@ const genBaseStyle = token => {
     colorBgElevated
   } = token;
   return [{
-    [componentCls]: Object.assign(Object.assign({}, (0,style/* resetComponent */.Wf)(token)), {
+    [componentCls]: {
       position: 'absolute',
       top: -9999,
       left: {
@@ -6702,7 +6665,7 @@ const genBaseStyle = token => {
           &${antCls}-slide-up-leave${antCls}-slide-up-leave-active${componentCls}-placement-topRight`]: {
         animationName: slide/* slideDownOut */.ly
       }
-    })
+    }
   },
   // =============================================================
   // ==                        Arrow style                      ==
@@ -6731,7 +6694,7 @@ const genBaseStyle = token => {
         margin: 0
       }
     },
-    [`${componentCls}, ${componentCls}-menu-submenu`]: {
+    [`${componentCls}, ${componentCls}-menu-submenu`]: Object.assign(Object.assign({}, (0,style/* resetComponent */.Wf)(token)), {
       [menuCls]: Object.assign(Object.assign({
         padding: dropdownEdgeChildPadding,
         listStyleType: 'none',
@@ -6788,7 +6751,7 @@ const genBaseStyle = token => {
           cursor: 'pointer',
           transition: `all ${motionDurationMid}`,
           borderRadius: token.borderRadiusSM,
-          [`&:hover, &-active`]: {
+          '&:hover, &-active': {
             backgroundColor: token.controlItemBgHover
           }
         }, (0,style/* genFocusStyle */.Qy)(token)), {
@@ -6853,7 +6816,7 @@ const genBaseStyle = token => {
           color: token.colorPrimary
         }
       })
-    }
+    })
   },
   // Follow code may reuse in other components
   [(0,slide/* initSlideMotion */.oN)(token, 'slide-up'), (0,slide/* initSlideMotion */.oN)(token, 'slide-down'), initMoveMotion(token, 'move-up'), initMoveMotion(token, 'move-down'), (0,zoom/* initZoomMotion */._y)(token, 'zoom-big')]];
@@ -6879,7 +6842,9 @@ const dropdown_style_prepareComponentToken = token => Object.assign(Object.assig
     dropdownEdgeChildPadding: paddingXXS
   });
   return [genBaseStyle(dropdownToken), style_status(dropdownToken)];
-}, dropdown_style_prepareComponentToken));
+}, dropdown_style_prepareComponentToken, {
+  resetStyle: false
+}));
 ;// CONCATENATED MODULE: ./node_modules/antd/es/dropdown/dropdown.js
 "use client";
 
@@ -6904,6 +6869,7 @@ const dropdown_style_prepareComponentToken = token => Object.assign(Object.assig
 
 const Placements = (/* unused pure expression or super */ null && (['topLeft', 'topCenter', 'topRight', 'bottomLeft', 'bottomCenter', 'bottomRight', 'top', 'bottom']));
 const Dropdown = props => {
+  var _a;
   const {
     menu,
     arrow,
@@ -6966,13 +6932,10 @@ const Dropdown = props => {
     className: classnames_default()(`${prefixCls}-trigger`, {
       [`${prefixCls}-rtl`]: direction === 'rtl'
     }, child.props.className),
-    disabled
+    disabled: (_a = child.props.disabled) !== null && _a !== void 0 ? _a : disabled
   });
   const triggerActions = disabled ? [] : trigger;
-  let alignPoint;
-  if (triggerActions && triggerActions.includes('contextMenu')) {
-    alignPoint = true;
-  }
+  const alignPoint = !!(triggerActions === null || triggerActions === void 0 ? void 0 : triggerActions.includes('contextMenu'));
   // =========================== Open ============================
   const [mergedOpen, setOpen] = (0,useMergedState/* default */.Z)(false, {
     value: open !== null && open !== void 0 ? open : visible
@@ -7090,6 +7053,8 @@ if (false) {}
 var es_button = __webpack_require__(45093);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/index.js + 2 modules
 var space = __webpack_require__(42075);
+// EXTERNAL MODULE: ./node_modules/antd/es/space/Compact.js
+var Compact = __webpack_require__(4173);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/dropdown/dropdown-button.js
 "use client";
 
@@ -7229,8 +7194,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // UNUSED EXPORTS: FormContext, FormItemPrefixContext, FormProvider, NoStyleItemContext
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
 var esm_extends = __webpack_require__(87462);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js + 1 modules
@@ -7251,8 +7216,8 @@ var createClass = __webpack_require__(43144);
 var assertThisInitialized = __webpack_require__(97326);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
 var inherits = __webpack_require__(60136);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js
-var createSuper = __webpack_require__(29388);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js + 1 modules
+var createSuper = __webpack_require__(18486);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
 var defineProperty = __webpack_require__(4942);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/Children/toArray.js
@@ -7382,13 +7347,14 @@ var getPrototypeOf = __webpack_require__(61120);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
 var setPrototypeOf = __webpack_require__(89611);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/isNativeFunction.js
-function _isNativeFunction(fn) {
+function _isNativeFunction(t) {
   try {
-    return Function.toString.call(fn).indexOf("[native code]") !== -1;
-  } catch (e) {
-    return typeof fn === "function";
+    return -1 !== Function.toString.call(t).indexOf("[native code]");
+  } catch (n) {
+    return "function" == typeof t;
   }
 }
+
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/isNativeReflectConstruct.js
 var isNativeReflectConstruct = __webpack_require__(78814);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/construct.js
@@ -7401,37 +7367,35 @@ function _construct(t, e, r) {
   var p = new (t.bind.apply(t, o))();
   return r && (0,setPrototypeOf/* default */.Z)(p, r.prototype), p;
 }
+
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/wrapNativeSuper.js
 
 
 
 
-function _wrapNativeSuper(Class) {
-  var _cache = typeof Map === "function" ? new Map() : undefined;
-  _wrapNativeSuper = function _wrapNativeSuper(Class) {
-    if (Class === null || !_isNativeFunction(Class)) return Class;
-    if (typeof Class !== "function") {
-      throw new TypeError("Super expression must either be null or a function");
-    }
-    if (typeof _cache !== "undefined") {
-      if (_cache.has(Class)) return _cache.get(Class);
-      _cache.set(Class, Wrapper);
+function _wrapNativeSuper(t) {
+  var r = "function" == typeof Map ? new Map() : void 0;
+  return _wrapNativeSuper = function _wrapNativeSuper(t) {
+    if (null === t || !_isNativeFunction(t)) return t;
+    if ("function" != typeof t) throw new TypeError("Super expression must either be null or a function");
+    if (void 0 !== r) {
+      if (r.has(t)) return r.get(t);
+      r.set(t, Wrapper);
     }
     function Wrapper() {
-      return _construct(Class, arguments, (0,getPrototypeOf/* default */.Z)(this).constructor);
+      return _construct(t, arguments, (0,getPrototypeOf/* default */.Z)(this).constructor);
     }
-    Wrapper.prototype = Object.create(Class.prototype, {
+    return Wrapper.prototype = Object.create(t.prototype, {
       constructor: {
         value: Wrapper,
-        enumerable: false,
-        writable: true,
-        configurable: true
+        enumerable: !1,
+        writable: !0,
+        configurable: !0
       }
-    });
-    return (0,setPrototypeOf/* default */.Z)(Wrapper, Class);
-  };
-  return _wrapNativeSuper(Class);
+    }), (0,setPrototypeOf/* default */.Z)(Wrapper, t);
+  }, _wrapNativeSuper(t);
 }
+
 ;// CONCATENATED MODULE: ./node_modules/@rc-component/async-validator/es/util.js
 /* provided dependency */ var process = __webpack_require__(34155);
 
@@ -9986,14 +9950,20 @@ var FormStore = /*#__PURE__*/(0,createClass/* default */.Z)(function FormStore(f
       _this.updateStore(nextStore);
     }
   });
-  (0,defineProperty/* default */.Z)(this, "destroyForm", function () {
-    var prevWithoutPreserves = new utils_NameMap();
-    _this.getFieldEntities(true).forEach(function (entity) {
-      if (!_this.isMergedPreserve(entity.isPreserve())) {
-        prevWithoutPreserves.set(entity.getNamePath(), true);
-      }
-    });
-    _this.prevWithoutPreserves = prevWithoutPreserves;
+  (0,defineProperty/* default */.Z)(this, "destroyForm", function (clearOnDestroy) {
+    if (clearOnDestroy) {
+      // destroy form reset store
+      _this.updateStore({});
+    } else {
+      // Fill preserve fields
+      var prevWithoutPreserves = new utils_NameMap();
+      _this.getFieldEntities(true).forEach(function (entity) {
+        if (!_this.isMergedPreserve(entity.isPreserve())) {
+          prevWithoutPreserves.set(entity.getNamePath(), true);
+        }
+      });
+      _this.prevWithoutPreserves = prevWithoutPreserves;
+    }
   });
   (0,defineProperty/* default */.Z)(this, "getInitialValue", function (namePath) {
     var initValue = (0,get/* default */.Z)(_this.initialValues, namePath);
@@ -10830,7 +10800,7 @@ var FormProvider = function FormProvider(_ref) {
 
 
 
-var Form_excluded = ["name", "initialValues", "fields", "form", "preserve", "children", "component", "validateMessages", "validateTrigger", "onValuesChange", "onFieldsChange", "onFinish", "onFinishFailed"];
+var Form_excluded = ["name", "initialValues", "fields", "form", "preserve", "children", "component", "validateMessages", "validateTrigger", "onValuesChange", "onFieldsChange", "onFinish", "onFinishFailed", "clearOnDestroy"];
 
 
 
@@ -10853,7 +10823,9 @@ var Form = function Form(_ref, ref) {
     _onFieldsChange = _ref.onFieldsChange,
     _onFinish = _ref.onFinish,
     onFinishFailed = _ref.onFinishFailed,
+    clearOnDestroy = _ref.clearOnDestroy,
     restProps = (0,objectWithoutProperties/* default */.Z)(_ref, Form_excluded);
+  var nativeElementRef = react.useRef(null);
   var formContext = react.useContext(es_FormContext);
 
   // We customize handle event since Context will makes all the consumer re-render:
@@ -10871,7 +10843,9 @@ var Form = function Form(_ref, ref) {
 
   // Pass ref with form instance
   react.useImperativeHandle(ref, function () {
-    return formInstance;
+    return (0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({}, formInstance), {}, {
+      nativeElement: nativeElementRef.current
+    });
   });
 
   // Register form into Context
@@ -10912,7 +10886,9 @@ var Form = function Form(_ref, ref) {
     mountRef.current = true;
   }
   react.useEffect(function () {
-    return destroyForm;
+    return function () {
+      return destroyForm(clearOnDestroy);
+    };
   },
   // eslint-disable-next-line react-hooks/exhaustive-deps
   []);
@@ -10952,6 +10928,7 @@ var Form = function Form(_ref, ref) {
     return wrapperNode;
   }
   return /*#__PURE__*/react.createElement(Component, (0,esm_extends/* default */.Z)({}, restProps, {
+    ref: nativeElementRef,
     onSubmit: function onSubmit(event) {
       event.preventDefault();
       event.stopPropagation();
@@ -11135,8 +11112,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // UNUSED EXPORTS: Col, Row
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/hooks/useLayoutEffect.js
 var useLayoutEffect = __webpack_require__(8410);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/hooks/useForceUpdate.js
@@ -11191,7 +11168,7 @@ function grid_useBreakpoint() {
 /***/ 10110:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62435);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
 /* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(76745);
 /* harmony import */ var _en_US__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(81570);
 
@@ -11230,8 +11207,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js + 2 modules
 var toConsumableArray = __webpack_require__(74902);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/React/render.js
 var React_render = __webpack_require__(38135);
 // EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
@@ -11271,7 +11248,7 @@ var buttonHelpers = __webpack_require__(33671);
 
 
 function isThenable(thing) {
-  return !!(thing && thing.then);
+  return !!(thing === null || thing === void 0 ? void 0 : thing.then);
 }
 const ActionButton = props => {
   const {
@@ -11349,7 +11326,7 @@ const ActionButton = props => {
       clickedRef.current = false;
     } else {
       returnValueOfOnOk = actionFn();
-      if (!returnValueOfOnOk) {
+      if (!isThenable(returnValueOfOnOk)) {
         onInternalClose();
         return;
       }
@@ -11490,8 +11467,8 @@ function offset(el) {
   pos.top += getScroll(w, true);
   return pos;
 }
-// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 12 modules
-var rc_motion_es = __webpack_require__(82225);
+// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 13 modules
+var rc_motion_es = __webpack_require__(29372);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
 var esm_typeof = __webpack_require__(71002);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/ref.js
@@ -11559,15 +11536,21 @@ var Panel = /*#__PURE__*/react.forwardRef(function (props, ref) {
     return {
       focus: function focus() {
         var _entityRef$current;
-        (_entityRef$current = entityRef.current) === null || _entityRef$current === void 0 || _entityRef$current.focus();
+        (_entityRef$current = entityRef.current) === null || _entityRef$current === void 0 || _entityRef$current.focus({
+          preventScroll: true
+        });
       },
       changeActive: function changeActive(next) {
         var _document = document,
           activeElement = _document.activeElement;
         if (next && activeElement === sentinelEndRef.current) {
-          sentinelStartRef.current.focus();
+          sentinelStartRef.current.focus({
+            preventScroll: true
+          });
         } else if (!next && activeElement === sentinelStartRef.current) {
-          sentinelEndRef.current.focus();
+          sentinelEndRef.current.focus({
+            preventScroll: true
+          });
         }
       }
     };
@@ -11582,23 +11565,17 @@ var Panel = /*#__PURE__*/react.forwardRef(function (props, ref) {
     contentStyle.height = height;
   }
   // ================================ Render ================================
-  var footerNode;
-  if (footer) {
-    footerNode = /*#__PURE__*/react.createElement("div", {
-      className: classnames_default()("".concat(prefixCls, "-footer"), modalClassNames === null || modalClassNames === void 0 ? void 0 : modalClassNames.footer),
-      style: (0,objectSpread2/* default */.Z)({}, modalStyles === null || modalStyles === void 0 ? void 0 : modalStyles.footer)
-    }, footer);
-  }
-  var headerNode;
-  if (title) {
-    headerNode = /*#__PURE__*/react.createElement("div", {
-      className: classnames_default()("".concat(prefixCls, "-header"), modalClassNames === null || modalClassNames === void 0 ? void 0 : modalClassNames.header),
-      style: (0,objectSpread2/* default */.Z)({}, modalStyles === null || modalStyles === void 0 ? void 0 : modalStyles.header)
-    }, /*#__PURE__*/react.createElement("div", {
-      className: "".concat(prefixCls, "-title"),
-      id: ariaId
-    }, title));
-  }
+  var footerNode = footer ? /*#__PURE__*/react.createElement("div", {
+    className: classnames_default()("".concat(prefixCls, "-footer"), modalClassNames === null || modalClassNames === void 0 ? void 0 : modalClassNames.footer),
+    style: (0,objectSpread2/* default */.Z)({}, modalStyles === null || modalStyles === void 0 ? void 0 : modalStyles.footer)
+  }, footer) : null;
+  var headerNode = title ? /*#__PURE__*/react.createElement("div", {
+    className: classnames_default()("".concat(prefixCls, "-header"), modalClassNames === null || modalClassNames === void 0 ? void 0 : modalClassNames.header),
+    style: (0,objectSpread2/* default */.Z)({}, modalStyles === null || modalStyles === void 0 ? void 0 : modalStyles.header)
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "".concat(prefixCls, "-title"),
+    id: ariaId
+  }, title)) : null;
   var closableObj = (0,react.useMemo)(function () {
     if ((0,esm_typeof/* default */.Z)(closable) === 'object' && closable !== null) {
       return closable;
@@ -11611,22 +11588,21 @@ var Panel = /*#__PURE__*/react.forwardRef(function (props, ref) {
       };
     }
     return {};
-  }, [closable, closeIcon]);
+  }, [closable, closeIcon, prefixCls]);
   var ariaProps = (0,pickAttrs/* default */.Z)(closableObj, true);
-  var closer;
-  if (closable) {
-    closer = /*#__PURE__*/react.createElement("button", (0,esm_extends/* default */.Z)({
-      type: "button",
-      onClick: onClose,
-      "aria-label": "Close"
-    }, ariaProps, {
-      className: "".concat(prefixCls, "-close")
-    }), closableObj.closeIcon);
-  }
+  var closeBtnIsDisabled = (0,esm_typeof/* default */.Z)(closable) === 'object' && closable.disabled;
+  var closerNode = closable ? /*#__PURE__*/react.createElement("button", (0,esm_extends/* default */.Z)({
+    type: "button",
+    onClick: onClose,
+    "aria-label": "Close"
+  }, ariaProps, {
+    className: "".concat(prefixCls, "-close"),
+    disabled: closeBtnIsDisabled
+  }), closableObj.closeIcon) : null;
   var content = /*#__PURE__*/react.createElement("div", {
     className: classnames_default()("".concat(prefixCls, "-content"), modalClassNames === null || modalClassNames === void 0 ? void 0 : modalClassNames.content),
     style: modalStyles === null || modalStyles === void 0 ? void 0 : modalStyles.content
-  }, closer, headerNode, /*#__PURE__*/react.createElement("div", (0,esm_extends/* default */.Z)({
+  }, closerNode, headerNode, /*#__PURE__*/react.createElement("div", (0,esm_extends/* default */.Z)({
     className: classnames_default()("".concat(prefixCls, "-body"), modalClassNames === null || modalClassNames === void 0 ? void 0 : modalClassNames.body),
     style: (0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({}, bodyStyle), modalStyles === null || modalStyles === void 0 ? void 0 : modalStyles.body)
   }, bodyProps), children), footerNode);
@@ -11695,7 +11671,7 @@ var Content = /*#__PURE__*/react.forwardRef(function (props, ref) {
   }
   function onPrepare() {
     var elementOffset = offset(dialogRef.current);
-    setTransformOrigin(mousePosition ? "".concat(mousePosition.x - elementOffset.left, "px ").concat(mousePosition.y - elementOffset.top, "px") : '');
+    setTransformOrigin(mousePosition && (mousePosition.x || mousePosition.y) ? "".concat(mousePosition.x - elementOffset.left, "px ").concat(mousePosition.y - elementOffset.top, "px") : '');
   }
 
   // ============================= Render =============================
@@ -11730,7 +11706,7 @@ Content.displayName = 'Content';
 
 
 
-function Mask(props) {
+var Mask = function Mask(props) {
   var prefixCls = props.prefixCls,
     style = props.style,
     visible = props.visible,
@@ -11751,7 +11727,8 @@ function Mask(props) {
       className: classnames_default()("".concat(prefixCls, "-mask"), motionClassName, className)
     }, maskProps));
   });
-}
+};
+/* harmony default export */ var Dialog_Mask = (Mask);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/warning.js
 var warning = __webpack_require__(80334);
 ;// CONCATENATED MODULE: ./node_modules/rc-dialog/es/Dialog/index.js
@@ -11769,7 +11746,7 @@ var warning = __webpack_require__(80334);
 
 
 
-function Dialog(props) {
+var Dialog = function Dialog(props) {
   var _props$prefixCls = props.prefixCls,
     prefixCls = _props$prefixCls === void 0 ? 'rc-dialog' : _props$prefixCls,
     zIndex = props.zIndex,
@@ -11888,10 +11865,8 @@ function Dialog(props) {
     }
 
     // keep focus inside dialog
-    if (visible) {
-      if (e.keyCode === KeyCode/* default */.Z.TAB) {
-        contentRef.current.changeActive(!e.shiftKey);
-      }
+    if (visible && e.keyCode === KeyCode/* default */.Z.TAB) {
+      contentRef.current.changeActive(!e.shiftKey);
     }
   }
 
@@ -11909,13 +11884,18 @@ function Dialog(props) {
       clearTimeout(contentTimeoutRef.current);
     };
   }, []);
+  var mergedStyle = (0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({
+    zIndex: zIndex
+  }, wrapStyle), modalStyles === null || modalStyles === void 0 ? void 0 : modalStyles.wrapper), {}, {
+    display: !animatedVisible ? 'none' : null
+  });
 
   // ========================= Render =========================
   return /*#__PURE__*/react.createElement("div", (0,esm_extends/* default */.Z)({
     className: classnames_default()("".concat(prefixCls, "-root"), rootClassName)
   }, (0,pickAttrs/* default */.Z)(props, {
     data: true
-  })), /*#__PURE__*/react.createElement(Mask, {
+  })), /*#__PURE__*/react.createElement(Dialog_Mask, {
     prefixCls: prefixCls,
     visible: mask && visible,
     motionName: getMotionName(prefixCls, maskTransitionName, maskAnimation),
@@ -11930,11 +11910,7 @@ function Dialog(props) {
     className: classnames_default()("".concat(prefixCls, "-wrap"), wrapClassName, modalClassNames === null || modalClassNames === void 0 ? void 0 : modalClassNames.wrapper),
     ref: wrapperRef,
     onClick: onWrapperClick,
-    style: (0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({
-      zIndex: zIndex
-    }, wrapStyle), modalStyles === null || modalStyles === void 0 ? void 0 : modalStyles.wrapper), {}, {
-      display: !animatedVisible ? 'none' : null
-    })
+    style: mergedStyle
   }, wrapProps), /*#__PURE__*/react.createElement(Dialog_Content, (0,esm_extends/* default */.Z)({}, props, {
     onMouseDown: onContentMouseDown,
     onMouseUp: onContentMouseUp,
@@ -11947,7 +11923,8 @@ function Dialog(props) {
     onVisibleChanged: onDialogVisibleChanged,
     motionName: getMotionName(prefixCls, transitionName, animation)
   }))));
-}
+};
+/* harmony default export */ var es_Dialog = (Dialog);
 ;// CONCATENATED MODULE: ./node_modules/rc-dialog/es/DialogWrap.js
 
 
@@ -11998,7 +11975,7 @@ var DialogWrap = function DialogWrap(props) {
     autoDestroy: false,
     getContainer: getContainer,
     autoLock: visible || animatedVisible
-  }, /*#__PURE__*/react.createElement(Dialog, (0,esm_extends/* default */.Z)({}, props, {
+  }, /*#__PURE__*/react.createElement(es_Dialog, (0,esm_extends/* default */.Z)({}, props, {
     destroyOnClose: destroyOnClose,
     afterClose: function afterClose() {
       _afterClose === null || _afterClose === void 0 || _afterClose();
@@ -12013,6 +11990,8 @@ DialogWrap.displayName = 'Dialog';
 
 
 /* harmony default export */ var rc_dialog_es = (es_DialogWrap);
+// EXTERNAL MODULE: ./node_modules/antd/es/_util/ContextIsolator.js
+var ContextIsolator = __webpack_require__(89942);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/hooks/useClosable.js
 "use client";
 
@@ -12140,10 +12119,8 @@ const canUseDocElement = () => (0,canUseDom/* default */.Z)() && window.document
 var zindexContext = __webpack_require__(43945);
 // EXTERNAL MODULE: ./node_modules/antd/es/config-provider/hooks/useCSSVarCls.js
 var useCSSVarCls = __webpack_require__(35792);
-// EXTERNAL MODULE: ./node_modules/antd/es/form/context.js + 45 modules
-var form_context = __webpack_require__(60566);
-// EXTERNAL MODULE: ./node_modules/antd/es/space/Compact.js
-var Compact = __webpack_require__(4173);
+// EXTERNAL MODULE: ./node_modules/antd/es/skeleton/index.js + 12 modules
+var skeleton = __webpack_require__(21687);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/index.js
 var rc_util_es = __webpack_require__(56790);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/watermark/context.js
@@ -12277,8 +12254,8 @@ const Footer = props => {
     disabled: false
   }, footerNode);
 };
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 35 modules
-var cssinjs_es = __webpack_require__(54548);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
+var cssinjs_es = __webpack_require__(861);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/index.js
 var style = __webpack_require__(14747);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/motion/motion.js
@@ -12326,8 +12303,8 @@ const initFadeMotion = function (token) {
 var zoom = __webpack_require__(50438);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
 var statistic = __webpack_require__(45503);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/modal/style/index.js
 
 
@@ -12496,7 +12473,15 @@ const genModalStyle = token => {
         fontSize: token.fontSize,
         lineHeight: token.lineHeight,
         wordWrap: 'break-word',
-        padding: token.bodyPadding
+        padding: token.bodyPadding,
+        [`${componentCls}-body-skeleton`]: {
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: `${(0,cssinjs_es/* unit */.bf)(token.margin)} auto`
+        }
       },
       [`${componentCls}-footer`]: {
         textAlign: 'end',
@@ -12678,9 +12663,11 @@ const Modal = props => {
       width = 520,
       footer,
       classNames: modalClassNames,
-      styles: modalStyles
+      styles: modalStyles,
+      children,
+      loading
     } = props,
-    restProps = __rest(props, ["prefixCls", "className", "rootClassName", "open", "wrapClassName", "centered", "getContainer", "focusTriggerAfterClose", "style", "visible", "width", "footer", "classNames", "styles"]);
+    restProps = __rest(props, ["prefixCls", "className", "rootClassName", "open", "wrapClassName", "centered", "getContainer", "focusTriggerAfterClose", "style", "visible", "width", "footer", "classNames", "styles", "children", "loading"]);
   const prefixCls = getPrefixCls('modal', customizePrefixCls);
   const rootPrefixCls = getPrefixCls();
   // Style
@@ -12690,10 +12677,10 @@ const Modal = props => {
     [`${prefixCls}-centered`]: !!centered,
     [`${prefixCls}-wrap-rtl`]: direction === 'rtl'
   });
-  const dialogFooter = footer !== null && ( /*#__PURE__*/react.createElement(Footer, Object.assign({}, props, {
+  const dialogFooter = footer !== null && !loading ? ( /*#__PURE__*/react.createElement(Footer, Object.assign({}, props, {
     onOk: handleOk,
     onCancel: handleCancel
-  })));
+  }))) : null;
   const [mergedClosable, mergedCloseIcon] = useClosable(pickClosable(props), pickClosable(modalContext), {
     closable: true,
     closeIcon: /*#__PURE__*/react.createElement(CloseOutlined/* default */.Z, {
@@ -12707,9 +12694,9 @@ const Modal = props => {
   // ============================ zIndex ============================
   const [zIndex, contextZIndex] = (0,useZIndex/* useZIndex */.Cn)('Modal', restProps.zIndex);
   // =========================== Render ===========================
-  return wrapCSSVar( /*#__PURE__*/react.createElement(Compact/* NoCompactStyle */.BR, null, /*#__PURE__*/react.createElement(form_context/* NoFormStyle */.Ux, {
-    status: true,
-    override: true
+  return wrapCSSVar( /*#__PURE__*/react.createElement(ContextIsolator/* default */.Z, {
+    form: true,
+    space: true
   }, /*#__PURE__*/react.createElement(zindexContext/* default */.Z.Provider, {
     value: contextZIndex
   }, /*#__PURE__*/react.createElement(rc_dialog_es, Object.assign({
@@ -12735,7 +12722,14 @@ const Modal = props => {
     }),
     styles: Object.assign(Object.assign({}, modalContext === null || modalContext === void 0 ? void 0 : modalContext.styles), modalStyles),
     panelRef: panelRef
-  }))))));
+  }), loading ? ( /*#__PURE__*/react.createElement(skeleton/* default */.Z, {
+    active: true,
+    title: false,
+    paragraph: {
+      rows: 4
+    },
+    className: `${prefixCls}-body-skeleton`
+  })) : children))));
 };
 /* harmony default export */ var modal_Modal = (Modal);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/modal/style/confirm.js
@@ -13096,12 +13090,14 @@ function confirm_confirm(config) {
   });
   let timeoutId;
   function destroy() {
+    var _a;
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
-    const triggerCancel = args.some(param => param && param.triggerCancel);
-    if (config.onCancel && triggerCancel) {
-      config.onCancel.apply(config, [() => {}].concat((0,toConsumableArray/* default */.Z)(args.slice(1))));
+    const triggerCancel = args.some(param => param === null || param === void 0 ? void 0 : param.triggerCancel);
+    if (triggerCancel) {
+      var _a2;
+      (_a = config.onCancel) === null || _a === void 0 ? void 0 : (_a2 = _a).call.apply(_a2, [config, () => {}].concat((0,toConsumableArray/* default */.Z)(args.slice(1))));
     }
     for (let i = 0; i < modal_destroyFns.length; i++) {
       const fn = modal_destroyFns[i];
@@ -13329,13 +13325,15 @@ const HookModal = (_a, ref) => {
     (_a = innerConfig.afterClose) === null || _a === void 0 ? void 0 : _a.call(innerConfig);
   };
   const close = function () {
+    var _a;
     setOpen(false);
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
-    const triggerCancel = args.some(param => param && param.triggerCancel);
-    if (innerConfig.onCancel && triggerCancel) {
-      innerConfig.onCancel.apply(innerConfig, [() => {}].concat((0,toConsumableArray/* default */.Z)(args.slice(1))));
+    const triggerCancel = args.some(param => param === null || param === void 0 ? void 0 : param.triggerCancel);
+    if (triggerCancel) {
+      var _a2;
+      (_a = innerConfig.onCancel) === null || _a === void 0 ? void 0 : (_a2 = _a).call.apply(_a2, [innerConfig, () => {}].concat((0,toConsumableArray/* default */.Z)(args.slice(1))));
     }
   };
   react.useImperativeHandle(ref, () => ({
@@ -13503,6 +13501,799 @@ if (false) {}
 
 /***/ }),
 
+/***/ 21687:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  Z: function() { return /* binding */ skeleton; }
+});
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
+// EXTERNAL MODULE: ./node_modules/classnames/index.js
+var classnames = __webpack_require__(93967);
+var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
+// EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
+var context = __webpack_require__(53124);
+// EXTERNAL MODULE: ./node_modules/rc-util/es/omit.js
+var omit = __webpack_require__(98423);
+;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Element.js
+"use client";
+
+
+
+const Element = props => {
+  const {
+    prefixCls,
+    className,
+    style,
+    size,
+    shape
+  } = props;
+  const sizeCls = classnames_default()({
+    [`${prefixCls}-lg`]: size === 'large',
+    [`${prefixCls}-sm`]: size === 'small'
+  });
+  const shapeCls = classnames_default()({
+    [`${prefixCls}-circle`]: shape === 'circle',
+    [`${prefixCls}-square`]: shape === 'square',
+    [`${prefixCls}-round`]: shape === 'round'
+  });
+  const sizeStyle = react.useMemo(() => typeof size === 'number' ? {
+    width: size,
+    height: size,
+    lineHeight: `${size}px`
+  } : {}, [size]);
+  return /*#__PURE__*/react.createElement("span", {
+    className: classnames_default()(prefixCls, sizeCls, shapeCls, className),
+    style: Object.assign(Object.assign({}, sizeStyle), style)
+  });
+};
+/* harmony default export */ var skeleton_Element = (Element);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
+var es = __webpack_require__(861);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
+var statistic = __webpack_require__(45503);
+;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/style/index.js
+
+
+const skeletonClsLoading = new es/* Keyframes */.E4(`ant-skeleton-loading`, {
+  '0%': {
+    backgroundPosition: '100% 50%'
+  },
+  '100%': {
+    backgroundPosition: '0 50%'
+  }
+});
+const genSkeletonElementCommonSize = size => ({
+  height: size,
+  lineHeight: (0,es/* unit */.bf)(size)
+});
+const genSkeletonElementAvatarSize = size => Object.assign({
+  width: size
+}, genSkeletonElementCommonSize(size));
+const genSkeletonColor = token => ({
+  background: token.skeletonLoadingBackground,
+  backgroundSize: '400% 100%',
+  animationName: skeletonClsLoading,
+  animationDuration: token.skeletonLoadingMotionDuration,
+  animationTimingFunction: 'ease',
+  animationIterationCount: 'infinite'
+});
+const genSkeletonElementInputSize = (size, calc) => Object.assign({
+  width: calc(size).mul(5).equal(),
+  minWidth: calc(size).mul(5).equal()
+}, genSkeletonElementCommonSize(size));
+const genSkeletonElementAvatar = token => {
+  const {
+    skeletonAvatarCls,
+    gradientFromColor,
+    controlHeight,
+    controlHeightLG,
+    controlHeightSM
+  } = token;
+  return {
+    [`${skeletonAvatarCls}`]: Object.assign({
+      display: 'inline-block',
+      verticalAlign: 'top',
+      background: gradientFromColor
+    }, genSkeletonElementAvatarSize(controlHeight)),
+    [`${skeletonAvatarCls}${skeletonAvatarCls}-circle`]: {
+      borderRadius: '50%'
+    },
+    [`${skeletonAvatarCls}${skeletonAvatarCls}-lg`]: Object.assign({}, genSkeletonElementAvatarSize(controlHeightLG)),
+    [`${skeletonAvatarCls}${skeletonAvatarCls}-sm`]: Object.assign({}, genSkeletonElementAvatarSize(controlHeightSM))
+  };
+};
+const genSkeletonElementInput = token => {
+  const {
+    controlHeight,
+    borderRadiusSM,
+    skeletonInputCls,
+    controlHeightLG,
+    controlHeightSM,
+    gradientFromColor,
+    calc
+  } = token;
+  return {
+    [`${skeletonInputCls}`]: Object.assign({
+      display: 'inline-block',
+      verticalAlign: 'top',
+      background: gradientFromColor,
+      borderRadius: borderRadiusSM
+    }, genSkeletonElementInputSize(controlHeight, calc)),
+    [`${skeletonInputCls}-lg`]: Object.assign({}, genSkeletonElementInputSize(controlHeightLG, calc)),
+    [`${skeletonInputCls}-sm`]: Object.assign({}, genSkeletonElementInputSize(controlHeightSM, calc))
+  };
+};
+const genSkeletonElementImageSize = size => Object.assign({
+  width: size
+}, genSkeletonElementCommonSize(size));
+const genSkeletonElementImage = token => {
+  const {
+    skeletonImageCls,
+    imageSizeBase,
+    gradientFromColor,
+    borderRadiusSM,
+    calc
+  } = token;
+  return {
+    [`${skeletonImageCls}`]: Object.assign(Object.assign({
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      verticalAlign: 'top',
+      background: gradientFromColor,
+      borderRadius: borderRadiusSM
+    }, genSkeletonElementImageSize(calc(imageSizeBase).mul(2).equal())), {
+      [`${skeletonImageCls}-path`]: {
+        fill: '#bfbfbf'
+      },
+      [`${skeletonImageCls}-svg`]: Object.assign(Object.assign({}, genSkeletonElementImageSize(imageSizeBase)), {
+        maxWidth: calc(imageSizeBase).mul(4).equal(),
+        maxHeight: calc(imageSizeBase).mul(4).equal()
+      }),
+      [`${skeletonImageCls}-svg${skeletonImageCls}-svg-circle`]: {
+        borderRadius: '50%'
+      }
+    }),
+    [`${skeletonImageCls}${skeletonImageCls}-circle`]: {
+      borderRadius: '50%'
+    }
+  };
+};
+const genSkeletonElementButtonShape = (token, size, buttonCls) => {
+  const {
+    skeletonButtonCls
+  } = token;
+  return {
+    [`${buttonCls}${skeletonButtonCls}-circle`]: {
+      width: size,
+      minWidth: size,
+      borderRadius: '50%'
+    },
+    [`${buttonCls}${skeletonButtonCls}-round`]: {
+      borderRadius: size
+    }
+  };
+};
+const genSkeletonElementButtonSize = (size, calc) => Object.assign({
+  width: calc(size).mul(2).equal(),
+  minWidth: calc(size).mul(2).equal()
+}, genSkeletonElementCommonSize(size));
+const genSkeletonElementButton = token => {
+  const {
+    borderRadiusSM,
+    skeletonButtonCls,
+    controlHeight,
+    controlHeightLG,
+    controlHeightSM,
+    gradientFromColor,
+    calc
+  } = token;
+  return Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({
+    [`${skeletonButtonCls}`]: Object.assign({
+      display: 'inline-block',
+      verticalAlign: 'top',
+      background: gradientFromColor,
+      borderRadius: borderRadiusSM,
+      width: calc(controlHeight).mul(2).equal(),
+      minWidth: calc(controlHeight).mul(2).equal()
+    }, genSkeletonElementButtonSize(controlHeight, calc))
+  }, genSkeletonElementButtonShape(token, controlHeight, skeletonButtonCls)), {
+    [`${skeletonButtonCls}-lg`]: Object.assign({}, genSkeletonElementButtonSize(controlHeightLG, calc))
+  }), genSkeletonElementButtonShape(token, controlHeightLG, `${skeletonButtonCls}-lg`)), {
+    [`${skeletonButtonCls}-sm`]: Object.assign({}, genSkeletonElementButtonSize(controlHeightSM, calc))
+  }), genSkeletonElementButtonShape(token, controlHeightSM, `${skeletonButtonCls}-sm`));
+};
+// =============================== Base ===============================
+const genBaseStyle = token => {
+  const {
+    componentCls,
+    skeletonAvatarCls,
+    skeletonTitleCls,
+    skeletonParagraphCls,
+    skeletonButtonCls,
+    skeletonInputCls,
+    skeletonImageCls,
+    controlHeight,
+    controlHeightLG,
+    controlHeightSM,
+    gradientFromColor,
+    padding,
+    marginSM,
+    borderRadius,
+    titleHeight,
+    blockRadius,
+    paragraphLiHeight,
+    controlHeightXS,
+    paragraphMarginTop
+  } = token;
+  return {
+    [`${componentCls}`]: {
+      display: 'table',
+      width: '100%',
+      [`${componentCls}-header`]: {
+        display: 'table-cell',
+        paddingInlineEnd: padding,
+        verticalAlign: 'top',
+        // Avatar
+        [`${skeletonAvatarCls}`]: Object.assign({
+          display: 'inline-block',
+          verticalAlign: 'top',
+          background: gradientFromColor
+        }, genSkeletonElementAvatarSize(controlHeight)),
+        [`${skeletonAvatarCls}-circle`]: {
+          borderRadius: '50%'
+        },
+        [`${skeletonAvatarCls}-lg`]: Object.assign({}, genSkeletonElementAvatarSize(controlHeightLG)),
+        [`${skeletonAvatarCls}-sm`]: Object.assign({}, genSkeletonElementAvatarSize(controlHeightSM))
+      },
+      [`${componentCls}-content`]: {
+        display: 'table-cell',
+        width: '100%',
+        verticalAlign: 'top',
+        // Title
+        [`${skeletonTitleCls}`]: {
+          width: '100%',
+          height: titleHeight,
+          background: gradientFromColor,
+          borderRadius: blockRadius,
+          [`+ ${skeletonParagraphCls}`]: {
+            marginBlockStart: controlHeightSM
+          }
+        },
+        // paragraph
+        [`${skeletonParagraphCls}`]: {
+          padding: 0,
+          '> li': {
+            width: '100%',
+            height: paragraphLiHeight,
+            listStyle: 'none',
+            background: gradientFromColor,
+            borderRadius: blockRadius,
+            '+ li': {
+              marginBlockStart: controlHeightXS
+            }
+          }
+        },
+        [`${skeletonParagraphCls}> li:last-child:not(:first-child):not(:nth-child(2))`]: {
+          width: '61%'
+        }
+      },
+      [`&-round ${componentCls}-content`]: {
+        [`${skeletonTitleCls}, ${skeletonParagraphCls} > li`]: {
+          borderRadius
+        }
+      }
+    },
+    [`${componentCls}-with-avatar ${componentCls}-content`]: {
+      // Title
+      [`${skeletonTitleCls}`]: {
+        marginBlockStart: marginSM,
+        [`+ ${skeletonParagraphCls}`]: {
+          marginBlockStart: paragraphMarginTop
+        }
+      }
+    },
+    // Skeleton element
+    [`${componentCls}${componentCls}-element`]: Object.assign(Object.assign(Object.assign(Object.assign({
+      display: 'inline-block',
+      width: 'auto'
+    }, genSkeletonElementButton(token)), genSkeletonElementAvatar(token)), genSkeletonElementInput(token)), genSkeletonElementImage(token)),
+    // Skeleton Block Button, Input
+    [`${componentCls}${componentCls}-block`]: {
+      width: '100%',
+      [`${skeletonButtonCls}`]: {
+        width: '100%'
+      },
+      [`${skeletonInputCls}`]: {
+        width: '100%'
+      }
+    },
+    // With active animation
+    [`${componentCls}${componentCls}-active`]: {
+      [`
+        ${skeletonTitleCls},
+        ${skeletonParagraphCls} > li,
+        ${skeletonAvatarCls},
+        ${skeletonButtonCls},
+        ${skeletonInputCls},
+        ${skeletonImageCls}
+      `]: Object.assign({}, genSkeletonColor(token))
+    }
+  };
+};
+// ============================== Export ==============================
+const prepareComponentToken = token => {
+  const {
+    colorFillContent,
+    colorFill
+  } = token;
+  const gradientFromColor = colorFillContent;
+  const gradientToColor = colorFill;
+  return {
+    color: gradientFromColor,
+    colorGradientEnd: gradientToColor,
+    gradientFromColor,
+    gradientToColor,
+    titleHeight: token.controlHeight / 2,
+    blockRadius: token.borderRadiusSM,
+    paragraphMarginTop: token.marginLG + token.marginXXS,
+    paragraphLiHeight: token.controlHeight / 2
+  };
+};
+/* harmony default export */ var skeleton_style = ((0,genComponentStyleHook/* genStyleHooks */.I$)('Skeleton', token => {
+  const {
+    componentCls,
+    calc
+  } = token;
+  const skeletonToken = (0,statistic/* merge */.TS)(token, {
+    skeletonAvatarCls: `${componentCls}-avatar`,
+    skeletonTitleCls: `${componentCls}-title`,
+    skeletonParagraphCls: `${componentCls}-paragraph`,
+    skeletonButtonCls: `${componentCls}-button`,
+    skeletonInputCls: `${componentCls}-input`,
+    skeletonImageCls: `${componentCls}-image`,
+    imageSizeBase: calc(token.controlHeight).mul(1.5).equal(),
+    borderRadius: 100,
+    // Large number to make capsule shape
+    skeletonLoadingBackground: `linear-gradient(90deg, ${token.gradientFromColor} 25%, ${token.gradientToColor} 37%, ${token.gradientFromColor} 63%)`,
+    skeletonLoadingMotionDuration: '1.4s'
+  });
+  return [genBaseStyle(skeletonToken)];
+}, prepareComponentToken, {
+  deprecatedTokens: [['color', 'gradientFromColor'], ['colorGradientEnd', 'gradientToColor']]
+}));
+;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Avatar.js
+"use client";
+
+
+
+
+
+
+
+const SkeletonAvatar = props => {
+  const {
+    prefixCls: customizePrefixCls,
+    className,
+    rootClassName,
+    active,
+    shape = 'circle',
+    size = 'default'
+  } = props;
+  const {
+    getPrefixCls
+  } = react.useContext(context/* ConfigContext */.E_);
+  const prefixCls = getPrefixCls('skeleton', customizePrefixCls);
+  const [wrapCSSVar, hashId, cssVarCls] = skeleton_style(prefixCls);
+  const otherProps = (0,omit/* default */.Z)(props, ['prefixCls', 'className']);
+  const cls = classnames_default()(prefixCls, `${prefixCls}-element`, {
+    [`${prefixCls}-active`]: active
+  }, className, rootClassName, hashId, cssVarCls);
+  return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
+    className: cls
+  }, /*#__PURE__*/react.createElement(skeleton_Element, Object.assign({
+    prefixCls: `${prefixCls}-avatar`,
+    shape: shape,
+    size: size
+  }, otherProps))));
+};
+/* harmony default export */ var Avatar = (SkeletonAvatar);
+;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Button.js
+"use client";
+
+
+
+
+
+
+
+const SkeletonButton = props => {
+  const {
+    prefixCls: customizePrefixCls,
+    className,
+    rootClassName,
+    active,
+    block = false,
+    size = 'default'
+  } = props;
+  const {
+    getPrefixCls
+  } = react.useContext(context/* ConfigContext */.E_);
+  const prefixCls = getPrefixCls('skeleton', customizePrefixCls);
+  const [wrapCSSVar, hashId, cssVarCls] = skeleton_style(prefixCls);
+  const otherProps = (0,omit/* default */.Z)(props, ['prefixCls']);
+  const cls = classnames_default()(prefixCls, `${prefixCls}-element`, {
+    [`${prefixCls}-active`]: active,
+    [`${prefixCls}-block`]: block
+  }, className, rootClassName, hashId, cssVarCls);
+  return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
+    className: cls
+  }, /*#__PURE__*/react.createElement(skeleton_Element, Object.assign({
+    prefixCls: `${prefixCls}-button`,
+    size: size
+  }, otherProps))));
+};
+/* harmony default export */ var Button = (SkeletonButton);
+;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Image.js
+"use client";
+
+
+
+
+
+const path = 'M365.714286 329.142857q0 45.714286-32.036571 77.677714t-77.677714 32.036571-77.677714-32.036571-32.036571-77.677714 32.036571-77.677714 77.677714-32.036571 77.677714 32.036571 32.036571 77.677714zM950.857143 548.571429l0 256-804.571429 0 0-109.714286 182.857143-182.857143 91.428571 91.428571 292.571429-292.571429zM1005.714286 146.285714l-914.285714 0q-7.460571 0-12.873143 5.412571t-5.412571 12.873143l0 694.857143q0 7.460571 5.412571 12.873143t12.873143 5.412571l914.285714 0q7.460571 0 12.873143-5.412571t5.412571-12.873143l0-694.857143q0-7.460571-5.412571-12.873143t-12.873143-5.412571zM1097.142857 164.571429l0 694.857143q0 37.741714-26.843429 64.585143t-64.585143 26.843429l-914.285714 0q-37.741714 0-64.585143-26.843429t-26.843429-64.585143l0-694.857143q0-37.741714 26.843429-64.585143t64.585143-26.843429l914.285714 0q37.741714 0 64.585143 26.843429t26.843429 64.585143z';
+const SkeletonImage = props => {
+  const {
+    prefixCls: customizePrefixCls,
+    className,
+    rootClassName,
+    style,
+    active
+  } = props;
+  const {
+    getPrefixCls
+  } = react.useContext(context/* ConfigContext */.E_);
+  const prefixCls = getPrefixCls('skeleton', customizePrefixCls);
+  const [wrapCSSVar, hashId, cssVarCls] = skeleton_style(prefixCls);
+  const cls = classnames_default()(prefixCls, `${prefixCls}-element`, {
+    [`${prefixCls}-active`]: active
+  }, className, rootClassName, hashId, cssVarCls);
+  return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
+    className: cls
+  }, /*#__PURE__*/react.createElement("div", {
+    className: classnames_default()(`${prefixCls}-image`, className),
+    style: style
+  }, /*#__PURE__*/react.createElement("svg", {
+    viewBox: "0 0 1098 1024",
+    xmlns: "http://www.w3.org/2000/svg",
+    className: `${prefixCls}-image-svg`
+  }, /*#__PURE__*/react.createElement("title", null, "Image placeholder"), /*#__PURE__*/react.createElement("path", {
+    d: path,
+    className: `${prefixCls}-image-path`
+  })))));
+};
+/* harmony default export */ var Image = (SkeletonImage);
+;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Input.js
+"use client";
+
+
+
+
+
+
+
+const SkeletonInput = props => {
+  const {
+    prefixCls: customizePrefixCls,
+    className,
+    rootClassName,
+    active,
+    block,
+    size = 'default'
+  } = props;
+  const {
+    getPrefixCls
+  } = react.useContext(context/* ConfigContext */.E_);
+  const prefixCls = getPrefixCls('skeleton', customizePrefixCls);
+  const [wrapCSSVar, hashId, cssVarCls] = skeleton_style(prefixCls);
+  const otherProps = (0,omit/* default */.Z)(props, ['prefixCls']);
+  const cls = classnames_default()(prefixCls, `${prefixCls}-element`, {
+    [`${prefixCls}-active`]: active,
+    [`${prefixCls}-block`]: block
+  }, className, rootClassName, hashId, cssVarCls);
+  return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
+    className: cls
+  }, /*#__PURE__*/react.createElement(skeleton_Element, Object.assign({
+    prefixCls: `${prefixCls}-input`,
+    size: size
+  }, otherProps))));
+};
+/* harmony default export */ var Input = (SkeletonInput);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
+var esm_extends = __webpack_require__(87462);
+;// CONCATENATED MODULE: ./node_modules/@ant-design/icons-svg/es/asn/DotChartOutlined.js
+// This icon file is generated automatically.
+var DotChartOutlined = { "icon": { "tag": "svg", "attrs": { "viewBox": "64 64 896 896", "focusable": "false" }, "children": [{ "tag": "path", "attrs": { "d": "M888 792H200V168c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v688c0 4.4 3.6 8 8 8h752c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM288 604a64 64 0 10128 0 64 64 0 10-128 0zm118-224a48 48 0 1096 0 48 48 0 10-96 0zm158 228a96 96 0 10192 0 96 96 0 10-192 0zm148-314a56 56 0 10112 0 56 56 0 10-112 0z" } }] }, "name": "dot-chart", "theme": "outlined" };
+/* harmony default export */ var asn_DotChartOutlined = (DotChartOutlined);
+
+// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/components/AntdIcon.js + 3 modules
+var AntdIcon = __webpack_require__(42135);
+;// CONCATENATED MODULE: ./node_modules/@ant-design/icons/es/icons/DotChartOutlined.js
+
+// GENERATE BY ./scripts/generate.ts
+// DON NOT EDIT IT MANUALLY
+
+
+
+
+var DotChartOutlined_DotChartOutlined = function DotChartOutlined(props, ref) {
+  return /*#__PURE__*/react.createElement(AntdIcon/* default */.Z, (0,esm_extends/* default */.Z)({}, props, {
+    ref: ref,
+    icon: asn_DotChartOutlined
+  }));
+};
+
+/**![dot-chart](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIGZpbGw9IiNjYWNhY2EiIHZpZXdCb3g9IjY0IDY0IDg5NiA4OTYiIGZvY3VzYWJsZT0iZmFsc2UiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTg4OCA3OTJIMjAwVjE2OGMwLTQuNC0zLjYtOC04LThoLTU2Yy00LjQgMC04IDMuNi04IDh2Njg4YzAgNC40IDMuNiA4IDggOGg3NTJjNC40IDAgOC0zLjYgOC04di01NmMwLTQuNC0zLjYtOC04LTh6TTI4OCA2MDRhNjQgNjQgMCAxMDEyOCAwIDY0IDY0IDAgMTAtMTI4IDB6bTExOC0yMjRhNDggNDggMCAxMDk2IDAgNDggNDggMCAxMC05NiAwem0xNTggMjI4YTk2IDk2IDAgMTAxOTIgMCA5NiA5NiAwIDEwLTE5MiAwem0xNDgtMzE0YTU2IDU2IDAgMTAxMTIgMCA1NiA1NiAwIDEwLTExMiAweiIgLz48L3N2Zz4=) */
+var RefIcon = /*#__PURE__*/react.forwardRef(DotChartOutlined_DotChartOutlined);
+if (false) {}
+/* harmony default export */ var icons_DotChartOutlined = (RefIcon);
+;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Node.js
+"use client";
+
+
+
+
+
+
+const SkeletonNode = props => {
+  const {
+    prefixCls: customizePrefixCls,
+    className,
+    rootClassName,
+    style,
+    active,
+    children
+  } = props;
+  const {
+    getPrefixCls
+  } = react.useContext(context/* ConfigContext */.E_);
+  const prefixCls = getPrefixCls('skeleton', customizePrefixCls);
+  const [wrapCSSVar, hashId, cssVarCls] = skeleton_style(prefixCls);
+  const cls = classnames_default()(prefixCls, `${prefixCls}-element`, {
+    [`${prefixCls}-active`]: active
+  }, hashId, className, rootClassName, cssVarCls);
+  const content = children !== null && children !== void 0 ? children : /*#__PURE__*/react.createElement(icons_DotChartOutlined, null);
+  return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
+    className: cls
+  }, /*#__PURE__*/react.createElement("div", {
+    className: classnames_default()(`${prefixCls}-image`, className),
+    style: style
+  }, content)));
+};
+/* harmony default export */ var Node = (SkeletonNode);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js + 2 modules
+var toConsumableArray = __webpack_require__(74902);
+;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Paragraph.js
+"use client";
+
+
+
+
+const getWidth = (index, props) => {
+  const {
+    width,
+    rows = 2
+  } = props;
+  if (Array.isArray(width)) {
+    return width[index];
+  }
+  // last paragraph
+  if (rows - 1 === index) {
+    return width;
+  }
+  return undefined;
+};
+const Paragraph = props => {
+  const {
+    prefixCls,
+    className,
+    style,
+    rows
+  } = props;
+  const rowList = (0,toConsumableArray/* default */.Z)(Array(rows)).map((_, index) => (
+  /*#__PURE__*/
+  // eslint-disable-next-line react/no-array-index-key
+  react.createElement("li", {
+    key: index,
+    style: {
+      width: getWidth(index, props)
+    }
+  })));
+  return /*#__PURE__*/react.createElement("ul", {
+    className: classnames_default()(prefixCls, className),
+    style: style
+  }, rowList);
+};
+/* harmony default export */ var skeleton_Paragraph = (Paragraph);
+;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Title.js
+"use client";
+
+/* eslint-disable jsx-a11y/heading-has-content */
+
+
+const Title = _ref => {
+  let {
+    prefixCls,
+    className,
+    width,
+    style
+  } = _ref;
+  return (
+    /*#__PURE__*/
+    // biome-ignore lint/a11y/useHeadingContent: HOC here
+    react.createElement("h3", {
+      className: classnames_default()(prefixCls, className),
+      style: Object.assign({
+        width
+      }, style)
+    })
+  );
+};
+/* harmony default export */ var skeleton_Title = (Title);
+;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Skeleton.js
+"use client";
+
+
+
+
+
+
+
+
+
+
+
+
+
+function getComponentProps(prop) {
+  if (prop && typeof prop === 'object') {
+    return prop;
+  }
+  return {};
+}
+function getAvatarBasicProps(hasTitle, hasParagraph) {
+  if (hasTitle && !hasParagraph) {
+    // Square avatar
+    return {
+      size: 'large',
+      shape: 'square'
+    };
+  }
+  return {
+    size: 'large',
+    shape: 'circle'
+  };
+}
+function getTitleBasicProps(hasAvatar, hasParagraph) {
+  if (!hasAvatar && hasParagraph) {
+    return {
+      width: '38%'
+    };
+  }
+  if (hasAvatar && hasParagraph) {
+    return {
+      width: '50%'
+    };
+  }
+  return {};
+}
+function getParagraphBasicProps(hasAvatar, hasTitle) {
+  const basicProps = {};
+  // Width
+  if (!hasAvatar || !hasTitle) {
+    basicProps.width = '61%';
+  }
+  // Rows
+  if (!hasAvatar && hasTitle) {
+    basicProps.rows = 3;
+  } else {
+    basicProps.rows = 2;
+  }
+  return basicProps;
+}
+const Skeleton = props => {
+  const {
+    prefixCls: customizePrefixCls,
+    loading,
+    className,
+    rootClassName,
+    style,
+    children,
+    avatar = false,
+    title = true,
+    paragraph = true,
+    active,
+    round
+  } = props;
+  const {
+    getPrefixCls,
+    direction,
+    skeleton
+  } = react.useContext(context/* ConfigContext */.E_);
+  const prefixCls = getPrefixCls('skeleton', customizePrefixCls);
+  const [wrapCSSVar, hashId, cssVarCls] = skeleton_style(prefixCls);
+  if (loading || !('loading' in props)) {
+    const hasAvatar = !!avatar;
+    const hasTitle = !!title;
+    const hasParagraph = !!paragraph;
+    // Avatar
+    let avatarNode;
+    if (hasAvatar) {
+      const avatarProps = Object.assign(Object.assign({
+        prefixCls: `${prefixCls}-avatar`
+      }, getAvatarBasicProps(hasTitle, hasParagraph)), getComponentProps(avatar));
+      // We direct use SkeletonElement as avatar in skeleton internal.
+      avatarNode = /*#__PURE__*/react.createElement("div", {
+        className: `${prefixCls}-header`
+      }, /*#__PURE__*/react.createElement(skeleton_Element, Object.assign({}, avatarProps)));
+    }
+    let contentNode;
+    if (hasTitle || hasParagraph) {
+      // Title
+      let $title;
+      if (hasTitle) {
+        const titleProps = Object.assign(Object.assign({
+          prefixCls: `${prefixCls}-title`
+        }, getTitleBasicProps(hasAvatar, hasParagraph)), getComponentProps(title));
+        $title = /*#__PURE__*/react.createElement(skeleton_Title, Object.assign({}, titleProps));
+      }
+      // Paragraph
+      let paragraphNode;
+      if (hasParagraph) {
+        const paragraphProps = Object.assign(Object.assign({
+          prefixCls: `${prefixCls}-paragraph`
+        }, getParagraphBasicProps(hasAvatar, hasTitle)), getComponentProps(paragraph));
+        paragraphNode = /*#__PURE__*/react.createElement(skeleton_Paragraph, Object.assign({}, paragraphProps));
+      }
+      contentNode = /*#__PURE__*/react.createElement("div", {
+        className: `${prefixCls}-content`
+      }, $title, paragraphNode);
+    }
+    const cls = classnames_default()(prefixCls, {
+      [`${prefixCls}-with-avatar`]: hasAvatar,
+      [`${prefixCls}-active`]: active,
+      [`${prefixCls}-rtl`]: direction === 'rtl',
+      [`${prefixCls}-round`]: round
+    }, skeleton === null || skeleton === void 0 ? void 0 : skeleton.className, className, rootClassName, hashId, cssVarCls);
+    return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
+      className: cls,
+      style: Object.assign(Object.assign({}, skeleton === null || skeleton === void 0 ? void 0 : skeleton.style), style)
+    }, avatarNode, contentNode));
+  }
+  return children !== null && children !== void 0 ? children : null;
+};
+Skeleton.Button = Button;
+Skeleton.Avatar = Avatar;
+Skeleton.Input = Input;
+Skeleton.Image = Image;
+Skeleton.Node = Node;
+if (false) {}
+/* harmony default export */ var skeleton_Skeleton = (Skeleton);
+;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/index.js
+"use client";
+
+
+/* harmony default export */ var skeleton = (skeleton_Skeleton);
+
+/***/ }),
+
 /***/ 4173:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -13511,7 +14302,7 @@ if (false) {}
 /* harmony export */   ri: function() { return /* binding */ useCompactItemContext; }
 /* harmony export */ });
 /* unused harmony export SpaceCompactItemContext */
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62435);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(93967);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var rc_util_es_Children_toArray__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(50344);
@@ -13602,7 +14393,7 @@ const Compact = props => {
   const compactItemContext = react__WEBPACK_IMPORTED_MODULE_0__.useContext(SpaceCompactItemContext);
   const childNodes = (0,rc_util_es_Children_toArray__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(children);
   const nodes = react__WEBPACK_IMPORTED_MODULE_0__.useMemo(() => childNodes.map((child, i) => {
-    const key = child && child.key || `${prefixCls}-item-${i}`;
+    const key = (child === null || child === void 0 ? void 0 : child.key) || `${prefixCls}-item-${i}`;
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(CompactItem, {
       key: key,
       compactSize: mergedSize,
@@ -13634,8 +14425,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // UNUSED EXPORTS: SpaceContext
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
@@ -13704,14 +14495,14 @@ var __rest = undefined && undefined.__rest || function (s, e) {
 
 
 const InternalSpace = /*#__PURE__*/react.forwardRef((props, ref) => {
-  var _a, _b;
+  var _a, _b, _c;
   const {
     getPrefixCls,
     space,
     direction: directionConfig
   } = react.useContext(context/* ConfigContext */.E_);
   const {
-      size = (space === null || space === void 0 ? void 0 : space.size) || 'small',
+      size = (_a = space === null || space === void 0 ? void 0 : space.size) !== null && _a !== void 0 ? _a : 'small',
       align,
       className,
       rootClassName,
@@ -13742,7 +14533,7 @@ const InternalSpace = /*#__PURE__*/react.forwardRef((props, ref) => {
     [`${prefixCls}-gap-row-${verticalSize}`]: isPresetVerticalSize,
     [`${prefixCls}-gap-col-${horizontalSize}`]: isPresetHorizontalSize
   }, className, rootClassName, cssVarCls);
-  const itemClassName = classnames_default()(`${prefixCls}-item`, (_a = customClassNames === null || customClassNames === void 0 ? void 0 : customClassNames.item) !== null && _a !== void 0 ? _a : (_b = space === null || space === void 0 ? void 0 : space.classNames) === null || _b === void 0 ? void 0 : _b.item);
+  const itemClassName = classnames_default()(`${prefixCls}-item`, (_b = customClassNames === null || customClassNames === void 0 ? void 0 : customClassNames.item) !== null && _b !== void 0 ? _b : (_c = space === null || space === void 0 ? void 0 : space.classNames) === null || _c === void 0 ? void 0 : _c.item);
   // Calculate latest one
   let latestIndex = 0;
   const nodes = childNodes.map((child, i) => {
@@ -13750,7 +14541,7 @@ const InternalSpace = /*#__PURE__*/react.forwardRef((props, ref) => {
     if (child !== null && child !== undefined) {
       latestIndex = i;
     }
-    const key = child && child.key || `${itemClassName}-${i}`;
+    const key = (child === null || child === void 0 ? void 0 : child.key) || `${itemClassName}-${i}`;
     return /*#__PURE__*/react.createElement(space_Item, {
       className: itemClassName,
       key: key,
@@ -13802,8 +14593,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // UNUSED EXPORTS: prepareComponentToken
 
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
 var statistic = __webpack_require__(45503);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/space/style/compact.js
@@ -14040,7 +14831,7 @@ const initMotion = function (motionCls, inKeyframes, outKeyframes, duration) {
 /* harmony export */   oN: function() { return /* binding */ initSlideMotion; }
 /* harmony export */ });
 /* unused harmony exports slideLeftIn, slideLeftOut, slideRightIn, slideRightOut */
-/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(54548);
+/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(861);
 /* harmony import */ var _motion__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(93590);
 
 
@@ -14176,7 +14967,7 @@ const initSlideMotion = (token, motionName) => {
       transformOrigin: '0% 0%',
       opacity: 0,
       animationTimingFunction: token.motionEaseOutQuint,
-      [`&-prepare`]: {
+      '&-prepare': {
         transform: 'scale(1)'
       }
     },
@@ -14195,7 +14986,7 @@ const initSlideMotion = (token, motionName) => {
 /* harmony export */   _y: function() { return /* binding */ initZoomMotion; }
 /* harmony export */ });
 /* unused harmony exports zoomIn, zoomOut, zoomBigIn, zoomBigOut, zoomUpIn, zoomUpOut, zoomLeftIn, zoomLeftOut, zoomRightIn, zoomRightOut, zoomDownIn, zoomDownOut */
-/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(54548);
+/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(861);
 /* harmony import */ var _motion__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(93590);
 
 
@@ -14393,8 +15184,8 @@ __webpack_require__.d(__webpack_exports__, {
   Z: function() { return /* binding */ theme; }
 });
 
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 35 modules
-var es = __webpack_require__(54548);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
+var es = __webpack_require__(861);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/themes/default/index.js + 5 modules
 var themes_default = __webpack_require__(67164);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/themes/seed.js
@@ -14458,8 +15249,8 @@ const derivative = (token, mapToken) => {
   })));
 };
 /* harmony default export */ var compact = (derivative);
-// EXTERNAL MODULE: ./node_modules/@ant-design/colors/es/index.js + 1 modules
-var colors_es = __webpack_require__(16397);
+// EXTERNAL MODULE: ./node_modules/@ant-design/colors/es/index.js + 2 modules
+var colors_es = __webpack_require__(84898);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/themes/shared/genColorMapToken.js
 var genColorMapToken = __webpack_require__(57);
 // EXTERNAL MODULE: ./node_modules/@ctrl/tinycolor/dist/module/index.js
@@ -14534,6 +15325,7 @@ const dark_derivative = (token, mapToken) => {
       return prev;
     }, {});
   }).reduce((prev, cur) => {
+    // biome-ignore lint/style/noParameterAssign: it is a reduce
     prev = Object.assign(Object.assign({}, prev), cur);
     return prev;
   }, {});
@@ -14603,8 +15395,8 @@ var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/ref.js
 var es_ref = __webpack_require__(42550);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/KeyCode.js
 var KeyCode = __webpack_require__(15105);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/raf.js
@@ -14886,9 +15678,9 @@ function Dropdown(props, ref) {
 __webpack_require__.d(__webpack_exports__, {
   iz: function() { return /* reexport */ Divider; },
   ck: function() { return /* reexport */ es_MenuItem; },
-  BW: function() { return /* reexport */ MenuItemGroup; },
+  BW: function() { return /* reexport */ es_MenuItemGroup; },
   sN: function() { return /* reexport */ es_MenuItem; },
-  Wd: function() { return /* reexport */ SubMenu; },
+  Wd: function() { return /* reexport */ es_SubMenu; },
   ZP: function() { return /* binding */ rc_menu_es; },
   Xl: function() { return /* reexport */ useFullPath; }
 });
@@ -14910,8 +15702,8 @@ var objectWithoutProperties = __webpack_require__(91);
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/rc-resize-observer/es/index.js + 5 modules
 var es = __webpack_require__(9220);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/hooks/useLayoutEffect.js
@@ -14992,8 +15784,8 @@ Item.displayName = 'Item';
 /* harmony default export */ var es_Item = (Item);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/hooks/useEvent.js
 var useEvent = __webpack_require__(66680);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react-dom/index.js
-var react_dom = __webpack_require__(61254);
+// EXTERNAL MODULE: ./node_modules/react-dom/index.js
+var react_dom = __webpack_require__(73935);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/raf.js
 var raf = __webpack_require__(75164);
 ;// CONCATENATED MODULE: ./node_modules/rc-overflow/es/hooks/channelUpdate.js
@@ -15581,7 +16373,7 @@ var LEFT = KeyCode/* default */.Z.LEFT,
   END = KeyCode/* default */.Z.END;
 var ArrowKeys = [UP, DOWN, LEFT, RIGHT];
 function getOffset(mode, isRootLevel, isRtl, which) {
-  var _offsets;
+  var _inline, _horizontal, _vertical, _offsets;
   var prev = 'prev';
   var next = 'next';
   var children = 'children';
@@ -15593,9 +16385,9 @@ function getOffset(mode, isRootLevel, isRtl, which) {
       inlineTrigger: true
     };
   }
-  var inline = (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, UP, prev), DOWN, next);
-  var horizontal = (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, LEFT, isRtl ? next : prev), RIGHT, isRtl ? prev : next), DOWN, children), ENTER, children);
-  var vertical = (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, UP, prev), DOWN, next), ENTER, children), ESC, parent), LEFT, isRtl ? children : parent), RIGHT, isRtl ? parent : children);
+  var inline = (_inline = {}, (0,defineProperty/* default */.Z)(_inline, UP, prev), (0,defineProperty/* default */.Z)(_inline, DOWN, next), _inline);
+  var horizontal = (_horizontal = {}, (0,defineProperty/* default */.Z)(_horizontal, LEFT, isRtl ? next : prev), (0,defineProperty/* default */.Z)(_horizontal, RIGHT, isRtl ? prev : next), (0,defineProperty/* default */.Z)(_horizontal, DOWN, children), (0,defineProperty/* default */.Z)(_horizontal, ENTER, children), _horizontal);
+  var vertical = (_vertical = {}, (0,defineProperty/* default */.Z)(_vertical, UP, prev), (0,defineProperty/* default */.Z)(_vertical, DOWN, next), (0,defineProperty/* default */.Z)(_vertical, ENTER, children), (0,defineProperty/* default */.Z)(_vertical, ESC, parent), (0,defineProperty/* default */.Z)(_vertical, LEFT, isRtl ? children : parent), (0,defineProperty/* default */.Z)(_vertical, RIGHT, isRtl ? parent : children), _vertical);
   var offsets = {
     inline: inline,
     horizontal: horizontal,
@@ -15831,7 +16623,7 @@ function useAccessibility(mode, activeKey, isRtl, id, containerRef, getKeys, get
     }
 
     // Pass origin key down event
-    originOnKeyDown === null || originOnKeyDown === void 0 || originOnKeyDown(e);
+    originOnKeyDown === null || originOnKeyDown === void 0 ? void 0 : originOnKeyDown(e);
   };
 }
 ;// CONCATENATED MODULE: ./node_modules/rc-menu/es/utils/timeUtil.js
@@ -15904,7 +16696,9 @@ function useKeyRecords() {
     return keys;
   }, [overflowKeys]);
   var isSubPathKey = (0,react.useCallback)(function (pathKeys, eventKey) {
-    return pathKeys.some(function (pathKey) {
+    return pathKeys.filter(function (item) {
+      return item !== undefined;
+    }).some(function (pathKey) {
       var pathKeyList = getKeyPath(pathKey, true);
       return pathKeyList.includes(eventKey);
     });
@@ -15992,8 +16786,8 @@ var classCallCheck = __webpack_require__(15671);
 var createClass = __webpack_require__(43144);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
 var inherits = __webpack_require__(60136);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js
-var createSuper = __webpack_require__(29388);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js + 1 modules
+var createSuper = __webpack_require__(18486);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/omit.js
 var omit = __webpack_require__(98423);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/ref.js
@@ -16013,14 +16807,14 @@ function useActive(eventKey, disabled, onMouseEnter, onMouseLeave) {
   // Skip when disabled
   if (!disabled) {
     ret.onMouseEnter = function (domEvent) {
-      onMouseEnter === null || onMouseEnter === void 0 || onMouseEnter({
+      onMouseEnter === null || onMouseEnter === void 0 ? void 0 : onMouseEnter({
         key: eventKey,
         domEvent: domEvent
       });
       onActive(eventKey);
     };
     ret.onMouseLeave = function (domEvent) {
-      onMouseLeave === null || onMouseLeave === void 0 || onMouseLeave({
+      onMouseLeave === null || onMouseLeave === void 0 ? void 0 : onMouseLeave({
         key: eventKey,
         domEvent: domEvent
       });
@@ -16152,6 +16946,7 @@ var LegacyMenuItem = /*#__PURE__*/function (_React$Component) {
  * Real Menu Item component
  */
 var InternalMenuItem = /*#__PURE__*/react.forwardRef(function (props, ref) {
+  var _classNames;
   var style = props.style,
     className = props.className,
     eventKey = props.eventKey,
@@ -16218,16 +17013,16 @@ var InternalMenuItem = /*#__PURE__*/react.forwardRef(function (props, ref) {
       return;
     }
     var info = getEventInfo(e);
-    onClick === null || onClick === void 0 || onClick(warnItemProp(info));
+    onClick === null || onClick === void 0 ? void 0 : onClick(warnItemProp(info));
     onItemClick(info);
   };
   var onInternalKeyDown = function onInternalKeyDown(e) {
-    onKeyDown === null || onKeyDown === void 0 || onKeyDown(e);
+    onKeyDown === null || onKeyDown === void 0 ? void 0 : onKeyDown(e);
     if (e.which === KeyCode/* default */.Z.ENTER) {
       var info = getEventInfo(e);
 
       // Legacy. Key will also trigger click event
-      onClick === null || onClick === void 0 || onClick(warnItemProp(info));
+      onClick === null || onClick === void 0 ? void 0 : onClick(warnItemProp(info));
       onItemClick(info);
     }
   };
@@ -16238,7 +17033,7 @@ var InternalMenuItem = /*#__PURE__*/react.forwardRef(function (props, ref) {
    */
   var onInternalFocus = function onInternalFocus(e) {
     onActive(eventKey);
-    onFocus === null || onFocus === void 0 || onFocus(e);
+    onFocus === null || onFocus === void 0 ? void 0 : onFocus(e);
   };
 
   // ============================ Render ============================
@@ -16256,7 +17051,7 @@ var InternalMenuItem = /*#__PURE__*/react.forwardRef(function (props, ref) {
     component: "li",
     "aria-disabled": disabled,
     style: (0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({}, directionStyle), style),
-    className: classnames_default()(itemCls, (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, "".concat(itemCls, "-active"), active), "".concat(itemCls, "-selected"), selected), "".concat(itemCls, "-disabled"), mergedDisabled), className),
+    className: classnames_default()(itemCls, (_classNames = {}, (0,defineProperty/* default */.Z)(_classNames, "".concat(itemCls, "-active"), active), (0,defineProperty/* default */.Z)(_classNames, "".concat(itemCls, "-selected"), selected), (0,defineProperty/* default */.Z)(_classNames, "".concat(itemCls, "-disabled"), mergedDisabled), _classNames), className),
     onClick: onInternalClick,
     onKeyDown: onInternalKeyDown,
     onFocus: onInternalFocus
@@ -16529,8 +17324,8 @@ function PopupTrigger(_ref) {
     fresh: true
   }, children);
 }
-// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 12 modules
-var rc_motion_es = __webpack_require__(82225);
+// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 13 modules
+var rc_motion_es = __webpack_require__(29372);
 ;// CONCATENATED MODULE: ./node_modules/rc-menu/es/SubMenu/InlineSubMenuList.js
 
 
@@ -16636,7 +17431,8 @@ var SubMenu_excluded = ["style", "className", "title", "eventKey", "warnKey", "d
 
 
 
-var InternalSubMenu = function InternalSubMenu(props) {
+var InternalSubMenu = /*#__PURE__*/react.forwardRef(function (props, ref) {
+  var _classNames;
   var style = props.style,
     className = props.className,
     title = props.title,
@@ -16712,14 +17508,14 @@ var InternalSubMenu = function InternalSubMenu(props) {
   };
   var onInternalMouseEnter = function onInternalMouseEnter(domEvent) {
     triggerChildrenActive(true);
-    onMouseEnter === null || onMouseEnter === void 0 || onMouseEnter({
+    onMouseEnter === null || onMouseEnter === void 0 ? void 0 : onMouseEnter({
       key: eventKey,
       domEvent: domEvent
     });
   };
   var onInternalMouseLeave = function onInternalMouseLeave(domEvent) {
     triggerChildrenActive(false);
-    onMouseLeave === null || onMouseLeave === void 0 || onMouseLeave({
+    onMouseLeave === null || onMouseLeave === void 0 ? void 0 : onMouseLeave({
       key: eventKey,
       domEvent: domEvent
     });
@@ -16744,7 +17540,7 @@ var InternalSubMenu = function InternalSubMenu(props) {
     if (mergedDisabled) {
       return;
     }
-    onTitleClick === null || onTitleClick === void 0 || onTitleClick({
+    onTitleClick === null || onTitleClick === void 0 ? void 0 : onTitleClick({
       key: eventKey,
       domEvent: e
     });
@@ -16757,7 +17553,7 @@ var InternalSubMenu = function InternalSubMenu(props) {
 
   // >>>> Context for children click
   var onMergedItemClick = useMemoCallback(function (info) {
-    onClick === null || onClick === void 0 || onClick(warnItemProp(info));
+    onClick === null || onClick === void 0 ? void 0 : onClick(warnItemProp(info));
     onItemClick(info);
   });
 
@@ -16839,11 +17635,12 @@ var InternalSubMenu = function InternalSubMenu(props) {
 
   // >>>>> List node
   var listNode = /*#__PURE__*/react.createElement(rc_overflow_es.Item, (0,esm_extends/* default */.Z)({
+    ref: ref,
     role: "none"
   }, restProps, {
     component: "li",
     style: style,
-    className: classnames_default()(subMenuPrefixCls, "".concat(subMenuPrefixCls, "-").concat(mode), className, (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, "".concat(subMenuPrefixCls, "-open"), open), "".concat(subMenuPrefixCls, "-active"), mergedActive), "".concat(subMenuPrefixCls, "-selected"), childrenSelected), "".concat(subMenuPrefixCls, "-disabled"), mergedDisabled)),
+    className: classnames_default()(subMenuPrefixCls, "".concat(subMenuPrefixCls, "-").concat(mode), className, (_classNames = {}, (0,defineProperty/* default */.Z)(_classNames, "".concat(subMenuPrefixCls, "-open"), open), (0,defineProperty/* default */.Z)(_classNames, "".concat(subMenuPrefixCls, "-active"), mergedActive), (0,defineProperty/* default */.Z)(_classNames, "".concat(subMenuPrefixCls, "-selected"), childrenSelected), (0,defineProperty/* default */.Z)(_classNames, "".concat(subMenuPrefixCls, "-disabled"), mergedDisabled), _classNames)),
     onMouseEnter: onInternalMouseEnter,
     onMouseLeave: onInternalMouseLeave
   }), titleNode, !overflowDisabled && /*#__PURE__*/react.createElement(InlineSubMenuList, {
@@ -16867,8 +17664,8 @@ var InternalSubMenu = function InternalSubMenu(props) {
     itemIcon: mergedItemIcon,
     expandIcon: mergedExpandIcon
   }, listNode);
-};
-function SubMenu(props) {
+});
+var SubMenu = /*#__PURE__*/react.forwardRef(function (props, ref) {
   var eventKey = props.eventKey,
     children = props.children;
   var connectedKeyPath = useFullPath(eventKey);
@@ -16892,61 +17689,18 @@ function SubMenu(props) {
   if (measure) {
     renderNode = childList;
   } else {
-    renderNode = /*#__PURE__*/react.createElement(InternalSubMenu, props, childList);
+    renderNode = /*#__PURE__*/react.createElement(InternalSubMenu, (0,esm_extends/* default */.Z)({
+      ref: ref
+    }, props), childList);
   }
   return /*#__PURE__*/react.createElement(PathTrackerContext.Provider, {
     value: connectedKeyPath
   }, renderNode);
-}
+});
+if (false) {}
+/* harmony default export */ var es_SubMenu = (SubMenu);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
 var esm_typeof = __webpack_require__(71002);
-;// CONCATENATED MODULE: ./node_modules/rc-menu/es/MenuItemGroup.js
-
-
-var MenuItemGroup_excluded = ["className", "title", "eventKey", "children"],
-  MenuItemGroup_excluded2 = ["children"];
-
-
-
-
-
-
-var InternalMenuItemGroup = function InternalMenuItemGroup(_ref) {
-  var className = _ref.className,
-    title = _ref.title,
-    eventKey = _ref.eventKey,
-    children = _ref.children,
-    restProps = (0,objectWithoutProperties/* default */.Z)(_ref, MenuItemGroup_excluded);
-  var _React$useContext = react.useContext(MenuContext),
-    prefixCls = _React$useContext.prefixCls;
-  var groupPrefixCls = "".concat(prefixCls, "-item-group");
-  return /*#__PURE__*/react.createElement("li", (0,esm_extends/* default */.Z)({
-    role: "presentation"
-  }, restProps, {
-    onClick: function onClick(e) {
-      return e.stopPropagation();
-    },
-    className: classnames_default()(groupPrefixCls, className)
-  }), /*#__PURE__*/react.createElement("div", {
-    role: "presentation",
-    className: "".concat(groupPrefixCls, "-title"),
-    title: typeof title === 'string' ? title : undefined
-  }, title), /*#__PURE__*/react.createElement("ul", {
-    role: "group",
-    className: "".concat(groupPrefixCls, "-list")
-  }, children));
-};
-function MenuItemGroup(_ref2) {
-  var children = _ref2.children,
-    props = (0,objectWithoutProperties/* default */.Z)(_ref2, MenuItemGroup_excluded2);
-  var connectedKeyPath = useFullPath(props.eventKey);
-  var childList = parseChildren(children, connectedKeyPath);
-  var measure = useMeasure();
-  if (measure) {
-    return childList;
-  }
-  return /*#__PURE__*/react.createElement(InternalMenuItemGroup, (0,omit/* default */.Z)(props, ['warnKey']), childList);
-}
 ;// CONCATENATED MODULE: ./node_modules/rc-menu/es/Divider.js
 
 
@@ -16967,7 +17721,59 @@ function Divider(_ref) {
     style: style
   });
 }
+;// CONCATENATED MODULE: ./node_modules/rc-menu/es/MenuItemGroup.js
+
+
+var MenuItemGroup_excluded = ["className", "title", "eventKey", "children"];
+
+
+
+
+
+
+var InternalMenuItemGroup = /*#__PURE__*/react.forwardRef(function (props, ref) {
+  var className = props.className,
+    title = props.title,
+    eventKey = props.eventKey,
+    children = props.children,
+    restProps = (0,objectWithoutProperties/* default */.Z)(props, MenuItemGroup_excluded);
+  var _React$useContext = react.useContext(MenuContext),
+    prefixCls = _React$useContext.prefixCls;
+  var groupPrefixCls = "".concat(prefixCls, "-item-group");
+  return /*#__PURE__*/react.createElement("li", (0,esm_extends/* default */.Z)({
+    ref: ref,
+    role: "presentation"
+  }, restProps, {
+    onClick: function onClick(e) {
+      return e.stopPropagation();
+    },
+    className: classnames_default()(groupPrefixCls, className)
+  }), /*#__PURE__*/react.createElement("div", {
+    role: "presentation",
+    className: "".concat(groupPrefixCls, "-title"),
+    title: typeof title === 'string' ? title : undefined
+  }, title), /*#__PURE__*/react.createElement("ul", {
+    role: "group",
+    className: "".concat(groupPrefixCls, "-list")
+  }, children));
+});
+var MenuItemGroup = /*#__PURE__*/react.forwardRef(function (props, ref) {
+  var eventKey = props.eventKey,
+    children = props.children;
+  var connectedKeyPath = useFullPath(eventKey);
+  var childList = parseChildren(children, connectedKeyPath);
+  var measure = useMeasure();
+  if (measure) {
+    return childList;
+  }
+  return /*#__PURE__*/react.createElement(InternalMenuItemGroup, (0,esm_extends/* default */.Z)({
+    ref: ref
+  }, (0,omit/* default */.Z)(props, ['warnKey'])), childList);
+});
+if (false) {}
+/* harmony default export */ var es_MenuItemGroup = (MenuItemGroup);
 ;// CONCATENATED MODULE: ./node_modules/rc-menu/es/utils/nodeUtil.js
+
 
 
 
@@ -16978,7 +17784,11 @@ var nodeUtil_excluded = ["label", "children", "key", "type"];
 
 
 
-function convertItemsToNodes(list) {
+function convertItemsToNodes(list, components) {
+  var MergedMenuItem = components.item,
+    MergedMenuItemGroup = components.group,
+    MergedSubMenu = components.submenu,
+    MergedDivider = components.divider;
   return (list || []).map(function (opt, index) {
     if (opt && (0,esm_typeof/* default */.Z)(opt) === 'object') {
       var _ref = opt,
@@ -16993,28 +17803,28 @@ function convertItemsToNodes(list) {
       if (children || type === 'group') {
         if (type === 'group') {
           // Group
-          return /*#__PURE__*/react.createElement(MenuItemGroup, (0,esm_extends/* default */.Z)({
+          return /*#__PURE__*/react.createElement(MergedMenuItemGroup, (0,esm_extends/* default */.Z)({
             key: mergedKey
           }, restProps, {
             title: label
-          }), convertItemsToNodes(children));
+          }), convertItemsToNodes(children, components));
         }
 
         // Sub Menu
-        return /*#__PURE__*/react.createElement(SubMenu, (0,esm_extends/* default */.Z)({
+        return /*#__PURE__*/react.createElement(MergedSubMenu, (0,esm_extends/* default */.Z)({
           key: mergedKey
         }, restProps, {
           title: label
-        }), convertItemsToNodes(children));
+        }), convertItemsToNodes(children, components));
       }
 
       // MenuItem & Divider
       if (type === 'divider') {
-        return /*#__PURE__*/react.createElement(Divider, (0,esm_extends/* default */.Z)({
+        return /*#__PURE__*/react.createElement(MergedDivider, (0,esm_extends/* default */.Z)({
           key: mergedKey
         }, restProps));
       }
-      return /*#__PURE__*/react.createElement(es_MenuItem, (0,esm_extends/* default */.Z)({
+      return /*#__PURE__*/react.createElement(MergedMenuItem, (0,esm_extends/* default */.Z)({
         key: mergedKey
       }, restProps), label);
     }
@@ -17023,10 +17833,16 @@ function convertItemsToNodes(list) {
     return opt;
   });
 }
-function parseItems(children, items, keyPath) {
+function parseItems(children, items, keyPath, components) {
   var childNodes = children;
+  var mergedComponents = (0,objectSpread2/* default */.Z)({
+    divider: Divider,
+    item: es_MenuItem,
+    group: es_MenuItemGroup,
+    submenu: es_SubMenu
+  }, components);
   if (items) {
-    childNodes = convertItemsToNodes(items);
+    childNodes = convertItemsToNodes(items, mergedComponents);
   }
   return parseChildren(childNodes, keyPath);
 }
@@ -17037,7 +17853,7 @@ function parseItems(children, items, keyPath) {
 
 
 
-var Menu_excluded = ["prefixCls", "rootClassName", "style", "className", "tabIndex", "items", "children", "direction", "id", "mode", "inlineCollapsed", "disabled", "disabledOverflow", "subMenuOpenDelay", "subMenuCloseDelay", "forceSubMenuRender", "defaultOpenKeys", "openKeys", "activeKey", "defaultActiveFirst", "selectable", "multiple", "defaultSelectedKeys", "selectedKeys", "onSelect", "onDeselect", "inlineIndent", "motion", "defaultMotions", "triggerSubMenuAction", "builtinPlacements", "itemIcon", "expandIcon", "overflowedIndicator", "overflowedIndicatorPopupClassName", "getPopupContainer", "onClick", "onOpenChange", "onKeyDown", "openAnimation", "openTransitionName", "_internalRenderMenuItem", "_internalRenderSubMenuItem"];
+var Menu_excluded = ["prefixCls", "rootClassName", "style", "className", "tabIndex", "items", "children", "direction", "id", "mode", "inlineCollapsed", "disabled", "disabledOverflow", "subMenuOpenDelay", "subMenuCloseDelay", "forceSubMenuRender", "defaultOpenKeys", "openKeys", "activeKey", "defaultActiveFirst", "selectable", "multiple", "defaultSelectedKeys", "selectedKeys", "onSelect", "onDeselect", "inlineIndent", "motion", "defaultMotions", "triggerSubMenuAction", "builtinPlacements", "itemIcon", "expandIcon", "overflowedIndicator", "overflowedIndicatorPopupClassName", "getPopupContainer", "onClick", "onOpenChange", "onKeyDown", "openAnimation", "openTransitionName", "_internalRenderMenuItem", "_internalRenderSubMenuItem", "_internalComponents"];
 
 
 
@@ -17075,7 +17891,7 @@ var Menu_excluded = ["prefixCls", "rootClassName", "style", "className", "tabInd
 // optimize for render
 var EMPTY_LIST = [];
 var Menu = /*#__PURE__*/react.forwardRef(function (props, ref) {
-  var _childList$;
+  var _childList$, _classNames;
   var _ref = props,
     _ref$prefixCls = _ref.prefixCls,
     prefixCls = _ref$prefixCls === void 0 ? 'rc-menu' : _ref$prefixCls,
@@ -17130,10 +17946,14 @@ var Menu = /*#__PURE__*/react.forwardRef(function (props, ref) {
     openTransitionName = _ref.openTransitionName,
     _internalRenderMenuItem = _ref._internalRenderMenuItem,
     _internalRenderSubMenuItem = _ref._internalRenderSubMenuItem,
+    _internalComponents = _ref._internalComponents,
     restProps = (0,objectWithoutProperties/* default */.Z)(_ref, Menu_excluded);
-  var childList = react.useMemo(function () {
-    return parseItems(children, items, EMPTY_LIST);
-  }, [children, items]);
+  var _React$useMemo = react.useMemo(function () {
+      return [parseItems(children, items, EMPTY_LIST, _internalComponents), parseItems(children, items, EMPTY_LIST, {})];
+    }, [children, items, _internalComponents]),
+    _React$useMemo2 = (0,slicedToArray/* default */.Z)(_React$useMemo, 2),
+    childList = _React$useMemo2[0],
+    measureChildList = _React$useMemo2[1];
   var _React$useState = react.useState(false),
     _React$useState2 = (0,slicedToArray/* default */.Z)(_React$useState, 2),
     mounted = _React$useState2[0],
@@ -17162,7 +17982,7 @@ var Menu = /*#__PURE__*/react.forwardRef(function (props, ref) {
     var forceFlush = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     function doUpdate() {
       setMergedOpenKeys(keys);
-      onOpenChange === null || onOpenChange === void 0 || onOpenChange(keys);
+      onOpenChange === null || onOpenChange === void 0 ? void 0 : onOpenChange(keys);
     }
     if (forceFlush) {
       (0,react_dom.flushSync)(doUpdate);
@@ -17179,15 +17999,15 @@ var Menu = /*#__PURE__*/react.forwardRef(function (props, ref) {
   var mountRef = react.useRef(false);
 
   // ========================= Mode =========================
-  var _React$useMemo = react.useMemo(function () {
+  var _React$useMemo3 = react.useMemo(function () {
       if ((mode === 'inline' || mode === 'vertical') && inlineCollapsed) {
         return ['vertical', inlineCollapsed];
       }
       return [mode, false];
     }, [mode, inlineCollapsed]),
-    _React$useMemo2 = (0,slicedToArray/* default */.Z)(_React$useMemo, 2),
-    mergedMode = _React$useMemo2[0],
-    mergedInlineCollapsed = _React$useMemo2[1];
+    _React$useMemo4 = (0,slicedToArray/* default */.Z)(_React$useMemo3, 2),
+    mergedMode = _React$useMemo4[0],
+    mergedInlineCollapsed = _React$useMemo4[1];
   var isInlineMode = mergedMode === 'inline';
   var _React$useState5 = react.useState(mergedMode),
     _React$useState6 = (0,slicedToArray/* default */.Z)(_React$useState5, 2),
@@ -17288,7 +18108,7 @@ var Menu = /*#__PURE__*/react.forwardRef(function (props, ref) {
         var elementToFocus = key2element.get(shouldFocusKey);
         if (shouldFocusKey && elementToFocus) {
           var _elementToFocus$focus;
-          elementToFocus === null || elementToFocus === void 0 || (_elementToFocus$focus = elementToFocus.focus) === null || _elementToFocus$focus === void 0 || _elementToFocus$focus.call(elementToFocus, options);
+          elementToFocus === null || elementToFocus === void 0 ? void 0 : (_elementToFocus$focus = elementToFocus.focus) === null || _elementToFocus$focus === void 0 ? void 0 : _elementToFocus$focus.call(elementToFocus, options);
         }
       }
     };
@@ -17338,9 +18158,9 @@ var Menu = /*#__PURE__*/react.forwardRef(function (props, ref) {
         selectedKeys: newSelectKeys
       });
       if (exist) {
-        onDeselect === null || onDeselect === void 0 || onDeselect(selectInfo);
+        onDeselect === null || onDeselect === void 0 ? void 0 : onDeselect(selectInfo);
       } else {
-        onSelect === null || onSelect === void 0 || onSelect(selectInfo);
+        onSelect === null || onSelect === void 0 ? void 0 : onSelect(selectInfo);
       }
     }
 
@@ -17355,7 +18175,7 @@ var Menu = /*#__PURE__*/react.forwardRef(function (props, ref) {
    * Click for item. SubMenu do not have selection status
    */
   var onInternalClick = useMemoCallback(function (info) {
-    onClick === null || onClick === void 0 || onClick(warnItemProp(info));
+    onClick === null || onClick === void 0 ? void 0 : onClick(warnItemProp(info));
     triggerSelection(info);
   });
   var onInternalOpenChange = useMemoCallback(function (key, open) {
@@ -17419,7 +18239,7 @@ var Menu = /*#__PURE__*/react.forwardRef(function (props, ref) {
     prefixCls: "".concat(prefixCls, "-overflow"),
     component: "ul",
     itemComponent: es_MenuItem,
-    className: classnames_default()(prefixCls, "".concat(prefixCls, "-root"), "".concat(prefixCls, "-").concat(internalMode), className, (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, "".concat(prefixCls, "-inline-collapsed"), internalInlineCollapsed), "".concat(prefixCls, "-rtl"), isRtl), rootClassName),
+    className: classnames_default()(prefixCls, "".concat(prefixCls, "-root"), "".concat(prefixCls, "-").concat(internalMode), className, (_classNames = {}, (0,defineProperty/* default */.Z)(_classNames, "".concat(prefixCls, "-inline-collapsed"), internalInlineCollapsed), (0,defineProperty/* default */.Z)(_classNames, "".concat(prefixCls, "-rtl"), isRtl), _classNames), rootClassName),
     dir: direction,
     style: style,
     role: "menu",
@@ -17432,7 +18252,7 @@ var Menu = /*#__PURE__*/react.forwardRef(function (props, ref) {
       // We use origin list since wrapped list use context to prevent open
       var len = omitItems.length;
       var originOmitItems = len ? childList.slice(-len) : null;
-      return /*#__PURE__*/react.createElement(SubMenu, {
+      return /*#__PURE__*/react.createElement(es_SubMenu, {
         eventKey: OVERFLOW_KEY,
         title: overflowedIndicator,
         disabled: allVisible,
@@ -17503,7 +18323,7 @@ var Menu = /*#__PURE__*/react.forwardRef(function (props, ref) {
     "aria-hidden": true
   }, /*#__PURE__*/react.createElement(PathRegisterContext.Provider, {
     value: registerPathContext
-  }, childList)))));
+  }, measureChildList)))));
 });
 /* harmony default export */ var es_Menu = (Menu);
 ;// CONCATENATED MODULE: ./node_modules/rc-menu/es/index.js
@@ -17516,8 +18336,8 @@ var Menu = /*#__PURE__*/react.forwardRef(function (props, ref) {
 
 var ExportMenu = es_Menu;
 ExportMenu.Item = es_MenuItem;
-ExportMenu.SubMenu = SubMenu;
-ExportMenu.ItemGroup = MenuItemGroup;
+ExportMenu.SubMenu = es_SubMenu;
+ExportMenu.ItemGroup = es_MenuItemGroup;
 ExportMenu.Divider = Divider;
 /* harmony default export */ var rc_menu_es = (ExportMenu);
 
@@ -17536,8 +18356,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
 var esm_extends = __webpack_require__(87462);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/Children/toArray.js
 var toArray = __webpack_require__(50344);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/warning.js
@@ -18558,8 +19378,8 @@ var classCallCheck = __webpack_require__(15671);
 var createClass = __webpack_require__(43144);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
 var inherits = __webpack_require__(60136);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js
-var createSuper = __webpack_require__(29388);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js + 1 modules
+var createSuper = __webpack_require__(18486);
 ;// CONCATENATED MODULE: ./node_modules/rc-resize-observer/es/SingleObserver/DomWrapper.js
 
 
@@ -18619,9 +19439,9 @@ function SingleObserver(props, ref) {
   var mergedRef = (0,es_ref/* useComposeRef */.x1)(originRef, elementRef);
   var getDom = function getDom() {
     var _elementRef$current;
-    return (0,findDOMNode/* default */.Z)(elementRef.current) || (
+    return (0,findDOMNode/* default */.ZP)(elementRef.current) || (
     // Support `nativeElement` format
-    elementRef.current && (0,esm_typeof/* default */.Z)(elementRef.current) === 'object' ? (0,findDOMNode/* default */.Z)((_elementRef$current = elementRef.current) === null || _elementRef$current === void 0 ? void 0 : _elementRef$current.nativeElement) : null) || (0,findDOMNode/* default */.Z)(wrapperRef.current);
+    elementRef.current && (0,esm_typeof/* default */.Z)(elementRef.current) === 'object' ? (0,findDOMNode/* default */.ZP)((_elementRef$current = elementRef.current) === null || _elementRef$current === void 0 ? void 0 : _elementRef$current.nativeElement) : null) || (0,findDOMNode/* default */.ZP)(wrapperRef.current);
   };
   react.useImperativeHandle(ref, function () {
     return getDom();
@@ -18733,7 +19553,7 @@ RefResizeObserver.Collection = Collection;
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Z: function() { return /* binding */ toArray; }
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62435);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
 /* harmony import */ var react_is__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11805);
 
 
@@ -18797,7 +19617,7 @@ var react__WEBPACK_IMPORTED_MODULE_0___namespace_cache;
 /* unused harmony export resetUuid */
 /* harmony import */ var _babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(97685);
 /* harmony import */ var _babel_runtime_helpers_esm_objectSpread2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1413);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62435);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
 
 
 
@@ -18873,10 +19693,8 @@ function useCompatId(id) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Z: function() { return /* binding */ omit; }
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_esm_objectSpread2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1413);
-
 function omit(obj, fields) {
-  var clone = (0,_babel_runtime_helpers_esm_objectSpread2__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)({}, obj);
+  var clone = Object.assign({}, obj);
   if (Array.isArray(fields)) {
     fields.forEach(function (key) {
       delete clone[key];

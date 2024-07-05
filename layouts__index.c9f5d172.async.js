@@ -17,13 +17,13 @@ var objectSpread2_default = /*#__PURE__*/__webpack_require__.n(objectSpread2);
 var grid = __webpack_require__(74250);
 // EXTERNAL MODULE: ./node_modules/antd/es/modal/index.js + 30 modules
 var modal = __webpack_require__(72003);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 ;// CONCATENATED MODULE: ./src/components/ResponPopup/index.less
 // extracted by mini-css-extract-plugin
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/jsx-runtime.js
-var jsx_runtime = __webpack_require__(86074);
+// EXTERNAL MODULE: ./node_modules/react/jsx-runtime.js
+var jsx_runtime = __webpack_require__(85893);
 ;// CONCATENATED MODULE: ./src/components/ResponPopup/index.tsx
 
 
@@ -111,8 +111,8 @@ var _umi_production_exports = __webpack_require__(82195);
 ;// CONCATENATED MODULE: ./src/layouts/index.less
 // extracted by mini-css-extract-plugin
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 ;// CONCATENATED MODULE: ./src/assets/logo.svg
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
@@ -203,8 +203,8 @@ const SvgTg = (props) => /* @__PURE__ */ React.createElement("svg", tg_spreadVal
 
 /* harmony default export */ var tg = ("data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PHBhdGggZD0ibTQxNy4yOCA3OTUuNzMzIDExLjk0Ny0xODAuNDhMNzU2LjkwNyAzMjBjMTQuNTA2LTEzLjIyNy0yLjk4Ny0xOS42MjctMjIuMTg3LTguMTA3TDMzMC4yNCA1NjcuNDY3IDE1NS4zMDcgNTEyYy0zNy41NDctMTAuNjY3LTM3Ljk3NC0zNi42OTMgOC41MzMtNTUuNDY3bDY4MS4zODctMjYyLjgyNmMzMS4xNDYtMTQuMDggNjEuMDEzIDcuNjggNDkuMDY2IDU1LjQ2Nkw3NzguMjQgNzk1LjczM2MtOC4xMDcgMzguODI3LTMxLjU3MyA0OC4yMTQtNjQgMzAuMjk0TDUzNy42IDY5NS40NjdsLTg0LjkwNyA4Mi4zNDZjLTkuODEzIDkuODE0LTE3LjkyIDE3LjkyLTM1LjQxMyAxNy45MnoiIGZpbGw9IiNGRkYiIGZpbGwtb3BhY2l0eT0iLjc3Ii8+PC9zdmc+");
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/jsx-runtime.js
-var jsx_runtime = __webpack_require__(86074);
+// EXTERNAL MODULE: ./node_modules/react/jsx-runtime.js
+var jsx_runtime = __webpack_require__(85893);
 ;// CONCATENATED MODULE: ./src/layouts/components/Nav.tsx
 
 
@@ -352,8 +352,8 @@ var es_button = __webpack_require__(45093);
     })
   });
 });
-// EXTERNAL MODULE: ./node_modules/antd/es/dropdown/index.js + 36 modules
-var dropdown = __webpack_require__(84819);
+// EXTERNAL MODULE: ./node_modules/antd/es/dropdown/index.js + 35 modules
+var dropdown = __webpack_require__(38872);
 ;// CONCATENATED MODULE: ./src/assets/wrapping.svg
 var wrapping_defProp = Object.defineProperty;
 var wrapping_getOwnPropSymbols = Object.getOwnPropertySymbols;

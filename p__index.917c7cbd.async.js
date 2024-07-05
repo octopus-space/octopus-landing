@@ -14,8 +14,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/rc-queue-anim/es/index.js + 16 modules
 var es = __webpack_require__(73049);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 ;// CONCATENATED MODULE: ./src/assets/checked.svg
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
@@ -115,8 +115,8 @@ const SvgBgCricle = (props) => /* @__PURE__ */ React.createElement("svg", bgCric
 
 // EXTERNAL MODULE: ./node_modules/antd/es/message/index.js + 12 modules
 var message = __webpack_require__(68872);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/jsx-runtime.js
-var jsx_runtime = __webpack_require__(86074);
+// EXTERNAL MODULE: ./node_modules/react/jsx-runtime.js
+var jsx_runtime = __webpack_require__(85893);
 ;// CONCATENATED MODULE: ./src/components/HomePage1/index.tsx
 
 
@@ -143,6 +143,7 @@ var tags = ["BRC20", "Runes", "Atomicals", "MRC20"];
         children: /*#__PURE__*/(0,jsx_runtime.jsxs)(es/* default */.Z, {
           delay: 300,
           ease: "easeOutQuart",
+          className: "leftAnmi",
           children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("p", {
             className: "title",
             children: ["Greater Bitcoin", " "]
@@ -307,8 +308,6 @@ var page2 = [{
   return /*#__PURE__*/(0,jsx_runtime.jsxs)(rc_scroll_anim_es/* OverPack */.bk, {
     id: "page2",
     className: "homePage2",
-    replay: true,
-    playScale: "50vh",
     children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
       className: "bg1",
       children: /*#__PURE__*/(0,jsx_runtime.jsx)("img", {
@@ -342,7 +341,6 @@ var page2 = [{
         component: row/* default */.Z,
         type: "bottom",
         componentProps: {
-          gutter: 35,
           className: "cardwrap"
         },
         children: children
@@ -427,7 +425,7 @@ function GetLi(num, d, i) {
     _loop(i);
   }
   return /*#__PURE__*/(0,jsx_runtime.jsxs)(rc_scroll_anim_es/* OverPack */.bk, {
-    id: "page2",
+    id: "page3",
     className: "homePage3",
     replay: true,
     playScale: "50vh",

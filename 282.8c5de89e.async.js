@@ -1,4 +1,4 @@
-(self["webpackChunk"] = self["webpackChunk"] || []).push([[306],{
+(self["webpackChunk"] = self["webpackChunk"] || []).push([[282],{
 
 /***/ 80882:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
@@ -12,8 +12,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
 var esm_extends = __webpack_require__(87462);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 ;// CONCATENATED MODULE: ./node_modules/@ant-design/icons-svg/es/asn/DownOutlined.js
 // This icon file is generated automatically.
 var DownOutlined = { "icon": { "tag": "svg", "attrs": { "viewBox": "64 64 896 896", "focusable": "false" }, "children": [{ "tag": "path", "attrs": { "d": "M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z" } }] }, "name": "down", "theme": "outlined" };
@@ -55,8 +55,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
 var esm_extends = __webpack_require__(87462);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 ;// CONCATENATED MODULE: ./node_modules/@ant-design/icons-svg/es/asn/SearchOutlined.js
 // This icon file is generated automatically.
 var SearchOutlined = { "icon": { "tag": "svg", "attrs": { "viewBox": "64 64 896 896", "focusable": "false" }, "children": [{ "tag": "path", "attrs": { "d": "M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z" } }] }, "name": "search", "theme": "outlined" };
@@ -98,8 +98,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
 var esm_extends = __webpack_require__(87462);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 ;// CONCATENATED MODULE: ./node_modules/@ant-design/icons-svg/es/asn/SyncOutlined.js
 // This icon file is generated automatically.
 var SyncOutlined = { "icon": { "tag": "svg", "attrs": { "viewBox": "64 64 896 896", "focusable": "false" }, "children": [{ "tag": "path", "attrs": { "d": "M168 504.2c1-43.7 10-86.1 26.9-126 17.3-41 42.1-77.7 73.7-109.4S337 212.3 378 195c42.4-17.9 87.4-27 133.9-27s91.5 9.1 133.8 27A341.5 341.5 0 01755 268.8c9.9 9.9 19.2 20.4 27.8 31.4l-60.2 47a8 8 0 003 14.1l175.7 43c5 1.2 9.9-2.6 9.9-7.7l.8-180.9c0-6.7-7.7-10.5-12.9-6.3l-56.4 44.1C765.8 155.1 646.2 92 511.8 92 282.7 92 96.3 275.6 92 503.8a8 8 0 008 8.2h60c4.4 0 7.9-3.5 8-7.8zm756 7.8h-60c-4.4 0-7.9 3.5-8 7.8-1 43.7-10 86.1-26.9 126-17.3 41-42.1 77.8-73.7 109.4A342.45 342.45 0 01512.1 856a342.24 342.24 0 01-243.2-100.8c-9.9-9.9-19.2-20.4-27.8-31.4l60.2-47a8 8 0 00-3-14.1l-175.7-43c-5-1.2-9.9 2.6-9.9 7.7l-.7 181c0 6.7 7.7 10.5 12.9 6.3l56.4-44.1C258.2 868.9 377.8 932 512.2 932c229.2 0 415.5-183.7 419.8-411.8a8 8 0 00-8-8.2z" } }] }, "name": "sync", "theme": "outlined" };
@@ -3441,8 +3441,8 @@ __webpack_require__.d(__webpack_exports__, {
   Z: function() { return /* binding */ card; }
 });
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
@@ -3489,12 +3489,12 @@ const Grid = _a => {
   }));
 };
 /* harmony default export */ var card_Grid = (Grid);
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 35 modules
-var es = __webpack_require__(54548);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
+var es = __webpack_require__(861);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/index.js
 var style = __webpack_require__(14747);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
 var statistic = __webpack_require__(45503);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/card/style/index.js
@@ -3935,7 +3935,7 @@ const Card = /*#__PURE__*/react.forwardRef((props, ref) => {
   const isContainGrid = react.useMemo(() => {
     let containGrid = false;
     react.Children.forEach(children, element => {
-      if (element && element.type && element.type === card_Grid) {
+      if ((element === null || element === void 0 ? void 0 : element.type) === card_Grid) {
         containGrid = true;
       }
     });
@@ -4004,7 +4004,7 @@ const Card = /*#__PURE__*/react.forwardRef((props, ref) => {
     style: mergedBodyStyle
   }, loading ? loadingBlock : children);
   const actionClasses = classnames_default()(`${prefixCls}-actions`, moduleClass('actions'));
-  const actionDom = actions && actions.length ? ( /*#__PURE__*/react.createElement(ActionNode, {
+  const actionDom = (actions === null || actions === void 0 ? void 0 : actions.length) ? ( /*#__PURE__*/react.createElement(ActionNode, {
     actionClasses: actionClasses,
     actionStyle: moduleStyle('actions'),
     actions: actions
@@ -4015,7 +4015,7 @@ const Card = /*#__PURE__*/react.forwardRef((props, ref) => {
     [`${prefixCls}-bordered`]: bordered,
     [`${prefixCls}-hoverable`]: hoverable,
     [`${prefixCls}-contain-grid`]: isContainGrid,
-    [`${prefixCls}-contain-tabs`]: tabList && tabList.length,
+    [`${prefixCls}-contain-tabs`]: tabList === null || tabList === void 0 ? void 0 : tabList.length,
     [`${prefixCls}-${mergedSize}`]: mergedSize,
     [`${prefixCls}-type-${type}`]: !!type,
     [`${prefixCls}-rtl`]: direction === 'rtl'
@@ -4098,8 +4098,8 @@ __webpack_require__.d(__webpack_exports__, {
   Z: function() { return /* binding */ es_empty; }
 });
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
@@ -4130,7 +4130,7 @@ const Empty = () => {
     height: "152",
     viewBox: "0 0 184 152",
     xmlns: "http://www.w3.org/2000/svg"
-  }, /*#__PURE__*/react.createElement("g", {
+  }, /*#__PURE__*/react.createElement("title", null, "empty image"), /*#__PURE__*/react.createElement("g", {
     fill: "none",
     fillRule: "evenodd"
   }, /*#__PURE__*/react.createElement("g", {
@@ -4201,7 +4201,7 @@ const Simple = () => {
     height: "41",
     viewBox: "0 0 64 41",
     xmlns: "http://www.w3.org/2000/svg"
-  }, /*#__PURE__*/react.createElement("g", {
+  }, /*#__PURE__*/react.createElement("title", null, "Simple Empty"), /*#__PURE__*/react.createElement("g", {
     transform: "translate(0 1)",
     fill: "none",
     fillRule: "evenodd"
@@ -4223,8 +4223,8 @@ const Simple = () => {
 };
 if (false) {}
 /* harmony default export */ var simple = (Simple);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
 var statistic = __webpack_require__(45503);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/empty/style/index.js
@@ -4260,7 +4260,7 @@ const genSharedEmptyStyle = token => {
         }
       },
       [`${componentCls}-description`]: {
-        color: token.colorText
+        color: token.colorTextDescription
       },
       // 原来 &-footer 没有父子结构，现在为了外层承担我们的hashId，改成父子结果
       [`${componentCls}-footer`]: {
@@ -4384,8 +4384,8 @@ __webpack_require__.d(__webpack_exports__, {
   Z: function() { return /* binding */ flex; }
 });
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
@@ -4395,8 +4395,8 @@ var omit = __webpack_require__(98423);
 var gapSize = __webpack_require__(98065);
 // EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
 var context = __webpack_require__(53124);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
 var statistic = __webpack_require__(45503);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/flex/utils.js
@@ -4589,34 +4589,41 @@ if (false) {}
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* unused harmony export Variants */
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62435);
-/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(60566);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
+/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(60566);
+/* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(53124);
 
 
-const Variants = ['outlined', 'borderless', 'filled'];
+
 /**
  * Compatible for legacy `bordered` prop.
  */
-const useVariant = function (variant) {
-  let legacyBordered = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-  const ctxVariant = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_context__WEBPACK_IMPORTED_MODULE_1__/* .VariantContext */ .pg);
+const useVariant = function (component, variant) {
+  let legacyBordered = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  var _a, _b;
+  const {
+    variant: configVariant,
+    [component]: componentConfig
+  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_config_provider__WEBPACK_IMPORTED_MODULE_1__/* .ConfigContext */ .E_);
+  const ctxVariant = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_context__WEBPACK_IMPORTED_MODULE_2__/* .VariantContext */ .pg);
+  const configComponentVariant = componentConfig === null || componentConfig === void 0 ? void 0 : componentConfig.variant;
   let mergedVariant;
   if (typeof variant !== 'undefined') {
     mergedVariant = variant;
   } else if (legacyBordered === false) {
     mergedVariant = 'borderless';
   } else {
-    mergedVariant = ctxVariant !== null && ctxVariant !== void 0 ? ctxVariant : 'outlined';
+    // form variant > component global variant > global variant
+    mergedVariant = (_b = (_a = ctxVariant !== null && ctxVariant !== void 0 ? ctxVariant : configComponentVariant) !== null && _a !== void 0 ? _a : configVariant) !== null && _b !== void 0 ? _b : 'outlined';
   }
-  const enableVariantCls = Variants.includes(mergedVariant);
+  const enableVariantCls = _config_provider__WEBPACK_IMPORTED_MODULE_1__/* .Variants */ .tr.includes(mergedVariant);
   return [mergedVariant, enableVariantCls];
 };
 /* harmony default export */ __webpack_exports__.Z = (useVariant);
 
 /***/ }),
 
-/***/ 10418:
+/***/ 24435:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4626,8 +4633,8 @@ __webpack_require__.d(__webpack_exports__, {
   Z: function() { return /* binding */ input_number; }
 });
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/DownOutlined.js + 1 modules
 var DownOutlined = __webpack_require__(80882);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
@@ -5128,6 +5135,26 @@ function toFixed(numStr, separatorStr, precision) {
 var rc_input_es = __webpack_require__(67656);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/hooks/useLayoutEffect.js
 var useLayoutEffect = __webpack_require__(8410);
+;// CONCATENATED MODULE: ./node_modules/rc-util/es/proxyObject.js
+/**
+ * Proxy object if environment supported
+ */
+function proxyObject(obj, extendProps) {
+  if (typeof Proxy !== 'undefined' && obj) {
+    return new Proxy(obj, {
+      get: function get(target, prop) {
+        if (extendProps[prop]) {
+          return extendProps[prop];
+        }
+
+        // Proxy origin property
+        var originProp = target[prop];
+        return typeof originProp === 'function' ? originProp.bind(target) : originProp;
+      }
+    });
+  }
+  return obj;
+}
 // EXTERNAL MODULE: ./node_modules/rc-util/es/ref.js
 var es_ref = __webpack_require__(42550);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/warning.js
@@ -5366,8 +5393,9 @@ var commonUtils = __webpack_require__(87887);
 
 
 
-var _excluded = ["prefixCls", "className", "style", "min", "max", "step", "defaultValue", "value", "disabled", "readOnly", "upHandler", "downHandler", "keyboard", "changeOnWheel", "controls", "classNames", "stringMode", "parser", "formatter", "precision", "decimalSeparator", "onChange", "onInput", "onPressEnter", "onStep", "changeOnBlur"],
+var _excluded = ["prefixCls", "className", "style", "min", "max", "step", "defaultValue", "value", "disabled", "readOnly", "upHandler", "downHandler", "keyboard", "changeOnWheel", "controls", "classNames", "stringMode", "parser", "formatter", "precision", "decimalSeparator", "onChange", "onInput", "onPressEnter", "onStep", "changeOnBlur", "domRef"],
   _excluded2 = ["disabled", "style", "prefixCls", "value", "prefix", "suffix", "addonBefore", "addonAfter", "className", "classNames"];
+
 
 
 
@@ -5401,9 +5429,7 @@ var getDecimalIfValidate = function getDecimalIfValidate(value) {
   return decimal.isInvalidate() ? null : decimal;
 };
 var InternalInputNumber = /*#__PURE__*/react.forwardRef(function (props, ref) {
-  var _clsx;
-  var _props$prefixCls = props.prefixCls,
-    prefixCls = _props$prefixCls === void 0 ? 'rc-input-number' : _props$prefixCls,
+  var prefixCls = props.prefixCls,
     className = props.className,
     style = props.style,
     min = props.min,
@@ -5433,6 +5459,7 @@ var InternalInputNumber = /*#__PURE__*/react.forwardRef(function (props, ref) {
     onStep = props.onStep,
     _props$changeOnBlur = props.changeOnBlur,
     changeOnBlur = _props$changeOnBlur === void 0 ? true : _props$changeOnBlur,
+    domRef = props.domRef,
     inputProps = (0,objectWithoutProperties/* default */.Z)(props, _excluded);
   var inputClassName = "".concat(prefixCls, "-input");
   var inputRef = react.useRef(null);
@@ -5730,7 +5757,7 @@ var InternalInputNumber = /*#__PURE__*/react.forwardRef(function (props, ref) {
    */
   var flushInputValue = function flushInputValue(userTyping) {
     var parsedValue = es(mergedParser(inputValue));
-    var formatValue = parsedValue;
+    var formatValue;
     if (!parsedValue.isNaN()) {
       // Only validate value or empty value can be re-fill to inputValue
       // Reassign the formatValue within ranged of trigger control
@@ -5840,7 +5867,8 @@ var InternalInputNumber = /*#__PURE__*/react.forwardRef(function (props, ref) {
 
   // ============================ Render ============================
   return /*#__PURE__*/react.createElement("div", {
-    className: classnames_default()(prefixCls, className, (_clsx = {}, (0,defineProperty/* default */.Z)(_clsx, "".concat(prefixCls, "-focused"), focus), (0,defineProperty/* default */.Z)(_clsx, "".concat(prefixCls, "-disabled"), disabled), (0,defineProperty/* default */.Z)(_clsx, "".concat(prefixCls, "-readonly"), readOnly), (0,defineProperty/* default */.Z)(_clsx, "".concat(prefixCls, "-not-a-number"), decimalValue.isNaN()), (0,defineProperty/* default */.Z)(_clsx, "".concat(prefixCls, "-out-of-range"), !decimalValue.isInvalidate() && !isInRange(decimalValue)), _clsx)),
+    ref: domRef,
+    className: classnames_default()(prefixCls, className, (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, "".concat(prefixCls, "-focused"), focus), "".concat(prefixCls, "-disabled"), disabled), "".concat(prefixCls, "-readonly"), readOnly), "".concat(prefixCls, "-not-a-number"), decimalValue.isNaN()), "".concat(prefixCls, "-out-of-range"), !decimalValue.isInvalidate() && !isInRange(decimalValue))),
     style: style,
     onFocus: function onFocus() {
       setFocus(true);
@@ -5879,7 +5907,8 @@ var InternalInputNumber = /*#__PURE__*/react.forwardRef(function (props, ref) {
 var InputNumber = /*#__PURE__*/react.forwardRef(function (props, ref) {
   var disabled = props.disabled,
     style = props.style,
-    prefixCls = props.prefixCls,
+    _props$prefixCls = props.prefixCls,
+    prefixCls = _props$prefixCls === void 0 ? 'rc-input-number' : _props$prefixCls,
     value = props.value,
     prefix = props.prefix,
     suffix = props.suffix,
@@ -5888,12 +5917,19 @@ var InputNumber = /*#__PURE__*/react.forwardRef(function (props, ref) {
     className = props.className,
     classNames = props.classNames,
     rest = (0,objectWithoutProperties/* default */.Z)(props, _excluded2);
+  var holderRef = react.useRef(null);
+  var inputNumberDomRef = react.useRef(null);
   var inputFocusRef = react.useRef(null);
   var focus = function focus(option) {
     if (inputFocusRef.current) {
       (0,commonUtils/* triggerFocus */.nH)(inputFocusRef.current, option);
     }
   };
+  react.useImperativeHandle(ref, function () {
+    return proxyObject(inputFocusRef.current, {
+      nativeElement: holderRef.current.nativeElement || inputNumberDomRef.current
+    });
+  });
   return /*#__PURE__*/react.createElement(rc_input_es/* BaseInput */.Q, {
     className: className,
     triggerFocus: focus,
@@ -5911,19 +5947,23 @@ var InputNumber = /*#__PURE__*/react.forwardRef(function (props, ref) {
       groupWrapper: 'div',
       wrapper: 'div',
       groupAddon: 'div'
-    }
+    },
+    ref: holderRef
   }, /*#__PURE__*/react.createElement(InternalInputNumber, (0,esm_extends/* default */.Z)({
     prefixCls: prefixCls,
     disabled: disabled,
-    ref: (0,es_ref/* composeRef */.sQ)(inputFocusRef, ref),
+    ref: inputFocusRef,
+    domRef: inputNumberDomRef,
     className: classNames === null || classNames === void 0 ? void 0 : classNames.input
   }, rest)));
 });
-InputNumber.displayName = 'InputNumber';
+if (false) {}
 /* harmony default export */ var es_InputNumber = (InputNumber);
 ;// CONCATENATED MODULE: ./node_modules/rc-input-number/es/index.js
 
 /* harmony default export */ var rc_input_number_es = (es_InputNumber);
+// EXTERNAL MODULE: ./node_modules/antd/es/_util/ContextIsolator.js
+var ContextIsolator = __webpack_require__(89942);
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/statusUtils.js
 var statusUtils = __webpack_require__(9708);
 // EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
@@ -5942,8 +5982,8 @@ var form_context = __webpack_require__(60566);
 var useVariants = __webpack_require__(27833);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/Compact.js
 var Compact = __webpack_require__(4173);
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 35 modules
-var cssinjs_es = __webpack_require__(54548);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
+var cssinjs_es = __webpack_require__(861);
 // EXTERNAL MODULE: ./node_modules/antd/es/input/style/index.js
 var style = __webpack_require__(47673);
 // EXTERNAL MODULE: ./node_modules/antd/es/input/style/token.js
@@ -5954,8 +5994,8 @@ var variants = __webpack_require__(93900);
 var es_style = __webpack_require__(14747);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/compact-item.js
 var compact_item = __webpack_require__(80110);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
 var statistic = __webpack_require__(45503);
 // EXTERNAL MODULE: ./node_modules/@ctrl/tinycolor/dist/module/index.js
@@ -6015,7 +6055,8 @@ const genInputNumberStyles = token => {
     lineWidth,
     lineType,
     borderRadius,
-    fontSizeLG,
+    inputFontSizeSM,
+    inputFontSizeLG,
     controlHeightLG,
     controlHeightSM,
     colorError,
@@ -6075,7 +6116,7 @@ const genInputNumberStyles = token => {
       },
       '&-lg': {
         padding: 0,
-        fontSize: fontSizeLG,
+        fontSize: inputFontSizeLG,
         lineHeight: lineHeightLG,
         borderRadius: borderRadiusLG,
         [`input${componentCls}-input`]: {
@@ -6085,6 +6126,7 @@ const genInputNumberStyles = token => {
       },
       '&-sm': {
         padding: 0,
+        fontSize: inputFontSizeSM,
         borderRadius: borderRadiusSM,
         [`input${componentCls}-input`]: {
           height: calc(controlHeightSM).sub(calc(lineWidth).mul(2)).equal(),
@@ -6160,7 +6202,6 @@ const genInputNumberStyles = token => {
         }), (0,style/* genPlaceholderStyle */.nz)(token.colorTextPlaceholder)), {
           '&[type="number"]::-webkit-inner-spin-button, &[type="number"]::-webkit-outer-spin-button': {
             margin: 0,
-            /* stylelint-disable-next-line property-no-vendor-prefix */
             webkitAppearance: 'none',
             appearance: 'none'
           }
@@ -6395,6 +6436,7 @@ var __rest = undefined && undefined.__rest || function (s, e) {
 
 
 
+
 const input_number_InputNumber = /*#__PURE__*/react.forwardRef((props, ref) => {
   if (false) {}
   const {
@@ -6456,8 +6498,8 @@ const input_number_InputNumber = /*#__PURE__*/react.forwardRef((props, ref) => {
   // ===================== Disabled =====================
   const disabled = react.useContext(DisabledContext/* default */.Z);
   const mergedDisabled = customDisabled !== null && customDisabled !== void 0 ? customDisabled : disabled;
-  const [variant, enableVariantCls] = (0,useVariants/* default */.Z)(customVariant, bordered);
-  // eslint-disable-next-line react/jsx-no-useless-fragment
+  const [variant, enableVariantCls] = (0,useVariants/* default */.Z)('inputNumber', customVariant, bordered);
+  /* biome-ignore lint/complexity/noUselessFragments: avoid falsy value */ /* eslint-disable-next-line react/jsx-no-useless-fragment */
   const suffixNode = hasFeedback && /*#__PURE__*/react.createElement(react.Fragment, null, feedbackIcon);
   const inputNumberClass = classnames_default()({
     [`${prefixCls}-lg`]: mergedSize === 'large',
@@ -6477,14 +6519,14 @@ const input_number_InputNumber = /*#__PURE__*/react.forwardRef((props, ref) => {
     controls: controlsTemp,
     prefix: prefix,
     suffix: suffixNode,
-    addonAfter: addonAfter && ( /*#__PURE__*/react.createElement(Compact/* NoCompactStyle */.BR, null, /*#__PURE__*/react.createElement(form_context/* NoFormStyle */.Ux, {
-      override: true,
-      status: true
-    }, addonAfter))),
-    addonBefore: addonBefore && ( /*#__PURE__*/react.createElement(Compact/* NoCompactStyle */.BR, null, /*#__PURE__*/react.createElement(form_context/* NoFormStyle */.Ux, {
-      override: true,
-      status: true
-    }, addonBefore))),
+    addonBefore: addonBefore && ( /*#__PURE__*/react.createElement(ContextIsolator/* default */.Z, {
+      form: true,
+      space: true
+    }, addonBefore)),
+    addonAfter: addonAfter && ( /*#__PURE__*/react.createElement(ContextIsolator/* default */.Z, {
+      form: true,
+      space: true
+    }, addonAfter)),
     classNames: {
       input: inputNumberClass,
       variant: classnames_default()({
@@ -6535,8 +6577,8 @@ __webpack_require__.d(__webpack_exports__, {
   Z: function() { return /* binding */ input; }
 });
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
@@ -6595,6 +6637,8 @@ const Group = props => {
 var es = __webpack_require__(67656);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/ref.js
 var es_ref = __webpack_require__(42550);
+// EXTERNAL MODULE: ./node_modules/antd/es/_util/ContextIsolator.js
+var ContextIsolator = __webpack_require__(89942);
 // EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/CloseCircleFilled.js + 1 modules
 var CloseCircleFilled = __webpack_require__(4340);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/getAllowClear.js
@@ -6683,6 +6727,7 @@ var __rest = undefined && undefined.__rest || function (s, e) {
 
 
 
+
 function triggerFocus(element, option) {
   if (!element) {
     return;
@@ -6703,7 +6748,6 @@ function triggerFocus(element, option) {
         break;
       default:
         element.setSelectionRange(0, len);
-        break;
     }
   }
 }
@@ -6783,7 +6827,7 @@ const Input = /*#__PURE__*/(0,react.forwardRef)((props, ref) => {
   };
   const suffixNode = (hasFeedback || suffix) && ( /*#__PURE__*/react.createElement(react.Fragment, null, suffix, hasFeedback && feedbackIcon));
   const mergedAllowClear = _util_getAllowClear(allowClear !== null && allowClear !== void 0 ? allowClear : input === null || input === void 0 ? void 0 : input.allowClear);
-  const [variant, enableVariantCls] = (0,useVariants/* default */.Z)(customVariant, bordered);
+  const [variant, enableVariantCls] = (0,useVariants/* default */.Z)('input', customVariant, bordered);
   return wrapCSSVar( /*#__PURE__*/react.createElement(es/* default */.Z, Object.assign({
     ref: (0,es_ref/* composeRef */.sQ)(ref, inputRef),
     prefixCls: prefixCls,
@@ -6798,14 +6842,14 @@ const Input = /*#__PURE__*/(0,react.forwardRef)((props, ref) => {
     allowClear: mergedAllowClear,
     className: classnames_default()(className, rootClassName, cssVarCls, rootCls, compactItemClassnames, input === null || input === void 0 ? void 0 : input.className),
     onChange: handleChange,
-    addonAfter: addonAfter && ( /*#__PURE__*/react.createElement(Compact/* NoCompactStyle */.BR, null, /*#__PURE__*/react.createElement(form_context/* NoFormStyle */.Ux, {
-      override: true,
-      status: true
-    }, addonAfter))),
-    addonBefore: addonBefore && ( /*#__PURE__*/react.createElement(Compact/* NoCompactStyle */.BR, null, /*#__PURE__*/react.createElement(form_context/* NoFormStyle */.Ux, {
-      override: true,
-      status: true
-    }, addonBefore))),
+    addonBefore: addonBefore && ( /*#__PURE__*/react.createElement(ContextIsolator/* default */.Z, {
+      form: true,
+      space: true
+    }, addonBefore)),
+    addonAfter: addonAfter && ( /*#__PURE__*/react.createElement(ContextIsolator/* default */.Z, {
+      form: true,
+      space: true
+    }, addonAfter)),
     classNames: Object.assign(Object.assign(Object.assign({}, classes), input === null || input === void 0 ? void 0 : input.classNames), {
       input: classnames_default()({
         [`${prefixCls}-sm`]: mergedSize === 'small',
@@ -6840,8 +6884,8 @@ var toConsumableArray = __webpack_require__(74902);
 var rc_util_es = __webpack_require__(56790);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/pickAttrs.js
 var pickAttrs = __webpack_require__(64217);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
 var statistic = __webpack_require__(45503);
 // EXTERNAL MODULE: ./node_modules/antd/es/input/style/token.js
@@ -7364,14 +7408,12 @@ const Search = /*#__PURE__*/react.forwardRef((props, ref) => {
   });
   const inputRef = react.useRef(null);
   const onChange = e => {
-    if (e && e.target && e.type === 'click' && customOnSearch) {
+    if ((e === null || e === void 0 ? void 0 : e.target) && e.type === 'click' && customOnSearch) {
       customOnSearch(e.target.value, e, {
         source: 'clear'
       });
     }
-    if (customOnChange) {
-      customOnChange(e);
-    }
+    customOnChange === null || customOnChange === void 0 ? void 0 : customOnChange(e);
   };
   const onMouseDown = e => {
     var _a;
@@ -7777,7 +7819,7 @@ var ResizableTextArea = /*#__PURE__*/react.forwardRef(function (props, ref) {
 
 
 
-var TextArea_excluded = ["defaultValue", "value", "onFocus", "onBlur", "onChange", "allowClear", "maxLength", "onCompositionStart", "onCompositionEnd", "suffix", "prefixCls", "showCount", "count", "className", "style", "disabled", "hidden", "classNames", "styles", "onResize"];
+var TextArea_excluded = ["defaultValue", "value", "onFocus", "onBlur", "onChange", "allowClear", "maxLength", "onCompositionStart", "onCompositionEnd", "suffix", "prefixCls", "showCount", "count", "className", "style", "disabled", "hidden", "classNames", "styles", "onResize", "readOnly"];
 
 
 
@@ -7786,7 +7828,7 @@ var TextArea_excluded = ["defaultValue", "value", "onFocus", "onBlur", "onChange
 
 
 var TextArea = /*#__PURE__*/react.forwardRef(function (_ref, ref) {
-  var _countConfig$max, _clsx;
+  var _countConfig$max;
   var defaultValue = _ref.defaultValue,
     customValue = _ref.value,
     onFocus = _ref.onFocus,
@@ -7808,6 +7850,7 @@ var TextArea = /*#__PURE__*/react.forwardRef(function (_ref, ref) {
     classNames = _ref.classNames,
     styles = _ref.styles,
     onResize = _ref.onResize,
+    readOnly = _ref.readOnly,
     rest = (0,objectWithoutProperties/* default */.Z)(_ref, TextArea_excluded);
   var _useMergedState = (0,useMergedState/* default */.Z)(defaultValue, {
       value: customValue,
@@ -7828,6 +7871,7 @@ var TextArea = /*#__PURE__*/react.forwardRef(function (_ref, ref) {
     setTextareaResized = _React$useState4[1];
 
   // =============================== Ref ================================
+  var holderRef = (0,react.useRef)(null);
   var resizableTextAreaRef = (0,react.useRef)(null);
   var getTextArea = function getTextArea() {
     var _resizableTextAreaRef;
@@ -7837,12 +7881,14 @@ var TextArea = /*#__PURE__*/react.forwardRef(function (_ref, ref) {
     getTextArea().focus();
   };
   (0,react.useImperativeHandle)(ref, function () {
+    var _holderRef$current;
     return {
       resizableTextArea: resizableTextAreaRef.current,
       focus: focus,
       blur: function blur() {
         getTextArea().blur();
-      }
+      },
+      nativeElement: ((_holderRef$current = holderRef.current) === null || _holderRef$current === void 0 ? void 0 : _holderRef$current.nativeElement) || getTextArea()
     };
   });
   (0,react.useEffect)(function () {
@@ -7949,13 +7995,14 @@ var TextArea = /*#__PURE__*/react.forwardRef(function (_ref, ref) {
   };
   var isPureTextArea = !rest.autoSize && !showCount && !allowClear;
   return /*#__PURE__*/react.createElement(es/* BaseInput */.Q, {
+    ref: holderRef,
     value: formatValue,
     allowClear: allowClear,
     handleReset: handleReset,
     suffix: suffixNode,
     prefixCls: prefixCls,
     classNames: (0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({}, classNames), {}, {
-      affixWrapper: classnames_default()(classNames === null || classNames === void 0 ? void 0 : classNames.affixWrapper, (_clsx = {}, (0,defineProperty/* default */.Z)(_clsx, "".concat(prefixCls, "-show-count"), showCount), (0,defineProperty/* default */.Z)(_clsx, "".concat(prefixCls, "-textarea-allow-clear"), allowClear), _clsx))
+      affixWrapper: classnames_default()(classNames === null || classNames === void 0 ? void 0 : classNames.affixWrapper, (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, "".concat(prefixCls, "-show-count"), showCount), "".concat(prefixCls, "-textarea-allow-clear"), allowClear))
     }),
     disabled: disabled,
     focused: focused,
@@ -7968,7 +8015,8 @@ var TextArea = /*#__PURE__*/react.forwardRef(function (_ref, ref) {
         'data-count': typeof dataCount === 'string' ? dataCount : undefined
       }
     },
-    hidden: hidden
+    hidden: hidden,
+    readOnly: readOnly
   }, /*#__PURE__*/react.createElement(es_ResizableTextArea, (0,esm_extends/* default */.Z)({}, rest, {
     maxLength: maxLength,
     onKeyDown: handleKeyDown,
@@ -7984,7 +8032,8 @@ var TextArea = /*#__PURE__*/react.forwardRef(function (_ref, ref) {
     disabled: disabled,
     prefixCls: prefixCls,
     onResize: handleResize,
-    ref: resizableTextAreaRef
+    ref: resizableTextAreaRef,
+    readOnly: readOnly
   })));
 });
 /* harmony default export */ var es_TextArea = (TextArea);
@@ -8073,7 +8122,7 @@ const TextArea_TextArea = /*#__PURE__*/(0,react.forwardRef)((props, ref) => {
   // ===================== Style =====================
   const rootCls = (0,useCSSVarCls/* default */.Z)(prefixCls);
   const [wrapCSSVar, hashId, cssVarCls] = (0,input_style/* default */.ZP)(prefixCls, rootCls);
-  const [variant, enableVariantCls] = (0,useVariants/* default */.Z)(customVariant, bordered);
+  const [variant, enableVariantCls] = (0,useVariants/* default */.Z)('textArea', customVariant, bordered);
   const mergedAllowClear = _util_getAllowClear(allowClear !== null && allowClear !== void 0 ? allowClear : textArea === null || textArea === void 0 ? void 0 : textArea.allowClear);
   return wrapCSSVar( /*#__PURE__*/react.createElement(rc_textarea_es, Object.assign({
     autoComplete: textArea === null || textArea === void 0 ? void 0 : textArea.autoComplete
@@ -8135,10 +8184,10 @@ es_input_Input.OTP = input_OTP;
 /* harmony export */   s7: function() { return /* binding */ genInputGroupStyle; }
 /* harmony export */ });
 /* unused harmony exports genActiveStyle, genInputSmallStyle */
-/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(54548);
+/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(861);
 /* harmony import */ var _style__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14747);
 /* harmony import */ var _style_compact_item__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(80110);
-/* harmony import */ var _theme_internal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(92030);
+/* harmony import */ var _theme_internal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(27036);
 /* harmony import */ var _theme_internal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(45503);
 /* harmony import */ var _token__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(20353);
 /* harmony import */ var _variants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(93900);
@@ -8214,10 +8263,7 @@ const genBasicInputStyle = token => Object.assign(Object.assign({
   '&-lg': Object.assign({}, genInputLargeStyle(token)),
   '&-sm': Object.assign({}, genInputSmallStyle(token)),
   // RTL
-  '&-rtl': {
-    direction: 'rtl'
-  },
-  '&-textarea-rtl': {
+  '&-rtl, &-textarea-rtl': {
     direction: 'rtl'
   }
 });
@@ -8233,7 +8279,7 @@ const genInputGroupStyle = token => {
     borderCollapse: 'separate',
     borderSpacing: 0,
     // Undo padding and float of grid classes
-    [`&[class*='col-']`]: {
+    "&[class*='col-']": {
       paddingInlineEnd: token.paddingXS,
       '&:last-child': {
         paddingInlineEnd: 0
@@ -8256,7 +8302,7 @@ const genInputGroupStyle = token => {
       }
     },
     [`${componentCls}-group`]: {
-      [`&-addon, &-wrap`]: {
+      '&-addon, &-wrap': {
         display: 'table-cell',
         width: 1,
         whiteSpace: 'nowrap',
@@ -8372,16 +8418,13 @@ const genInputGroupStyle = token => {
       [`${componentCls}-group-addon, ${componentCls}-group-wrap, > ${componentCls}`]: {
         '&:not(:first-child):not(:last-child)': {
           borderInlineEndWidth: token.lineWidth,
-          '&:hover': {
-            zIndex: 1
-          },
-          '&:focus': {
+          '&:hover, &:focus': {
             zIndex: 1
           }
         }
       },
       '& > *': {
-        display: 'inline-block',
+        display: 'inline-flex',
         float: 'none',
         verticalAlign: 'top',
         // https://github.com/ant-design/ant-design-pro/issues/139
@@ -8409,10 +8452,7 @@ const genInputGroupStyle = token => {
       & > ${componentCls}-group-wrapper ${componentCls}`]: {
         borderInlineEndWidth: token.lineWidth,
         borderRadius: 0,
-        '&:hover': {
-          zIndex: 1
-        },
-        '&:focus': {
+        '&:hover, &:focus': {
           zIndex: 1
         }
       },
@@ -8693,9 +8733,7 @@ const genSearchInputStyle = token => {
       // fix slight height diff in Firefox:
       // https://ant.design/components/auto-complete-cn/#components-auto-complete-demo-certain-category
       [`${componentCls}-lg`]: {
-        lineHeight: token.calc(token.lineHeightLG).sub(0.0002).equal({
-          unit: false
-        })
+        lineHeight: token.calc(token.lineHeightLG).sub(0.0002).equal()
       },
       [`> ${componentCls}-group`]: {
         [`> ${componentCls}-group-addon:last-child`]: {
@@ -8763,7 +8801,7 @@ const genSearchInputStyle = token => {
         [`> ${componentCls}-group-addon ${componentCls}-search-button,
         > ${componentCls},
         ${componentCls}-affix-wrapper`]: {
-          '&:hover,&:focus,&:active': {
+          '&:hover, &:focus, &:active': {
             zIndex: 2
           }
         },
@@ -8797,15 +8835,11 @@ const genTextAreaStyle = token => {
           pointerEvents: 'none'
         }
       },
-      '&-allow-clear': {
-        [`> ${componentCls}`]: {
-          paddingInlineEnd: paddingLG
-        }
-      },
-      [`&-affix-wrapper${textareaPrefixCls}-has-feedback`]: {
-        [`${componentCls}`]: {
-          paddingInlineEnd: paddingLG
-        }
+      [`
+        &-allow-clear > ${componentCls},
+        &-affix-wrapper${textareaPrefixCls}-has-feedback ${componentCls}
+      `]: {
+        paddingInlineEnd: paddingLG
       },
       [`&-affix-wrapper${componentCls}-affix-wrapper`]: {
         padding: 0,
@@ -8945,7 +8979,7 @@ const initComponentToken = token => {
 /* harmony export */   qG: function() { return /* binding */ genOutlinedStyle; }
 /* harmony export */ });
 /* unused harmony exports genHoverStyle, genDisabledStyle, genBaseOutlinedStyle */
-/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(54548);
+/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(861);
 /* harmony import */ var _theme_internal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45503);
 
 
@@ -8960,7 +8994,7 @@ const genDisabledStyle = token => ({
   boxShadow: 'none',
   cursor: 'not-allowed',
   opacity: 1,
-  [`input[disabled], textarea[disabled]`]: {
+  'input[disabled], textarea[disabled]': {
     cursor: 'not-allowed'
   },
   '&:hover:not([disabled])': Object.assign({}, genHoverStyle((0,_theme_internal__WEBPACK_IMPORTED_MODULE_1__/* .merge */ .TS)(token, {
@@ -9056,25 +9090,42 @@ const genOutlinedGroupStyle = token => ({
   })
 });
 /* ============ Borderless ============ */
-const genBorderlessStyle = (token, extraStyles) => ({
-  '&-borderless': Object.assign({
-    background: 'transparent',
-    border: 'none',
-    '&:focus, &:focus-within': {
-      outline: 'none'
-    },
-    [`&${token.componentCls}-disabled, &[disabled]`]: {
-      color: token.colorTextDisabled
-    }
-  }, extraStyles)
-});
+const genBorderlessStyle = (token, extraStyles) => {
+  const {
+    componentCls
+  } = token;
+  return {
+    '&-borderless': Object.assign({
+      background: 'transparent',
+      border: 'none',
+      '&:focus, &:focus-within': {
+        outline: 'none'
+      },
+      // >>>>> Disabled
+      [`&${componentCls}-disabled, &[disabled]`]: {
+        color: token.colorTextDisabled
+      },
+      // >>>>> Status
+      [`&${componentCls}-status-error`]: {
+        '&, & input, & textarea': {
+          color: token.colorError
+        }
+      },
+      [`&${componentCls}-status-warning`]: {
+        '&, & input, & textarea': {
+          color: token.colorWarning
+        }
+      }
+    }, extraStyles)
+  };
+};
 /* ============== Filled ============== */
 const genBaseFilledStyle = (token, options) => ({
   background: options.bg,
   borderWidth: token.lineWidth,
   borderStyle: token.lineType,
   borderColor: 'transparent',
-  [`input&, & input, textarea&, & textarea`]: {
+  'input&, & input, textarea&, & textarea': {
     color: options === null || options === void 0 ? void 0 : options.inputColor
   },
   '&:hover': {
@@ -9181,8 +9232,8 @@ __webpack_require__.d(__webpack_exports__, {
   Z: function() { return /* binding */ segmented; }
 });
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
@@ -9204,8 +9255,8 @@ var useMergedState = __webpack_require__(21770);
 var es_ref = __webpack_require__(42550);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/omit.js
 var omit = __webpack_require__(98423);
-// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 12 modules
-var es = __webpack_require__(82225);
+// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 13 modules
+var es = __webpack_require__(29372);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/hooks/useLayoutEffect.js
 var useLayoutEffect = __webpack_require__(8410);
 ;// CONCATENATED MODULE: ./node_modules/rc-segmented/es/MotionThumb.js
@@ -9485,12 +9536,12 @@ var TypedSegmented = Segmented;
 var context = __webpack_require__(53124);
 // EXTERNAL MODULE: ./node_modules/antd/es/config-provider/hooks/useSize.js
 var useSize = __webpack_require__(98675);
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 35 modules
-var cssinjs_es = __webpack_require__(54548);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
+var cssinjs_es = __webpack_require__(861);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/index.js
 var style = __webpack_require__(14747);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
 var statistic = __webpack_require__(45503);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/segmented/style/index.js
@@ -9765,797 +9816,7 @@ if (false) {}
 
 /***/ }),
 
-/***/ 21687:
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  Z: function() { return /* binding */ skeleton; }
-});
-
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
-// EXTERNAL MODULE: ./node_modules/classnames/index.js
-var classnames = __webpack_require__(93967);
-var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
-// EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
-var context = __webpack_require__(53124);
-// EXTERNAL MODULE: ./node_modules/rc-util/es/omit.js
-var omit = __webpack_require__(98423);
-;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Element.js
-"use client";
-
-
-
-const Element = props => {
-  const {
-    prefixCls,
-    className,
-    style,
-    size,
-    shape
-  } = props;
-  const sizeCls = classnames_default()({
-    [`${prefixCls}-lg`]: size === 'large',
-    [`${prefixCls}-sm`]: size === 'small'
-  });
-  const shapeCls = classnames_default()({
-    [`${prefixCls}-circle`]: shape === 'circle',
-    [`${prefixCls}-square`]: shape === 'square',
-    [`${prefixCls}-round`]: shape === 'round'
-  });
-  const sizeStyle = react.useMemo(() => typeof size === 'number' ? {
-    width: size,
-    height: size,
-    lineHeight: `${size}px`
-  } : {}, [size]);
-  return /*#__PURE__*/react.createElement("span", {
-    className: classnames_default()(prefixCls, sizeCls, shapeCls, className),
-    style: Object.assign(Object.assign({}, sizeStyle), style)
-  });
-};
-/* harmony default export */ var skeleton_Element = (Element);
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 35 modules
-var es = __webpack_require__(54548);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
-var statistic = __webpack_require__(45503);
-;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/style/index.js
-
-
-const skeletonClsLoading = new es/* Keyframes */.E4(`ant-skeleton-loading`, {
-  '0%': {
-    backgroundPosition: '100% 50%'
-  },
-  '100%': {
-    backgroundPosition: '0 50%'
-  }
-});
-const genSkeletonElementCommonSize = size => ({
-  height: size,
-  lineHeight: (0,es/* unit */.bf)(size)
-});
-const genSkeletonElementAvatarSize = size => Object.assign({
-  width: size
-}, genSkeletonElementCommonSize(size));
-const genSkeletonColor = token => ({
-  background: token.skeletonLoadingBackground,
-  backgroundSize: '400% 100%',
-  animationName: skeletonClsLoading,
-  animationDuration: token.skeletonLoadingMotionDuration,
-  animationTimingFunction: 'ease',
-  animationIterationCount: 'infinite'
-});
-const genSkeletonElementInputSize = (size, calc) => Object.assign({
-  width: calc(size).mul(5).equal(),
-  minWidth: calc(size).mul(5).equal()
-}, genSkeletonElementCommonSize(size));
-const genSkeletonElementAvatar = token => {
-  const {
-    skeletonAvatarCls,
-    gradientFromColor,
-    controlHeight,
-    controlHeightLG,
-    controlHeightSM
-  } = token;
-  return {
-    [`${skeletonAvatarCls}`]: Object.assign({
-      display: 'inline-block',
-      verticalAlign: 'top',
-      background: gradientFromColor
-    }, genSkeletonElementAvatarSize(controlHeight)),
-    [`${skeletonAvatarCls}${skeletonAvatarCls}-circle`]: {
-      borderRadius: '50%'
-    },
-    [`${skeletonAvatarCls}${skeletonAvatarCls}-lg`]: Object.assign({}, genSkeletonElementAvatarSize(controlHeightLG)),
-    [`${skeletonAvatarCls}${skeletonAvatarCls}-sm`]: Object.assign({}, genSkeletonElementAvatarSize(controlHeightSM))
-  };
-};
-const genSkeletonElementInput = token => {
-  const {
-    controlHeight,
-    borderRadiusSM,
-    skeletonInputCls,
-    controlHeightLG,
-    controlHeightSM,
-    gradientFromColor,
-    calc
-  } = token;
-  return {
-    [`${skeletonInputCls}`]: Object.assign({
-      display: 'inline-block',
-      verticalAlign: 'top',
-      background: gradientFromColor,
-      borderRadius: borderRadiusSM
-    }, genSkeletonElementInputSize(controlHeight, calc)),
-    [`${skeletonInputCls}-lg`]: Object.assign({}, genSkeletonElementInputSize(controlHeightLG, calc)),
-    [`${skeletonInputCls}-sm`]: Object.assign({}, genSkeletonElementInputSize(controlHeightSM, calc))
-  };
-};
-const genSkeletonElementImageSize = size => Object.assign({
-  width: size
-}, genSkeletonElementCommonSize(size));
-const genSkeletonElementImage = token => {
-  const {
-    skeletonImageCls,
-    imageSizeBase,
-    gradientFromColor,
-    borderRadiusSM,
-    calc
-  } = token;
-  return {
-    [`${skeletonImageCls}`]: Object.assign(Object.assign({
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      verticalAlign: 'top',
-      background: gradientFromColor,
-      borderRadius: borderRadiusSM
-    }, genSkeletonElementImageSize(calc(imageSizeBase).mul(2).equal())), {
-      [`${skeletonImageCls}-path`]: {
-        fill: '#bfbfbf'
-      },
-      [`${skeletonImageCls}-svg`]: Object.assign(Object.assign({}, genSkeletonElementImageSize(imageSizeBase)), {
-        maxWidth: calc(imageSizeBase).mul(4).equal(),
-        maxHeight: calc(imageSizeBase).mul(4).equal()
-      }),
-      [`${skeletonImageCls}-svg${skeletonImageCls}-svg-circle`]: {
-        borderRadius: '50%'
-      }
-    }),
-    [`${skeletonImageCls}${skeletonImageCls}-circle`]: {
-      borderRadius: '50%'
-    }
-  };
-};
-const genSkeletonElementButtonShape = (token, size, buttonCls) => {
-  const {
-    skeletonButtonCls
-  } = token;
-  return {
-    [`${buttonCls}${skeletonButtonCls}-circle`]: {
-      width: size,
-      minWidth: size,
-      borderRadius: '50%'
-    },
-    [`${buttonCls}${skeletonButtonCls}-round`]: {
-      borderRadius: size
-    }
-  };
-};
-const genSkeletonElementButtonSize = (size, calc) => Object.assign({
-  width: calc(size).mul(2).equal(),
-  minWidth: calc(size).mul(2).equal()
-}, genSkeletonElementCommonSize(size));
-const genSkeletonElementButton = token => {
-  const {
-    borderRadiusSM,
-    skeletonButtonCls,
-    controlHeight,
-    controlHeightLG,
-    controlHeightSM,
-    gradientFromColor,
-    calc
-  } = token;
-  return Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({
-    [`${skeletonButtonCls}`]: Object.assign({
-      display: 'inline-block',
-      verticalAlign: 'top',
-      background: gradientFromColor,
-      borderRadius: borderRadiusSM,
-      width: calc(controlHeight).mul(2).equal(),
-      minWidth: calc(controlHeight).mul(2).equal()
-    }, genSkeletonElementButtonSize(controlHeight, calc))
-  }, genSkeletonElementButtonShape(token, controlHeight, skeletonButtonCls)), {
-    [`${skeletonButtonCls}-lg`]: Object.assign({}, genSkeletonElementButtonSize(controlHeightLG, calc))
-  }), genSkeletonElementButtonShape(token, controlHeightLG, `${skeletonButtonCls}-lg`)), {
-    [`${skeletonButtonCls}-sm`]: Object.assign({}, genSkeletonElementButtonSize(controlHeightSM, calc))
-  }), genSkeletonElementButtonShape(token, controlHeightSM, `${skeletonButtonCls}-sm`));
-};
-// =============================== Base ===============================
-const genBaseStyle = token => {
-  const {
-    componentCls,
-    skeletonAvatarCls,
-    skeletonTitleCls,
-    skeletonParagraphCls,
-    skeletonButtonCls,
-    skeletonInputCls,
-    skeletonImageCls,
-    controlHeight,
-    controlHeightLG,
-    controlHeightSM,
-    gradientFromColor,
-    padding,
-    marginSM,
-    borderRadius,
-    titleHeight,
-    blockRadius,
-    paragraphLiHeight,
-    controlHeightXS,
-    paragraphMarginTop
-  } = token;
-  return {
-    [`${componentCls}`]: {
-      display: 'table',
-      width: '100%',
-      [`${componentCls}-header`]: {
-        display: 'table-cell',
-        paddingInlineEnd: padding,
-        verticalAlign: 'top',
-        // Avatar
-        [`${skeletonAvatarCls}`]: Object.assign({
-          display: 'inline-block',
-          verticalAlign: 'top',
-          background: gradientFromColor
-        }, genSkeletonElementAvatarSize(controlHeight)),
-        [`${skeletonAvatarCls}-circle`]: {
-          borderRadius: '50%'
-        },
-        [`${skeletonAvatarCls}-lg`]: Object.assign({}, genSkeletonElementAvatarSize(controlHeightLG)),
-        [`${skeletonAvatarCls}-sm`]: Object.assign({}, genSkeletonElementAvatarSize(controlHeightSM))
-      },
-      [`${componentCls}-content`]: {
-        display: 'table-cell',
-        width: '100%',
-        verticalAlign: 'top',
-        // Title
-        [`${skeletonTitleCls}`]: {
-          width: '100%',
-          height: titleHeight,
-          background: gradientFromColor,
-          borderRadius: blockRadius,
-          [`+ ${skeletonParagraphCls}`]: {
-            marginBlockStart: controlHeightSM
-          }
-        },
-        // paragraph
-        [`${skeletonParagraphCls}`]: {
-          padding: 0,
-          '> li': {
-            width: '100%',
-            height: paragraphLiHeight,
-            listStyle: 'none',
-            background: gradientFromColor,
-            borderRadius: blockRadius,
-            '+ li': {
-              marginBlockStart: controlHeightXS
-            }
-          }
-        },
-        [`${skeletonParagraphCls}> li:last-child:not(:first-child):not(:nth-child(2))`]: {
-          width: '61%'
-        }
-      },
-      [`&-round ${componentCls}-content`]: {
-        [`${skeletonTitleCls}, ${skeletonParagraphCls} > li`]: {
-          borderRadius
-        }
-      }
-    },
-    [`${componentCls}-with-avatar ${componentCls}-content`]: {
-      // Title
-      [`${skeletonTitleCls}`]: {
-        marginBlockStart: marginSM,
-        [`+ ${skeletonParagraphCls}`]: {
-          marginBlockStart: paragraphMarginTop
-        }
-      }
-    },
-    // Skeleton element
-    [`${componentCls}${componentCls}-element`]: Object.assign(Object.assign(Object.assign(Object.assign({
-      display: 'inline-block',
-      width: 'auto'
-    }, genSkeletonElementButton(token)), genSkeletonElementAvatar(token)), genSkeletonElementInput(token)), genSkeletonElementImage(token)),
-    // Skeleton Block Button, Input
-    [`${componentCls}${componentCls}-block`]: {
-      width: '100%',
-      [`${skeletonButtonCls}`]: {
-        width: '100%'
-      },
-      [`${skeletonInputCls}`]: {
-        width: '100%'
-      }
-    },
-    // With active animation
-    [`${componentCls}${componentCls}-active`]: {
-      [`
-        ${skeletonTitleCls},
-        ${skeletonParagraphCls} > li,
-        ${skeletonAvatarCls},
-        ${skeletonButtonCls},
-        ${skeletonInputCls},
-        ${skeletonImageCls}
-      `]: Object.assign({}, genSkeletonColor(token))
-    }
-  };
-};
-// ============================== Export ==============================
-const prepareComponentToken = token => {
-  const {
-    colorFillContent,
-    colorFill
-  } = token;
-  const gradientFromColor = colorFillContent;
-  const gradientToColor = colorFill;
-  return {
-    color: gradientFromColor,
-    colorGradientEnd: gradientToColor,
-    gradientFromColor,
-    gradientToColor,
-    titleHeight: token.controlHeight / 2,
-    blockRadius: token.borderRadiusSM,
-    paragraphMarginTop: token.marginLG + token.marginXXS,
-    paragraphLiHeight: token.controlHeight / 2
-  };
-};
-/* harmony default export */ var skeleton_style = ((0,genComponentStyleHook/* genStyleHooks */.I$)('Skeleton', token => {
-  const {
-    componentCls,
-    calc
-  } = token;
-  const skeletonToken = (0,statistic/* merge */.TS)(token, {
-    skeletonAvatarCls: `${componentCls}-avatar`,
-    skeletonTitleCls: `${componentCls}-title`,
-    skeletonParagraphCls: `${componentCls}-paragraph`,
-    skeletonButtonCls: `${componentCls}-button`,
-    skeletonInputCls: `${componentCls}-input`,
-    skeletonImageCls: `${componentCls}-image`,
-    imageSizeBase: calc(token.controlHeight).mul(1.5).equal(),
-    borderRadius: 100,
-    // Large number to make capsule shape
-    skeletonLoadingBackground: `linear-gradient(90deg, ${token.gradientFromColor} 25%, ${token.gradientToColor} 37%, ${token.gradientFromColor} 63%)`,
-    skeletonLoadingMotionDuration: '1.4s'
-  });
-  return [genBaseStyle(skeletonToken)];
-}, prepareComponentToken, {
-  deprecatedTokens: [['color', 'gradientFromColor'], ['colorGradientEnd', 'gradientToColor']]
-}));
-;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Avatar.js
-"use client";
-
-
-
-
-
-
-
-const SkeletonAvatar = props => {
-  const {
-    prefixCls: customizePrefixCls,
-    className,
-    rootClassName,
-    active,
-    shape = 'circle',
-    size = 'default'
-  } = props;
-  const {
-    getPrefixCls
-  } = react.useContext(context/* ConfigContext */.E_);
-  const prefixCls = getPrefixCls('skeleton', customizePrefixCls);
-  const [wrapCSSVar, hashId, cssVarCls] = skeleton_style(prefixCls);
-  const otherProps = (0,omit/* default */.Z)(props, ['prefixCls', 'className']);
-  const cls = classnames_default()(prefixCls, `${prefixCls}-element`, {
-    [`${prefixCls}-active`]: active
-  }, className, rootClassName, hashId, cssVarCls);
-  return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
-    className: cls
-  }, /*#__PURE__*/react.createElement(skeleton_Element, Object.assign({
-    prefixCls: `${prefixCls}-avatar`,
-    shape: shape,
-    size: size
-  }, otherProps))));
-};
-/* harmony default export */ var Avatar = (SkeletonAvatar);
-;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Button.js
-"use client";
-
-
-
-
-
-
-
-const SkeletonButton = props => {
-  const {
-    prefixCls: customizePrefixCls,
-    className,
-    rootClassName,
-    active,
-    block = false,
-    size = 'default'
-  } = props;
-  const {
-    getPrefixCls
-  } = react.useContext(context/* ConfigContext */.E_);
-  const prefixCls = getPrefixCls('skeleton', customizePrefixCls);
-  const [wrapCSSVar, hashId, cssVarCls] = skeleton_style(prefixCls);
-  const otherProps = (0,omit/* default */.Z)(props, ['prefixCls']);
-  const cls = classnames_default()(prefixCls, `${prefixCls}-element`, {
-    [`${prefixCls}-active`]: active,
-    [`${prefixCls}-block`]: block
-  }, className, rootClassName, hashId, cssVarCls);
-  return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
-    className: cls
-  }, /*#__PURE__*/react.createElement(skeleton_Element, Object.assign({
-    prefixCls: `${prefixCls}-button`,
-    size: size
-  }, otherProps))));
-};
-/* harmony default export */ var Button = (SkeletonButton);
-;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Image.js
-"use client";
-
-
-
-
-
-const path = 'M365.714286 329.142857q0 45.714286-32.036571 77.677714t-77.677714 32.036571-77.677714-32.036571-32.036571-77.677714 32.036571-77.677714 77.677714-32.036571 77.677714 32.036571 32.036571 77.677714zM950.857143 548.571429l0 256-804.571429 0 0-109.714286 182.857143-182.857143 91.428571 91.428571 292.571429-292.571429zM1005.714286 146.285714l-914.285714 0q-7.460571 0-12.873143 5.412571t-5.412571 12.873143l0 694.857143q0 7.460571 5.412571 12.873143t12.873143 5.412571l914.285714 0q7.460571 0 12.873143-5.412571t5.412571-12.873143l0-694.857143q0-7.460571-5.412571-12.873143t-12.873143-5.412571zM1097.142857 164.571429l0 694.857143q0 37.741714-26.843429 64.585143t-64.585143 26.843429l-914.285714 0q-37.741714 0-64.585143-26.843429t-26.843429-64.585143l0-694.857143q0-37.741714 26.843429-64.585143t64.585143-26.843429l914.285714 0q37.741714 0 64.585143 26.843429t26.843429 64.585143z';
-const SkeletonImage = props => {
-  const {
-    prefixCls: customizePrefixCls,
-    className,
-    rootClassName,
-    style,
-    active
-  } = props;
-  const {
-    getPrefixCls
-  } = react.useContext(context/* ConfigContext */.E_);
-  const prefixCls = getPrefixCls('skeleton', customizePrefixCls);
-  const [wrapCSSVar, hashId, cssVarCls] = skeleton_style(prefixCls);
-  const cls = classnames_default()(prefixCls, `${prefixCls}-element`, {
-    [`${prefixCls}-active`]: active
-  }, className, rootClassName, hashId, cssVarCls);
-  return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
-    className: cls
-  }, /*#__PURE__*/react.createElement("div", {
-    className: classnames_default()(`${prefixCls}-image`, className),
-    style: style
-  }, /*#__PURE__*/react.createElement("svg", {
-    viewBox: "0 0 1098 1024",
-    xmlns: "http://www.w3.org/2000/svg",
-    className: `${prefixCls}-image-svg`
-  }, /*#__PURE__*/react.createElement("path", {
-    d: path,
-    className: `${prefixCls}-image-path`
-  })))));
-};
-/* harmony default export */ var Image = (SkeletonImage);
-;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Input.js
-"use client";
-
-
-
-
-
-
-
-const SkeletonInput = props => {
-  const {
-    prefixCls: customizePrefixCls,
-    className,
-    rootClassName,
-    active,
-    block,
-    size = 'default'
-  } = props;
-  const {
-    getPrefixCls
-  } = react.useContext(context/* ConfigContext */.E_);
-  const prefixCls = getPrefixCls('skeleton', customizePrefixCls);
-  const [wrapCSSVar, hashId, cssVarCls] = skeleton_style(prefixCls);
-  const otherProps = (0,omit/* default */.Z)(props, ['prefixCls']);
-  const cls = classnames_default()(prefixCls, `${prefixCls}-element`, {
-    [`${prefixCls}-active`]: active,
-    [`${prefixCls}-block`]: block
-  }, className, rootClassName, hashId, cssVarCls);
-  return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
-    className: cls
-  }, /*#__PURE__*/react.createElement(skeleton_Element, Object.assign({
-    prefixCls: `${prefixCls}-input`,
-    size: size
-  }, otherProps))));
-};
-/* harmony default export */ var Input = (SkeletonInput);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
-var esm_extends = __webpack_require__(87462);
-;// CONCATENATED MODULE: ./node_modules/@ant-design/icons-svg/es/asn/DotChartOutlined.js
-// This icon file is generated automatically.
-var DotChartOutlined = { "icon": { "tag": "svg", "attrs": { "viewBox": "64 64 896 896", "focusable": "false" }, "children": [{ "tag": "path", "attrs": { "d": "M888 792H200V168c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v688c0 4.4 3.6 8 8 8h752c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM288 604a64 64 0 10128 0 64 64 0 10-128 0zm118-224a48 48 0 1096 0 48 48 0 10-96 0zm158 228a96 96 0 10192 0 96 96 0 10-192 0zm148-314a56 56 0 10112 0 56 56 0 10-112 0z" } }] }, "name": "dot-chart", "theme": "outlined" };
-/* harmony default export */ var asn_DotChartOutlined = (DotChartOutlined);
-
-// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/components/AntdIcon.js + 3 modules
-var AntdIcon = __webpack_require__(42135);
-;// CONCATENATED MODULE: ./node_modules/@ant-design/icons/es/icons/DotChartOutlined.js
-
-// GENERATE BY ./scripts/generate.ts
-// DON NOT EDIT IT MANUALLY
-
-
-
-
-var DotChartOutlined_DotChartOutlined = function DotChartOutlined(props, ref) {
-  return /*#__PURE__*/react.createElement(AntdIcon/* default */.Z, (0,esm_extends/* default */.Z)({}, props, {
-    ref: ref,
-    icon: asn_DotChartOutlined
-  }));
-};
-
-/**![dot-chart](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIGZpbGw9IiNjYWNhY2EiIHZpZXdCb3g9IjY0IDY0IDg5NiA4OTYiIGZvY3VzYWJsZT0iZmFsc2UiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTg4OCA3OTJIMjAwVjE2OGMwLTQuNC0zLjYtOC04LThoLTU2Yy00LjQgMC04IDMuNi04IDh2Njg4YzAgNC40IDMuNiA4IDggOGg3NTJjNC40IDAgOC0zLjYgOC04di01NmMwLTQuNC0zLjYtOC04LTh6TTI4OCA2MDRhNjQgNjQgMCAxMDEyOCAwIDY0IDY0IDAgMTAtMTI4IDB6bTExOC0yMjRhNDggNDggMCAxMDk2IDAgNDggNDggMCAxMC05NiAwem0xNTggMjI4YTk2IDk2IDAgMTAxOTIgMCA5NiA5NiAwIDEwLTE5MiAwem0xNDgtMzE0YTU2IDU2IDAgMTAxMTIgMCA1NiA1NiAwIDEwLTExMiAweiIgLz48L3N2Zz4=) */
-var RefIcon = /*#__PURE__*/react.forwardRef(DotChartOutlined_DotChartOutlined);
-if (false) {}
-/* harmony default export */ var icons_DotChartOutlined = (RefIcon);
-;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Node.js
-"use client";
-
-
-
-
-
-
-const SkeletonNode = props => {
-  const {
-    prefixCls: customizePrefixCls,
-    className,
-    rootClassName,
-    style,
-    active,
-    children
-  } = props;
-  const {
-    getPrefixCls
-  } = react.useContext(context/* ConfigContext */.E_);
-  const prefixCls = getPrefixCls('skeleton', customizePrefixCls);
-  const [wrapCSSVar, hashId, cssVarCls] = skeleton_style(prefixCls);
-  const cls = classnames_default()(prefixCls, `${prefixCls}-element`, {
-    [`${prefixCls}-active`]: active
-  }, hashId, className, rootClassName, cssVarCls);
-  const content = children !== null && children !== void 0 ? children : /*#__PURE__*/react.createElement(icons_DotChartOutlined, null);
-  return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
-    className: cls
-  }, /*#__PURE__*/react.createElement("div", {
-    className: classnames_default()(`${prefixCls}-image`, className),
-    style: style
-  }, content)));
-};
-/* harmony default export */ var Node = (SkeletonNode);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js + 2 modules
-var toConsumableArray = __webpack_require__(74902);
-;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Paragraph.js
-"use client";
-
-
-
-
-const getWidth = (index, props) => {
-  const {
-    width,
-    rows = 2
-  } = props;
-  if (Array.isArray(width)) {
-    return width[index];
-  }
-  // last paragraph
-  if (rows - 1 === index) {
-    return width;
-  }
-  return undefined;
-};
-const Paragraph = props => {
-  const {
-    prefixCls,
-    className,
-    style,
-    rows
-  } = props;
-  const rowList = (0,toConsumableArray/* default */.Z)(Array(rows)).map((_, index) => (
-  /*#__PURE__*/
-  // eslint-disable-next-line react/no-array-index-key
-  react.createElement("li", {
-    key: index,
-    style: {
-      width: getWidth(index, props)
-    }
-  })));
-  return /*#__PURE__*/react.createElement("ul", {
-    className: classnames_default()(prefixCls, className),
-    style: style
-  }, rowList);
-};
-/* harmony default export */ var skeleton_Paragraph = (Paragraph);
-;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Title.js
-"use client";
-
-/* eslint-disable jsx-a11y/heading-has-content */
-
-
-const Title = _ref => {
-  let {
-    prefixCls,
-    className,
-    width,
-    style
-  } = _ref;
-  return /*#__PURE__*/react.createElement("h3", {
-    className: classnames_default()(prefixCls, className),
-    style: Object.assign({
-      width
-    }, style)
-  });
-};
-/* harmony default export */ var skeleton_Title = (Title);
-;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/Skeleton.js
-"use client";
-
-
-
-
-
-
-
-
-
-
-
-
-
-function getComponentProps(prop) {
-  if (prop && typeof prop === 'object') {
-    return prop;
-  }
-  return {};
-}
-function getAvatarBasicProps(hasTitle, hasParagraph) {
-  if (hasTitle && !hasParagraph) {
-    // Square avatar
-    return {
-      size: 'large',
-      shape: 'square'
-    };
-  }
-  return {
-    size: 'large',
-    shape: 'circle'
-  };
-}
-function getTitleBasicProps(hasAvatar, hasParagraph) {
-  if (!hasAvatar && hasParagraph) {
-    return {
-      width: '38%'
-    };
-  }
-  if (hasAvatar && hasParagraph) {
-    return {
-      width: '50%'
-    };
-  }
-  return {};
-}
-function getParagraphBasicProps(hasAvatar, hasTitle) {
-  const basicProps = {};
-  // Width
-  if (!hasAvatar || !hasTitle) {
-    basicProps.width = '61%';
-  }
-  // Rows
-  if (!hasAvatar && hasTitle) {
-    basicProps.rows = 3;
-  } else {
-    basicProps.rows = 2;
-  }
-  return basicProps;
-}
-const Skeleton = props => {
-  const {
-    prefixCls: customizePrefixCls,
-    loading,
-    className,
-    rootClassName,
-    style,
-    children,
-    avatar = false,
-    title = true,
-    paragraph = true,
-    active,
-    round
-  } = props;
-  const {
-    getPrefixCls,
-    direction,
-    skeleton
-  } = react.useContext(context/* ConfigContext */.E_);
-  const prefixCls = getPrefixCls('skeleton', customizePrefixCls);
-  const [wrapCSSVar, hashId, cssVarCls] = skeleton_style(prefixCls);
-  if (loading || !('loading' in props)) {
-    const hasAvatar = !!avatar;
-    const hasTitle = !!title;
-    const hasParagraph = !!paragraph;
-    // Avatar
-    let avatarNode;
-    if (hasAvatar) {
-      const avatarProps = Object.assign(Object.assign({
-        prefixCls: `${prefixCls}-avatar`
-      }, getAvatarBasicProps(hasTitle, hasParagraph)), getComponentProps(avatar));
-      // We direct use SkeletonElement as avatar in skeleton internal.
-      avatarNode = /*#__PURE__*/react.createElement("div", {
-        className: `${prefixCls}-header`
-      }, /*#__PURE__*/react.createElement(skeleton_Element, Object.assign({}, avatarProps)));
-    }
-    let contentNode;
-    if (hasTitle || hasParagraph) {
-      // Title
-      let $title;
-      if (hasTitle) {
-        const titleProps = Object.assign(Object.assign({
-          prefixCls: `${prefixCls}-title`
-        }, getTitleBasicProps(hasAvatar, hasParagraph)), getComponentProps(title));
-        $title = /*#__PURE__*/react.createElement(skeleton_Title, Object.assign({}, titleProps));
-      }
-      // Paragraph
-      let paragraphNode;
-      if (hasParagraph) {
-        const paragraphProps = Object.assign(Object.assign({
-          prefixCls: `${prefixCls}-paragraph`
-        }, getParagraphBasicProps(hasAvatar, hasTitle)), getComponentProps(paragraph));
-        paragraphNode = /*#__PURE__*/react.createElement(skeleton_Paragraph, Object.assign({}, paragraphProps));
-      }
-      contentNode = /*#__PURE__*/react.createElement("div", {
-        className: `${prefixCls}-content`
-      }, $title, paragraphNode);
-    }
-    const cls = classnames_default()(prefixCls, {
-      [`${prefixCls}-with-avatar`]: hasAvatar,
-      [`${prefixCls}-active`]: active,
-      [`${prefixCls}-rtl`]: direction === 'rtl',
-      [`${prefixCls}-round`]: round
-    }, skeleton === null || skeleton === void 0 ? void 0 : skeleton.className, className, rootClassName, hashId, cssVarCls);
-    return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
-      className: cls,
-      style: Object.assign(Object.assign({}, skeleton === null || skeleton === void 0 ? void 0 : skeleton.style), style)
-    }, avatarNode, contentNode));
-  }
-  return children !== null && children !== void 0 ? children : null;
-};
-Skeleton.Button = Button;
-Skeleton.Avatar = Avatar;
-Skeleton.Input = Input;
-Skeleton.Image = Image;
-Skeleton.Node = Node;
-if (false) {}
-/* harmony default export */ var skeleton_Skeleton = (Skeleton);
-;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/index.js
-"use client";
-
-
-/* harmony default export */ var skeleton = (skeleton_Skeleton);
-
-/***/ }),
-
-/***/ 75081:
+/***/ 74330:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10565,13 +9826,11 @@ __webpack_require__.d(__webpack_exports__, {
   Z: function() { return /* binding */ spin; }
 });
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
-// EXTERNAL MODULE: ./node_modules/rc-util/es/omit.js
-var omit = __webpack_require__(98423);
 ;// CONCATENATED MODULE: ./node_modules/throttle-debounce/esm/index.js
 /* eslint-disable no-undefined,no-param-reassign,no-shadow */
 
@@ -10598,73 +9857,67 @@ var omit = __webpack_require__(98423);
  */
 function throttle (delay, callback, options) {
   var _ref = options || {},
-      _ref$noTrailing = _ref.noTrailing,
-      noTrailing = _ref$noTrailing === void 0 ? false : _ref$noTrailing,
-      _ref$noLeading = _ref.noLeading,
-      noLeading = _ref$noLeading === void 0 ? false : _ref$noLeading,
-      _ref$debounceMode = _ref.debounceMode,
-      debounceMode = _ref$debounceMode === void 0 ? undefined : _ref$debounceMode;
+    _ref$noTrailing = _ref.noTrailing,
+    noTrailing = _ref$noTrailing === void 0 ? false : _ref$noTrailing,
+    _ref$noLeading = _ref.noLeading,
+    noLeading = _ref$noLeading === void 0 ? false : _ref$noLeading,
+    _ref$debounceMode = _ref.debounceMode,
+    debounceMode = _ref$debounceMode === void 0 ? undefined : _ref$debounceMode;
   /*
    * After wrapper has stopped being called, this timeout ensures that
    * `callback` is executed at the proper times in `throttle` and `end`
    * debounce modes.
    */
-
-
   var timeoutID;
-  var cancelled = false; // Keep track of the last time `callback` was executed.
+  var cancelled = false;
 
-  var lastExec = 0; // Function to clear existing timeout
+  // Keep track of the last time `callback` was executed.
+  var lastExec = 0;
 
+  // Function to clear existing timeout
   function clearExistingTimeout() {
     if (timeoutID) {
       clearTimeout(timeoutID);
     }
-  } // Function to cancel next exec
+  }
 
-
+  // Function to cancel next exec
   function cancel(options) {
     var _ref2 = options || {},
-        _ref2$upcomingOnly = _ref2.upcomingOnly,
-        upcomingOnly = _ref2$upcomingOnly === void 0 ? false : _ref2$upcomingOnly;
-
+      _ref2$upcomingOnly = _ref2.upcomingOnly,
+      upcomingOnly = _ref2$upcomingOnly === void 0 ? false : _ref2$upcomingOnly;
     clearExistingTimeout();
     cancelled = !upcomingOnly;
   }
+
   /*
    * The `wrapper` function encapsulates all of the throttling / debouncing
    * functionality and when executed will limit the rate at which `callback`
    * is executed.
    */
-
-
   function wrapper() {
     for (var _len = arguments.length, arguments_ = new Array(_len), _key = 0; _key < _len; _key++) {
       arguments_[_key] = arguments[_key];
     }
-
     var self = this;
     var elapsed = Date.now() - lastExec;
-
     if (cancelled) {
       return;
-    } // Execute `callback` and update the `lastExec` timestamp.
+    }
 
-
+    // Execute `callback` and update the `lastExec` timestamp.
     function exec() {
       lastExec = Date.now();
       callback.apply(self, arguments_);
     }
+
     /*
      * If `debounceMode` is true (at begin) this is used to clear the flag
      * to allow future `callback` executions.
      */
-
-
     function clear() {
       timeoutID = undefined;
     }
-
     if (!noLeading && debounceMode && !timeoutID) {
       /*
        * Since `wrapper` is being called for the first time and
@@ -10673,9 +9926,7 @@ function throttle (delay, callback, options) {
        */
       exec();
     }
-
     clearExistingTimeout();
-
     if (debounceMode === undefined && elapsed > delay) {
       if (noLeading) {
         /*
@@ -10684,7 +9935,6 @@ function throttle (delay, callback, options) {
          * to execute after `delay` ms.
          */
         lastExec = Date.now();
-
         if (!noTrailing) {
           timeoutID = setTimeout(debounceMode ? clear : exec, delay);
         }
@@ -10710,13 +9960,14 @@ function throttle (delay, callback, options) {
       timeoutID = setTimeout(debounceMode ? clear : exec, debounceMode === undefined ? delay - elapsed : delay);
     }
   }
+  wrapper.cancel = cancel;
 
-  wrapper.cancel = cancel; // Return the wrapper function.
-
+  // Return the wrapper function.
   return wrapper;
 }
 
 /* eslint-disable no-undefined */
+
 /**
  * Debounce execution of a function. Debouncing, unlike throttling,
  * guarantees that a function is only executed a single time, either at the
@@ -10732,12 +9983,10 @@ function throttle (delay, callback, options) {
  *
  * @returns {Function} A new, debounced function.
  */
-
 function debounce (delay, callback, options) {
   var _ref = options || {},
-      _ref$atBegin = _ref.atBegin,
-      atBegin = _ref$atBegin === void 0 ? false : _ref$atBegin;
-
+    _ref$atBegin = _ref.atBegin,
+    atBegin = _ref$atBegin === void 0 ? false : _ref$atBegin;
   return throttle(delay, callback, {
     debounceMode: atBegin !== false
   });
@@ -10746,16 +9995,123 @@ function debounce (delay, callback, options) {
 
 //# sourceMappingURL=index.js.map
 
-// EXTERNAL MODULE: ./node_modules/antd/es/_util/reactNode.js
-var reactNode = __webpack_require__(96159);
 // EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
 var context = __webpack_require__(53124);
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 35 modules
-var es = __webpack_require__(54548);
+// EXTERNAL MODULE: ./node_modules/antd/es/_util/reactNode.js
+var reactNode = __webpack_require__(96159);
+// EXTERNAL MODULE: ./node_modules/rc-util/es/hooks/useLayoutEffect.js
+var useLayoutEffect = __webpack_require__(8410);
+;// CONCATENATED MODULE: ./node_modules/antd/es/spin/Indicator/Progress.js
+"use client";
+
+
+
+
+function Progress(_ref) {
+  let {
+    percent,
+    prefixCls
+  } = _ref;
+  const dotClassName = `${prefixCls}-dot`;
+  const holderClassName = `${dotClassName}-holder`;
+  const hideClassName = `${holderClassName}-hidden`;
+  const [render, setRender] = react.useState(false);
+  // ==================== Visible =====================
+  (0,useLayoutEffect/* default */.Z)(() => {
+    if (percent !== 0) {
+      setRender(true);
+    }
+  }, [percent !== 0]);
+  // ==================== Progress ====================
+  const safePtg = Math.max(Math.min(percent, 100), 0);
+  const viewSize = 100;
+  const borderWidth = viewSize / 5;
+  const radius = viewSize / 2 - borderWidth / 2;
+  const circumference = radius * 2 * Math.PI;
+  const renderCircle = (circleClassName, style) => ( /*#__PURE__*/react.createElement("circle", {
+    className: classnames_default()(circleClassName, `${dotClassName}-circle`),
+    r: radius,
+    cx: "50",
+    cy: "50",
+    strokeWidth: borderWidth,
+    style: style
+  }));
+  // ===================== Render =====================
+  if (!render) {
+    return null;
+  }
+  return /*#__PURE__*/react.createElement("span", {
+    className: classnames_default()(holderClassName, `${dotClassName}-progress`, safePtg <= 0 && hideClassName)
+  }, /*#__PURE__*/react.createElement("svg", {
+    viewBox: `0 0 ${viewSize} ${viewSize}`,
+    // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: progressbar could be readonly
+    role: "progressbar",
+    "aria-valuemin": 0,
+    "aria-valuemax": 100,
+    "aria-valuenow": safePtg
+  }, renderCircle(`${dotClassName}-circle-bg`), renderCircle('', {
+    strokeDasharray: `${circumference * safePtg / 100} ${circumference * (100 - safePtg) / 100}`,
+    strokeDashoffset: `${circumference / 4}`
+  })));
+}
+;// CONCATENATED MODULE: ./node_modules/antd/es/spin/Indicator/Looper.js
+"use client";
+
+
+
+
+function Looper(props) {
+  const {
+    prefixCls,
+    percent = 0
+  } = props;
+  const dotClassName = `${prefixCls}-dot`;
+  const holderClassName = `${dotClassName}-holder`;
+  const hideClassName = `${holderClassName}-hidden`;
+  // ===================== Render =====================
+  return /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", {
+    className: classnames_default()(holderClassName, percent > 0 && hideClassName)
+  }, /*#__PURE__*/react.createElement("span", {
+    className: classnames_default()(dotClassName, `${prefixCls}-dot-spin`)
+  }, [1, 2, 3, 4].map(i => ( /*#__PURE__*/react.createElement("i", {
+    className: `${prefixCls}-dot-item`,
+    key: i
+  }))))), /*#__PURE__*/react.createElement(Progress, {
+    prefixCls: prefixCls,
+    percent: percent
+  }));
+}
+;// CONCATENATED MODULE: ./node_modules/antd/es/spin/Indicator/index.js
+"use client";
+
+
+
+
+
+function Indicator(props) {
+  const {
+    prefixCls,
+    indicator,
+    percent
+  } = props;
+  const dotClassName = `${prefixCls}-dot`;
+  if (indicator && /*#__PURE__*/react.isValidElement(indicator)) {
+    return (0,reactNode/* cloneElement */.Tm)(indicator, {
+      className: classnames_default()(indicator.props.className, dotClassName),
+      percent
+    });
+  }
+  return /*#__PURE__*/react.createElement(Looper, {
+    prefixCls: prefixCls,
+    percent: percent
+  });
+}
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
+var es = __webpack_require__(861);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/index.js
 var style = __webpack_require__(14747);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
 var statistic = __webpack_require__(45503);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/spin/style/index.js
@@ -10788,7 +10144,7 @@ const genSpinStyle = token => {
       opacity: 0,
       transition: `transform ${token.motionDurationSlow} ${token.motionEaseInOutCirc}`,
       '&-spinning': {
-        position: 'static',
+        position: 'relative',
         display: 'inline-block',
         opacity: 1
       },
@@ -10814,11 +10170,13 @@ const genSpinStyle = token => {
           opacity: 1,
           visibility: 'visible'
         },
-        [`${componentCls}-dot ${componentCls}-dot-item`]: {
-          backgroundColor: token.colorWhite
-        },
-        [`${componentCls}-text`]: {
-          color: token.colorTextLightSolid
+        [componentCls]: {
+          [`${componentCls}-dot-holder`]: {
+            color: token.colorWhite
+          },
+          [`${componentCls}-text`]: {
+            color: token.colorTextLightSolid
+          }
         }
       },
       '&-nested-loading': {
@@ -10894,7 +10252,7 @@ const genSpinStyle = token => {
           opacity: 0.5,
           userSelect: 'none',
           pointerEvents: 'none',
-          [`&::after`]: {
+          '&::after': {
             opacity: 0.4,
             pointerEvents: 'auto'
           }
@@ -10902,8 +10260,36 @@ const genSpinStyle = token => {
       },
       // tip
       // ------------------------------
-      [`&-tip`]: {
+      '&-tip': {
         color: token.spinDotDefault
+      },
+      // holder
+      // ------------------------------
+      [`${componentCls}-dot-progress`]: {
+        position: 'absolute',
+        top: 0,
+        insetInlineStart: 0
+      },
+      [`${componentCls}-dot-holder`]: {
+        width: '1em',
+        height: '1em',
+        fontSize: token.dotSize,
+        display: 'inline-block',
+        transition: `transform ${token.motionDurationSlow} ease, opacity ${token.motionDurationSlow} ease`,
+        transformOrigin: '50% 50%',
+        lineHeight: 1,
+        color: token.colorPrimary,
+        '&-hidden': {
+          transform: 'scale(0.3)',
+          opacity: 0
+        }
+      },
+      // progress
+      // ------------------------------
+      [`${componentCls}-dot-progress`]: {
+        position: 'absolute',
+        top: 0,
+        insetInlineStart: 0
       },
       // dots
       // ------------------------------
@@ -10918,7 +10304,7 @@ const genSpinStyle = token => {
           display: 'block',
           width: calc(token.dotSize).sub(calc(token.marginXXS).div(2)).div(2).equal(),
           height: calc(token.dotSize).sub(calc(token.marginXXS).div(2)).div(2).equal(),
-          backgroundColor: token.colorPrimary,
+          background: 'currentColor',
           borderRadius: '100%',
           transform: 'scale(0.75)',
           transformOrigin: '50% 50%',
@@ -10955,11 +10341,22 @@ const genSpinStyle = token => {
           animationDuration: '1.2s',
           animationIterationCount: 'infinite',
           animationTimingFunction: 'linear'
+        },
+        '&-circle': {
+          strokeLinecap: 'round',
+          transition: ['stroke-dashoffset', 'stroke-dasharray', 'stroke', 'stroke-width', 'opacity'].map(item => `${item} ${token.motionDurationSlow} ease`).join(','),
+          fillOpacity: 0,
+          stroke: 'currentcolor'
+        },
+        '&-circle-bg': {
+          stroke: token.colorFillSecondary
         }
       },
       // small
       [`&-sm ${componentCls}-dot`]: {
-        fontSize: token.dotSizeSM,
+        fontSize: token.dotSizeSM
+      },
+      [`&-sm ${componentCls}-dot-holder`]: {
         i: {
           width: calc(calc(token.dotSizeSM).sub(calc(token.marginXXS).div(2))).div(2).equal(),
           height: calc(calc(token.dotSizeSM).sub(calc(token.marginXXS).div(2))).div(2).equal()
@@ -10967,7 +10364,9 @@ const genSpinStyle = token => {
       },
       // large
       [`&-lg ${componentCls}-dot`]: {
-        fontSize: token.dotSizeLG,
+        fontSize: token.dotSizeLG
+      },
+      [`&-lg ${componentCls}-dot-holder`]: {
         i: {
           width: calc(calc(token.dotSizeLG).sub(token.marginXXS)).div(2).equal(),
           height: calc(calc(token.dotSizeLG).sub(token.marginXXS)).div(2).equal()
@@ -10998,6 +10397,36 @@ const prepareComponentToken = token => {
   });
   return [genSpinStyle(spinToken)];
 }, prepareComponentToken));
+;// CONCATENATED MODULE: ./node_modules/antd/es/spin/usePercent.js
+
+const AUTO_INTERVAL = 200;
+const STEP_BUCKETS = [[30, 0.05], [70, 0.03], [96, 0.01]];
+function usePercent(spinning, percent) {
+  const [mockPercent, setMockPercent] = react.useState(0);
+  const mockIntervalRef = react.useRef();
+  const isAuto = percent === 'auto';
+  react.useEffect(() => {
+    if (isAuto && spinning) {
+      setMockPercent(0);
+      mockIntervalRef.current = setInterval(() => {
+        setMockPercent(prev => {
+          const restPTG = 100 - prev;
+          for (let i = 0; i < STEP_BUCKETS.length; i += 1) {
+            const [limit, stepPtg] = STEP_BUCKETS[i];
+            if (prev <= limit) {
+              return prev + restPTG * stepPtg;
+            }
+          }
+          return prev;
+        });
+      }, AUTO_INTERVAL);
+    }
+    return () => {
+      clearInterval(mockIntervalRef.current);
+    };
+  }, [isAuto, spinning]);
+  return isAuto ? mockPercent : percent;
+}
 ;// CONCATENATED MODULE: ./node_modules/antd/es/spin/index.js
 "use client";
 
@@ -11019,42 +10448,7 @@ var __rest = undefined && undefined.__rest || function (s, e) {
 
 const SpinSizes = (/* unused pure expression or super */ null && (['small', 'default', 'large']));
 // Render indicator
-let defaultIndicator = null;
-function renderIndicator(prefixCls, props) {
-  const {
-    indicator
-  } = props;
-  const dotClassName = `${prefixCls}-dot`;
-  // should not be render default indicator when indicator value is null
-  if (indicator === null) {
-    return null;
-  }
-  if ( /*#__PURE__*/react.isValidElement(indicator)) {
-    return (0,reactNode/* cloneElement */.Tm)(indicator, {
-      className: classnames_default()(indicator.props.className, dotClassName)
-    });
-  }
-  if ( /*#__PURE__*/react.isValidElement(defaultIndicator)) {
-    return (0,reactNode/* cloneElement */.Tm)(defaultIndicator, {
-      className: classnames_default()(defaultIndicator.props.className, dotClassName)
-    });
-  }
-  return /*#__PURE__*/react.createElement("span", {
-    className: classnames_default()(dotClassName, `${prefixCls}-dot-spin`)
-  }, /*#__PURE__*/react.createElement("i", {
-    className: `${prefixCls}-dot-item`,
-    key: 1
-  }), /*#__PURE__*/react.createElement("i", {
-    className: `${prefixCls}-dot-item`,
-    key: 2
-  }), /*#__PURE__*/react.createElement("i", {
-    className: `${prefixCls}-dot-item`,
-    key: 3
-  }), /*#__PURE__*/react.createElement("i", {
-    className: `${prefixCls}-dot-item`,
-    key: 4
-  }));
-}
+let defaultIndicator;
 function shouldDelay(spinning, delay) {
   return !!spinning && !!delay && !isNaN(Number(delay));
 }
@@ -11070,15 +10464,18 @@ const Spin = props => {
       wrapperClassName,
       style,
       children,
-      fullscreen = false
+      fullscreen = false,
+      indicator,
+      percent
     } = props,
-    restProps = __rest(props, ["prefixCls", "spinning", "delay", "className", "rootClassName", "size", "tip", "wrapperClassName", "style", "children", "fullscreen"]);
+    restProps = __rest(props, ["prefixCls", "spinning", "delay", "className", "rootClassName", "size", "tip", "wrapperClassName", "style", "children", "fullscreen", "indicator", "percent"]);
   const {
     getPrefixCls
   } = react.useContext(context/* ConfigContext */.E_);
   const prefixCls = getPrefixCls('spin', customizePrefixCls);
   const [wrapCSSVar, hashId, cssVarCls] = spin_style(prefixCls);
   const [spinning, setSpinning] = react.useState(() => customSpinning && !shouldDelay(customSpinning, delay));
+  const mergedPercent = usePercent(spinning, percent);
   react.useEffect(() => {
     if (customSpinning) {
       const showSpinning = debounce(delay, () => {
@@ -11103,26 +10500,26 @@ const Spin = props => {
     [`${prefixCls}-lg`]: size === 'large',
     [`${prefixCls}-spinning`]: spinning,
     [`${prefixCls}-show-text`]: !!tip,
-    [`${prefixCls}-fullscreen`]: fullscreen,
-    [`${prefixCls}-fullscreen-show`]: fullscreen && spinning,
     [`${prefixCls}-rtl`]: direction === 'rtl'
-  }, className, rootClassName, hashId, cssVarCls);
+  }, className, !fullscreen && rootClassName, hashId, cssVarCls);
   const containerClassName = classnames_default()(`${prefixCls}-container`, {
     [`${prefixCls}-blur`]: spinning
   });
-  // fix https://fb.me/react-unknown-prop
-  const divProps = (0,omit/* default */.Z)(restProps, ['indicator']);
   const mergedStyle = Object.assign(Object.assign({}, spin === null || spin === void 0 ? void 0 : spin.style), style);
-  const spinElement = /*#__PURE__*/react.createElement("div", Object.assign({}, divProps, {
+  const spinElement = /*#__PURE__*/react.createElement("div", Object.assign({}, restProps, {
     style: mergedStyle,
     className: spinClassName,
     "aria-live": "polite",
     "aria-busy": spinning
-  }), renderIndicator(prefixCls, props), tip && (isNestedPattern || fullscreen) ? ( /*#__PURE__*/react.createElement("div", {
+  }), /*#__PURE__*/react.createElement(Indicator, {
+    prefixCls: prefixCls,
+    indicator: indicator !== null && indicator !== void 0 ? indicator : defaultIndicator,
+    percent: mergedPercent
+  }), tip && (isNestedPattern || fullscreen) ? ( /*#__PURE__*/react.createElement("div", {
     className: `${prefixCls}-text`
   }, tip)) : null);
   if (isNestedPattern) {
-    return wrapCSSVar( /*#__PURE__*/react.createElement("div", Object.assign({}, divProps, {
+    return wrapCSSVar( /*#__PURE__*/react.createElement("div", Object.assign({}, restProps, {
       className: classnames_default()(`${prefixCls}-nested-loading`, wrapperClassName, hashId, cssVarCls)
     }), spinning && /*#__PURE__*/react.createElement("div", {
       key: "loading"
@@ -11130,6 +10527,13 @@ const Spin = props => {
       className: containerClassName,
       key: "container"
     }, children)));
+  }
+  if (fullscreen) {
+    return wrapCSSVar( /*#__PURE__*/react.createElement("div", {
+      className: classnames_default()(`${prefixCls}-fullscreen`, {
+        [`${prefixCls}-fullscreen-show`]: spinning
+      }, rootClassName, hashId, cssVarCls)
+    }, spinElement));
   }
   return wrapCSSVar(spinElement);
 };
@@ -11151,8 +10555,8 @@ __webpack_require__.d(__webpack_exports__, {
   Z: function() { return /* binding */ tabs; }
 });
 
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/CloseOutlined.js + 1 modules
 var CloseOutlined = __webpack_require__(97937);
 // EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/EllipsisOutlined.js + 1 modules
@@ -11484,14 +10888,16 @@ function useTouchMove(ref, onOffset) {
       passive: false
     });
     document.addEventListener('touchend', onProxyTouchEnd, {
-      passive: false
+      passive: true
     });
 
     // No need to clean up since element removed
     ref.current.addEventListener('touchstart', onProxyTouchStart, {
+      passive: true
+    });
+    ref.current.addEventListener('wheel', onProxyWheel, {
       passive: false
     });
-    ref.current.addEventListener('wheel', onProxyWheel);
     return function () {
       document.removeEventListener('touchmove', onProxyTouchMove);
       document.removeEventListener('touchend', onProxyTouchEnd);
@@ -12513,8 +11919,8 @@ var TabNavListWrapper = function TabNavListWrapper(_ref) {
 };
 if (false) {}
 /* harmony default export */ var Wrapper = (TabNavListWrapper);
-// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 12 modules
-var rc_motion_es = __webpack_require__(82225);
+// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 13 modules
+var rc_motion_es = __webpack_require__(29372);
 ;// CONCATENATED MODULE: ./node_modules/rc-tabs/es/TabPanelList/index.js
 
 
@@ -12878,12 +12284,12 @@ function useLegacyItems(items, children) {
   });
   return filter(childrenItems);
 }
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 35 modules
-var cssinjs_es = __webpack_require__(54548);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
+var cssinjs_es = __webpack_require__(861);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/index.js
 var style = __webpack_require__(14747);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 6 modules
-var genComponentStyleHook = __webpack_require__(92030);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
+var genComponentStyleHook = __webpack_require__(27036);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
 var statistic = __webpack_require__(45503);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/motion/slide.js
@@ -16502,6 +15908,9 @@ function _toFutureSegwitAddress(output, network) {
   console.warn(FUTURE_SEGWIT_VERSION_WARNING);
   return toBech32(data, version, network.bech32);
 }
+/**
+ * decode address with base58 specification,  return address version and address hash if valid
+ */
 function fromBase58Check(address) {
   const payload = Buffer.from(bs58check.decode(address));
   // TODO: 4.0.0, move to "toOutputScript"
@@ -16512,6 +15921,9 @@ function fromBase58Check(address) {
   return { version, hash };
 }
 exports.fromBase58Check = fromBase58Check;
+/**
+ * decode address with bech32 specification,  return address version、address prefix and address data if valid
+ */
 function fromBech32(address) {
   let result;
   let version;
@@ -16534,6 +15946,9 @@ function fromBech32(address) {
   };
 }
 exports.fromBech32 = fromBech32;
+/**
+ * encode address hash to base58 address with version
+ */
 function toBase58Check(hash, version) {
   (0, types_1.typeforce)(
     (0, types_1.tuple)(types_1.Hash160bit, types_1.UInt8),
@@ -16545,6 +15960,9 @@ function toBase58Check(hash, version) {
   return bs58check.encode(payload);
 }
 exports.toBase58Check = toBase58Check;
+/**
+ * encode address hash to bech32 address with version and prefix
+ */
 function toBech32(data, version, prefix) {
   const words = bech32_1.bech32.toWords(data);
   words.unshift(version);
@@ -16553,6 +15971,9 @@ function toBech32(data, version, prefix) {
     : bech32_1.bech32m.encode(prefix, words);
 }
 exports.toBech32 = toBech32;
+/**
+ * decode address from output script with network, return address if matched
+ */
 function fromOutputScript(output, network) {
   // TODO: Network
   network = network || networks.bitcoin;
@@ -16577,6 +15998,9 @@ function fromOutputScript(output, network) {
   throw new Error(bscript.toASM(output) + ' has no matching Address');
 }
 exports.fromOutputScript = fromOutputScript;
+/**
+ * encodes address to output script with network, return output script if address matched
+ */
 function toOutputScript(address, network) {
   network = network || networks.bitcoin;
   let decodeBase58;
@@ -17002,6 +16426,14 @@ function readUInt64LE(buffer, offset) {
   return b + a;
 }
 exports.readUInt64LE = readUInt64LE;
+/**
+ * Writes a 64-bit unsigned integer in little-endian format to the specified buffer at the given offset.
+ *
+ * @param buffer - The buffer to write the value to.
+ * @param value - The 64-bit unsigned integer value to write.
+ * @param offset - The offset in the buffer where the value should be written.
+ * @returns The new offset after writing the value.
+ */
 function writeUInt64LE(buffer, value, offset) {
   verifuint(value, 0x001fffffffffffff);
   buffer.writeInt32LE(value & -1, offset);
@@ -17009,6 +16441,11 @@ function writeUInt64LE(buffer, value, offset) {
   return offset + 8;
 }
 exports.writeUInt64LE = writeUInt64LE;
+/**
+ * Reverses the order of bytes in a buffer.
+ * @param buffer - The buffer to reverse.
+ * @returns A new buffer with the bytes reversed.
+ */
 function reverseBuffer(buffer) {
   if (buffer.length < 1) return buffer;
   let j = buffer.length - 1;
@@ -17151,6 +16588,12 @@ exports.taggedHash =
   exports.sha1 =
   exports.ripemd160 =
     void 0;
+/**
+ * A module for hashing functions.
+ * include ripemd160、sha1、sha256、hash160、hash256、taggedHash
+ *
+ * @packageDocumentation
+ */
 const ripemd160_1 = __webpack_require__(70830);
 const sha1_1 = __webpack_require__(73963);
 const sha256_1 = __webpack_require__(23061);
@@ -17190,6 +16633,9 @@ exports.TAGS = [
   'KeyAgg coefficient',
 ];
 /** An object mapping tags to their tagged hash prefix of [SHA256(tag) | SHA256(tag)] */
+/**
+ * Defines the tagged hash prefixes used in the crypto module.
+ */
 exports.TAGGED_HASH_PREFIXES = {
   'BIP0340/challenge': Buffer.from([
     123, 181, 45, 122, 159, 239, 88, 50, 62, 177, 191, 122, 64, 125, 179, 130,
@@ -17263,6 +16709,13 @@ exports.taggedHash = taggedHash;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getEccLib = exports.initEccLib = void 0;
 const _ECCLIB_CACHE = {};
+/**
+ * Initializes the ECC library with the provided instance.
+ * If `eccLib` is `undefined`, the library will be cleared.
+ * If `eccLib` is a new instance, it will be verified before setting it as the active library.
+ *
+ * @param eccLib The instance of the ECC library to initialize.
+ */
 function initEccLib(eccLib) {
   if (!eccLib) {
     // allow clearing the library
@@ -17274,6 +16727,13 @@ function initEccLib(eccLib) {
   }
 }
 exports.initEccLib = initEccLib;
+/**
+ * Retrieves the ECC Library instance.
+ * Throws an error if the ECC Library is not provided.
+ * You must call initEccLib() with a valid TinySecp256k1Interface instance before calling this function.
+ * @returns The ECC Library instance.
+ * @throws Error if the ECC Library is not provided.
+ */
 function getEccLib() {
   if (!_ECCLIB_CACHE.eccLib)
     throw new Error(
@@ -17283,6 +16743,11 @@ function getEccLib() {
 }
 exports.getEccLib = getEccLib;
 const h = hex => Buffer.from(hex, 'hex');
+/**
+ * Verifies the ECC functionality.
+ *
+ * @param ecc - The TinySecp256k1Interface object.
+ */
 function verifyEcc(ecc) {
   assert(typeof ecc.isXOnlyPoint === 'function');
   assert(
@@ -17396,6 +16861,7 @@ Object.defineProperty(exports, "_B", ({
     return psbt_1.Psbt;
   },
 }));
+/** @hidden */
 var ops_1 = __webpack_require__(47334);
 __webpack_unused_export__ = ({
   enumerable: true,
@@ -17429,6 +16895,14 @@ Object.defineProperty(exports, "Wi", ({
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.fastMerkleRoot = void 0;
+/**
+ * Calculates the Merkle root of an array of buffers using a specified digest function.
+ *
+ * @param values - The array of buffers.
+ * @param digestFn - The digest function used to calculate the hash of the concatenated buffers.
+ * @returns The Merkle root as a buffer.
+ * @throws {TypeError} If the values parameter is not an array or the digestFn parameter is not a function.
+ */
 function fastMerkleRoot(values, digestFn) {
   if (!Array.isArray(values)) throw TypeError('Expected values Array');
   if (typeof digestFn !== 'function')
@@ -17457,19 +16931,51 @@ exports.fastMerkleRoot = fastMerkleRoot;
 
 "use strict";
 
+// https://en.bitcoin.it/wiki/List_of_address_prefixes
+// Dogecoin BIP32 is a proposed standard: https://bitcointalk.org/index.php?topic=409731
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.testnet = exports.regtest = exports.bitcoin = void 0;
+/**
+ * Represents the Bitcoin network configuration.
+ */
 exports.bitcoin = {
+  /**
+   * The message prefix used for signing Bitcoin messages.
+   */
   messagePrefix: '\x18Bitcoin Signed Message:\n',
+  /**
+   * The Bech32 prefix used for Bitcoin addresses.
+   */
   bech32: 'bc',
+  /**
+   * The BIP32 key prefixes for Bitcoin.
+   */
   bip32: {
+    /**
+     * The public key prefix for BIP32 extended public keys.
+     */
     public: 0x0488b21e,
+    /**
+     * The private key prefix for BIP32 extended private keys.
+     */
     private: 0x0488ade4,
   },
+  /**
+   * The prefix for Bitcoin public key hashes.
+   */
   pubKeyHash: 0x00,
+  /**
+   * The prefix for Bitcoin script hashes.
+   */
   scriptHash: 0x05,
+  /**
+   * The prefix for Bitcoin Wallet Import Format (WIF) private keys.
+   */
   wif: 0x80,
 };
+/**
+ * Represents the regtest network configuration.
+ */
 exports.regtest = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: 'bcrt',
@@ -17481,6 +16987,9 @@ exports.regtest = {
   scriptHash: 0xc4,
   wif: 0xef,
 };
+/**
+ * Represents the testnet network configuration.
+ */
 exports.testnet = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: 'tb',
@@ -17658,6 +17167,13 @@ const types_1 = __webpack_require__(41838);
 exports.LEAF_VERSION_TAPSCRIPT = 0xc0;
 exports.MAX_TAPTREE_DEPTH = 128;
 const isHashBranch = ht => 'left' in ht && 'right' in ht;
+/**
+ * Calculates the root hash from a given control block and leaf hash.
+ * @param controlBlock - The control block buffer.
+ * @param leafHash - The leaf hash buffer.
+ * @returns The root hash buffer.
+ * @throws {TypeError} If the control block length is less than 33.
+ */
 function rootHashFromPath(controlBlock, leafHash) {
   if (controlBlock.length < 33)
     throw new TypeError(
@@ -17769,13 +17285,14 @@ const bscript = __webpack_require__(73357);
 const types_1 = __webpack_require__(41838);
 const lazy = __webpack_require__(52691);
 const OPS = bscript.OPS;
-function stacksEqual(a, b) {
-  if (a.length !== b.length) return false;
-  return a.every((x, i) => {
-    return x.equals(b[i]);
-  });
-}
 // output: OP_RETURN ...
+/**
+ * Embeds data in a Bitcoin payment.
+ * @param a - The payment object.
+ * @param opts - Optional payment options.
+ * @returns The modified payment object.
+ * @throws {TypeError} If there is not enough data or if the output is invalid.
+ */
 function p2data(a, opts) {
   if (!a.data && !a.output) throw new TypeError('Not enough data');
   opts = Object.assign({ validate: true }, opts || {});
@@ -17806,7 +17323,7 @@ function p2data(a, opts) {
       if (chunks[0] !== OPS.OP_RETURN) throw new TypeError('Output is invalid');
       if (!chunks.slice(1).every(types_1.typeforce.Buffer))
         throw new TypeError('Output is invalid');
-      if (a.data && !stacksEqual(a.data, o.data))
+      if (a.data && !(0, types_1.stacksEqual)(a.data, o.data))
         throw new TypeError('Data mismatch');
     }
   }
@@ -17947,14 +17464,15 @@ const types_1 = __webpack_require__(41838);
 const lazy = __webpack_require__(52691);
 const OPS = bscript.OPS;
 const OP_INT_BASE = OPS.OP_RESERVED; // OP_1 - 1
-function stacksEqual(a, b) {
-  if (a.length !== b.length) return false;
-  return a.every((x, i) => {
-    return x.equals(b[i]);
-  });
-}
 // input: OP_0 [signatures ...]
 // output: m [pubKeys ...] n OP_CHECKMULTISIG
+/**
+ * Represents a function that creates a Pay-to-Multisig (P2MS) payment object.
+ * @param a - The payment object.
+ * @param opts - Optional payment options.
+ * @returns The created payment object.
+ * @throws {TypeError} If the provided data is not valid.
+ */
 function p2ms(a, opts) {
   if (
     !a.input &&
@@ -18057,7 +17575,7 @@ function p2ms(a, opts) {
         throw new TypeError('Output is invalid');
       if (a.m !== undefined && a.m !== o.m) throw new TypeError('m mismatch');
       if (a.n !== undefined && a.n !== o.n) throw new TypeError('n mismatch');
-      if (a.pubkeys && !stacksEqual(a.pubkeys, o.pubkeys))
+      if (a.pubkeys && !(0, types_1.stacksEqual)(a.pubkeys, o.pubkeys))
         throw new TypeError('Pubkeys mismatch');
     }
     if (a.pubkeys) {
@@ -18079,7 +17597,7 @@ function p2ms(a, opts) {
         !o.signatures.every(isAcceptableSignature)
       )
         throw new TypeError('Input has invalid signature(s)');
-      if (a.signatures && !stacksEqual(a.signatures, o.signatures))
+      if (a.signatures && !(0, types_1.stacksEqual)(a.signatures, o.signatures))
         throw new TypeError('Signature mismatch');
       if (a.m !== undefined && a.m !== a.signatures.length)
         throw new TypeError('Signature count mismatch');
@@ -18106,6 +17624,14 @@ const lazy = __webpack_require__(52691);
 const OPS = bscript.OPS;
 // input: {signature}
 // output: {pubKey} OP_CHECKSIG
+/**
+ * Creates a pay-to-public-key (P2PK) payment object.
+ *
+ * @param a - The payment object containing the necessary data.
+ * @param opts - Optional payment options.
+ * @returns The P2PK payment object.
+ * @throws {TypeError} If the required data is not provided or if the data is invalid.
+ */
 function p2pk(a, opts) {
   if (!a.input && !a.output && !a.pubkey && !a.input && !a.signature)
     throw new TypeError('Not enough data');
@@ -18189,6 +17715,14 @@ const bs58check = __webpack_require__(58334);
 const OPS = bscript.OPS;
 // input: {signature} {pubkey}
 // output: OP_DUP OP_HASH160 {hash160(pubkey)} OP_EQUALVERIFY OP_CHECKSIG
+/**
+ * Creates a Pay-to-Public-Key-Hash (P2PKH) payment object.
+ *
+ * @param a - The payment object containing the necessary data.
+ * @param opts - Optional payment options.
+ * @returns The P2PKH payment object.
+ * @throws {TypeError} If the required data is not provided or if the data is invalid.
+ */
 function p2pkh(a, opts) {
   if (!a.address && !a.hash && !a.output && !a.pubkey && !a.input)
     throw new TypeError('Not enough data');
@@ -18328,15 +17862,17 @@ const types_1 = __webpack_require__(41838);
 const lazy = __webpack_require__(52691);
 const bs58check = __webpack_require__(58334);
 const OPS = bscript.OPS;
-function stacksEqual(a, b) {
-  if (a.length !== b.length) return false;
-  return a.every((x, i) => {
-    return x.equals(b[i]);
-  });
-}
 // input: [redeemScriptSig ...] {redeemScript}
 // witness: <?>
 // output: OP_HASH160 {hash160(redeemScript)} OP_EQUAL
+/**
+ * Creates a Pay-to-Script-Hash (P2SH) payment object.
+ *
+ * @param a - The payment object containing the necessary data.
+ * @param opts - Optional payment options.
+ * @returns The P2SH payment object.
+ * @throws {TypeError} If the required data is not provided or if the data is invalid.
+ */
 function p2sh(a, opts) {
   if (!a.address && !a.hash && !a.output && !a.redeem && !a.input)
     throw new TypeError('Not enough data');
@@ -18508,7 +18044,7 @@ function p2sh(a, opts) {
       if (
         a.redeem &&
         a.redeem.witness &&
-        !stacksEqual(a.redeem.witness, a.witness)
+        !(0, types_1.stacksEqual)(a.redeem.witness, a.witness)
       )
         throw new TypeError('Witness and redeem.witness mismatch');
     }
@@ -18535,9 +18071,18 @@ const ecc_lib_1 = __webpack_require__(66379);
 const bip341_1 = __webpack_require__(12227);
 const lazy = __webpack_require__(52691);
 const bech32_1 = __webpack_require__(27715);
+const address_1 = __webpack_require__(95488);
 const OPS = bscript.OPS;
 const TAPROOT_WITNESS_VERSION = 0x01;
 const ANNEX_PREFIX = 0x50;
+/**
+ * Creates a Pay-to-Taproot (P2TR) payment object.
+ *
+ * @param a - The payment object containing the necessary data for P2TR.
+ * @param opts - Optional payment options.
+ * @returns The P2TR payment object.
+ * @throws {TypeError} If the provided data is invalid or insufficient.
+ */
 function p2tr(a, opts) {
   if (
     !a.address &&
@@ -18579,14 +18124,7 @@ function p2tr(a, opts) {
     a,
   );
   const _address = lazy.value(() => {
-    const result = bech32_1.bech32m.decode(a.address);
-    const version = result.words.shift();
-    const data = bech32_1.bech32m.fromWords(result.words);
-    return {
-      version,
-      prefix: result.prefix,
-      data: buffer_1.Buffer.from(data),
-    };
+    return (0, address_1.fromBech32)(a.address);
   });
   // remove annex if present, ignored by taproot
   const _witness = lazy.value(() => {
@@ -18763,7 +18301,7 @@ function p2tr(a, opts) {
       if (a.redeem.witness) {
         if (
           o.redeem.witness &&
-          !stacksEqual(a.redeem.witness, o.redeem.witness)
+          !(0, types_1.stacksEqual)(a.redeem.witness, o.redeem.witness)
         )
           throw new TypeError('Redeem.witness and witness mismatch');
       }
@@ -18815,12 +18353,6 @@ function p2tr(a, opts) {
   return Object.assign(o, a);
 }
 exports.p2tr = p2tr;
-function stacksEqual(a, b) {
-  if (a.length !== b.length) return false;
-  return a.every((x, i) => {
-    return x.equals(b[i]);
-  });
-}
 
 
 /***/ }),
@@ -18844,6 +18376,14 @@ const EMPTY_BUFFER = Buffer.alloc(0);
 // witness: {signature} {pubKey}
 // input: <>
 // output: OP_0 {pubKeyHash}
+/**
+ * Creates a pay-to-witness-public-key-hash (p2wpkh) payment object.
+ *
+ * @param a - The payment object containing the necessary data.
+ * @param opts - Optional payment options.
+ * @returns The p2wpkh payment object.
+ * @throws {TypeError} If the required data is missing or invalid.
+ */
 function p2wpkh(a, opts) {
   if (!a.address && !a.hash && !a.output && !a.pubkey && !a.witness)
     throw new TypeError('Not enough data');
@@ -18982,12 +18522,6 @@ const lazy = __webpack_require__(52691);
 const bech32_1 = __webpack_require__(27715);
 const OPS = bscript.OPS;
 const EMPTY_BUFFER = Buffer.alloc(0);
-function stacksEqual(a, b) {
-  if (a.length !== b.length) return false;
-  return a.every((x, i) => {
-    return x.equals(b[i]);
-  });
-}
 function chunkHasUncompressedPubkey(chunk) {
   if (
     Buffer.isBuffer(chunk) &&
@@ -19003,6 +18537,14 @@ function chunkHasUncompressedPubkey(chunk) {
 // input: <>
 // witness: [redeemScriptSig ...] {redeemScript}
 // output: OP_0 {sha256(redeemScript)}
+/**
+ * Creates a Pay-to-Witness-Script-Hash (P2WSH) payment object.
+ *
+ * @param a - The payment object containing the necessary data.
+ * @param opts - Optional payment options.
+ * @returns The P2WSH payment object.
+ * @throws {TypeError} If the required data is missing or invalid.
+ */
 function p2wsh(a, opts) {
   if (!a.address && !a.hash && !a.output && !a.redeem && !a.witness)
     throw new TypeError('Not enough data');
@@ -19163,7 +18705,7 @@ function p2wsh(a, opts) {
       if (
         a.witness &&
         a.redeem.witness &&
-        !stacksEqual(a.witness, a.redeem.witness)
+        !(0, types_1.stacksEqual)(a.witness, a.redeem.witness)
       )
         throw new TypeError('Witness and redeem.witness mismatch');
       if (
@@ -19237,6 +18779,7 @@ const DEFAULT_OPTS = {
  * There are 6 roles that this class fulfills. (Explained in BIP174)
  *
  * Creator: This can be done with `new Psbt()`
+ *
  * Updater: This can be done with `psbt.addInput(input)`, `psbt.addInputs(inputs)`,
  *   `psbt.addOutput(output)`, `psbt.addOutputs(outputs)` when you are looking to
  *   add new inputs and outputs to the PSBT, and `psbt.updateGlobal(itemObject)`,
@@ -19247,20 +18790,24 @@ const DEFAULT_OPTS = {
  *   data for updateOutput.
  *   For a list of what attributes should be what types. Check the bip174 library.
  *   Also, check the integration tests for some examples of usage.
+ *
  * Signer: There are a few methods. signAllInputs and signAllInputsAsync, which will search all input
  *   information for your pubkey or pubkeyhash, and only sign inputs where it finds
  *   your info. Or you can explicitly sign a specific input with signInput and
  *   signInputAsync. For the async methods you can create a SignerAsync object
  *   and use something like a hardware wallet to sign with. (You must implement this)
+ *
  * Combiner: psbts can be combined easily with `psbt.combine(psbt2, psbt3, psbt4 ...)`
  *   the psbt calling combine will always have precedence when a conflict occurs.
  *   Combine checks if the internal bitcoin transaction is the same, so be sure that
  *   all sequences, version, locktime, etc. are the same before combining.
+ *
  * Input Finalizer: This role is fairly important. Not only does it need to construct
  *   the input scriptSigs and witnesses, but it SHOULD verify the signatures etc.
  *   Before running `psbt.finalizeAllInputs()` please run `psbt.validateSignaturesOfAllInputs()`
  *   Running any finalize method will delete any data in the input(s) that are no longer
  *   needed due to the finalized scripts containing the information.
+ *
  * Transaction Extractor: This role will perform some checks before returning a
  *   Transaction object. Such as fee rate not being larger than maximumFeeRate etc.
  */
@@ -19288,7 +18835,7 @@ class Psbt {
       __NON_WITNESS_UTXO_BUF_CACHE: [],
       __TX_IN_CACHE: {},
       __TX: this.data.globalMap.unsignedTx.tx,
-      // Psbt's predecesor (TransactionBuilder - now removed) behavior
+      // Psbt's predecessor (TransactionBuilder - now removed) behavior
       // was to not confirm input values  before signing.
       // Even though we highly encourage people to get
       // the full parent transaction to verify values, the ability to
@@ -19441,7 +18988,7 @@ class Psbt {
     if (typeof address === 'string') {
       const { network } = this.opts;
       const script = (0, address_1.toOutputScript)(address, network);
-      outputData = Object.assign(outputData, { script });
+      outputData = Object.assign({}, outputData, { script });
     }
     (0, bip371_1.checkTaprootOutputFields)(outputData, outputData, 'addOutput');
     const c = this.__CACHE;
@@ -20465,7 +20012,7 @@ function getHashForSig(inputIndex, input, cache, forValidate, sighashTypes) {
       console.warn(
         'Warning: Signing non-segwit inputs without the full parent transaction ' +
           'means there is a chance that a miner could feed you incorrect information ' +
-          "to trick you into paying large fees. This behavior is the same as Psbt's predecesor " +
+          "to trick you into paying large fees. This behavior is the same as Psbt's predecessor " +
           '(TransactionBuilder - now removed) when signing non-segwit scripts. You are not ' +
           'able to export this Psbt with toBuffer|toBase64|toHex since it is not ' +
           'BIP174 compliant.\n*********************\nPROCEED WITH CAUTION!\n' +
@@ -20556,7 +20103,7 @@ function getTaprootHashesForSig(
         inputIndex,
         signingScripts,
         values,
-        transaction_1.Transaction.SIGHASH_DEFAULT,
+        sighashType,
         tapLeaf.hash,
       );
       return {
@@ -21208,6 +20755,14 @@ function checkMixedTaprootAndNonTaprootOutputFields(
         `Cannot use both taproot and non-taproot fields.`,
     );
 }
+/**
+ * Checks if the tap leaf is part of the tap tree for the given input data.
+ * Throws an error if the tap leaf is not part of the tap tree.
+ * @param inputData - The original PsbtInput data.
+ * @param newInputData - The new PsbtInput data.
+ * @param action - The action being performed.
+ * @throws {Error} - If the tap leaf is not part of the tap tree.
+ */
 function checkIfTapLeafInTree(inputData, newInputData, action) {
   if (newInputData.tapMerkleRoot) {
     const newLeafsInTree = (newInputData.tapLeafScript || []).every(l =>
@@ -21230,6 +20785,12 @@ function checkIfTapLeafInTree(inputData, newInputData, action) {
       );
   }
 }
+/**
+ * Checks if a TapLeafScript is present in a Merkle tree.
+ * @param tapLeaf The TapLeafScript to check.
+ * @param merkleRoot The Merkle root of the tree. If not provided, the function assumes the TapLeafScript is present.
+ * @returns A boolean indicating whether the TapLeafScript is present in the tree.
+ */
 function isTapLeafInTree(tapLeaf, merkleRoot) {
   if (!merkleRoot) return true;
   const leafHash = (0, bip341_1.tapleafHash)({
@@ -21242,6 +20803,13 @@ function isTapLeafInTree(tapLeaf, merkleRoot) {
   );
   return rootHash.equals(merkleRoot);
 }
+/**
+ * Sorts the signatures in the input's tapScriptSig array based on their position in the tapLeaf script.
+ *
+ * @param input - The PsbtInput object.
+ * @param tapLeaf - The TapLeafScript object.
+ * @returns An array of sorted signatures as Buffers.
+ */
 function sortSignatures(input, tapLeaf) {
   const leafHash = (0, bip341_1.tapleafHash)({
     output: tapLeaf.script,
@@ -21253,6 +20821,12 @@ function sortSignatures(input, tapLeaf) {
     .sort((t1, t2) => t2.positionInScript - t1.positionInScript)
     .map(t => t.signature);
 }
+/**
+ * Adds the position of a public key in a script to a TapScriptSig object.
+ * @param script The script in which to find the position of the public key.
+ * @param tss The TapScriptSig object to add the position to.
+ * @returns A TapScriptSigWitPosition object with the added position.
+ */
 function addPubkeyPositionInScript(script, tss) {
   return Object.assign(
     {
@@ -21283,6 +20857,14 @@ function findTapLeafToFinalize(input, inputIndex, leafHashToFinalize) {
     );
   return tapLeaf;
 }
+/**
+ * Determines whether a TapLeafScript can be finalized.
+ *
+ * @param leaf - The TapLeafScript to check.
+ * @param tapScriptSig - The array of TapScriptSig objects.
+ * @param hash - The optional hash to compare with the leaf hash.
+ * @returns A boolean indicating whether the TapLeafScript can be finalized.
+ */
 function canFinalizeLeaf(leaf, tapScriptSig, hash) {
   const leafHash = (0, bip341_1.tapleafHash)({
     output: leaf.script,
@@ -21294,6 +20876,12 @@ function canFinalizeLeaf(leaf, tapScriptSig, hash) {
     tapScriptSig.find(tss => tss.leafHash.equals(leafHash)) !== undefined
   );
 }
+/**
+ * Checks if the given PsbtInput or PsbtOutput has non-taproot fields.
+ * Non-taproot fields include redeemScript, witnessScript, and bip32Derivation.
+ * @param io The PsbtInput or PsbtOutput to check.
+ * @returns A boolean indicating whether the given input or output has non-taproot fields.
+ */
 function hasNonTaprootFields(io) {
   return (
     io &&
@@ -21350,6 +20938,16 @@ exports.isP2WPKH = isPaymentFactory(payments.p2wpkh);
 exports.isP2WSHScript = isPaymentFactory(payments.p2wsh);
 exports.isP2SHScript = isPaymentFactory(payments.p2sh);
 exports.isP2TR = isPaymentFactory(payments.p2tr);
+/**
+ * Converts a witness stack to a script witness.
+ * @param witness The witness stack to convert.
+ * @returns The script witness as a Buffer.
+ */
+/**
+ * Converts a witness stack to a script witness.
+ * @param witness The witness stack to convert.
+ * @returns The converted script witness.
+ */
 function witnessStackToScriptWitness(witness) {
   let buffer = Buffer.allocUnsafe(0);
   function writeSlice(slice) {
@@ -21373,6 +20971,13 @@ function witnessStackToScriptWitness(witness) {
   return buffer;
 }
 exports.witnessStackToScriptWitness = witnessStackToScriptWitness;
+/**
+ * Finds the position of a public key in a script.
+ * @param pubkey The public key to search for.
+ * @param script The script to search in.
+ * @returns The index of the public key in the script, or -1 if not found.
+ * @throws {Error} If there is an unknown script error.
+ */
 function pubkeyPositionInScript(pubkey, script) {
   const pubkeyHash = (0, crypto_1.hash160)(pubkey);
   const pubkeyXOnly = pubkey.slice(1, 33); // slice before calling?
@@ -21388,10 +20993,22 @@ function pubkeyPositionInScript(pubkey, script) {
   });
 }
 exports.pubkeyPositionInScript = pubkeyPositionInScript;
+/**
+ * Checks if a public key is present in a script.
+ * @param pubkey The public key to check.
+ * @param script The script to search in.
+ * @returns A boolean indicating whether the public key is present in the script.
+ */
 function pubkeyInScript(pubkey, script) {
   return pubkeyPositionInScript(pubkey, script) !== -1;
 }
 exports.pubkeyInScript = pubkeyInScript;
+/**
+ * Checks if an input contains a signature for a specific action.
+ * @param input - The input to check.
+ * @param action - The action to check for.
+ * @returns A boolean indicating whether the input contains a signature for the specified action.
+ */
 function checkInputForSig(input, action) {
   const pSigs = extractPartialSigs(input);
   return pSigs.some(pSig =>
@@ -21399,6 +21016,13 @@ function checkInputForSig(input, action) {
   );
 }
 exports.checkInputForSig = checkInputForSig;
+/**
+ * Determines if a given action is allowed for a signature block.
+ * @param signature - The signature block.
+ * @param signatureDecodeFn - The function used to decode the signature.
+ * @param action - The action to be checked.
+ * @returns True if the action is allowed, false otherwise.
+ */
 function signatureBlocksAction(signature, signatureDecodeFn, action) {
   const { hashType } = signatureDecodeFn(signature);
   const whitelist = [];
@@ -21421,6 +21045,16 @@ function signatureBlocksAction(signature, signatureDecodeFn, action) {
   return false;
 }
 exports.signatureBlocksAction = signatureBlocksAction;
+/**
+ * Extracts the signatures from a PsbtInput object.
+ * If the input has partial signatures, it returns an array of the signatures.
+ * If the input does not have partial signatures, it checks if it has a finalScriptSig or finalScriptWitness.
+ * If it does, it extracts the signatures from the final scripts and returns them.
+ * If none of the above conditions are met, it returns an empty array.
+ *
+ * @param input - The PsbtInput object from which to extract the signatures.
+ * @returns An array of signatures extracted from the PsbtInput object.
+ */
 function extractPartialSigs(input) {
   let pSigs = [];
   if ((input.partialSig || []).length === 0) {
@@ -21431,6 +21065,14 @@ function extractPartialSigs(input) {
   }
   return pSigs.map(p => p.signature);
 }
+/**
+ * Retrieves the partial signatures (Psigs) from the input's final scripts.
+ * Psigs are extracted from both the final scriptSig and final scriptWitness of the input.
+ * Only canonical script signatures are considered.
+ *
+ * @param input - The PsbtInput object representing the input.
+ * @returns An array of PartialSig objects containing the extracted Psigs.
+ */
 function getPsigsFromInputFinalScripts(input) {
   const scriptItems = !input.finalScriptSig
     ? []
@@ -21457,10 +21099,25 @@ function getPsigsFromInputFinalScripts(input) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.decode = exports.encode = exports.encodingLength = void 0;
 const ops_1 = __webpack_require__(47334);
+/**
+ * Calculates the encoding length of a number used for push data in Bitcoin transactions.
+ * @param i The number to calculate the encoding length for.
+ * @returns The encoding length of the number.
+ */
 function encodingLength(i) {
   return i < ops_1.OPS.OP_PUSHDATA1 ? 1 : i <= 0xff ? 2 : i <= 0xffff ? 3 : 5;
 }
 exports.encodingLength = encodingLength;
+/**
+ * Encodes a number into a buffer using a variable-length encoding scheme.
+ * The encoded buffer is written starting at the specified offset.
+ * Returns the size of the encoded buffer.
+ *
+ * @param buffer - The buffer to write the encoded data into.
+ * @param num - The number to encode.
+ * @param offset - The offset at which to start writing the encoded buffer.
+ * @returns The size of the encoded buffer.
+ */
 function encode(buffer, num, offset) {
   const size = encodingLength(num);
   // ~6 bit
@@ -21482,6 +21139,12 @@ function encode(buffer, num, offset) {
   return size;
 }
 exports.encode = encode;
+/**
+ * Decodes a buffer and returns information about the opcode, number, and size.
+ * @param buffer - The buffer to decode.
+ * @param offset - The offset within the buffer to start decoding.
+ * @returns An object containing the opcode, number, and size, or null if decoding fails.
+ */
 function decode(buffer, offset) {
   const opcode = buffer.readUInt8(offset);
   let num;
@@ -21539,6 +21202,10 @@ exports.signature =
   exports.isPushOnly =
   exports.OPS =
     void 0;
+/**
+ * Script tools, including decompile, compile, toASM, fromASM, toStack, isCanonicalPubKey, isCanonicalScriptSignature
+ * @packageDocumentation
+ */
 const bip66 = __webpack_require__(77617);
 const ops_1 = __webpack_require__(47334);
 Object.defineProperty(exports, "OPS", ({
@@ -21587,6 +21254,13 @@ function chunksIsArray(buf) {
 function singleChunkIsBuffer(buf) {
   return Buffer.isBuffer(buf);
 }
+/**
+ * Compiles an array of chunks into a Buffer.
+ *
+ * @param chunks - The array of chunks to compile.
+ * @returns The compiled Buffer.
+ * @throws Error if the compilation fails.
+ */
 function compile(chunks) {
   // TODO: remove me
   if (chunksIsBuffer(chunks)) return chunks;
@@ -21662,9 +21336,18 @@ function decompile(buffer) {
   return chunks;
 }
 exports.decompile = decompile;
+/**
+ * Converts the given chunks into an ASM (Assembly) string representation.
+ * If the chunks parameter is a Buffer, it will be decompiled into a Stack before conversion.
+ * @param chunks - The chunks to convert into ASM.
+ * @returns The ASM string representation of the chunks.
+ */
 function toASM(chunks) {
   if (chunksIsBuffer(chunks)) {
     chunks = decompile(chunks);
+  }
+  if (!chunks) {
+    throw new Error('Could not convert invalid chunks to ASM');
   }
   return chunks
     .map(chunk => {
@@ -21680,6 +21363,11 @@ function toASM(chunks) {
     .join(' ');
 }
 exports.toASM = toASM;
+/**
+ * Converts an ASM string to a Buffer.
+ * @param asm The ASM string to convert.
+ * @returns The converted Buffer.
+ */
 function fromASM(asm) {
   typeforce(types.String, asm);
   return compile(
@@ -21693,6 +21381,12 @@ function fromASM(asm) {
   );
 }
 exports.fromASM = fromASM;
+/**
+ * Converts the given chunks into a stack of buffers.
+ *
+ * @param chunks - The chunks to convert.
+ * @returns The stack of buffers.
+ */
 function toStack(chunks) {
   chunks = decompile(chunks);
   typeforce(isPushOnly, chunks);
@@ -21733,6 +21427,16 @@ exports.signature = scriptSignature;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.encode = exports.decode = void 0;
+/**
+ * Decodes a script number from a buffer.
+ *
+ * @param buffer - The buffer containing the script number.
+ * @param maxLength - The maximum length of the script number. Defaults to 4.
+ * @param minimal - Whether the script number should be minimal. Defaults to true.
+ * @returns The decoded script number.
+ * @throws {TypeError} If the script number overflows the maximum length.
+ * @throws {Error} If the script number is not minimally encoded when minimal is true.
+ */
 function decode(buffer, maxLength, minimal) {
   maxLength = maxLength || 4;
   minimal = minimal === undefined ? true : minimal;
@@ -21775,6 +21479,12 @@ function scriptNumSize(i) {
     ? 1
     : 0;
 }
+/**
+ * Encodes a number into a Buffer using a specific format.
+ *
+ * @param _number - The number to encode.
+ * @returns The encoded number as a Buffer.
+ */
 function encode(_number) {
   let value = Math.abs(_number);
   const size = scriptNumSize(value);
@@ -21805,9 +21515,15 @@ exports.encode = encode;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.encode = exports.decode = void 0;
 const bip66 = __webpack_require__(77617);
+const script_1 = __webpack_require__(73357);
 const types = __webpack_require__(41838);
 const { typeforce } = types;
 const ZERO = Buffer.alloc(1, 0);
+/**
+ * Converts a buffer to a DER-encoded buffer.
+ * @param x - The buffer to be converted.
+ * @returns The DER-encoded buffer.
+ */
 function toDER(x) {
   let i = 0;
   while (x[i] === 0) ++i;
@@ -21816,6 +21532,13 @@ function toDER(x) {
   if (x[0] & 0x80) return Buffer.concat([ZERO, x], 1 + x.length);
   return x;
 }
+/**
+ * Converts a DER-encoded signature to a buffer.
+ * If the first byte of the input buffer is 0x00, it is skipped.
+ * The resulting buffer is 32 bytes long, filled with zeros if necessary.
+ * @param x - The DER-encoded signature.
+ * @returns The converted buffer.
+ */
 function fromDER(x) {
   if (x[0] === 0x00) x = x.slice(1);
   const buffer = Buffer.alloc(32, 0);
@@ -21824,11 +21547,17 @@ function fromDER(x) {
   return buffer;
 }
 // BIP62: 1 byte hashType flag (only 0x01, 0x02, 0x03, 0x81, 0x82 and 0x83 are allowed)
+/**
+ * Decodes a buffer into a ScriptSignature object.
+ * @param buffer - The buffer to decode.
+ * @returns The decoded ScriptSignature object.
+ * @throws Error if the hashType is invalid.
+ */
 function decode(buffer) {
   const hashType = buffer.readUInt8(buffer.length - 1);
-  const hashTypeMod = hashType & ~0x80;
-  if (hashTypeMod <= 0 || hashTypeMod >= 4)
+  if (!(0, script_1.isDefinedHashType)(hashType)) {
     throw new Error('Invalid hashType ' + hashType);
+  }
   const decoded = bip66.decode(buffer.slice(0, -1));
   const r = fromDER(decoded.r);
   const s = fromDER(decoded.s);
@@ -21836,6 +21565,13 @@ function decode(buffer) {
   return { signature, hashType };
 }
 exports.decode = decode;
+/**
+ * Encodes a signature and hash type into a buffer.
+ * @param signature - The signature to encode.
+ * @param hashType - The hash type to encode.
+ * @returns The encoded buffer.
+ * @throws Error if the hashType is invalid.
+ */
 function encode(signature, hashType) {
   typeforce(
     {
@@ -21844,9 +21580,9 @@ function encode(signature, hashType) {
     },
     { signature, hashType },
   );
-  const hashTypeMod = hashType & ~0x80;
-  if (hashTypeMod <= 0 || hashTypeMod >= 4)
+  if (!(0, script_1.isDefinedHashType)(hashType)) {
     throw new Error('Invalid hashType ' + hashType);
+  }
   const hashTypeBuffer = Buffer.allocUnsafe(1);
   hashTypeBuffer.writeUInt8(hashType, 0);
   const r = toDER(signature.slice(0, 32));
@@ -21903,6 +21639,9 @@ const BLANK_OUTPUT = {
 function isOutput(out) {
   return out.value !== undefined;
 }
+/**
+ * Represents a Bitcoin transaction.
+ */
 class Transaction {
   constructor() {
     this.version = 1;
@@ -22435,13 +22174,9 @@ exports.oneOf =
   exports.isTaptree =
   exports.isTapleaf =
   exports.TAPLEAF_VERSION_MASK =
-  exports.Network =
-  exports.ECPoint =
   exports.Satoshi =
-  exports.Signer =
-  exports.BIP32Path =
-  exports.UInt31 =
   exports.isPoint =
+  exports.stacksEqual =
   exports.typeforce =
     void 0;
 const buffer_1 = __webpack_require__(48764);
@@ -22451,6 +22186,24 @@ const EC_P = buffer_1.Buffer.from(
   'fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f',
   'hex',
 );
+/**
+ * Checks if two arrays of Buffers are equal.
+ * @param a - The first array of Buffers.
+ * @param b - The second array of Buffers.
+ * @returns True if the arrays are equal, false otherwise.
+ */
+function stacksEqual(a, b) {
+  if (a.length !== b.length) return false;
+  return a.every((x, i) => {
+    return x.equals(b[i]);
+  });
+}
+exports.stacksEqual = stacksEqual;
+/**
+ * Checks if the given value is a valid elliptic curve point.
+ * @param p - The value to check.
+ * @returns True if the value is a valid elliptic curve point, false otherwise.
+ */
 function isPoint(p) {
   if (!buffer_1.Buffer.isBuffer(p)) return false;
   if (p.length < 33) return false;
@@ -22468,49 +22221,11 @@ function isPoint(p) {
   return false;
 }
 exports.isPoint = isPoint;
-const UINT31_MAX = Math.pow(2, 31) - 1;
-function UInt31(value) {
-  return exports.typeforce.UInt32(value) && value <= UINT31_MAX;
-}
-exports.UInt31 = UInt31;
-function BIP32Path(value) {
-  return (
-    exports.typeforce.String(value) && !!value.match(/^(m\/)?(\d+'?\/)*\d+'?$/)
-  );
-}
-exports.BIP32Path = BIP32Path;
-BIP32Path.toJSON = () => {
-  return 'BIP32 derivation path';
-};
-function Signer(obj) {
-  return (
-    (exports.typeforce.Buffer(obj.publicKey) ||
-      typeof obj.getPublicKey === 'function') &&
-    typeof obj.sign === 'function'
-  );
-}
-exports.Signer = Signer;
 const SATOSHI_MAX = 21 * 1e14;
 function Satoshi(value) {
   return exports.typeforce.UInt53(value) && value <= SATOSHI_MAX;
 }
 exports.Satoshi = Satoshi;
-// external dependent types
-exports.ECPoint = exports.typeforce.quacksLike('Point');
-// exposed, external API
-exports.Network = exports.typeforce.compile({
-  messagePrefix: exports.typeforce.oneOf(
-    exports.typeforce.Buffer,
-    exports.typeforce.String,
-  ),
-  bip32: {
-    public: exports.typeforce.UInt32,
-    private: exports.typeforce.UInt32,
-  },
-  pubKeyHash: exports.typeforce.UInt8,
-  scriptHash: exports.typeforce.UInt8,
-  wif: exports.typeforce.UInt8,
-});
 exports.TAPLEAF_VERSION_MASK = 0xfe;
 function isTapleaf(o) {
   if (!o || !('output' in o)) return false;
@@ -22646,7 +22361,7 @@ module.exports = bs58checkBase(sha256x2)
 /* harmony import */ var _babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(91);
 /* harmony import */ var _babel_runtime_helpers_esm_objectSpread2__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1413);
 /* harmony import */ var _babel_runtime_helpers_esm_typeof__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(71002);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62435);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
 
 
 
@@ -22706,8 +22421,8 @@ var esm_typeof = __webpack_require__(71002);
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
-// EXTERNAL MODULE: ./node_modules/@umijs/preset-umi/node_modules/react/index.js
-var react = __webpack_require__(62435);
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/rc-input/es/utils/commonUtils.js
 var commonUtils = __webpack_require__(87887);
 ;// CONCATENATED MODULE: ./node_modules/rc-input/es/BaseInput.js
@@ -22718,7 +22433,7 @@ var commonUtils = __webpack_require__(87887);
 
 
 
-var BaseInput = function BaseInput(props) {
+var BaseInput = /*#__PURE__*/react.forwardRef(function (props, ref) {
   var _element$props, _element$props2;
   var inputEl = props.inputElement,
     children = props.children,
@@ -22758,6 +22473,14 @@ var BaseInput = function BaseInput(props) {
   var element = /*#__PURE__*/(0,react.cloneElement)(inputElement, {
     value: value,
     className: classnames_default()(inputElement.props.className, !hasAffix && (classNames === null || classNames === void 0 ? void 0 : classNames.variant)) || null
+  });
+
+  // ======================== Ref ======================== //
+  var groupRef = (0,react.useRef)(null);
+  react.useImperativeHandle(ref, function () {
+    return {
+      nativeElement: groupRef.current || containerRef.current
+    };
   });
 
   // ================== Prefix & Suffix ================== //
@@ -22812,7 +22535,8 @@ var BaseInput = function BaseInput(props) {
     // Need another wrapper for changing display:table to display:inline-block
     // and put style prop in wrapper
     element = /*#__PURE__*/react.createElement(GroupWrapperComponent, {
-      className: mergedGroupClassName
+      className: mergedGroupClassName,
+      ref: groupRef
     }, /*#__PURE__*/react.createElement(WrapperComponent, {
       className: mergedWrapperClassName
     }, addonBefore && /*#__PURE__*/react.createElement(GroupAddonComponent, {
@@ -22828,7 +22552,7 @@ var BaseInput = function BaseInput(props) {
     style: (0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({}, (_element$props2 = element.props) === null || _element$props2 === void 0 ? void 0 : _element$props2.style), style),
     hidden: hidden
   });
-};
+});
 /* harmony default export */ var es_BaseInput = (BaseInput);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js + 2 modules
 var toConsumableArray = __webpack_require__(74902);
@@ -22887,6 +22611,7 @@ var Input = /*#__PURE__*/(0,react.forwardRef)(function (props, ref) {
     setFocused = _useState2[1];
   var compositionRef = (0,react.useRef)(false);
   var inputRef = (0,react.useRef)(null);
+  var holderRef = (0,react.useRef)(null);
   var focus = function focus(option) {
     if (inputRef.current) {
       (0,commonUtils/* triggerFocus */.nH)(inputRef.current, option);
@@ -22916,6 +22641,7 @@ var Input = /*#__PURE__*/(0,react.forwardRef)(function (props, ref) {
 
   // ======================= Ref ========================
   (0,react.useImperativeHandle)(ref, function () {
+    var _holderRef$current;
     return {
       focus: focus,
       blur: function blur() {
@@ -22930,7 +22656,8 @@ var Input = /*#__PURE__*/(0,react.forwardRef)(function (props, ref) {
         var _inputRef$current3;
         (_inputRef$current3 = inputRef.current) === null || _inputRef$current3 === void 0 || _inputRef$current3.select();
       },
-      input: inputRef.current
+      input: inputRef.current,
+      nativeElement: ((_holderRef$current = holderRef.current) === null || _holderRef$current === void 0 ? void 0 : _holderRef$current.nativeElement) || inputRef.current
     };
   });
   (0,react.useEffect)(function () {
@@ -23109,6 +22836,9 @@ function cloneEvent(event, target, value) {
     currentTarget.selectionStart = target.selectionStart;
     currentTarget.selectionEnd = target.selectionEnd;
   }
+  currentTarget.setSelectionRange = function () {
+    target.setSelectionRange.apply(target, arguments);
+  };
   return newEvent;
 }
 function resolveOnChange(target, e, onChange, targetValue) {
