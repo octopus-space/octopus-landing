@@ -294,7 +294,7 @@ var checkExtension = function checkExtension() {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
           if (!(network && connected)) {
-            _context3.next = 10;
+            _context3.next = 11;
             break;
           }
           _context3.next = 3;
@@ -305,6 +305,7 @@ var checkExtension = function checkExtension() {
           return window.metaidwallet.token.getBalance();
         case 6:
           tokens = _context3.sent;
+          console.log(btcBal, tokens, 'https://octopus.space/');
           _bals = {
             btc: (0,utils/* formatSat */.gB)(btcBal.total)
           };
@@ -313,7 +314,7 @@ var checkExtension = function checkExtension() {
             _bals[item.genesis] = (0,utils/* formatSat */.gB)(balance.toString(), item.decimal);
           });
           setUserBal(_bals);
-        case 10:
+        case 11:
         case "end":
           return _context3.stop();
       }
@@ -3427,6 +3428,7 @@ function useModel(namespace, selector) {
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   C5: function() { return /* binding */ submitPrepayOrderMintRunes; },
+/* harmony export */   LB: function() { return /* binding */ createPrepayOrderRedeemMrc20; },
 /* harmony export */   MF: function() { return /* binding */ createPrepayOrderMintRunes; },
 /* harmony export */   NZ: function() { return /* binding */ getUserRunesBalance; },
 /* harmony export */   PL: function() { return /* binding */ createPrepayOrderMintMrc20; },
@@ -3446,6 +3448,7 @@ function useModel(namespace, selector) {
 /* harmony export */   k8: function() { return /* binding */ createPrepayOrderMintBRC20; },
 /* harmony export */   nc: function() { return /* binding */ submitPrepayOrderMintBrc20; },
 /* harmony export */   s7: function() { return /* binding */ submitPrepayOrderRedeemRunes; },
+/* harmony export */   t0: function() { return /* binding */ submitPrepayOrderRedeemMrc20; },
 /* harmony export */   z_: function() { return /* binding */ createPrepayOrderMintBtc; }
 /* harmony export */ });
 /* unused harmony export getUserMrc20Balance */
@@ -3795,15 +3798,15 @@ function _createPrepayOrderRedeemRunes() {
   }));
   return _createPrepayOrderRedeemRunes.apply(this, arguments);
 }
-function submitPrepayOrderRedeemRunes(_x48, _x49, _x50) {
-  return _submitPrepayOrderRedeemRunes.apply(this, arguments);
+function createPrepayOrderRedeemMrc20(_x48, _x49, _x50) {
+  return _createPrepayOrderRedeemMrc.apply(this, arguments);
 }
-function _submitPrepayOrderRedeemRunes() {
-  _submitPrepayOrderRedeemRunes = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee17(network, data, options) {
+function _createPrepayOrderRedeemMrc() {
+  _createPrepayOrderRedeemMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee17(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee17$(_context17) {
       while (1) switch (_context17.prev = _context17.next) {
         case 0:
-          return _context17.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemRunes"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context17.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderRedeemMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -3813,22 +3816,62 @@ function _submitPrepayOrderRedeemRunes() {
       }
     }, _callee17);
   }));
+  return _createPrepayOrderRedeemMrc.apply(this, arguments);
+}
+function submitPrepayOrderRedeemRunes(_x51, _x52, _x53) {
   return _submitPrepayOrderRedeemRunes.apply(this, arguments);
 }
-function fetchRunesUtxos(_x51, _x52, _x53) {
-  return _fetchRunesUtxos.apply(this, arguments);
-}
-function _fetchRunesUtxos() {
-  _fetchRunesUtxos = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee18(address, runeId, network) {
-    var offset,
-      limit,
-      _args18 = arguments;
+function _submitPrepayOrderRedeemRunes() {
+  _submitPrepayOrderRedeemRunes = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee18(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee18$(_context18) {
       while (1) switch (_context18.prev = _context18.next) {
         case 0:
-          offset = _args18.length > 3 && _args18[3] !== undefined ? _args18[3] : 0;
-          limit = _args18.length > 4 && _args18[4] !== undefined ? _args18[4] : 50;
-          return _context18.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(ApiHost + "/runes/address/utxo", {
+          return _context18.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemRunes"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+            method: "POST",
+            data: data
+          }, options || {})));
+        case 1:
+        case "end":
+          return _context18.stop();
+      }
+    }, _callee18);
+  }));
+  return _submitPrepayOrderRedeemRunes.apply(this, arguments);
+}
+function submitPrepayOrderRedeemMrc20(_x54, _x55, _x56) {
+  return _submitPrepayOrderRedeemMrc.apply(this, arguments);
+}
+function _submitPrepayOrderRedeemMrc() {
+  _submitPrepayOrderRedeemMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee19(network, data, options) {
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee19$(_context19) {
+      while (1) switch (_context19.prev = _context19.next) {
+        case 0:
+          return _context19.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+            method: "POST",
+            data: data
+          }, options || {})));
+        case 1:
+        case "end":
+          return _context19.stop();
+      }
+    }, _callee19);
+  }));
+  return _submitPrepayOrderRedeemMrc.apply(this, arguments);
+}
+function fetchRunesUtxos(_x57, _x58, _x59) {
+  return _fetchRunesUtxos.apply(this, arguments);
+}
+function _fetchRunesUtxos() {
+  _fetchRunesUtxos = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee20(address, runeId, network) {
+    var offset,
+      limit,
+      _args20 = arguments;
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee20$(_context20) {
+      while (1) switch (_context20.prev = _context20.next) {
+        case 0:
+          offset = _args20.length > 3 && _args20[3] !== undefined ? _args20[3] : 0;
+          limit = _args20.length > 4 && _args20[4] !== undefined ? _args20[4] : 50;
+          return _context20.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(ApiHost + "/runes/address/utxo", {
             method: "GET",
             params: {
               address: address,
@@ -3840,21 +3883,21 @@ function _fetchRunesUtxos() {
           }));
         case 3:
         case "end":
-          return _context18.stop();
+          return _context20.stop();
       }
-    }, _callee18);
+    }, _callee20);
   }));
   return _fetchRunesUtxos.apply(this, arguments);
 }
-function getUserRunesBalance(_x54, _x55, _x56) {
+function getUserRunesBalance(_x60, _x61, _x62) {
   return _getUserRunesBalance.apply(this, arguments);
 }
 function _getUserRunesBalance() {
-  _getUserRunesBalance = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee19(address, network, runeId) {
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee19$(_context19) {
-      while (1) switch (_context19.prev = _context19.next) {
+  _getUserRunesBalance = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee21(address, network, runeId) {
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee21$(_context21) {
+      while (1) switch (_context21.prev = _context21.next) {
         case 0:
-          return _context19.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(ApiHost + "/runes/address/balance-info", {
+          return _context21.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(ApiHost + "/runes/address/balance-info", {
             method: "GET",
             params: {
               address: address,
@@ -3864,26 +3907,26 @@ function _getUserRunesBalance() {
           }));
         case 1:
         case "end":
-          return _context19.stop();
+          return _context21.stop();
       }
-    }, _callee19);
+    }, _callee21);
   }));
   return _getUserRunesBalance.apply(this, arguments);
 }
-function getUserMrc20Balance(_x57, _x58, _x59) {
+function getUserMrc20Balance(_x63, _x64, _x65) {
   return _getUserMrc20Balance.apply(this, arguments);
 }
 function _getUserMrc20Balance() {
-  _getUserMrc20Balance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee20(address, network, tickId) {
+  _getUserMrc20Balance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee22(address, network, tickId) {
     var cursor,
       size,
-      _args20 = arguments;
-    return _regeneratorRuntime().wrap(function _callee20$(_context20) {
-      while (1) switch (_context20.prev = _context20.next) {
+      _args22 = arguments;
+    return _regeneratorRuntime().wrap(function _callee22$(_context22) {
+      while (1) switch (_context22.prev = _context22.next) {
         case 0:
-          cursor = _args20.length > 3 && _args20[3] !== undefined ? _args20[3] : 0;
-          size = _args20.length > 4 && _args20[4] !== undefined ? _args20[4] : 50;
-          return _context20.abrupt("return", request(ApiHost + "/mrc20/address/utxo", {
+          cursor = _args22.length > 3 && _args22[3] !== undefined ? _args22[3] : 0;
+          size = _args22.length > 4 && _args22[4] !== undefined ? _args22[4] : 50;
+          return _context22.abrupt("return", request(ApiHost + "/mrc20/address/utxo", {
             method: "GET",
             params: {
               address: address,
@@ -3895,26 +3938,26 @@ function _getUserMrc20Balance() {
           }));
         case 3:
         case "end":
-          return _context20.stop();
+          return _context22.stop();
       }
-    }, _callee20);
+    }, _callee22);
   }));
   return _getUserMrc20Balance.apply(this, arguments);
 }
-function getUserMrc20Balances(_x60, _x61) {
+function getUserMrc20Balances(_x66, _x67) {
   return _getUserMrc20Balances.apply(this, arguments);
 }
 function _getUserMrc20Balances() {
-  _getUserMrc20Balances = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee21(address, network) {
+  _getUserMrc20Balances = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee23(address, network) {
     var cursor,
       size,
-      _args21 = arguments;
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee21$(_context21) {
-      while (1) switch (_context21.prev = _context21.next) {
+      _args23 = arguments;
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee23$(_context23) {
+      while (1) switch (_context23.prev = _context23.next) {
         case 0:
-          cursor = _args21.length > 2 && _args21[2] !== undefined ? _args21[2] : 0;
-          size = _args21.length > 3 && _args21[3] !== undefined ? _args21[3] : 50;
-          return _context21.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(ApiHost + "/mrc20/address/balance-list", {
+          cursor = _args23.length > 2 && _args23[2] !== undefined ? _args23[2] : 0;
+          size = _args23.length > 3 && _args23[3] !== undefined ? _args23[3] : 50;
+          return _context23.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(ApiHost + "/mrc20/address/balance-list", {
             method: "GET",
             params: {
               address: address,
@@ -3925,29 +3968,29 @@ function _getUserMrc20Balances() {
           }));
         case 3:
         case "end":
-          return _context21.stop();
+          return _context23.stop();
       }
-    }, _callee21);
+    }, _callee23);
   }));
   return _getUserMrc20Balances.apply(this, arguments);
 }
-function submitPrepayOrderMintMrc20(_x62, _x63, _x64) {
+function submitPrepayOrderMintMrc20(_x68, _x69, _x70) {
   return _submitPrepayOrderMintMrc.apply(this, arguments);
 }
 function _submitPrepayOrderMintMrc() {
-  _submitPrepayOrderMintMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee22(network, data, options) {
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee22$(_context22) {
-      while (1) switch (_context22.prev = _context22.next) {
+  _submitPrepayOrderMintMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee24(network, data, options) {
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee24$(_context24) {
+      while (1) switch (_context24.prev = _context24.next) {
         case 0:
-          return _context22.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderMintMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context24.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderMintMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
         case 1:
         case "end":
-          return _context22.stop();
+          return _context24.stop();
       }
-    }, _callee22);
+    }, _callee24);
   }));
   return _submitPrepayOrderMintMrc.apply(this, arguments);
 }
@@ -3968,6 +4011,7 @@ __webpack_require__.d(__webpack_exports__, {
   oj: function() { return /* binding */ calcMintRunesInfo; },
   ug: function() { return /* binding */ calcRedeemBrc20Info; },
   PO: function() { return /* binding */ calcRedeemBtcInfo; },
+  tw: function() { return /* binding */ calcRedeemMrc20Info; },
   iF: function() { return /* binding */ calcRedeemRunesInfo; },
   uY: function() { return /* binding */ determineAddressInfo; },
   gB: function() { return /* binding */ formatSat; },
@@ -7205,6 +7249,38 @@ var calcRedeemRunesInfo = function calcRedeemRunesInfo(redeemAmount, assetInfo, 
     throw new Error("amount greater than maximum amount");
   }
   var confirmNumber = confirmNumberBySeqAndAmount(redeemBrc20EqualBtcAmount, confirmSequence,
+  // mint btc -> mvc, get mvc confirm number
+  "MVC");
+  var bridgeFeeConst = BigInt(Math.floor(asset.feeRateConstRedeem / Math.pow(10, 8) * btcPrice / asset.price * Math.pow(10, asset.decimals - asset.trimDecimals)));
+  var bridgeFeePercent = BigInt(redeemAmount) * BigInt(asset.feeRateNumeratorRedeem) / 10000n;
+  var bridgeFee = bridgeFeeConst + bridgeFeePercent;
+  var minerFee = BigInt(Math.floor(transactionSize.RUNES_REDEEM / Math.pow(10, 8) * feeBtc * btcPrice / asset.price * Math.pow(10, asset.decimals - asset.trimDecimals)));
+  var totalFee = bridgeFee + minerFee;
+  var receiveAmount = BigInt(redeemAmount) - totalFee;
+  return {
+    receiveAmount: formatSat(String(receiveAmount), asset.decimals - asset.trimDecimals),
+    minerFee: formatSat(String(minerFee), asset.decimals - asset.trimDecimals),
+    bridgeFee: formatSat(String(bridgeFee), asset.decimals - asset.trimDecimals),
+    totalFee: formatSat(String(totalFee), asset.decimals - asset.trimDecimals),
+    confirmNumber: confirmNumber
+  };
+};
+var calcRedeemMrc20Info = function calcRedeemMrc20Info(redeemAmount, assetInfo, asset) {
+  var btcPrice = assetInfo.btcPrice,
+    feeBtc = assetInfo.feeBtc,
+    amountLimitMaximum = assetInfo.amountLimitMaximum,
+    amountLimitMinimum = assetInfo.amountLimitMinimum,
+    confirmSequence = assetInfo.confirmSequence,
+    transactionSize = assetInfo.transactionSize;
+  var brcAmount = redeemAmount / Math.pow(10, asset.decimals - asset.trimDecimals);
+  var redeemMrc20EqualBtcAmount = asset.price * Number(brcAmount) / btcPrice * Math.pow(10, 8);
+  if (redeemMrc20EqualBtcAmount < Number(amountLimitMinimum)) {
+    throw new Error("amount less than minimum amount");
+  }
+  if (redeemMrc20EqualBtcAmount > Number(amountLimitMaximum)) {
+    throw new Error("amount greater than maximum amount");
+  }
+  var confirmNumber = confirmNumberBySeqAndAmount(redeemMrc20EqualBtcAmount, confirmSequence,
   // mint btc -> mvc, get mvc confirm number
   "MVC");
   var bridgeFeeConst = BigInt(Math.floor(asset.feeRateConstRedeem / Math.pow(10, 8) * btcPrice / asset.price * Math.pow(10, asset.decimals - asset.trimDecimals)));
@@ -37838,7 +37914,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"6465a201","242":"50706a9e","282":"4b103a2b","307":"24ff5d87","503":"4545e4d0","717":"c9f5d172","866":"917c7cbd"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"6465a201","242":"50706a9e","282":"4b103a2b","307":"ed350494","503":"4545e4d0","717":"c9f5d172","866":"917c7cbd"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -37847,7 +37923,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.miniCssF = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + {"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] + "." + {"307":"06579e20","717":"2e23d095","866":"fe26ca99"}[chunkId] + ".chunk.css";
+/******/ 			return "" + {"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] + "." + {"307":"44c2ed2b","717":"f0e8844f","866":"fe26ca99"}[chunkId] + ".chunk.css";
 /******/ 		};
 /******/ 	}();
 /******/ 	
