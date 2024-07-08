@@ -15,7 +15,9 @@ type HistoryType =
   | "mvcToBtc"
   | "mvcToBrc20"
   | "runesToMvc"
-  | "mvcToRunes";
+  | "mvcToRunes"
+  | "mrc20ToMvc"
+  | "mvcToMrc20";
 const size = 10;
 export default ({ type }: { type: HistoryType }) => {
   const { connect, mvcAddress, network } = useModel("wallet");
@@ -43,6 +45,8 @@ export default ({ type }: { type: HistoryType }) => {
           type === "btcToMvc" ||
           type === "brc20ToMvc" ||
           type === "runesToMvc"
+          ||
+          type === "mrc20ToMvc"
         ) {
           item.originNetwork = "BTC";
           item.targetNetwork = "MVC";
@@ -50,7 +54,7 @@ export default ({ type }: { type: HistoryType }) => {
         if (
           type === "mvcToBtc" ||
           type === "mvcToBrc20" ||
-          type === "mvcToRunes"
+          type === "mvcToRunes" || type === "mvcToMrc20"
         ) {
           item.originNetwork = "MVC";
           item.targetNetwork = "BTC";
@@ -58,9 +62,10 @@ export default ({ type }: { type: HistoryType }) => {
         item.timestamp = prettyTimestamp(Number(item.timestamp), true);
 
         const currentToken = AssetsInfo.assetList.find((token) => {
-          return token.targetName == item.symbol;
+          return token.originName == item.name && token.originSymbol == item.symbol;
         });
         if (currentToken) {
+          console.log(currentToken, 'metacoin');
           item.amount = String(
             formatUnitToBtc(
               Number(item.amount),

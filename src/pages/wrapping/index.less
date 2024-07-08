@@ -1,10 +1,14 @@
 .wrapPage {
   margin-top: 92px;
   margin-bottom: 92px;
+  padding: 0 1vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  .ant-segmented.ant-segmented-block .ant-segmented-item {
+    min-width: 120px;
+  }
   .ant-segmented-item {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.6);
@@ -103,10 +107,10 @@
     &:focus-within {
       border: 2px solid #6e66fa;
     }
-    .tokenInputWrap{
+    .tokenInputWrap {
       display: flex;
       align-items: center;
-      gap:8px;
+      gap: 8px;
       height: 50px;
     }
     .assetName {
@@ -187,5 +191,34 @@
   .spanReset {
     transform: rotate(0deg);
     transition: transform 0.3s;
+  }
+}
+@media screen and (max-width: 768px) {
+  .wrapPage {
+    .chains {
+      display: flex;
+      flex-direction: column;
+      .switchIcon {
+        margin: 11px 0 0 60px;
+        transform: rotate(90deg);
+      }
+      .chain {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .label {
+          min-width: 60px;
+        }
+        .selectWrap {
+          flex-grow: 1;
+        }
+      }
+    }
+    .inputCard{
+      .assetName{
+        max-width: 80px;
+      }
+    }
   }
 }

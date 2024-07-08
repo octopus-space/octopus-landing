@@ -9,7 +9,7 @@ import { SegmentedOptions } from "antd/es/segmented";
 export const SegOptions: SegmentedOptions<any> = [
   {
     label: (
-      <div style={{ padding: 4 }} className="SegmentedItem">
+      <div style={{ padding: 4, minWidth: 90 }} className="SegmentedItem">
         <TokenIcon symbol="btc" src={btc} size={28} />
         <span>BTC</span>
       </div>
@@ -54,6 +54,26 @@ export const SegOptions: SegmentedOptions<any> = [
     value: "arc20",
     disabled: true,
   },
+  // {
+  //   label: (
+  //     <div style={{ padding: 4 }} className="SegmentedItem">
+  //       <TokenIcon symbol="BRC20" src={arc20} size={28} />
+  //       <span>ARC20</span>
+  //     </div>
+  //   ),
+  //   value: "arc2012",
+  //   disabled: true,
+  // },
+  // {
+  //   label: (
+  //     <div style={{ padding: 4 }} className="SegmentedItem">
+  //       <TokenIcon symbol="BRC20" src={arc20} size={28} />
+  //       <span>ARC20</span>
+  //     </div>
+  //   ),
+  //   value: "arc201ee2",
+  //   disabled: true,
+  // },
 
-  
+
 ];

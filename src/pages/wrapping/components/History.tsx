@@ -30,6 +30,12 @@ const items: TabsProps["items"] = [
     destroyInactiveTabPane:true
   },
   {
+    key: "mrc20ToMvc",
+    label: "MRC-20",
+    children: <HistoryPanel type="mrc20ToMvc" />,
+    destroyInactiveTabPane:true
+  },
+  {
     key: "mvcToBtc",
     label: "Redeem BTC",
     children: <HistoryPanel type="mvcToBtc" />,
@@ -45,6 +51,12 @@ const items: TabsProps["items"] = [
     key: "mvcToRunes",
     label: "Redeem RUNES",
     children: <HistoryPanel type="mvcToRunes" />,
+    destroyInactiveTabPane:true
+  },
+  {
+    key: "mvcToMrc20",
+    label: "Redeem MRC-20",
+    children: <HistoryPanel type="mvcToMrc20" />,
     destroyInactiveTabPane:true
   },
 ];
@@ -65,6 +77,9 @@ export default ({ show, onClose, protocolType, bridgeType }: Props) => {
       }
       if (protocolType === "runes") {
         key += "Runes";
+      }
+      if (protocolType === "mrc20") {
+        key += "Mrc20";
       }
     }
 

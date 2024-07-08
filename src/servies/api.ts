@@ -272,6 +272,23 @@ export async function createPrepayOrderRedeemRunes(
   });
 }
 
+export async function createPrepayOrderRedeemMrc20(
+  network: Network,
+  data: any,
+  options?: { [key: string]: any }
+) {
+  return request<
+    API.Ret<{
+      orderId: string;
+      bridgeAddress: string;
+    }>
+  >(`${getHost(network)}/createPrepayOrderRedeemMrc20`, {
+    method: "POST",
+    data,
+    ...(options || {}),
+  });
+}
+
 export async function submitPrepayOrderRedeemRunes(
   network: Network,
   data: any,
@@ -283,6 +300,23 @@ export async function submitPrepayOrderRedeemRunes(
       bridgeAddress: string;
     }>
   >(`${getHost(network)}/submitPrepayOrderRedeemRunes`, {
+    method: "POST",
+    data,
+    ...(options || {}),
+  });
+}
+
+export async function submitPrepayOrderRedeemMrc20(
+  network: Network,
+  data: any,
+  options?: { [key: string]: any }
+) {
+  return request<
+    API.Ret<{
+      orderId: string;
+      bridgeAddress: string;
+    }>
+  >(`${getHost(network)}/submitPrepayOrderRedeemMrc20`, {
     method: "POST",
     data,
     ...(options || {}),

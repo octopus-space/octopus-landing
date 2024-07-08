@@ -467,6 +467,71 @@ export const calcRedeemRunesInfo = (
   };
 };
 
+export const calcRedeemMrc20Info = (
+  redeemAmount: number,
+  assetInfo: API.AssetsData,
+  asset: API.AssetItem
+): FeeInfo => {
+  const {
+    btcPrice,
+    feeBtc,
+    amountLimitMaximum,
+    amountLimitMinimum,
+    confirmSequence,
+    transactionSize,
+  } = assetInfo;
+
+  const brcAmount =
+    redeemAmount / 10 ** (asset.decimals - asset.trimDecimals);
+  const redeemMrc20EqualBtcAmount =
+    ((asset.price * Number(brcAmount)) / btcPrice) * 10 ** 8;
+
+  if (redeemMrc20EqualBtcAmount < Number(amountLimitMinimum)) {
+    throw new Error("amount less than minimum amount");
+  }
+  if (redeemMrc20EqualBtcAmount > Number(amountLimitMaximum)) {
+    throw new Error("amount greater than maximum amount");
+  }
+
+  const confirmNumber = confirmNumberBySeqAndAmount(
+    redeemMrc20EqualBtcAmount,
+    confirmSequence,
+    // mint btc -> mvc, get mvc confirm number
+    "MVC"
+  );
+  const bridgeFeeConst = BigInt(
+    Math.floor(
+      (((asset.feeRateConstRedeem / 10 ** 8) * btcPrice) / asset.price) *
+        10 ** (asset.decimals - asset.trimDecimals)
+    )
+  );
+  const bridgeFeePercent =
+    (BigInt(redeemAmount) * BigInt(asset.feeRateNumeratorRedeem)) / 10000n;
+  const bridgeFee = bridgeFeeConst + bridgeFeePercent;
+  const minerFee = BigInt(
+    Math.floor(
+      (((transactionSize.RUNES_REDEEM / 10 ** 8) * feeBtc * btcPrice) /
+        asset.price) *
+        10 ** (asset.decimals - asset.trimDecimals)
+    )
+  );
+  const totalFee = bridgeFee + minerFee;
+  const receiveAmount = BigInt(redeemAmount) - totalFee;
+  return {
+    receiveAmount: formatSat(
+      String(receiveAmount),
+      asset.decimals - asset.trimDecimals
+    ),
+    minerFee: formatSat(String(minerFee), asset.decimals - asset.trimDecimals),
+    bridgeFee: formatSat(
+      String(bridgeFee),
+      asset.decimals - asset.trimDecimals
+    ),
+    totalFee: formatSat(String(totalFee), asset.decimals - asset.trimDecimals),
+    confirmNumber,
+  };
+};
+
 export const calcMintMRC20Info = (
   mintAmount: number,
   assetInfo: API.AssetsData,

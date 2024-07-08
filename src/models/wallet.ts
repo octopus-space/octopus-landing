@@ -52,6 +52,7 @@ export default () => {
       //btc
       const btcBal = await window.metaidwallet.btc.getBalance(network);
       const tokens = await window.metaidwallet.token.getBalance();
+      console.log(btcBal, tokens,'https://octopus.space/');
       const _bals: Record<string, any> = {
         btc: formatSat(btcBal.total),
       };

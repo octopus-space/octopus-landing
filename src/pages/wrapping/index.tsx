@@ -25,6 +25,7 @@ import {
   calcMintRunesInfo,
   calcRedeemBrc20Info,
   calcRedeemBtcInfo,
+  calcRedeemMrc20Info,
   calcRedeemRunesInfo,
   determineAddressInfo,
   formatSat,
@@ -43,6 +44,7 @@ import {
   mintRunes,
   redeemBrc20,
   redeemBtc,
+  redeemMrc20,
   redeemRunes,
   supportRedeemAddressType,
 } from "@/servies/wrapping";
@@ -194,6 +196,13 @@ export default () => {
           case "mintmrc20":
             info = calcMintMRC20Info(Number(value), AssetsInfo, asset);
             break;
+          case "redeemmrc20":
+            info = calcRedeemMrc20Info(
+              Number(amountRaw(String(value), asset.decimals - asset.trimDecimals)),
+              AssetsInfo,
+              asset
+            );
+            break
           default:
             throw new Error("unsupport protocol");
         }
@@ -324,6 +333,14 @@ export default () => {
           network
         );
       }
+      if (asset && bridgeType === "redeem" && protocolType === "mrc20") {
+        await redeemMrc20(
+          amountRaw(String(amount), asset.decimals - asset.trimDecimals),
+          asset,
+          addressType,
+          network
+        );
+      }
       setSuccessVisible(true);
       await getBal();
     } catch (err) {
@@ -436,7 +453,7 @@ export default () => {
     <div className="wrapPage">
       <Segmented
         defaultValue="mrc20"
-        style={{ width: 520, maxWidth: "100vw", marginBottom: 32 }}
+        style={{ width: 520, maxWidth: "98vw", marginBottom: 32, overflow: 'scroll' }}
         onChange={(value) => {
           setProtocolType(value);
           setAmount("");
@@ -444,15 +461,15 @@ export default () => {
         }}
         options={SegOptions}
         size="large"
-        block
+      // block
       />
       <Card
         style={{
           width: 520,
-          maxWidth: "100vw",
+          maxWidth: "98vw",
           position: "relative",
           border: "2px solid #6e66fa",
-          height: 666,
+          minHeight: 666,
         }}
         id="wrapping"
         loading={!AssetsInfo}

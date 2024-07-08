@@ -17,6 +17,7 @@ import {
   createPrepayOrderMintRunes,
   createPrepayOrderRedeemBrc20,
   createPrepayOrderRedeemBtc,
+  createPrepayOrderRedeemMrc20,
   createPrepayOrderRedeemRunes,
   fetchRunesUtxos,
   getRawTx,
@@ -26,6 +27,7 @@ import {
   submitPrepayOrderMintRunes,
   submitPrepayOrderRedeemBrc20,
   submitPrepayOrderRedeemBtc,
+  submitPrepayOrderRedeemMrc20,
   submitPrepayOrderRedeemRunes,
 } from "./api";
 import { determineAddressInfo } from "@/utils/utils";
@@ -276,6 +278,57 @@ export async function redeemRunes(
     };
     await sleep(3000);
     const ret = await submitPrepayOrderRedeemRunes(
+      network,
+      submitPrepayOrderRedeemDto
+    );
+    if (!ret.success) {
+      throw new Error(ret.msg);
+    }
+    return {
+      orderId,
+      txid,
+    };
+  } catch (error) {
+    throw new Error(error as any);
+  }
+}
+
+export async function redeemMrc20(
+  redeemAmount: number,
+  asset: API.AssetItem,
+  addressType: SupportRedeemAddressType,
+  network: Network
+): Promise<{ orderId: string; txid: string }> {
+  try {
+    const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
+      await signPublicKey();
+    const createPrepayOrderDto = {
+      amount: redeemAmount,
+      originTokenId: asset.originTokenId,
+      addressType,
+      publicKey,
+      publicKeySign,
+      publicKeyReceive,
+      publicKeyReceiveSign,
+    };
+    const { data: createResp } = await createPrepayOrderRedeemMrc20(
+      network,
+      createPrepayOrderDto
+    );
+    const { orderId, bridgeAddress } = createResp;
+    const { targetTokenCodeHash, targetTokenGenesis } = asset;
+    const txid = await sendToken(
+      String(redeemAmount),
+      bridgeAddress,
+      targetTokenCodeHash,
+      targetTokenGenesis
+    );
+    const submitPrepayOrderRedeemDto = {
+      orderId,
+      txid: txid,
+    };
+    await sleep(3000);
+    const ret = await submitPrepayOrderRedeemMrc20(
       network,
       submitPrepayOrderRedeemDto
     );
@@ -742,10 +795,7 @@ export async function mintMrc20(
     revealFeeRate: assetInfo.feeBtc,
   });
   if (MRC20Transfer.status) throw new Error(MRC20Transfer.status);
-  const {
-    commitTx,
-    revealTx,
-  } = MRC20Transfer;
+  const { commitTx, revealTx } = MRC20Transfer;
   console.log("commitTx", commitTx);
   const submitPrepayOrderMintDto = {
     orderId,
