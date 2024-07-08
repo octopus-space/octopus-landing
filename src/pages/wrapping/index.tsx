@@ -21,6 +21,7 @@ import {
   amountRaw,
   calcMintBrc20Info,
   calcMintBtcInfo,
+  calcMintMRC20Info,
   calcMintRunesInfo,
   calcRedeemBrc20Info,
   calcRedeemBtcInfo,
@@ -38,16 +39,20 @@ import {
   SupportRedeemAddressType,
   mintBrc,
   mintBtc,
+  mintMrc20,
   mintRunes,
   redeemBrc20,
   redeemBtc,
   redeemRunes,
   supportRedeemAddressType,
 } from "@/servies/wrapping";
-import { getUserBRC20, getUserRunesBalance } from "@/servies/api";
+import { getUserBRC20, getUserMrc20Balance, getUserMrc20Balances, getUserRunesBalance } from "@/servies/api";
 import SelectAsset from "@/components/SelectAsset";
 import Summary, { ConfirmProps } from "./components/Summary";
 import SuccessModel from "@/components/SuccessModel";
+import SwitchChain from "./components/SwitchChain";
+import MintBrc20Input from "./components/MintBrc20Input";
+import InputToken from "./components/InputToken";
 const defalut: ConfirmProps = {
   show: false,
   amount: "",
@@ -55,8 +60,8 @@ const defalut: ConfirmProps = {
   bridgeFee: "",
   totalFee: "",
   minerFee: "",
-  handleSubmit: async () => {},
-  onClose: () => {},
+  handleSubmit: async () => { },
+  onClose: () => { },
 };
 export default () => {
   const {
@@ -66,63 +71,47 @@ export default () => {
 
   const { userBal, connected, btcAddress, network, getBal } =
     useModel("wallet");
-  const [amount, setAmount] = useState<number | string>("");
-  const [reciveAmount, setReciveAmount] = useState<number | string>("");
-  const [selectChainVisible, setSelectChainVisible] = useState(false);
-  const [selectAssetVisible, setSelectAssetVisible] = useState<
-    "send" | "recive"
-  >();
-  const [successVisible, setSuccessVisible] = useState(false);
-  const [chainType, setChainType] = useState<"from" | "to">();
-
-  const [brc20Info, setBrc20Info] = useState<API.BRC20Info>();
-  const [runesInfo, setRunesInfo] = useState<API.RUNESItem>();
-  const [refreshBrc20, setRefreshBrc20] = useState<boolean>(false);
-  const [inscription, setInscription] = useState<API.TransferbleBRC20>();
-  const [confrimProps, setConfirmProps] = useState<ConfirmProps>(defalut);
-  const [loadingBrc20, setLoadingBrc20] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [ErrorMsg, setErrorMsg] = useState("");
-  const [feeInfo, setFeeInfo] = useState<FeeInfo>({
-    minerFee: "",
-    bridgeFee: "",
-    receiveAmount: "",
-    totalFee: "",
-    confirmNumber: "",
-  });
   const {
-    chains,
     fromChain,
-    toChain,
-    setFromChain,
-    setToChain,
     asset,
     protocolType,
     AssetsInfo,
     setProtocolType,
     setAsset,
+    resetInput,
+    amount,
+    setAmount,
+    reciveAmount,
+    setReciveAmount,
+    feeInfo,
+    setFeeInfo,
+    ErrorMsg,
+    setErrorMsg,
+    bridgeType,
+    brc20Info,
+    setBrc20Info,
+    runesInfo,
+    setRunesInfo,
+    inscription,
+    setInscription,
+    mrc20Info, setMrc20Info
   } = useModel("wrapping");
-  const switchChain = () => {
-    const _from = fromChain;
-    const _to = toChain;
-    setToChain(_from);
-    setFromChain(_to);
-    resetInput();
-  };
+  const [selectAssetVisible, setSelectAssetVisible] = useState<
+    "send" | "recive"
+  >();
+  const [successVisible, setSuccessVisible] = useState(false);
 
-  const resetInput = () => {
-    setAmount("");
-    setReciveAmount("");
-    setFeeInfo({
-      minerFee: "",
-      bridgeFee: "",
-      receiveAmount: "",
-      totalFee: "",
-      confirmNumber: "",
-    });
-    setErrorMsg("");
-    setInscription(undefined);
-  };
+
+
+  const [refreshInput, setRefreshInput] = useState<boolean>(false);
+  const [confrimProps, setConfirmProps] = useState<ConfirmProps>(defalut);
+  const [loadingInput, setLoadingInput] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+
+
+
+
 
   const handleHistory = () => {
     if (connected) {
@@ -131,41 +120,43 @@ export default () => {
       message.warning("please connect wallet");
     }
   };
-  const bridgeType: "mint" | "redeem" = useMemo(() => {
-    if (fromChain.key === "btc") return "mint";
-    return "redeem";
-  }, [fromChain]);
   const sendBal = useMemo(() => {
-    if (asset && protocolType == "btc") {
-      if (bridgeType === "mint") return userBal["btc"] || "0";
-      if (bridgeType === "redeem")
-        return userBal[asset.targetTokenGenesis] || "0";
+    if (!asset) return 0;
+    if (bridgeType === 'redeem') {
+      return userBal[asset.targetTokenGenesis] || "0";
     }
-    if (asset && protocolType == "brc20") {
-      if (bridgeType === "redeem")
-        return userBal[asset.targetTokenGenesis] || "0";
-      if (bridgeType === "mint")
-        return (brc20Info && brc20Info.balance) || "--";
-    }
-
-    if (asset && protocolType == "runes") {
-      if (bridgeType === "redeem")
-        return userBal[asset.targetTokenGenesis] || "0";
-      if (bridgeType === "mint" && runesInfo) {
-        console.log();
-        return Number(
-          (
-            Number(runesInfo.amount) /
-            10 ** Number(runesInfo.divisibility)
-          ).toFixed(2)
-        );
-      } else {
-        return "--";
+    switch (protocolType) {
+      case "btc": return userBal["btc"] || "0";
+      case "brc20": return (brc20Info && brc20Info.balance) || "--";
+      case "runes": return runesInfo ? Number(
+        (
+          Number(runesInfo.amount) /
+          10 ** Number(runesInfo.divisibility)
+        ).toFixed(2)
+      ) : '--';
+      // case "mrc20": return mrc20Info ? mrc20Info.reduce((a, b) => {
+      //   return a + b.mrc20s.reduce((c, d) => {
+      //     return c + Number(d.amount)
+      //   }, 0)
+      // }, 0) : "--";
+      case "mrc20": {
+        const find = mrc20Info?.find((item) => item.mrc20Id === asset?.originTokenId)
+        if (find) {
+          return find.balance
+        } else {
+          return '0'
+        }
       }
     }
-  }, [protocolType, bridgeType, asset, userBal, brc20Info, runesInfo]);
 
-  const onInputChange = (value: string | number) => {
+  }, [protocolType, bridgeType, asset, userBal, brc20Info, runesInfo, mrc20Info]);
+
+  const actionType = useMemo(() => {
+    return bridgeType + protocolType
+  }, [bridgeType, protocolType])
+
+  const onInputChange = (value: string | number | null) => {
+    if (!value) return
     setAmount(value);
     if (AssetsInfo && asset) {
       let info: FeeInfo;
@@ -173,32 +164,35 @@ export default () => {
         switch (bridgeType + protocolType) {
           case "redeembtc":
             info = calcRedeemBtcInfo(
-              amountRaw(String(value), asset.decimals),
+              Number(amountRaw(String(value), asset.decimals)),
               AssetsInfo
             );
             break;
           case "redeembrc20":
             info = info = calcRedeemBrc20Info(
-              amountRaw(value, asset.decimals - asset.trimDecimals),
+              Number(amountRaw(String(value), asset.decimals - asset.trimDecimals)),
               AssetsInfo,
               asset
             );
             break;
           case "mintbtc":
-            info = info = calcMintBtcInfo(amountRaw(value, 8), AssetsInfo);
+            info = info = calcMintBtcInfo(Number(amountRaw(String(value), 8)), AssetsInfo);
             break;
           case "mintbrc20":
-            info = calcMintBrc20Info(value, AssetsInfo, asset);
+            info = calcMintBrc20Info(Number(value), AssetsInfo, asset);
             break;
           case "mintrunes":
             info = calcMintRunesInfo(Number(value), AssetsInfo, asset);
             break;
           case "redeemrunes":
             info = calcRedeemRunesInfo(
-              amountRaw(value, asset.decimals - asset.trimDecimals),
+              Number(amountRaw(String(value), asset.decimals - asset.trimDecimals)),
               AssetsInfo,
               asset
             );
+            break
+          case "mintmrc20":
+            info = calcMintMRC20Info(Number(value), AssetsInfo, asset);
             break;
           default:
             throw new Error("unsupport protocol");
@@ -218,22 +212,33 @@ export default () => {
       }
     }
   };
+  const brc20OriginSymbol = useMemo(() => {
+    if (asset && asset.network == 'BRC20' && asset.originSymbol) {
+      return asset.originSymbol
+    }
+  }, [asset])
+
+  const runesOriginTokenId = useMemo(() => {
+    if (asset && asset.network == 'RUNES' && asset.originTokenId) {
+      return asset.originTokenId
+    }
+  }, [asset])
+
+  const mrc20OriginTokenId = useMemo(() => {
+    if (asset && asset.network == 'MRC20' && asset.originTokenId) {
+      return asset.originTokenId
+    }
+  }, [asset])
 
   useEffect(() => {
     let didCancel = false;
     const fetch = async () => {
-      if (
-        network &&
-        asset &&
-        btcAddress &&
-        bridgeType === "mint" &&
-        protocolType === "brc20" &&
-        asset.network === "BRC20"
-      ) {
-        setLoadingBrc20(true);
+      if (!network || !btcAddress) return
+      if (actionType === 'mintbrc20' && brc20OriginSymbol) {
+        setLoadingInput(true);
         const ret = await getUserBRC20(network, {
           address: btcAddress,
-          tick: asset?.originSymbol,
+          tick: brc20OriginSymbol,
         });
         if (didCancel) return;
         setBrc20Info(
@@ -243,48 +248,46 @@ export default () => {
             transferBalanceList: [],
           }
         );
-        setLoadingBrc20(false);
+        setLoadingInput(false);
       }
 
       if (
-        network &&
-        asset &&
-        btcAddress &&
-        bridgeType === "mint" &&
-        protocolType === "runes" &&
-        asset.network === "RUNES"
+        actionType === 'mintrunes' && runesOriginTokenId
       ) {
-        setLoadingBrc20(true);
+        setLoadingInput(true);
         const ret = await getUserRunesBalance(
           btcAddress,
           network,
-          asset.originTokenId
+          runesOriginTokenId
         );
         if (didCancel) return;
-        console.log(ret, "rrrr");
         setRunesInfo(ret.data);
-        setLoadingBrc20(false);
+        setLoadingInput(false);
+      }
+
+      if (actionType === 'mintmrc20' && mrc20OriginTokenId) {
+        setLoadingInput(true);
+        let list: API.Mrc20BalItem[] = [];
+        for (let i = 0; i < 10; i++) {
+          const ret = await getUserMrc20Balances(btcAddress, network, i, 50);
+          if (ret.code === 0) {
+            list = [...list, ...ret.data.list];
+            if (ret.data.list.length < 50) break;
+          }
+        }
+
+        if (didCancel) return;
+        setMrc20Info(list);
+        setLoadingInput(false);
       }
     };
     fetch();
     return () => {
       didCancel = true;
     };
-  }, [protocolType, bridgeType, network, asset, btcAddress, refreshBrc20]);
+  }, [actionType, brc20OriginSymbol, runesOriginTokenId, network, btcAddress, refreshInput, mrc20OriginTokenId]);
 
-  const handleChainChange = (chainType: "from" | "to", chain: Chain) => {
-    if (chainType === "from") {
-      if (fromChain.key !== chain.key) {
-        switchChain();
-      }
-    }
-    if (chainType === "to") {
-      if (toChain.key !== chain.key) {
-        switchChain();
-      }
-    }
-    setSelectChainVisible(false);
-  };
+
 
   const redeem = async () => {
     if (!btcAddress || !asset || !network) return;
@@ -368,6 +371,16 @@ export default () => {
           AssetsInfo
         );
       }
+
+      if (actionType === 'mintmrc20') {
+        const ret = await mintMrc20(
+          Number(amount),
+          asset,
+          addressType,
+          network,
+          AssetsInfo
+        );
+      }
       setSuccessVisible(true);
       await getBal();
     } catch (err) {
@@ -377,30 +390,26 @@ export default () => {
 
     setSubmitting(false);
   };
-  const Inscribe = async () => {
-    if (connected && asset) {
-      await window.metaidwallet.btc.inscribeTransfer(asset?.originSymbol);
-    }
-  };
+
   const conditions = useMemo(() => {
     return [
       {
         condition: !amount,
         text: "Entry Amount",
         type: "primary",
-        onClick: () => {},
+        onClick: () => { },
       },
       {
         condition: Number(reciveAmount) < 0,
         text: "Low Send Amount",
         type: "primary",
-        onClick: () => {},
+        onClick: () => { },
       },
       {
         condition: ErrorMsg,
         text: ErrorMsg,
         type: "primary",
-        onClick: () => {},
+        onClick: () => { },
       },
     ];
   }, [ErrorMsg, amount]);
@@ -421,10 +430,12 @@ export default () => {
     });
   };
 
+
+
   return (
     <div className="wrapPage">
       <Segmented
-        defaultValue="btc"
+        defaultValue="mrc20"
         style={{ width: 520, maxWidth: "100vw", marginBottom: 32 }}
         onChange={(value) => {
           setProtocolType(value);
@@ -457,114 +468,14 @@ export default () => {
               <img src={historyIcon} alt="" />
             </div>
           </div>
-          <div className="chains">
-            <div className="from chain">
-              <div className="label">From</div>
-              <Dropdown
-                dropdownRender={() => (
-                  <div
-                    style={{ marginTop: -100, paddingTop: 100 }}
-                    onMouseLeave={() => setChainType(undefined)}
-                  >
-                    <SelectNet
-                      defalutChain={fromChain}
-                      onChange={(chain) => {
-                        handleChainChange("from", chain);
-                        setChainType(undefined);
-                      }}
-                    />
-                  </div>
-                )}
-                open={chainType === "from"}
-              >
-                <Button
-                  type="text"
-                  className="selectWrap"
-                  style={{ background: colorBgBase, borderRadius }}
-                  onClick={() => {
-                    setChainType("from");
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <TokenIcon
-                      size={30}
-                      src={fromChain.icon}
-                      symbol={fromChain.label}
-                    />
-                    <span style={{ margin: "0 10px 0 5px" }}>
-                      {fromChain.label}
-                    </span>
-                    <div
-                      className={
-                        chainType == "from" ? "spanRotate" : "spanReset"
-                      }
-                    >
-                      <DownOutlined />
-                    </div>
-                  </div>
-                </Button>
-              </Dropdown>
-            </div>
-            <img
-              src={switchIcon}
-              alt=""
-              className="switchIcon"
-              onClick={switchChain}
-            />
-            <div className="to chain">
-              <div className="label">To</div>
-              <Dropdown
-                dropdownRender={() => (
-                  <div
-                    style={{ marginTop: -100, paddingTop: 100 }}
-                    onMouseLeave={() => setChainType(undefined)}
-                  >
-                    <SelectNet
-                      defalutChain={toChain}
-                      onChange={(chain) => {
-                        handleChainChange("to", chain);
-                        setChainType(undefined);
-                      }}
-                    />
-                  </div>
-                )}
-                open={chainType === "to"}
-                placement="bottomLeft"
-                autoAdjustOverflow={false}
-              >
-                <Button
-                  type="text"
-                  className="selectWrap"
-                  style={{ background: colorBgBase, borderRadius }}
-                  onClick={() => {
-                    setChainType("to");
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <TokenIcon
-                      size={30}
-                      src={toChain.icon}
-                      symbol={toChain.label}
-                    />
-                    <span style={{ margin: "0 10px 0 5px" }}>
-                      {toChain.label}
-                    </span>
-                    <div
-                      className={chainType == "to" ? "spanRotate" : "spanReset"}
-                    >
-                      <DownOutlined />
-                    </div>
-                  </div>
-                </Button>
-              </Dropdown>
-            </div>
-          </div>
+          <SwitchChain />
+
           {asset && (
             <div className="assets">
               <div className="send inputCardWrap">
                 <div className="label">
                   <span>You send</span>
-                  {!(protocolType === "brc20" && bridgeType === "mint") && (
+                  {actionType !== 'mintbrc20' && (
                     <Space>
                       <span
                         className="tag"
@@ -633,90 +544,26 @@ export default () => {
                         setSelectAssetVisible("send");
                       }}
                       style={{ cursor: "pointer" }}
+                      className="tokenInputWrap"
                     >
-                      <Space style={{ height: 50 }}>
-                        <TokenIcon
-                          size={40}
-                          src=""
-                          symbol={asset.originName}
-                        />
-                        {bridgeType === "mint" ? (
-                          <div className="assetName">{asset.originName} </div>
-                        ) : (
-                          <div className="assetName">{asset.originName} </div>
-                        )}
-                        <div
-                          className={
-                            selectAssetVisible == "send"
-                              ? "spanRotate"
-                              : "spanReset"
-                          }
-                        >
-                          <DownOutlined />
-                        </div>
-                      </Space>
+                      <InputToken asset={asset} position="send" bridgeType={bridgeType} />
+
+
+                      <div
+                        className={
+                          selectAssetVisible == "send"
+                            ? "spanRotate"
+                            : "spanReset"
+                        }
+                      >
+                        <DownOutlined />
+                      </div>
+
                     </div>
                   </Dropdown>
                   <div className="inputWrap">
-                    {protocolType === "brc20" && bridgeType === "mint" ? (
-                      <Spin spinning={loadingBrc20}>
-                        <Flex wrap="wrap" gap="small" justify="flex-end">
-                          {brc20Info && brc20Info.message && (
-                            <Button
-                              type="text"
-                              onClick={() => setRefreshBrc20(!refreshBrc20)}
-                            >
-                              {brc20Info.message} <SyncOutlined />
-                            </Button>
-                          )}
-
-                          {brc20Info &&
-                            brc20Info.transferBalanceList.map((item) => (
-                              <div
-                                className={`brcItem ${
-                                  inscription &&
-                                  inscription.inscriptionId ===
-                                    item.inscriptionId
-                                    ? "active"
-                                    : ""
-                                }`}
-                                onClick={() => {
-                                  setInscription(item);
-                                  onInputChange(item.amount);
-                                }}
-                                key={item.inscriptionId}
-                              >
-                                <span className="tick">
-                                  {bridgeType === "mint" ? (
-                                    <div>{asset.originSymbol} </div>
-                                  ) : (
-                                    <div>{asset.targetSymbol} </div>
-                                  )}
-                                </span>
-                                <span className="amount">{item.amount}</span>
-                                <span className="number">
-                                  #{item.inscriptionNumber}
-                                </span>
-                              </div>
-                            ))}
-                          {brc20Info &&
-                            brc20Info.transferBalanceList.length === 0 &&
-                            !brc20Info.message && (
-                              <div>
-                                No transferable
-                                <Button
-                                  type="text"
-                                  className="inscribeBtn"
-                                  onClick={Inscribe}
-                                  style={{ color: "#6E66FA" }}
-                                  disabled={Number(brc20Info.balance) === 0}
-                                >
-                                  Inscribe
-                                </Button>
-                              </div>
-                            )}
-                        </Flex>
-                      </Spin>
+                    {actionType === 'mintbrc20' ? (
+                      <MintBrc20Input onInputChange={onInputChange} loading={loadingInput} refresh={() => { setRefreshInput(prev => !prev) }} />
                     ) : (
                       <InputNumber
                         className="input"
@@ -731,7 +578,7 @@ export default () => {
                 </div>
                 <div className="bal">
                   Balance:
-                  <span> {loadingBrc20 ? "--" : sendBal} </span>
+                  <span> {loadingInput ? "..." : sendBal} </span>
                   {bridgeType === "mint"
                     ? asset.originSymbol
                     : asset.targetSymbol}
@@ -766,18 +613,14 @@ export default () => {
                     placement="bottomLeft"
                     autoAdjustOverflow={false}
                   >
-                    <Space
+                    <div
                       onClick={() => {
                         setSelectAssetVisible("recive");
                       }}
                       style={{ cursor: "pointer" }}
+                      className="tokenInputWrap"
                     >
-                      <TokenIcon size={40} src="" symbol={asset.originName} />
-                      {bridgeType === "redeem" ? (
-                        <div className="assetName">{asset.originName} </div>
-                      ) : (
-                        <div className="assetName">{asset.originName} </div>
-                      )}
+                      <InputToken asset={asset} position="recive" bridgeType={bridgeType} />
                       <div
                         className={
                           selectAssetVisible == "recive"
@@ -785,10 +628,9 @@ export default () => {
                             : "spanReset"
                         }
                       >
-                        {" "}
                         <DownOutlined />
                       </div>
-                    </Space>
+                    </div>
                   </Dropdown>
 
                   <div className="inputWrap">

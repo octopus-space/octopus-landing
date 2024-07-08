@@ -221,6 +221,23 @@ export async function createPrepayOrderMintRunes(
   });
 }
 
+
+export async function createPrepayOrderMintMrc20(
+  network: Network,
+  data: any,
+  options?: { [key: string]: any }
+) {
+  return request<
+    API.Ret<{
+      orderId: string;
+      bridgeAddress: string;
+    }>
+  >(`${getHost(network)}/createPrepayOrderMintMrc20`, {
+    method: "POST",
+    data,
+    ...(options || {}),
+  });
+}
 export async function submitPrepayOrderMintRunes(
   network: Network,
   data: any,
@@ -310,4 +327,63 @@ export async function getUserRunesBalance(
       },
     }
   );
+}
+
+export async function getUserMrc20Balance(
+  address: string,
+  network: Network,
+  tickId: string,
+  cursor: number = 0,
+  size: number = 50
+) {
+  return request<API.ListRet<API.MRC20Item>>(
+    ApiHost + "/mrc20/address/utxo",
+    {
+      method: "GET",
+      params: {
+        address,
+        tickId,
+        cursor: cursor * size,
+        size,
+        net: network === "mainnet" ? "livenet" : "testnet",
+      },
+    }
+  );
+}
+
+export async function getUserMrc20Balances(
+  address: string,
+  network: Network,
+  cursor: number = 0,
+  size: number = 50
+) {
+  return request<API.ListRet<API.Mrc20BalItem>>(
+    ApiHost + "/mrc20/address/balance-list",
+    {
+      method: "GET",
+      params: {
+        address,
+        cursor: cursor * size,
+        size,
+        net: network === "mainnet" ? "livenet" : "testnet",
+      },
+    }
+  );
+}
+
+export async function submitPrepayOrderMintMrc20(
+  network: Network,
+  data: any,
+  options?: { [key: string]: any }
+) {
+  return request<
+    API.Ret<{
+      orderId: string;
+      bridgeAddress: string;
+    }>
+  >(`${getHost(network)}/submitPrepayOrderMintMrc20`, {
+    method: "POST",
+    data,
+    ...(options || {}),
+  });
 }

@@ -32,7 +32,7 @@ export function amountRaw(
 const confirmNumberBySeqAndAmount = function (
   amount: number,
   seq: number[][],
-  network: "BTC" | "BRC20" | "RUNES" | "MVC"
+  network: "BTC" | "BRC20" | "RUNES" | "MVC" | "MRC20"
 ) {
   for (const item of seq) {
     const [start, end, confirmBtc, confirmMvc] = item;
@@ -353,7 +353,7 @@ export const calcMintRunesInfo = (
     assetList,
   } = assetInfo;
   console.log("asset:", asset);
- 
+
   console.log(new Decimal(mintAmount).mul(10 ** asset.decimals));
 
   // // 转换成btc价值
@@ -417,9 +417,9 @@ export const calcRedeemRunesInfo = (
   } = assetInfo;
 
   const runesAmount =
-  redeemAmount / 10 ** (asset.decimals - asset.trimDecimals);
+    redeemAmount / 10 ** (asset.decimals - asset.trimDecimals);
   const redeemBrc20EqualBtcAmount =
-  ((asset.price * Number(runesAmount)) / btcPrice) * 10 ** 8;
+    ((asset.price * Number(runesAmount)) / btcPrice) * 10 ** 8;
 
   if (redeemBrc20EqualBtcAmount < Number(amountLimitMinimum)) {
     throw new Error("amount less than minimum amount");
@@ -463,6 +463,66 @@ export const calcRedeemRunesInfo = (
       asset.decimals - asset.trimDecimals
     ),
     totalFee: formatSat(String(totalFee), asset.decimals - asset.trimDecimals),
+    confirmNumber,
+  };
+};
+
+export const calcMintMRC20Info = (
+  mintAmount: number,
+  assetInfo: API.AssetsData,
+  asset: API.AssetItem
+): FeeInfo => {
+  const {
+    btcPrice,
+    mvcPrice,
+    feeBtc,
+    feeMvc,
+    amountLimitMaximum,
+    amountLimitMinimum,
+    confirmSequence,
+    transactionSize,
+    assetList,
+  } = assetInfo;
+
+
+  const mintRawAmount = new Decimal(mintAmount)
+    .mul(10 ** asset.decimals)
+    .toFixed(0);
+  const mintMrc20EqualBtcAmount =
+    ((asset.price * Number(mintAmount)) / btcPrice) * 10 ** 8;
+
+  if (Number(mintMrc20EqualBtcAmount) < Number(amountLimitMinimum)) {
+    throw new Error("amount less than minimum amount");
+  }
+  if (Number(mintMrc20EqualBtcAmount) > Number(amountLimitMaximum)) {
+    throw new Error("amount greater than maximum amount");
+  }
+
+  const confirmNumber = confirmNumberBySeqAndAmount(
+    mintMrc20EqualBtcAmount,
+    confirmSequence,
+    // mint btc -> mvc, get mvc confirm number
+    "MRC20"
+  );
+  let bridgeFee: number = 0;
+  let minerFee: number = 0;
+  if (asset.feeRateNumeratorMint > 0 || asset.feeRateConstMint > 0) {
+    bridgeFee =
+      (Number(mintAmount) * asset.feeRateNumeratorMint) / 10000 +
+      ((asset.feeRateConstMint / 10 ** 8) * btcPrice) / asset.price;
+    minerFee =
+      (transactionSize.BTC_MINT * feeMvc * mvcPrice) / 10 ** 8 / asset.price;
+  }
+  const totalFee = bridgeFee + minerFee;
+  const receiveAmount = Number(mintAmount) - totalFee;
+  const receiveAmountFixed = receiveAmount.toFixed(
+    asset.decimals - asset.trimDecimals
+  );
+  return {
+    receiveAmount: receiveAmountFixed,
+    minerFee: minerFee.toFixed(asset.decimals),
+    bridgeFee:bridgeFee.toFixed(asset.decimals),
+    totalFee:totalFee.toFixed(asset.decimals),
     confirmNumber,
   };
 };

@@ -40,7 +40,18 @@ declare namespace API {
   };
   interface Ret<T> {
     success: boolean;
+    code:number;
+    message: string;
     data: T;
+  }
+  interface ListRet<T> {
+    success: boolean;
+    code: number;
+    message: string;
+    data: {
+      total: number;
+      list: T[];
+    };
   }
   type TransferbleBRC20 = {
     amount: string;
@@ -51,7 +62,7 @@ declare namespace API {
   type BRC20Info = {
     balance: string;
     transferBalanceList: TransferbleBRC20[];
-    message?: string;
+    message: string;
   };
   enum PrepayOrderStatus {
     doing = "doing",
@@ -80,12 +91,40 @@ declare namespace API {
     divisibility: string;
   };
 
+  type MRC20Item = {
+    chain: "btc";
+    blockHeight: number;
+    address: string;
+    satoshi: number;
+    satoshis: number;
+    scriptPk: string;
+    txId: string;
+    vout: number;
+    outputIndex: number;
+    mrc20s: {
+      tick: string;
+      mrc20Id: string;
+      txPoint: string;
+      amount: string;
+      decimals: string;
+    }[];
+    Mrc20Total: number;
+    timestamp: number;
+  };
+
+  type Mrc20BalItem = {
+    tick: string;
+    tokenName: string;
+    mrc20Id: string;
+    balance: string;
+    decimals: string;
+  };
   type UTXO = {
     txId: string;
     vout: number;
     outputIndex: number;
     satoshis: number;
-    satoshi:number;
+    satoshi: number;
     confirmed: boolean;
     rawTx?: string;
     inscriptions?:

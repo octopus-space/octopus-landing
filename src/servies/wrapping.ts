@@ -13,6 +13,7 @@ import * as ecc from "@bitcoin-js/tiny-secp256k1-asmjs";
 import {
   createPrepayOrderMintBRC20,
   createPrepayOrderMintBtc,
+  createPrepayOrderMintMrc20,
   createPrepayOrderMintRunes,
   createPrepayOrderRedeemBrc20,
   createPrepayOrderRedeemBtc,
@@ -21,6 +22,7 @@ import {
   getRawTx,
   submitPrepayOrderMintBrc20,
   submitPrepayOrderMintBtc,
+  submitPrepayOrderMintMrc20,
   submitPrepayOrderMintRunes,
   submitPrepayOrderRedeemBrc20,
   submitPrepayOrderRedeemBtc,
@@ -698,4 +700,60 @@ export async function mintRunes(
   } catch (error) {
     throw new Error((error as any).message || (error as any).msg);
   }
+}
+
+export async function mintMrc20(
+  mintAmount: number,
+  asset: API.AssetItem,
+  addressType: SupportRedeemAddressType,
+  network: Network,
+  assetInfo: API.AssetsData
+) {
+  const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
+    await signMintPublicKey();
+  const createPrepayOrderDto = {
+    amount: String(mintAmount),
+    originTokenId: asset.originTokenId,
+    addressType: addressType,
+    publicKey: publicKey,
+    publicKeySign: publicKeySign,
+    publicKeyReceive,
+    publicKeyReceiveSign: publicKeyReceiveSign,
+  };
+  const { data: createResp } = await createPrepayOrderMintMrc20(
+    network,
+    createPrepayOrderDto
+  );
+  console.log("createResp", createResp);
+  const { orderId, bridgeAddress } = createResp;
+  const MRC20Transfer = await window.metaidwallet.btc.transferMRC20({
+    body: JSON.stringify([
+      {
+        amount: String(mintAmount),
+        vout: 1,
+        id: asset.originTokenId,
+      },
+    ]),
+    amount: String(mintAmount),
+    mrc20TickId: asset.originTokenId,
+    flag: network === "mainnet" ? "metaid" : "testid",
+    revealAddr: bridgeAddress,
+    commitFeeRate: assetInfo.feeBtc,
+    revealFeeRate: assetInfo.feeBtc,
+  });
+  if (MRC20Transfer.status) throw new Error(MRC20Transfer.status);
+  const {
+    commitTx,
+    revealTx,
+  } = MRC20Transfer;
+  console.log("commitTx", commitTx);
+  const submitPrepayOrderMintDto = {
+    orderId,
+    txHexList: [commitTx.rawTx, revealTx.rawTx],
+  };
+  const submitRes = await submitPrepayOrderMintMrc20(
+    network,
+    submitPrepayOrderMintDto
+  );
+  if (!submitRes.success) throw new Error(submitRes.msg);
 }
