@@ -78,7 +78,7 @@ export default function Layout() {
             <div className="navWrap">
               <Nav />
             </div>
-            <div className="corp">Octopus.space@2024 All Rights Reserved</div>
+            <div className="corp" onClick={()=>history.push('/wrapping')}>Octopus.space@2024 All Rights Reserved</div>
           </div>
         </div>
       </div>

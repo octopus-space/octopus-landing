@@ -452,7 +452,7 @@ export default () => {
   return (
     <div className="wrapPage">
       <Segmented
-        defaultValue="mrc20"
+        // defaultValue="mrc20"
         style={{ width: 520, maxWidth: "98vw", marginBottom: 32, overflow: 'scroll' }}
         onChange={(value) => {
           setProtocolType(value);

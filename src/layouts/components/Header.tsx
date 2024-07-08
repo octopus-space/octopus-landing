@@ -2,7 +2,7 @@ import logo from "@/assets/logo.svg";
 import LoginModal from "@/components/LoginModal";
 import { Button, Dropdown } from "antd";
 import { useMemo } from "react";
-import { useModel } from "umi";
+import { useModel,history } from "umi";
 import wrapping from "@/assets/wrapping.svg";
 import mapping from "@/assets/mapping.svg";
 import logoIcon from "@/assets/logoIcon.svg";
@@ -23,7 +23,7 @@ export default () => {
     <div className="header inside">
       <div className="headerwrap">
         <div className="left">
-          <img src={logo} alt="" className="logo" />
+          <img src={logo} alt="" className="logo" onClick={()=>history.push('/')} />
           <div
             className="routes
         "
