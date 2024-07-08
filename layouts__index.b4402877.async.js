@@ -478,7 +478,10 @@ const SvgExit = (props) => /* @__PURE__ */ React.createElement("svg", exit_sprea
         children: [/*#__PURE__*/(0,jsx_runtime.jsx)("img", {
           src: logo,
           alt: "",
-          className: "logo"
+          className: "logo",
+          onClick: function onClick() {
+            return _umi_production_exports.history.push('/');
+          }
         }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
           className: "routes ",
           children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
@@ -651,6 +654,9 @@ function Layout() {
             children: /*#__PURE__*/(0,jsx_runtime.jsx)(Nav, {})
           }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
             className: "corp",
+            onClick: function onClick() {
+              return _umi_production_exports.history.push('/wrapping');
+            },
             children: "Octopus.space@2024 All Rights Reserved"
           })]
         })

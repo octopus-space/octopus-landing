@@ -3468,8 +3468,9 @@ var defalut = {
   };
   return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
     className: "wrapPage",
-    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(segmented/* default */.Z, {
-      defaultValue: "mrc20",
+    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(segmented/* default */.Z
+    // defaultValue="mrc20"
+    , {
       style: {
         width: 520,
         maxWidth: "98vw",
