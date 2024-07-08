@@ -8,10 +8,12 @@
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   iN: function() { return /* reexport */ blue; },
-  R_: function() { return /* reexport */ generate; }
+  R_: function() { return /* reexport */ generate; },
+  Ti: function() { return /* reexport */ presetPalettes; },
+  ez: function() { return /* reexport */ presetPrimaryColors; }
 });
 
-// UNUSED EXPORTS: blueDark, cyan, cyanDark, geekblue, geekblueDark, gold, goldDark, gray, green, greenDark, grey, greyDark, lime, limeDark, magenta, magentaDark, orange, orangeDark, presetDarkPalettes, presetPalettes, presetPrimaryColors, purple, purpleDark, red, redDark, volcano, volcanoDark, yellow, yellowDark
+// UNUSED EXPORTS: blueDark, cyan, cyanDark, geekblue, geekblueDark, gold, goldDark, gray, green, greenDark, grey, greyDark, lime, limeDark, magenta, magentaDark, orange, orangeDark, presetDarkPalettes, purple, purpleDark, red, redDark, volcano, volcanoDark, yellow, yellowDark
 
 // EXTERNAL MODULE: ./node_modules/@ctrl/tinycolor/dist/module/conversion.js
 var conversion = __webpack_require__(86500);
@@ -5035,6 +5037,7 @@ function pad2(c) {
 
 
 
+
 // Z-Index control range
 // Container: 1000 + offset 100 (max base + 10 * offset = 2000)
 // Popover: offset 50
@@ -5064,21 +5067,24 @@ function useZIndex(componentType, customZIndex) {
   const [, token] = (0,_theme_useToken__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .ZP)();
   const parentZIndex = react__WEBPACK_IMPORTED_MODULE_0__.useContext(_zindexContext__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z);
   const isContainer = isContainerType(componentType);
+  let result;
   if (customZIndex !== undefined) {
-    return [customZIndex, customZIndex];
-  }
-  let zIndex = parentZIndex !== null && parentZIndex !== void 0 ? parentZIndex : 0;
-  if (isContainer) {
-    zIndex +=
-    // Use preset token zIndex by default but not stack when has parent container
-    (parentZIndex ? 0 : token.zIndexPopupBase) +
-    // Container offset
-    containerBaseZIndexOffset[componentType];
-    zIndex = Math.min(zIndex, token.zIndexPopupBase + CONTAINER_MAX_OFFSET);
+    result = [customZIndex, customZIndex];
   } else {
-    zIndex += consumerBaseZIndexOffset[componentType];
+    let zIndex = parentZIndex !== null && parentZIndex !== void 0 ? parentZIndex : 0;
+    if (isContainer) {
+      zIndex +=
+      // Use preset token zIndex by default but not stack when has parent container
+      (parentZIndex ? 0 : token.zIndexPopupBase) +
+      // Container offset
+      containerBaseZIndexOffset[componentType];
+    } else {
+      zIndex += consumerBaseZIndexOffset[componentType];
+    }
+    result = [parentZIndex === undefined ? customZIndex : zIndex, zIndex];
   }
-  return [parentZIndex === undefined ? customZIndex : zIndex, zIndex];
+  if (false) {}
+  return result;
 }
 
 /***/ }),
@@ -8109,8 +8115,11 @@ const generateNeutralColorPalettes = (bgBaseColor, textBaseColor) => {
 
 
 function derivative(token) {
+  // pink is deprecated name of magenta, keep this for backwards compatibility
+  es/* presetPrimaryColors */.ez.pink = es/* presetPrimaryColors */.ez.magenta;
+  es/* presetPalettes */.Ti.pink = es/* presetPalettes */.Ti.magenta;
   const colorPalettes = Object.keys(seed/* defaultPresetColors */.M).map(colorKey => {
-    const colors = (0,es/* generate */.R_)(token[colorKey]);
+    const colors = token[colorKey] === es/* presetPrimaryColors */.ez[colorKey] ? es/* presetPalettes */.Ti[colorKey] : (0,es/* generate */.R_)(token[colorKey]);
     return new Array(10).fill(1).reduce((prev, _, i) => {
       prev[`${colorKey}-${i + 1}`] = colors[i];
       prev[`${colorKey}${i + 1}`] = colors[i];
@@ -8137,12 +8146,15 @@ function derivative(token) {
 /* harmony export */   M: function() { return /* binding */ defaultPresetColors; }
 /* harmony export */ });
 const defaultPresetColors = {
-  blue: '#1677ff',
+  blue: '#1677FF',
   purple: '#722ED1',
   cyan: '#13C2C2',
   green: '#52C41A',
   magenta: '#EB2F96',
-  pink: '#eb2f96',
+  /**
+   * @deprecated Use magenta instead
+   */
+  pink: '#EB2F96',
   red: '#F5222D',
   orange: '#FA8C16',
   yellow: '#FADB14',
@@ -8406,7 +8418,7 @@ var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
 var es = __webpack_require__(861);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/version/version.js
-/* harmony default export */ var version = ('5.19.0');
+/* harmony default export */ var version = ('5.19.1');
 ;// CONCATENATED MODULE: ./node_modules/antd/es/version/index.js
 "use client";
 

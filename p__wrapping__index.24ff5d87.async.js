@@ -92,7 +92,7 @@ var Popup = function Popup(_ref) {
 
 /***/ }),
 
-/***/ 61665:
+/***/ 88008:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 // ESM COMPAT FLAG
@@ -106,6 +106,9 @@ __webpack_require__.d(__webpack_exports__, {
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/objectSpread2.js
 var objectSpread2 = __webpack_require__(97857);
 var objectSpread2_default = /*#__PURE__*/__webpack_require__.n(objectSpread2);
+// EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/toConsumableArray.js
+var toConsumableArray = __webpack_require__(19632);
+var toConsumableArray_default = /*#__PURE__*/__webpack_require__.n(toConsumableArray);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/slicedToArray.js
 var slicedToArray = __webpack_require__(5574);
 var slicedToArray_default = /*#__PURE__*/__webpack_require__.n(slicedToArray);
@@ -125,20 +128,14 @@ var segmented = __webpack_require__(92783);
 var card = __webpack_require__(4393);
 // EXTERNAL MODULE: ./node_modules/antd/es/spin/index.js + 6 modules
 var spin = __webpack_require__(74330);
-// EXTERNAL MODULE: ./node_modules/antd/es/dropdown/index.js + 35 modules
-var dropdown = __webpack_require__(38872);
-// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 15 modules
-var es_button = __webpack_require__(45093);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/index.js + 2 modules
 var space = __webpack_require__(42075);
-// EXTERNAL MODULE: ./node_modules/antd/es/flex/index.js + 2 modules
-var flex = __webpack_require__(86250);
+// EXTERNAL MODULE: ./node_modules/antd/es/dropdown/index.js + 35 modules
+var dropdown = __webpack_require__(38872);
 // EXTERNAL MODULE: ./node_modules/antd/es/input-number/index.js + 18 modules
 var input_number = __webpack_require__(24435);
 // EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/DownOutlined.js + 1 modules
 var DownOutlined = __webpack_require__(80882);
-// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/SyncOutlined.js + 1 modules
-var SyncOutlined = __webpack_require__(98165);
 // EXTERNAL MODULE: ./node_modules/react/index.js
 var react = __webpack_require__(67294);
 ;// CONCATENATED MODULE: ./src/pages/wrapping/index.less
@@ -146,7 +143,7 @@ var react = __webpack_require__(67294);
 
 // EXTERNAL MODULE: ./src/.umi-production/exports.ts + 33 modules
 var _umi_production_exports = __webpack_require__(82195);
-;// CONCATENATED MODULE: ./src/assets/switch.svg
+;// CONCATENATED MODULE: ./src/assets/history.svg
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
@@ -164,34 +161,16 @@ var __spreadValues = (a, b) => {
   return a;
 };
 
-const SvgSwitch = (props) => /* @__PURE__ */ React.createElement("svg", __spreadValues({ xmlns: "http://www.w3.org/2000/svg", fill: "none", width: 32, height: 32 }, props), /* @__PURE__ */ React.createElement("defs", null, /* @__PURE__ */ React.createElement("clipPath", { id: "switch_svg__a" }, /* @__PURE__ */ React.createElement("rect", { x: 8, y: 7, width: 16, height: 18, rx: 0 }))), /* @__PURE__ */ React.createElement("circle", { cx: 16, cy: 48, fill: "#6E66FA", r: 16, transform: "rotate(-90 0 32)" }), /* @__PURE__ */ React.createElement("g", { clipPath: "url(#switch_svg__a)" }, /* @__PURE__ */ React.createElement("path", { d: "M21.223 17.323H10.99c-.065 0-.118.06-.118.133v.993c0 .072.053.131.118.131h8.9l-2.122 3.028a.147.147 0 0 0-.013.14c.02.045.06.075.105.075h1.067c.072 0 .14-.037.185-.1l2.482-3.543a.584.584 0 0 0 .053-.559.47.47 0 0 0-.423-.298Z", fill: "#FFF" }), /* @__PURE__ */ React.createElement("path", { d: "M10.973 13.82a.584.584 0 0 0-.054.558.47.47 0 0 0 .423.298h10.235c.065 0 .118-.059.118-.132v-.993c0-.073-.053-.133-.118-.133h-8.899l2.123-3.027a.147.147 0 0 0 .012-.14.118.118 0 0 0-.107-.075H13.64a.227.227 0 0 0-.185.1l-2.482 3.544Z", fill: "#FFF", fillOpacity: 0.5 })));
-
-/* harmony default export */ var assets_switch = ("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiI+PGRlZnM+PGNsaXBQYXRoIGlkPSJhIj48cmVjdCB4PSI4IiB5PSI3IiB3aWR0aD0iMTYiIGhlaWdodD0iMTgiIHJ4PSIwIi8+PC9jbGlwUGF0aD48L2RlZnM+PGNpcmNsZSBjeD0iMTYiIGN5PSI0OCIgZmlsbD0iIzZFNjZGQSIgcj0iMTYiIHRyYW5zZm9ybT0icm90YXRlKC05MCAwIDMyKSIvPjxnIGNsaXAtcGF0aD0idXJsKCNhKSI+PHBhdGggZD0iTTIxLjIyMyAxNy4zMjNIMTAuOTljLS4wNjUgMC0uMTE4LjA2LS4xMTguMTMzdi45OTNjMCAuMDcyLjA1My4xMzEuMTE4LjEzMWg4LjlsLTIuMTIyIDMuMDI4YS4xNDcuMTQ3IDAgMCAwLS4wMTMuMTRjLjAyLjA0NS4wNi4wNzUuMTA1LjA3NWgxLjA2N2MuMDcyIDAgLjE0LS4wMzcuMTg1LS4xbDIuNDgyLTMuNTQzYS41ODQuNTg0IDAgMCAwIC4wNTMtLjU1OS40Ny40NyAwIDAgMC0uNDIzLS4yOThaIiBmaWxsPSIjRkZGIi8+PHBhdGggZD0iTTEwLjk3MyAxMy44MmEuNTg0LjU4NCAwIDAgMC0uMDU0LjU1OC40Ny40NyAwIDAgMCAuNDIzLjI5OGgxMC4yMzVjLjA2NSAwIC4xMTgtLjA1OS4xMTgtLjEzMnYtLjk5M2MwLS4wNzMtLjA1My0uMTMzLS4xMTgtLjEzM2gtOC44OTlsMi4xMjMtMy4wMjdhLjE0Ny4xNDcgMCAwIDAgLjAxMi0uMTQuMTE4LjExOCAwIDAgMC0uMTA3LS4wNzVIMTMuNjRhLjIyNy4yMjcgMCAwIDAtLjE4NS4xbC0yLjQ4MiAzLjU0NFoiIGZpbGw9IiNGRkYiIGZpbGwtb3BhY2l0eT0iLjUiLz48L2c+PC9zdmc+");
-
-;// CONCATENATED MODULE: ./src/assets/history.svg
-var history_defProp = Object.defineProperty;
-var history_getOwnPropSymbols = Object.getOwnPropertySymbols;
-var history_hasOwnProp = Object.prototype.hasOwnProperty;
-var history_propIsEnum = Object.prototype.propertyIsEnumerable;
-var history_defNormalProp = (obj, key, value) => key in obj ? history_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var history_spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (history_hasOwnProp.call(b, prop))
-      history_defNormalProp(a, prop, b[prop]);
-  if (history_getOwnPropSymbols)
-    for (var prop of history_getOwnPropSymbols(b)) {
-      if (history_propIsEnum.call(b, prop))
-        history_defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-
-const SvgHistory = (props) => /* @__PURE__ */ React.createElement("svg", history_spreadValues({ xmlns: "http://www.w3.org/2000/svg", fill: "none", width: 23.997, height: 24 }, props), /* @__PURE__ */ React.createElement("path", { d: "M18.998 8.75a3.751 3.751 0 0 1 0-7.5 3.751 3.751 0 0 1 0 7.5Zm0-6c-1.24 0-2.25 1.01-2.25 2.25s1.01 2.25 2.25 2.25 2.25-1.01 2.25-2.25-1.01-2.25-2.25-2.25ZM11.999 13.75h-5c-.41 0-.75-.34-.75-.75s.34-.75.75-.75h5c.41 0 .75.34.75.75s-.34.75-.75.75ZM15.998 17.75H7c-.41 0-.75-.34-.75-.75s.34-.75.75-.75h9c.41 0 .75.34.75.75s-.34.75-.75.75Z", fill: "#C1C0C0" }), /* @__PURE__ */ React.createElement("path", { d: "M14.998 22.75H9c-5.43 0-7.75-2.32-7.75-7.75V9c0-5.43 2.32-7.75 7.75-7.75h5c.41 0 .75.34.75.75s-.34.75-.75.75h-5c-4.61 0-6.25 1.64-6.25 6.25v6c0 4.61 1.64 6.25 6.25 6.25h6c4.609 0 6.249-1.64 6.249-6.25v-5c0-.41.34-.75.75-.75s.75.34.75.75v5c0 5.43-2.32 7.75-7.75 7.75Z", fill: "#C1C0C0" }));
+const SvgHistory = (props) => /* @__PURE__ */ React.createElement("svg", __spreadValues({ xmlns: "http://www.w3.org/2000/svg", fill: "none", width: 23.997, height: 24 }, props), /* @__PURE__ */ React.createElement("path", { d: "M18.998 8.75a3.751 3.751 0 0 1 0-7.5 3.751 3.751 0 0 1 0 7.5Zm0-6c-1.24 0-2.25 1.01-2.25 2.25s1.01 2.25 2.25 2.25 2.25-1.01 2.25-2.25-1.01-2.25-2.25-2.25ZM11.999 13.75h-5c-.41 0-.75-.34-.75-.75s.34-.75.75-.75h5c.41 0 .75.34.75.75s-.34.75-.75.75ZM15.998 17.75H7c-.41 0-.75-.34-.75-.75s.34-.75.75-.75h9c.41 0 .75.34.75.75s-.34.75-.75.75Z", fill: "#C1C0C0" }), /* @__PURE__ */ React.createElement("path", { d: "M14.998 22.75H9c-5.43 0-7.75-2.32-7.75-7.75V9c0-5.43 2.32-7.75 7.75-7.75h5c.41 0 .75.34.75.75s-.34.75-.75.75h-5c-4.61 0-6.25 1.64-6.25 6.25v6c0 4.61 1.64 6.25 6.25 6.25h6c4.609 0 6.249-1.64 6.249-6.25v-5c0-.41.34-.75.75-.75s.75.34.75.75v5c0 5.43-2.32 7.75-7.75 7.75Z", fill: "#C1C0C0" }));
 
 /* harmony default export */ var assets_history = ("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHdpZHRoPSIyMy45OTciIGhlaWdodD0iMjQiPjxwYXRoIGQ9Ik0xOC45OTggOC43NWEzLjc1MSAzLjc1MSAwIDAgMSAwLTcuNSAzLjc1MSAzLjc1MSAwIDAgMSAwIDcuNVptMC02Yy0xLjI0IDAtMi4yNSAxLjAxLTIuMjUgMi4yNXMxLjAxIDIuMjUgMi4yNSAyLjI1IDIuMjUtMS4wMSAyLjI1LTIuMjUtMS4wMS0yLjI1LTIuMjUtMi4yNVpNMTEuOTk5IDEzLjc1aC01Yy0uNDEgMC0uNzUtLjM0LS43NS0uNzVzLjM0LS43NS43NS0uNzVoNWMuNDEgMCAuNzUuMzQuNzUuNzVzLS4zNC43NS0uNzUuNzVaTTE1Ljk5OCAxNy43NUg3Yy0uNDEgMC0uNzUtLjM0LS43NS0uNzVzLjM0LS43NS43NS0uNzVoOWMuNDEgMCAuNzUuMzQuNzUuNzVzLS4zNC43NS0uNzUuNzVaIiBmaWxsPSIjQzFDMEMwIi8+PHBhdGggZD0iTTE0Ljk5OCAyMi43NUg5Yy01LjQzIDAtNy43NS0yLjMyLTcuNzUtNy43NVY5YzAtNS40MyAyLjMyLTcuNzUgNy43NS03Ljc1aDVjLjQxIDAgLjc1LjM0Ljc1Ljc1cy0uMzQuNzUtLjc1Ljc1aC01Yy00LjYxIDAtNi4yNSAxLjY0LTYuMjUgNi4yNXY2YzAgNC42MSAxLjY0IDYuMjUgNi4yNSA2LjI1aDZjNC42MDkgMCA2LjI0OS0xLjY0IDYuMjQ5LTYuMjV2LTVjMC0uNDEuMzQtLjc1Ljc1LS43NXMuNzUuMzQuNzUuNzV2NWMwIDUuNDMtMi4zMiA3Ljc1LTcuNzUgNy43NVoiIGZpbGw9IiNDMUMwQzAiLz48L3N2Zz4=");
 
 // EXTERNAL MODULE: ./src/utils/utils.ts + 1 modules
 var utils = __webpack_require__(56808);
+// EXTERNAL MODULE: ./src/components/ResponPopup/index.tsx + 1 modules
+var ResponPopup = __webpack_require__(93417);
+// EXTERNAL MODULE: ./node_modules/antd/es/tabs/index.js + 26 modules
+var tabs = __webpack_require__(75214);
 // EXTERNAL MODULE: ./node_modules/react/jsx-runtime.js
 var jsx_runtime = __webpack_require__(85893);
 ;// CONCATENATED MODULE: ./src/components/TokenIcon/index.tsx
@@ -229,13 +208,6 @@ var TokenIcon = function TokenIcon(_ref) {
   });
 };
 /* harmony default export */ var components_TokenIcon = (TokenIcon);
-// EXTERNAL MODULE: ./src/components/ResponPopup/index.tsx + 1 modules
-var ResponPopup = __webpack_require__(93417);
-// EXTERNAL MODULE: ./node_modules/antd/es/tabs/index.js + 26 modules
-var tabs = __webpack_require__(75214);
-// EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/toConsumableArray.js
-var toConsumableArray = __webpack_require__(19632);
-var toConsumableArray_default = /*#__PURE__*/__webpack_require__.n(toConsumableArray);
 // EXTERNAL MODULE: ./src/servies/api.ts
 var api = __webpack_require__(17946);
 // EXTERNAL MODULE: ./src/assets/btc.png
@@ -248,6 +220,8 @@ var arrowRight_namespaceObject = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA
 var empty = __webpack_require__(32983);
 // EXTERNAL MODULE: ./node_modules/antd/es/skeleton/index.js + 12 modules
 var skeleton = __webpack_require__(21687);
+// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 15 modules
+var es_button = __webpack_require__(45093);
 ;// CONCATENATED MODULE: ./src/pages/wrapping/components/index.less
 // extracted by mini-css-extract-plugin
 
@@ -720,6 +694,21 @@ var SegOptions = [{
     },
     className: "SegmentedItem",
     children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+      symbol: "MRC20",
+      src: metaid_b_y_namespaceObject,
+      size: 28
+    }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+      children: "MRC20"
+    })]
+  }),
+  value: "mrc20"
+}, {
+  label: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+    style: {
+      padding: 4
+    },
+    className: "SegmentedItem",
+    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
       symbol: "BRC20",
       src: arc20_namespaceObject,
       size: 28
@@ -729,57 +718,7 @@ var SegOptions = [{
   }),
   value: "arc20",
   disabled: true
-}, {
-  label: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-    style: {
-      padding: 4
-    },
-    className: "SegmentedItem",
-    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-      symbol: "MRC20",
-      src: metaid_b_y_namespaceObject,
-      size: 28
-    }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-      children: "MRC20"
-    })]
-  }),
-  value: "mrc20",
-  disabled: true
 }];
-;// CONCATENATED MODULE: ./src/components/SelectNet/index.less
-// extracted by mini-css-extract-plugin
-
-;// CONCATENATED MODULE: ./src/components/SelectNet/index.tsx
-
-
-
-
-
-/* harmony default export */ var SelectNet = (function (_ref) {
-  var onChange = _ref.onChange,
-    defalutChain = _ref.defalutChain;
-  var _useModel = (0,_umi_production_exports.useModel)("wrapping"),
-    chains = _useModel.chains;
-  return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-    className: "selectNetWrap",
-    children: chains.map(function (item) {
-      return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-        className: "item ".concat((defalutChain === null || defalutChain === void 0 ? void 0 : defalutChain.key) === item.key ? 'active' : ''),
-        onClick: function onClick() {
-          return onChange(item);
-        },
-        children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-          src: item.icon,
-          symbol: item.label,
-          size: 30
-        }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-          className: "name",
-          children: item.label
-        })]
-      }, item.key);
-    })
-  });
-});
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/createForOfIteratorHelper.js
 var createForOfIteratorHelper = __webpack_require__(64599);
 var createForOfIteratorHelper_default = /*#__PURE__*/__webpack_require__.n(createForOfIteratorHelper);
@@ -1912,7 +1851,7 @@ function _sendBRC() {
                 }
               }, _callee11, null, [[8, 20, 23, 26]]);
             }));
-            return function buildPsbt(_x41, _x42) {
+            return function buildPsbt(_x46, _x47) {
               return _ref2.apply(this, arguments);
             };
           }();
@@ -2168,6 +2107,84 @@ function _mintRunes() {
     }, _callee14, null, [[8, 27]]);
   }));
   return _mintRunes.apply(this, arguments);
+}
+function mintMrc20(_x41, _x42, _x43, _x44, _x45) {
+  return _mintMrc.apply(this, arguments);
+}
+function _mintMrc() {
+  _mintMrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee15(mintAmount, asset, addressType, network, assetInfo) {
+    var _yield$signMintPublic4, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr7, createResp, orderId, bridgeAddress, MRC20Transfer, commitTx, revealTx, submitPrepayOrderMintDto, submitRes;
+    return regeneratorRuntime_default()().wrap(function _callee15$(_context15) {
+      while (1) switch (_context15.prev = _context15.next) {
+        case 0:
+          _context15.next = 2;
+          return signMintPublicKey();
+        case 2:
+          _yield$signMintPublic4 = _context15.sent;
+          publicKey = _yield$signMintPublic4.publicKey;
+          publicKeySign = _yield$signMintPublic4.publicKeySign;
+          publicKeyReceiveSign = _yield$signMintPublic4.publicKeyReceiveSign;
+          publicKeyReceive = _yield$signMintPublic4.publicKeyReceive;
+          createPrepayOrderDto = {
+            amount: String(mintAmount),
+            originTokenId: asset.originTokenId,
+            addressType: addressType,
+            publicKey: publicKey,
+            publicKeySign: publicKeySign,
+            publicKeyReceive: publicKeyReceive,
+            publicKeyReceiveSign: publicKeyReceiveSign
+          };
+          _context15.next = 10;
+          return (0,api/* createPrepayOrderMintMrc20 */.PL)(network, createPrepayOrderDto);
+        case 10:
+          _yield$createPrepayOr7 = _context15.sent;
+          createResp = _yield$createPrepayOr7.data;
+          console.log("createResp", createResp);
+          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
+          _context15.next = 16;
+          return window.metaidwallet.btc.transferMRC20({
+            body: JSON.stringify([{
+              amount: String(mintAmount),
+              vout: 1,
+              id: asset.originTokenId
+            }]),
+            amount: String(mintAmount),
+            mrc20TickId: asset.originTokenId,
+            flag: network === "mainnet" ? "metaid" : "testid",
+            revealAddr: bridgeAddress,
+            commitFeeRate: assetInfo.feeBtc,
+            revealFeeRate: assetInfo.feeBtc
+          });
+        case 16:
+          MRC20Transfer = _context15.sent;
+          if (!MRC20Transfer.status) {
+            _context15.next = 19;
+            break;
+          }
+          throw new Error(MRC20Transfer.status);
+        case 19:
+          commitTx = MRC20Transfer.commitTx, revealTx = MRC20Transfer.revealTx;
+          console.log("commitTx", commitTx);
+          submitPrepayOrderMintDto = {
+            orderId: orderId,
+            txHexList: [commitTx.rawTx, revealTx.rawTx]
+          };
+          _context15.next = 24;
+          return (0,api/* submitPrepayOrderMintMrc20 */.Vy)(network, submitPrepayOrderMintDto);
+        case 24:
+          submitRes = _context15.sent;
+          if (submitRes.success) {
+            _context15.next = 27;
+            break;
+          }
+          throw new Error(submitRes.msg);
+        case 27:
+        case "end":
+          return _context15.stop();
+      }
+    }, _callee15);
+  }));
+  return _mintMrc.apply(this, arguments);
 }
 ;// CONCATENATED MODULE: ./src/components/SelectAsset/index.less
 // extracted by mini-css-extract-plugin
@@ -2481,7 +2498,352 @@ const SvgCheckFill = (props) => /* @__PURE__ */ React.createElement("svg", check
     })
   });
 });
+;// CONCATENATED MODULE: ./src/components/SelectNet/index.less
+// extracted by mini-css-extract-plugin
+
+;// CONCATENATED MODULE: ./src/components/SelectNet/index.tsx
+
+
+
+
+
+/* harmony default export */ var SelectNet = (function (_ref) {
+  var onChange = _ref.onChange,
+    defalutChain = _ref.defalutChain;
+  var _useModel = (0,_umi_production_exports.useModel)("wrapping"),
+    chains = _useModel.chains;
+  return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+    className: "selectNetWrap",
+    children: chains.map(function (item) {
+      return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+        className: "item ".concat((defalutChain === null || defalutChain === void 0 ? void 0 : defalutChain.key) === item.key ? 'active' : ''),
+        onClick: function onClick() {
+          return onChange(item);
+        },
+        children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+          src: item.icon,
+          symbol: item.label,
+          size: 30
+        }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+          className: "name",
+          children: item.label
+        })]
+      }, item.key);
+    })
+  });
+});
+;// CONCATENATED MODULE: ./src/assets/switch.svg
+var switch_defProp = Object.defineProperty;
+var switch_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var switch_hasOwnProp = Object.prototype.hasOwnProperty;
+var switch_propIsEnum = Object.prototype.propertyIsEnumerable;
+var switch_defNormalProp = (obj, key, value) => key in obj ? switch_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var switch_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (switch_hasOwnProp.call(b, prop))
+      switch_defNormalProp(a, prop, b[prop]);
+  if (switch_getOwnPropSymbols)
+    for (var prop of switch_getOwnPropSymbols(b)) {
+      if (switch_propIsEnum.call(b, prop))
+        switch_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+
+const SvgSwitch = (props) => /* @__PURE__ */ React.createElement("svg", switch_spreadValues({ xmlns: "http://www.w3.org/2000/svg", fill: "none", width: 32, height: 32 }, props), /* @__PURE__ */ React.createElement("defs", null, /* @__PURE__ */ React.createElement("clipPath", { id: "switch_svg__a" }, /* @__PURE__ */ React.createElement("rect", { x: 8, y: 7, width: 16, height: 18, rx: 0 }))), /* @__PURE__ */ React.createElement("circle", { cx: 16, cy: 48, fill: "#6E66FA", r: 16, transform: "rotate(-90 0 32)" }), /* @__PURE__ */ React.createElement("g", { clipPath: "url(#switch_svg__a)" }, /* @__PURE__ */ React.createElement("path", { d: "M21.223 17.323H10.99c-.065 0-.118.06-.118.133v.993c0 .072.053.131.118.131h8.9l-2.122 3.028a.147.147 0 0 0-.013.14c.02.045.06.075.105.075h1.067c.072 0 .14-.037.185-.1l2.482-3.543a.584.584 0 0 0 .053-.559.47.47 0 0 0-.423-.298Z", fill: "#FFF" }), /* @__PURE__ */ React.createElement("path", { d: "M10.973 13.82a.584.584 0 0 0-.054.558.47.47 0 0 0 .423.298h10.235c.065 0 .118-.059.118-.132v-.993c0-.073-.053-.133-.118-.133h-8.899l2.123-3.027a.147.147 0 0 0 .012-.14.118.118 0 0 0-.107-.075H13.64a.227.227 0 0 0-.185.1l-2.482 3.544Z", fill: "#FFF", fillOpacity: 0.5 })));
+
+/* harmony default export */ var assets_switch = ("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiI+PGRlZnM+PGNsaXBQYXRoIGlkPSJhIj48cmVjdCB4PSI4IiB5PSI3IiB3aWR0aD0iMTYiIGhlaWdodD0iMTgiIHJ4PSIwIi8+PC9jbGlwUGF0aD48L2RlZnM+PGNpcmNsZSBjeD0iMTYiIGN5PSI0OCIgZmlsbD0iIzZFNjZGQSIgcj0iMTYiIHRyYW5zZm9ybT0icm90YXRlKC05MCAwIDMyKSIvPjxnIGNsaXAtcGF0aD0idXJsKCNhKSI+PHBhdGggZD0iTTIxLjIyMyAxNy4zMjNIMTAuOTljLS4wNjUgMC0uMTE4LjA2LS4xMTguMTMzdi45OTNjMCAuMDcyLjA1My4xMzEuMTE4LjEzMWg4LjlsLTIuMTIyIDMuMDI4YS4xNDcuMTQ3IDAgMCAwLS4wMTMuMTRjLjAyLjA0NS4wNi4wNzUuMTA1LjA3NWgxLjA2N2MuMDcyIDAgLjE0LS4wMzcuMTg1LS4xbDIuNDgyLTMuNTQzYS41ODQuNTg0IDAgMCAwIC4wNTMtLjU1OS40Ny40NyAwIDAgMC0uNDIzLS4yOThaIiBmaWxsPSIjRkZGIi8+PHBhdGggZD0iTTEwLjk3MyAxMy44MmEuNTg0LjU4NCAwIDAgMC0uMDU0LjU1OC40Ny40NyAwIDAgMCAuNDIzLjI5OGgxMC4yMzVjLjA2NSAwIC4xMTgtLjA1OS4xMTgtLjEzMnYtLjk5M2MwLS4wNzMtLjA1My0uMTMzLS4xMTgtLjEzM2gtOC44OTlsMi4xMjMtMy4wMjdhLjE0Ny4xNDcgMCAwIDAgLjAxMi0uMTQuMTE4LjExOCAwIDAgMC0uMTA3LS4wNzVIMTMuNjRhLjIyNy4yMjcgMCAwIDAtLjE4NS4xbC0yLjQ4MiAzLjU0NFoiIGZpbGw9IiNGRkYiIGZpbGwtb3BhY2l0eT0iLjUiLz48L2c+PC9zdmc+");
+
+;// CONCATENATED MODULE: ./src/pages/wrapping/components/SwitchChain.tsx
+
+
+
+
+
+
+
+
+/* harmony default export */ var SwitchChain = (function () {
+  var _theme$useToken = theme/* default */.Z.useToken(),
+    _theme$useToken$token = _theme$useToken.token,
+    colorBgBase = _theme$useToken$token.colorBgBase,
+    borderRadius = _theme$useToken$token.borderRadius;
+  var _useModel = (0,_umi_production_exports.useModel)("wrapping"),
+    fromChain = _useModel.fromChain,
+    toChain = _useModel.toChain,
+    setChainType = _useModel.setChainType,
+    chainType = _useModel.chainType,
+    setFromChain = _useModel.setFromChain,
+    setToChain = _useModel.setToChain,
+    resetInput = _useModel.resetInput;
+  var switchChain = function switchChain() {
+    var _from = fromChain;
+    var _to = toChain;
+    setToChain(_from);
+    setFromChain(_to);
+    resetInput();
+  };
+  var handleChainChange = function handleChainChange(chainType, chain) {
+    if (chainType === "from") {
+      if (fromChain.key !== chain.key) {
+        switchChain();
+      }
+    }
+    if (chainType === "to") {
+      if (toChain.key !== chain.key) {
+        switchChain();
+      }
+    }
+  };
+  return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+    className: "chains",
+    children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+      className: "from chain",
+      children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+        className: "label",
+        children: "From"
+      }), /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
+        dropdownRender: function dropdownRender() {
+          return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+            style: {
+              marginTop: -100,
+              paddingTop: 100
+            },
+            onMouseLeave: function onMouseLeave() {
+              return setChainType(undefined);
+            },
+            children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
+              defalutChain: fromChain,
+              onChange: function onChange(chain) {
+                handleChainChange("from", chain);
+                setChainType(undefined);
+              }
+            })
+          });
+        },
+        open: chainType === "from",
+        children: /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
+          type: "text",
+          className: "selectWrap",
+          style: {
+            background: colorBgBase,
+            borderRadius: borderRadius
+          },
+          onClick: function onClick() {
+            setChainType("from");
+          },
+          children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            style: {
+              display: "flex",
+              alignItems: "center"
+            },
+            children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+              size: 30,
+              src: fromChain.icon,
+              symbol: fromChain.label
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+              style: {
+                margin: "0 10px 0 5px"
+              },
+              children: fromChain.label
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+              className: chainType == "from" ? "spanRotate" : "spanReset",
+              children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
+            })]
+          })
+        })
+      })]
+    }), /*#__PURE__*/(0,jsx_runtime.jsx)("img", {
+      src: assets_switch,
+      alt: "",
+      className: "switchIcon",
+      onClick: switchChain
+    }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+      className: "to chain",
+      children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+        className: "label",
+        children: "To"
+      }), /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
+        dropdownRender: function dropdownRender() {
+          return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+            style: {
+              marginTop: -100,
+              paddingTop: 100
+            },
+            onMouseLeave: function onMouseLeave() {
+              return setChainType(undefined);
+            },
+            children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
+              defalutChain: toChain,
+              onChange: function onChange(chain) {
+                handleChainChange("to", chain);
+                setChainType(undefined);
+              }
+            })
+          });
+        },
+        open: chainType === "to",
+        placement: "bottomLeft",
+        autoAdjustOverflow: false,
+        children: /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
+          type: "text",
+          className: "selectWrap",
+          style: {
+            background: colorBgBase,
+            borderRadius: borderRadius
+          },
+          onClick: function onClick() {
+            setChainType("to");
+          },
+          children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            style: {
+              display: "flex",
+              alignItems: "center"
+            },
+            children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+              size: 30,
+              src: toChain.icon,
+              symbol: toChain.label
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+              style: {
+                margin: "0 10px 0 5px"
+              },
+              children: toChain.label
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+              className: chainType == "to" ? "spanRotate" : "spanReset",
+              children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
+            })]
+          })
+        })
+      })]
+    })]
+  });
+});
+// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/SyncOutlined.js + 1 modules
+var SyncOutlined = __webpack_require__(98165);
+// EXTERNAL MODULE: ./node_modules/antd/es/flex/index.js + 2 modules
+var flex = __webpack_require__(86250);
+;// CONCATENATED MODULE: ./src/pages/wrapping/components/MintBrc20Input.tsx
+
+
+
+
+
+
+
+/* harmony default export */ var MintBrc20Input = (function (_ref) {
+  var onInputChange = _ref.onInputChange,
+    loading = _ref.loading,
+    refresh = _ref.refresh;
+  var _useModel = (0,_umi_production_exports.useModel)("wallet"),
+    connected = _useModel.connected;
+  var _useModel2 = (0,_umi_production_exports.useModel)("wrapping"),
+    inscription = _useModel2.inscription,
+    setInscription = _useModel2.setInscription,
+    asset = _useModel2.asset,
+    bridgeType = _useModel2.bridgeType,
+    brc20Info = _useModel2.brc20Info;
+  var Inscribe = /*#__PURE__*/function () {
+    var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee() {
+      return regeneratorRuntime_default()().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            if (!(connected && asset)) {
+              _context.next = 3;
+              break;
+            }
+            _context.next = 3;
+            return window.metaidwallet.btc.inscribeTransfer(asset === null || asset === void 0 ? void 0 : asset.originSymbol);
+          case 3:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }));
+    return function Inscribe() {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+  if (!asset) return null;
+  return /*#__PURE__*/(0,jsx_runtime.jsx)(spin/* default */.Z, {
+    spinning: loading,
+    children: /*#__PURE__*/(0,jsx_runtime.jsxs)(flex/* default */.Z, {
+      wrap: "wrap",
+      gap: "small",
+      justify: "flex-end",
+      children: [brc20Info && brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)(es_button/* default */.ZP, {
+        type: "text",
+        onClick: refresh,
+        children: [brc20Info.message, " ", /*#__PURE__*/(0,jsx_runtime.jsx)(SyncOutlined/* default */.Z, {})]
+      }), brc20Info && brc20Info.transferBalanceList.map(function (item) {
+        return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+          className: "brcItem ".concat(inscription && inscription.inscriptionId === item.inscriptionId ? "active" : ""),
+          onClick: function onClick() {
+            setInscription(item);
+            onInputChange(item.amount);
+          },
+          children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+            className: "tick",
+            children: bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+              children: [asset.originSymbol, " "]
+            }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+              children: [asset.targetSymbol, " "]
+            })
+          }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+            className: "amount",
+            children: item.amount
+          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+            className: "number",
+            children: ["#", item.inscriptionNumber]
+          })]
+        }, item.inscriptionId);
+      }), brc20Info && brc20Info.transferBalanceList.length === 0 && !brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+        children: ["No transferable", /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
+          type: "text",
+          className: "inscribeBtn",
+          onClick: Inscribe,
+          style: {
+            color: "#6E66FA"
+          },
+          disabled: Number(brc20Info.balance) === 0,
+          children: "Inscribe"
+        })]
+      })]
+    })
+  });
+});
+;// CONCATENATED MODULE: ./src/pages/wrapping/components/InputToken.tsx
+
+
+
+
+
+var InputToken = function InputToken(_ref) {
+  var position = _ref.position,
+    asset = _ref.asset,
+    bridgeType = _ref.bridgeType;
+  var symbol = (0,react.useMemo)(function () {
+    if (position === 'send') {
+      return bridgeType === 'mint' ? asset.originName : asset.targetName;
+    } else {
+      return bridgeType === 'mint' ? asset.targetName : asset.originName;
+    }
+  }, [asset, bridgeType, position]);
+  if (!asset) return /*#__PURE__*/(0,jsx_runtime.jsx)(jsx_runtime.Fragment, {});
+  return /*#__PURE__*/(0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
+    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+      size: 40,
+      src: "",
+      symbol: symbol
+    }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+      className: "assetName",
+      children: [symbol, " "]
+    })]
+  });
+};
+/* harmony default export */ var components_InputToken = (InputToken);
 ;// CONCATENATED MODULE: ./src/pages/wrapping/index.tsx
+
 
 
 
@@ -2546,103 +2908,55 @@ var defalut = {
     btcAddress = _useModel.btcAddress,
     network = _useModel.network,
     getBal = _useModel.getBal;
-  var _useState3 = (0,react.useState)(""),
-    _useState4 = slicedToArray_default()(_useState3, 2),
-    amount = _useState4[0],
-    setAmount = _useState4[1];
-  var _useState5 = (0,react.useState)(""),
-    _useState6 = slicedToArray_default()(_useState5, 2),
-    reciveAmount = _useState6[0],
-    setReciveAmount = _useState6[1];
-  var _useState7 = (0,react.useState)(false),
-    _useState8 = slicedToArray_default()(_useState7, 2),
-    selectChainVisible = _useState8[0],
-    setSelectChainVisible = _useState8[1];
-  var _useState9 = (0,react.useState)(),
-    _useState10 = slicedToArray_default()(_useState9, 2),
-    selectAssetVisible = _useState10[0],
-    setSelectAssetVisible = _useState10[1];
-  var _useState11 = (0,react.useState)(false),
-    _useState12 = slicedToArray_default()(_useState11, 2),
-    successVisible = _useState12[0],
-    setSuccessVisible = _useState12[1];
-  var _useState13 = (0,react.useState)(),
-    _useState14 = slicedToArray_default()(_useState13, 2),
-    chainType = _useState14[0],
-    setChainType = _useState14[1];
-  var _useState15 = (0,react.useState)(),
-    _useState16 = slicedToArray_default()(_useState15, 2),
-    brc20Info = _useState16[0],
-    setBrc20Info = _useState16[1];
-  var _useState17 = (0,react.useState)(),
-    _useState18 = slicedToArray_default()(_useState17, 2),
-    runesInfo = _useState18[0],
-    setRunesInfo = _useState18[1];
-  var _useState19 = (0,react.useState)(false),
-    _useState20 = slicedToArray_default()(_useState19, 2),
-    refreshBrc20 = _useState20[0],
-    setRefreshBrc20 = _useState20[1];
-  var _useState21 = (0,react.useState)(),
-    _useState22 = slicedToArray_default()(_useState21, 2),
-    inscription = _useState22[0],
-    setInscription = _useState22[1];
-  var _useState23 = (0,react.useState)(defalut),
-    _useState24 = slicedToArray_default()(_useState23, 2),
-    confrimProps = _useState24[0],
-    setConfirmProps = _useState24[1];
-  var _useState25 = (0,react.useState)(false),
-    _useState26 = slicedToArray_default()(_useState25, 2),
-    loadingBrc20 = _useState26[0],
-    setLoadingBrc20 = _useState26[1];
-  var _useState27 = (0,react.useState)(false),
-    _useState28 = slicedToArray_default()(_useState27, 2),
-    submitting = _useState28[0],
-    setSubmitting = _useState28[1];
-  var _useState29 = (0,react.useState)(""),
-    _useState30 = slicedToArray_default()(_useState29, 2),
-    ErrorMsg = _useState30[0],
-    setErrorMsg = _useState30[1];
-  var _useState31 = (0,react.useState)({
-      minerFee: "",
-      bridgeFee: "",
-      receiveAmount: "",
-      totalFee: "",
-      confirmNumber: ""
-    }),
-    _useState32 = slicedToArray_default()(_useState31, 2),
-    feeInfo = _useState32[0],
-    setFeeInfo = _useState32[1];
   var _useModel2 = (0,_umi_production_exports.useModel)("wrapping"),
-    chains = _useModel2.chains,
     fromChain = _useModel2.fromChain,
-    toChain = _useModel2.toChain,
-    setFromChain = _useModel2.setFromChain,
-    setToChain = _useModel2.setToChain,
     asset = _useModel2.asset,
     protocolType = _useModel2.protocolType,
     AssetsInfo = _useModel2.AssetsInfo,
     setProtocolType = _useModel2.setProtocolType,
-    setAsset = _useModel2.setAsset;
-  var switchChain = function switchChain() {
-    var _from = fromChain;
-    var _to = toChain;
-    setToChain(_from);
-    setFromChain(_to);
-    resetInput();
-  };
-  var resetInput = function resetInput() {
-    setAmount("");
-    setReciveAmount("");
-    setFeeInfo({
-      minerFee: "",
-      bridgeFee: "",
-      receiveAmount: "",
-      totalFee: "",
-      confirmNumber: ""
-    });
-    setErrorMsg("");
-    setInscription(undefined);
-  };
+    setAsset = _useModel2.setAsset,
+    resetInput = _useModel2.resetInput,
+    amount = _useModel2.amount,
+    setAmount = _useModel2.setAmount,
+    reciveAmount = _useModel2.reciveAmount,
+    setReciveAmount = _useModel2.setReciveAmount,
+    feeInfo = _useModel2.feeInfo,
+    setFeeInfo = _useModel2.setFeeInfo,
+    ErrorMsg = _useModel2.ErrorMsg,
+    setErrorMsg = _useModel2.setErrorMsg,
+    bridgeType = _useModel2.bridgeType,
+    brc20Info = _useModel2.brc20Info,
+    setBrc20Info = _useModel2.setBrc20Info,
+    runesInfo = _useModel2.runesInfo,
+    setRunesInfo = _useModel2.setRunesInfo,
+    inscription = _useModel2.inscription,
+    setInscription = _useModel2.setInscription,
+    mrc20Info = _useModel2.mrc20Info,
+    setMrc20Info = _useModel2.setMrc20Info;
+  var _useState3 = (0,react.useState)(),
+    _useState4 = slicedToArray_default()(_useState3, 2),
+    selectAssetVisible = _useState4[0],
+    setSelectAssetVisible = _useState4[1];
+  var _useState5 = (0,react.useState)(false),
+    _useState6 = slicedToArray_default()(_useState5, 2),
+    successVisible = _useState6[0],
+    setSuccessVisible = _useState6[1];
+  var _useState7 = (0,react.useState)(false),
+    _useState8 = slicedToArray_default()(_useState7, 2),
+    refreshInput = _useState8[0],
+    setRefreshInput = _useState8[1];
+  var _useState9 = (0,react.useState)(defalut),
+    _useState10 = slicedToArray_default()(_useState9, 2),
+    confrimProps = _useState10[0],
+    setConfirmProps = _useState10[1];
+  var _useState11 = (0,react.useState)(false),
+    _useState12 = slicedToArray_default()(_useState11, 2),
+    loadingInput = _useState12[0],
+    setLoadingInput = _useState12[1];
+  var _useState13 = (0,react.useState)(false),
+    _useState14 = slicedToArray_default()(_useState13, 2),
+    submitting = _useState14[0],
+    setSubmitting = _useState14[1];
   var handleHistory = function handleHistory() {
     if (connected) {
       setHistoryVisible(true);
@@ -2650,52 +2964,66 @@ var defalut = {
       message/* default */.ZP.warning("please connect wallet");
     }
   };
-  var bridgeType = (0,react.useMemo)(function () {
-    if (fromChain.key === "btc") return "mint";
-    return "redeem";
-  }, [fromChain]);
   var sendBal = (0,react.useMemo)(function () {
-    if (asset && protocolType == "btc") {
-      if (bridgeType === "mint") return userBal["btc"] || "0";
-      if (bridgeType === "redeem") return userBal[asset.targetTokenGenesis] || "0";
+    if (!asset) return 0;
+    if (bridgeType === 'redeem') {
+      return userBal[asset.targetTokenGenesis] || "0";
     }
-    if (asset && protocolType == "brc20") {
-      if (bridgeType === "redeem") return userBal[asset.targetTokenGenesis] || "0";
-      if (bridgeType === "mint") return brc20Info && brc20Info.balance || "--";
+    switch (protocolType) {
+      case "btc":
+        return userBal["btc"] || "0";
+      case "brc20":
+        return brc20Info && brc20Info.balance || "--";
+      case "runes":
+        return runesInfo ? Number((Number(runesInfo.amount) / Math.pow(10, Number(runesInfo.divisibility))).toFixed(2)) : '--';
+      // case "mrc20": return mrc20Info ? mrc20Info.reduce((a, b) => {
+      //   return a + b.mrc20s.reduce((c, d) => {
+      //     return c + Number(d.amount)
+      //   }, 0)
+      // }, 0) : "--";
+      case "mrc20":
+        {
+          var find = mrc20Info === null || mrc20Info === void 0 ? void 0 : mrc20Info.find(function (item) {
+            return item.mrc20Id === (asset === null || asset === void 0 ? void 0 : asset.originTokenId);
+          });
+          if (find) {
+            return find.balance;
+          } else {
+            return '0';
+          }
+        }
     }
-    if (asset && protocolType == "runes") {
-      if (bridgeType === "redeem") return userBal[asset.targetTokenGenesis] || "0";
-      if (bridgeType === "mint" && runesInfo) {
-        console.log();
-        return Number((Number(runesInfo.amount) / Math.pow(10, Number(runesInfo.divisibility))).toFixed(2));
-      } else {
-        return "--";
-      }
-    }
-  }, [protocolType, bridgeType, asset, userBal, brc20Info, runesInfo]);
+  }, [protocolType, bridgeType, asset, userBal, brc20Info, runesInfo, mrc20Info]);
+  var actionType = (0,react.useMemo)(function () {
+    return bridgeType + protocolType;
+  }, [bridgeType, protocolType]);
   var onInputChange = function onInputChange(value) {
+    if (!value) return;
     setAmount(value);
     if (AssetsInfo && asset) {
       var info;
       try {
         switch (bridgeType + protocolType) {
           case "redeembtc":
-            info = (0,utils/* calcRedeemBtcInfo */.PO)((0,utils/* amountRaw */.xo)(String(value), asset.decimals), AssetsInfo);
+            info = (0,utils/* calcRedeemBtcInfo */.PO)(Number((0,utils/* amountRaw */.xo)(String(value), asset.decimals)), AssetsInfo);
             break;
           case "redeembrc20":
-            info = info = (0,utils/* calcRedeemBrc20Info */.ug)((0,utils/* amountRaw */.xo)(value, asset.decimals - asset.trimDecimals), AssetsInfo, asset);
+            info = info = (0,utils/* calcRedeemBrc20Info */.ug)(Number((0,utils/* amountRaw */.xo)(String(value), asset.decimals - asset.trimDecimals)), AssetsInfo, asset);
             break;
           case "mintbtc":
-            info = info = (0,utils/* calcMintBtcInfo */.jq)((0,utils/* amountRaw */.xo)(value, 8), AssetsInfo);
+            info = info = (0,utils/* calcMintBtcInfo */.jq)(Number((0,utils/* amountRaw */.xo)(String(value), 8)), AssetsInfo);
             break;
           case "mintbrc20":
-            info = (0,utils/* calcMintBrc20Info */.AY)(value, AssetsInfo, asset);
+            info = (0,utils/* calcMintBrc20Info */.AY)(Number(value), AssetsInfo, asset);
             break;
           case "mintrunes":
             info = (0,utils/* calcMintRunesInfo */.oj)(Number(value), AssetsInfo, asset);
             break;
           case "redeemrunes":
-            info = (0,utils/* calcRedeemRunesInfo */.iF)((0,utils/* amountRaw */.xo)(value, asset.decimals - asset.trimDecimals), AssetsInfo, asset);
+            info = (0,utils/* calcRedeemRunesInfo */.iF)(Number((0,utils/* amountRaw */.xo)(String(value), asset.decimals - asset.trimDecimals)), AssetsInfo, asset);
+            break;
+          case "mintmrc20":
+            info = (0,utils/* calcMintMRC20Info */.Ds)(Number(value), AssetsInfo, asset);
             break;
           default:
             throw new Error("unsupport protocol");
@@ -2714,58 +3042,118 @@ var defalut = {
       }
     }
   };
+  var brc20OriginSymbol = (0,react.useMemo)(function () {
+    if (asset && asset.network == 'BRC20' && asset.originSymbol) {
+      return asset.originSymbol;
+    }
+  }, [asset]);
+  var runesOriginTokenId = (0,react.useMemo)(function () {
+    if (asset && asset.network == 'RUNES' && asset.originTokenId) {
+      return asset.originTokenId;
+    }
+  }, [asset]);
+  var mrc20OriginTokenId = (0,react.useMemo)(function () {
+    if (asset && asset.network == 'MRC20' && asset.originTokenId) {
+      return asset.originTokenId;
+    }
+  }, [asset]);
   (0,react.useEffect)(function () {
     var didCancel = false;
     var fetch = /*#__PURE__*/function () {
       var _ref = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
-        var ret, _ret;
+        var ret, _ret, list, i, _ret2;
         return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              if (!(network && asset && btcAddress && bridgeType === "mint" && protocolType === "brc20" && asset.network === "BRC20")) {
-                _context2.next = 9;
-                break;
-              }
-              setLoadingBrc20(true);
-              _context2.next = 4;
-              return (0,api/* getUserBRC20 */.i3)(network, {
-                address: btcAddress,
-                tick: asset === null || asset === void 0 ? void 0 : asset.originSymbol
-              });
-            case 4:
-              ret = _context2.sent;
-              if (!didCancel) {
-                _context2.next = 7;
+              if (!(!network || !btcAddress)) {
+                _context2.next = 2;
                 break;
               }
               return _context2.abrupt("return");
-            case 7:
+            case 2:
+              if (!(actionType === 'mintbrc20' && brc20OriginSymbol)) {
+                _context2.next = 11;
+                break;
+              }
+              setLoadingInput(true);
+              _context2.next = 6;
+              return (0,api/* getUserBRC20 */.i3)(network, {
+                address: btcAddress,
+                tick: brc20OriginSymbol
+              });
+            case 6:
+              ret = _context2.sent;
+              if (!didCancel) {
+                _context2.next = 9;
+                break;
+              }
+              return _context2.abrupt("return");
+            case 9:
               setBrc20Info(ret.data || {
                 message: ret.message,
                 balance: "0",
                 transferBalanceList: []
               });
-              setLoadingBrc20(false);
-            case 9:
-              if (!(network && asset && btcAddress && bridgeType === "mint" && protocolType === "runes" && asset.network === "RUNES")) {
-                _context2.next = 19;
+              setLoadingInput(false);
+            case 11:
+              if (!(actionType === 'mintrunes' && runesOriginTokenId)) {
+                _context2.next = 20;
                 break;
               }
-              setLoadingBrc20(true);
-              _context2.next = 13;
-              return (0,api/* getUserRunesBalance */.NZ)(btcAddress, network, asset.originTokenId);
-            case 13:
+              setLoadingInput(true);
+              _context2.next = 15;
+              return (0,api/* getUserRunesBalance */.NZ)(btcAddress, network, runesOriginTokenId);
+            case 15:
               _ret = _context2.sent;
               if (!didCancel) {
-                _context2.next = 16;
+                _context2.next = 18;
                 break;
               }
               return _context2.abrupt("return");
-            case 16:
-              console.log(_ret, "rrrr");
+            case 18:
               setRunesInfo(_ret.data);
-              setLoadingBrc20(false);
-            case 19:
+              setLoadingInput(false);
+            case 20:
+              if (!(actionType === 'mintmrc20' && mrc20OriginTokenId)) {
+                _context2.next = 39;
+                break;
+              }
+              setLoadingInput(true);
+              list = [];
+              i = 0;
+            case 24:
+              if (!(i < 10)) {
+                _context2.next = 35;
+                break;
+              }
+              _context2.next = 27;
+              return (0,api/* getUserMrc20Balances */.ZC)(btcAddress, network, i, 50);
+            case 27:
+              _ret2 = _context2.sent;
+              if (!(_ret2.code === 0)) {
+                _context2.next = 32;
+                break;
+              }
+              list = [].concat(toConsumableArray_default()(list), toConsumableArray_default()(_ret2.data.list));
+              if (!(_ret2.data.list.length < 50)) {
+                _context2.next = 32;
+                break;
+              }
+              return _context2.abrupt("break", 35);
+            case 32:
+              i++;
+              _context2.next = 24;
+              break;
+            case 35:
+              if (!didCancel) {
+                _context2.next = 37;
+                break;
+              }
+              return _context2.abrupt("return");
+            case 37:
+              setMrc20Info(list);
+              setLoadingInput(false);
+            case 39:
             case "end":
               return _context2.stop();
           }
@@ -2779,20 +3167,7 @@ var defalut = {
     return function () {
       didCancel = true;
     };
-  }, [protocolType, bridgeType, network, asset, btcAddress, refreshBrc20]);
-  var handleChainChange = function handleChainChange(chainType, chain) {
-    if (chainType === "from") {
-      if (fromChain.key !== chain.key) {
-        switchChain();
-      }
-    }
-    if (chainType === "to") {
-      if (toChain.key !== chain.key) {
-        switchChain();
-      }
-    }
-    setSelectChainVisible(false);
-  };
+  }, [actionType, brc20OriginSymbol, runesOriginTokenId, network, btcAddress, refreshInput, mrc20OriginTokenId]);
   var redeem = /*#__PURE__*/function () {
     var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
       var addressInfo, addressType;
@@ -2861,7 +3236,7 @@ var defalut = {
   }();
   var mint = /*#__PURE__*/function () {
     var _ref3 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4() {
-      var addressInfo, addressType, ret, _ret2, _ret3;
+      var addressInfo, addressType, ret, _ret3, _ret4, _ret5;
       return regeneratorRuntime_default()().wrap(function _callee4$(_context4) {
         while (1) switch (_context4.prev = _context4.next) {
           case 0:
@@ -2891,7 +3266,7 @@ var defalut = {
             _context4.next = 13;
             return mintBrc(Number(inscription.amount), asset, addressType, network, AssetsInfo, inscription);
           case 13:
-            _ret2 = _context4.sent;
+            _ret3 = _context4.sent;
           case 14:
             if (!(bridgeType === "mint" && protocolType === "runes")) {
               _context4.next = 18;
@@ -2900,50 +3275,38 @@ var defalut = {
             _context4.next = 17;
             return mintRunes(amount, asset, addressType, network, AssetsInfo);
           case 17:
-            _ret3 = _context4.sent;
+            _ret4 = _context4.sent;
           case 18:
-            setSuccessVisible(true);
+            if (!(actionType === 'mintmrc20')) {
+              _context4.next = 22;
+              break;
+            }
             _context4.next = 21;
-            return getBal();
+            return mintMrc20(Number(amount), asset, addressType, network, AssetsInfo);
           case 21:
-            _context4.next = 27;
+            _ret5 = _context4.sent;
+          case 22:
+            setSuccessVisible(true);
+            _context4.next = 25;
+            return getBal();
+          case 25:
+            _context4.next = 31;
             break;
-          case 23:
-            _context4.prev = 23;
+          case 27:
+            _context4.prev = 27;
             _context4.t0 = _context4["catch"](2);
             console.log(_context4.t0);
             message/* default */.ZP.error(_context4.t0.message || "unknown error");
-          case 27:
+          case 31:
             setSubmitting(false);
-          case 28:
+          case 32:
           case "end":
             return _context4.stop();
         }
-      }, _callee4, null, [[2, 23]]);
+      }, _callee4, null, [[2, 27]]);
     }));
     return function mint() {
       return _ref3.apply(this, arguments);
-    };
-  }();
-  var Inscribe = /*#__PURE__*/function () {
-    var _ref4 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee5() {
-      return regeneratorRuntime_default()().wrap(function _callee5$(_context5) {
-        while (1) switch (_context5.prev = _context5.next) {
-          case 0:
-            if (!(connected && asset)) {
-              _context5.next = 3;
-              break;
-            }
-            _context5.next = 3;
-            return window.metaidwallet.btc.inscribeTransfer(asset === null || asset === void 0 ? void 0 : asset.originSymbol);
-          case 3:
-          case "end":
-            return _context5.stop();
-        }
-      }, _callee5);
-    }));
-    return function Inscribe() {
-      return _ref4.apply(this, arguments);
     };
   }();
   var conditions = (0,react.useMemo)(function () {
@@ -2985,7 +3348,7 @@ var defalut = {
   return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
     className: "wrapPage",
     children: [/*#__PURE__*/(0,jsx_runtime.jsx)(segmented/* default */.Z, {
-      defaultValue: "btc",
+      defaultValue: "mrc20",
       style: {
         width: 520,
         maxWidth: "100vw",
@@ -3025,129 +3388,7 @@ var defalut = {
               alt: ""
             })
           })]
-        }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-          className: "chains",
-          children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-            className: "from chain",
-            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-              className: "label",
-              children: "From"
-            }), /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
-              dropdownRender: function dropdownRender() {
-                return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                  style: {
-                    marginTop: -100,
-                    paddingTop: 100
-                  },
-                  onMouseLeave: function onMouseLeave() {
-                    return setChainType(undefined);
-                  },
-                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
-                    defalutChain: fromChain,
-                    onChange: function onChange(chain) {
-                      handleChainChange("from", chain);
-                      setChainType(undefined);
-                    }
-                  })
-                });
-              },
-              open: chainType === "from",
-              children: /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
-                type: "text",
-                className: "selectWrap",
-                style: {
-                  background: colorBgBase,
-                  borderRadius: borderRadius
-                },
-                onClick: function onClick() {
-                  setChainType("from");
-                },
-                children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                  style: {
-                    display: "flex",
-                    alignItems: "center"
-                  },
-                  children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                    size: 30,
-                    src: fromChain.icon,
-                    symbol: fromChain.label
-                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                    style: {
-                      margin: "0 10px 0 5px"
-                    },
-                    children: fromChain.label
-                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                    className: chainType == "from" ? "spanRotate" : "spanReset",
-                    children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
-                  })]
-                })
-              })
-            })]
-          }), /*#__PURE__*/(0,jsx_runtime.jsx)("img", {
-            src: assets_switch,
-            alt: "",
-            className: "switchIcon",
-            onClick: switchChain
-          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-            className: "to chain",
-            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-              className: "label",
-              children: "To"
-            }), /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.Z, {
-              dropdownRender: function dropdownRender() {
-                return /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                  style: {
-                    marginTop: -100,
-                    paddingTop: 100
-                  },
-                  onMouseLeave: function onMouseLeave() {
-                    return setChainType(undefined);
-                  },
-                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(SelectNet, {
-                    defalutChain: toChain,
-                    onChange: function onChange(chain) {
-                      handleChainChange("to", chain);
-                      setChainType(undefined);
-                    }
-                  })
-                });
-              },
-              open: chainType === "to",
-              placement: "bottomLeft",
-              autoAdjustOverflow: false,
-              children: /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
-                type: "text",
-                className: "selectWrap",
-                style: {
-                  background: colorBgBase,
-                  borderRadius: borderRadius
-                },
-                onClick: function onClick() {
-                  setChainType("to");
-                },
-                children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                  style: {
-                    display: "flex",
-                    alignItems: "center"
-                  },
-                  children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                    size: 30,
-                    src: toChain.icon,
-                    symbol: toChain.label
-                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                    style: {
-                      margin: "0 10px 0 5px"
-                    },
-                    children: toChain.label
-                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                    className: chainType == "to" ? "spanRotate" : "spanReset",
-                    children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
-                  })]
-                })
-              })
-            })]
-          })]
-        }), asset && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+        }), /*#__PURE__*/(0,jsx_runtime.jsx)(SwitchChain, {}), asset && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
           className: "assets",
           children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "send inputCardWrap",
@@ -3155,7 +3396,7 @@ var defalut = {
               className: "label",
               children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
                 children: "You send"
-              }), !(protocolType === "brc20" && bridgeType === "mint") && /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+              }), actionType !== 'mintbrc20' && /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
                 children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
                   className: "tag",
                   style: {
@@ -3217,82 +3458,33 @@ var defalut = {
                 open: selectAssetVisible == "send",
                 placement: "bottomLeft",
                 autoAdjustOverflow: false,
-                children: /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                   onClick: function onClick() {
                     setSelectAssetVisible("send");
                   },
                   style: {
                     cursor: "pointer"
                   },
-                  children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
-                    style: {
-                      height: 50
-                    },
-                    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                      size: 40,
-                      src: "",
-                      symbol: asset.originName
-                    }), bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                      className: "assetName",
-                      children: [asset.originName, " "]
-                    }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                      className: "assetName",
-                      children: [asset.originName, " "]
-                    }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                      className: selectAssetVisible == "send" ? "spanRotate" : "spanReset",
-                      children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
-                    })]
-                  })
+                  className: "tokenInputWrap",
+                  children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_InputToken, {
+                    asset: asset,
+                    position: "send",
+                    bridgeType: bridgeType
+                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                    className: selectAssetVisible == "send" ? "spanRotate" : "spanReset",
+                    children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
+                  })]
                 })
               }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
                 className: "inputWrap",
-                children: protocolType === "brc20" && bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsx)(spin/* default */.Z, {
-                  spinning: loadingBrc20,
-                  children: /*#__PURE__*/(0,jsx_runtime.jsxs)(flex/* default */.Z, {
-                    wrap: "wrap",
-                    gap: "small",
-                    justify: "flex-end",
-                    children: [brc20Info && brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)(es_button/* default */.ZP, {
-                      type: "text",
-                      onClick: function onClick() {
-                        return setRefreshBrc20(!refreshBrc20);
-                      },
-                      children: [brc20Info.message, " ", /*#__PURE__*/(0,jsx_runtime.jsx)(SyncOutlined/* default */.Z, {})]
-                    }), brc20Info && brc20Info.transferBalanceList.map(function (item) {
-                      return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                        className: "brcItem ".concat(inscription && inscription.inscriptionId === item.inscriptionId ? "active" : ""),
-                        onClick: function onClick() {
-                          setInscription(item);
-                          onInputChange(item.amount);
-                        },
-                        children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                          className: "tick",
-                          children: bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                            children: [asset.originSymbol, " "]
-                          }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                            children: [asset.targetSymbol, " "]
-                          })
-                        }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                          className: "amount",
-                          children: item.amount
-                        }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
-                          className: "number",
-                          children: ["#", item.inscriptionNumber]
-                        })]
-                      }, item.inscriptionId);
-                    }), brc20Info && brc20Info.transferBalanceList.length === 0 && !brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                      children: ["No transferable", /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
-                        type: "text",
-                        className: "inscribeBtn",
-                        onClick: Inscribe,
-                        style: {
-                          color: "#6E66FA"
-                        },
-                        disabled: Number(brc20Info.balance) === 0,
-                        children: "Inscribe"
-                      })]
-                    })]
-                  })
+                children: actionType === 'mintbrc20' ? /*#__PURE__*/(0,jsx_runtime.jsx)(MintBrc20Input, {
+                  onInputChange: onInputChange,
+                  loading: loadingInput,
+                  refresh: function refresh() {
+                    setRefreshInput(function (prev) {
+                      return !prev;
+                    });
+                  }
                 }) : /*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.Z, {
                   className: "input",
                   onChange: onInputChange,
@@ -3306,7 +3498,7 @@ var defalut = {
             }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
               className: "bal",
               children: ["Balance:", /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
-                children: [" ", loadingBrc20 ? "--" : sendBal, " "]
+                children: [" ", loadingInput ? "..." : sendBal, " "]
               }), bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
@@ -3345,26 +3537,21 @@ var defalut = {
                 open: selectAssetVisible == "recive",
                 placement: "bottomLeft",
                 autoAdjustOverflow: false,
-                children: /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.Z, {
+                children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                   onClick: function onClick() {
                     setSelectAssetVisible("recive");
                   },
                   style: {
                     cursor: "pointer"
                   },
-                  children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                    size: 40,
-                    src: "",
-                    symbol: asset.originName
-                  }), bridgeType === "redeem" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                    className: "assetName",
-                    children: [asset.originName, " "]
-                  }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                    className: "assetName",
-                    children: [asset.originName, " "]
-                  }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                  className: "tokenInputWrap",
+                  children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_InputToken, {
+                    asset: asset,
+                    position: "recive",
+                    bridgeType: bridgeType
+                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
                     className: selectAssetVisible == "recive" ? "spanRotate" : "spanReset",
-                    children: [" ", /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})]
+                    children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
                   })]
                 })
               }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {

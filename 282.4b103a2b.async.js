@@ -8860,7 +8860,7 @@ const genTextAreaStyle = token => {
           // Clear Icon
           [`${componentCls}-clear-icon`]: {
             position: 'absolute',
-            insetInlineEnd: token.paddingXS,
+            insetInlineEnd: token.paddingInline,
             insetBlockStart: token.paddingXS
           },
           // Feedback Icon
@@ -8874,6 +8874,13 @@ const genTextAreaStyle = token => {
             alignItems: 'center',
             margin: 'auto',
             pointerEvents: 'none'
+          }
+        }
+      },
+      [`&-affix-wrapper${componentCls}-affix-wrapper-sm`]: {
+        [`${componentCls}-suffix`]: {
+          [`${componentCls}-clear-icon`]: {
+            insetInlineEnd: token.paddingInlineSM
           }
         }
       }
@@ -9148,7 +9155,7 @@ const genFilledStyle = (token, extraStyles) => ({
   '&-filled': Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, genBaseFilledStyle(token, {
     bg: token.colorFillTertiary,
     hoverBg: token.colorFillSecondary,
-    activeBorderColor: token.colorPrimary
+    activeBorderColor: token.activeBorderColor
   })), {
     [`&${token.componentCls}-disabled, &[disabled]`]: Object.assign({}, genDisabledStyle(token))
   }), genFilledStatusStyle(token, {
