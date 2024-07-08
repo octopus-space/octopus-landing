@@ -2,7 +2,7 @@ import logo from "@/assets/logo.svg";
 import LoginModal from "@/components/LoginModal";
 import { Button, Dropdown } from "antd";
 import { useMemo } from "react";
-import { useModel,history } from "umi";
+import { useModel, history } from "umi";
 import wrapping from "@/assets/wrapping.svg";
 import mapping from "@/assets/mapping.svg";
 import logoIcon from "@/assets/logoIcon.svg";
@@ -23,7 +23,7 @@ export default () => {
     <div className="header inside">
       <div className="headerwrap">
         <div className="left">
-          <img src={logo} alt="" className="logo" onClick={()=>history.push('/')} />
+          <img src={logo} alt="" className="logo" onClick={() => history.push('/')} />
           <div
             className="routes
         "
@@ -31,7 +31,7 @@ export default () => {
             <div className="item">
               <img src={wrapping} alt="" />
               <div className="desc">
-                <div className="title">Wrapping {network==='testnet'&&<div className="beta">BETA</div>}</div>
+                <div className="title">Wrapping {network === 'testnet' && <div className="beta">BETA</div>}</div>
                 <div className="subTitle">Smartcontrat Bridging</div>
               </div>
             </div>
@@ -52,14 +52,14 @@ export default () => {
                 <div className="walletInfo">
                   <div
                     className={`item`}
-                   
+
                   >
-                     <img src={logoIcon} alt="" />
+                    <img src={logoIcon} alt="" />
                     <span className="name">{showAddress}</span>
                   </div>
                   <div
                     className={`item active`}
-                    
+
                     onClick={disConnect}
                   >
                     <img src={exit} alt="" />
