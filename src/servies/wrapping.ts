@@ -31,7 +31,6 @@ import {
   submitPrepayOrderRedeemRunes,
 } from "./api";
 import { determineAddressInfo } from "@/utils/utils";
-import { NetworkType } from "@unisat/wallet-sdk/lib/network";
 import { sendRunes } from "@/utils/runes";
 
 export type SupportRedeemAddressType = "P2TR" | "P2WPKH" | "P2PKH";
@@ -344,7 +343,7 @@ export async function redeemMrc20(
   }
 }
 
-async function buildTx(parmas: {
+async function transferBTC(parmas: {
   toAddress: string;
   satoshis: number;
   options: {
@@ -383,7 +382,7 @@ export async function mintBtc(
 
     const { orderId, bridgeAddress } = createResp;
 
-    const txHex = await buildTx({
+    const txHex = await transferBTC({
       toAddress: bridgeAddress,
       satoshis: Number(mintAmount),
       options: {
