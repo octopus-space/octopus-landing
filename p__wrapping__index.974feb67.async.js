@@ -92,7 +92,7 @@ var Popup = function Popup(_ref) {
 
 /***/ }),
 
-/***/ 88008:
+/***/ 29208:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 // ESM COMPAT FLAG
@@ -646,12 +646,9 @@ var FormButton = function FormButton(_ref) {
 var metaid_b_y_namespaceObject = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAYAAACohjseAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAUsSURBVGiB5Zs/bBpXHMc/gLGBpOEMiTo4yjHYkqeLN3dCbFUHVEuRMmHVSzxZaRarkbowNEOSIWrVyRmiCmeJZCkVUtNsEV3ClOSyVHIkcpE9OCr4UCogxkc6vLuDAxwbDAbTr/ST4PHeu9/39/u93/tzDxf9QQyYAy4DEVMkUwB0U96a8gp4Brzskz49wQLwANgFPnUpu2YfMerGGCgiQBLI0T2pz5FNMkCiyQMUO/VEl+iPxw6THGIY9BX3BkCsWe7RB29GGIzXDpIXpk4jSa4xZI9NcljJ9YTksJM7FkkJEeeDVr4Tkh1hGLJlp3LvqOQWhkDZbmXpMHISp2PcHSS5ZkKepu83OYHVQh8hAS7EzqTtj8fZCQyTRCxS7gaCNxiSLUoPsNRcMErec4xFy4NzjI73QIToAtQJfjcwVfqHb0FkHBDhOUoeBHHmM+lm9MLTggTE3IgDnlHFnBtxtNdXKBe9PLoW4u6VYL8f1YzLY7TZaqwlJolOj5N+XWF1o+j47dG1EMqUF3W7ytX7Bbt8cT5AXPERDLhRt6r8+uxftLwhnjLlJa74ULerLM4H0AoGmc2PdS0uerkU8iD5Rc7TyzXSagU57EEOjQGQ2fyI5HcTV3x2O71cQ93eR8vvH0Qw0pZgdHocOexhJXbGoWh0ZsJ+gLZr2PXvXgmyEjvjaJ+YD/D1L/+gblXtcmXKy1pCIpUtk9n8iBz28PT6eeSQc8Wo5Q3SaoXo9ARrCZEeZpPvTeO3pou0WmF5XUcv11oIujkkwfz4zRdtP8uTQqm44rPJpbIlltd11O0qkt/Fo2uhlv60vEGxXEPyux3ktLxhG/IoaKwfV3zcuXKuXTWpLUE5XLfo4nwAOewhOjNBdGbcLg8G3GbnfvHAgsG7goEc9pDZ3BP9hEQ7C5k3e8wmd1jdKBJXfMghD3r5E7PJHWaTOyw/1I9M0Gpz9f6uQ89mgmMtJf768jSzuUd0Zpy1xKRYAAHqdhVlyovkdzmMIYc8Dg8fBqtdWq105LlmpNUyWv4cctiDMuVt6WsMMSHaXrQ8A7D8cJe/k18Sna57bnld5/kPF0wlxyiWRNxrBYP1bKlFAa2wT9AyhplI9HINvSQs1hgV3UDyu22d3xVaDKW7TYINDYQyevkTWt4g1aB0KlviVUPSkPwu0mrFVh7E2Lhkfv7pjw9oeYO/NvfQCgZyyMPT78PEFR/p12W73dPr51mJnXVkyMOwOB9gJXaW5zcvIPldaAXDoZtFcAzx+ipilQTNELU8c+vJB6LTExQrNW49+WCTkMMegn43qWwJ5aKXldiZlhB9tVUlrVbQyzVWN4qsJSZRprzEFb+d+dYSEtGZ8Y492ZhNtYLhmLIa8NYiWKdcrpHKlnlX2LfJzCZ3HK3Srytmx6LO6kYRdatqz4Nafp91cyqw26gVvrr9npXYWTQzlFLZElrBsBOOFWqNYZ/Klh1lmTd7Dl2a59xmgiA2uoPev/VLbrgZ8reqx8Sz/8V2CeDxIDXpEx5DfUf/+wAV6Rd+ay7IMfik0Cuxh1zjsWEL41OMn2lawICY7Adt+Z56D5xH9zriECrWka2GD7eBPz9X4TSPxRxHmO6WhkDRbuXIL45G+gWohdwQKH1UeUEXK7HIKSGZY4RvWhyL3LCT7Am5RpLDdK2kp+QsSAxHdu04W3aKBQZ3nXKp3+QsSIhLqif12jt5EqTaoZ9Ec2bfkZOh8nlIiEX6A3pzKb1nd3Vch1fpCnMIwp38reAlB1zgOQ7+A5NDO7enKiAKAAAAAElFTkSuQmCC";
 ;// CONCATENATED MODULE: ./src/assets/brc20.png
 var brc20_namespaceObject = "data:image/png;base64,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";
-;// CONCATENATED MODULE: ./src/assets/arc20.png
-var arc20_namespaceObject = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAQ+SURBVEiJjVbLSyNJGP9VtTFRJKiHKCLSS4zszR7UIIGwHXLw4mFQz+LgUXD9D5w5efAwKnh2Ba+ysyhePKRHFPVk5qAnYRtfiHjwBZpHfbWHTTeV6piZhqa+qq++x+97VBXDL3ypVMrinH8sl8t/MMZMImrlnAPAA4C8lPJHQ0ODs7+/7/xMF6vHTKfTU+VyeR6ACQCMMRARGPtfTAiBimFIKQHAYYx9OTo6etdwTYO2bZuFQiEnpTSllJBSgjFWNaofEYFzDmWvUyqVPuXzeVfXzfWFVCplvb6+5lRUHqIqTxXDqrEKWtswjNzw8LBdF+Hg4KDNOc95SCrCAYRqWFW+PiciFIvFD2dnZ/kAQtu2TcMw1lQHPI9VZUQU4KtzPezhcPhvy7JMb0+DR7y8vKwxxkwAPgIlRFXFoStV5zpaIjIZYzkAv/kILcuyAdiegJYPHxkR+Qqbm5sDez2+NyqypmVZU75BwzDma232aD1kyWQS6+vrCIfDPl8IEdinygoh5gHAqKD7rOZEzZM6JyKEQiEsLCwgkUjg6ekJ+Xze56tOekWjON3a2tr6Dwdg64n3cqAi9MaWlhb09PSAMYbJyUnEYrGqfOrV6q1JKREKhT4anZ2dfxLR71rMA4XgfW9vb4hEIhgYGPDzeHBwUIVQj4oaOS6ltFSv1FGnJyYm0NXVhY2NDdzd3YExhrGxMZimGSg0PVqVNdOIxWKfiSiiV6XqpZQSHR0dWFxcRFtbG3Z2dlAsFpFOpxGJRBCNRrG7u1uzT/Wfv8fQwzs9PY329naMjo4iHo9jc3MT5+fnAICRkRH09/cHikdvDyklOBE96HHWy7qvrw/j4+NgjOH+/h43NzcoFApYXl5GuVxGKBTC3NwcDMOo2cMK/cCJyPUMeb3keed5PDMzg3A4DCEEVldX8fz8DCJCLpfD8fExAGBoaAjZbDaATqWFEHkupfyutoWeg2QyiWw2CwA4PT3F1taWzyuVSlhZWUGpVALnHLOzs2hqagoUjmeYc/6Dc86/CSEghKjySgiBxsZGzM3NgXMOIQS+fv2KQqFQFYGTkxNsb28DAHp7ezE+Pu7zhBBVdUBETsPZ2Vk+kUi4qNx/ahtEo1E4joO9vT08Pj7i8PAwcEALIbC0tISLiwsQEQqFgu+gdq05rus6DAASicSUlHJNDUG9+/AX+i0gS0SZq6srx7+A4/H4v7VQvkfXMvgeH4BzeXmZAZQLWAiRkVK6eoXV681aN4vef0TkGobxybNT9cQwTdMCcKKfo2rIdGS+ohrnbmU9c3V15XjzqkeU67p5ABkAbi1hfU2la0TDLRaLH1RjAYQKUlMIsYbKK6AeMm+uPTFcKWXm9vbW1XXXfQh3d3fbAOallLauuBZKKaUL4Mvt7e1f7+msa1A1TEQ2gH4ppQWgtWLgAYBLRN9DodC36+vrfD09APAfhu1cN/sXjUsAAAAASUVORK5CYII=";
 ;// CONCATENATED MODULE: ./src/assets/runes.png
 var runes_namespaceObject = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAPpSURBVEiJrZbLL3NrFMafd7daLaIuidvE2MBlwEDEZdQzIedEjIQQIiJSYSIRBBOMDBia+QO+Y2rgK5G4DDgNCdFQAzQN5dBEqbzvcwZ0h2p36/vOSlay073y/rrW+6y1l0BqVgngTwANAEoBON5//xfAPwA8ANzv/lvWBcAHgCn6TwCNvwIq/SYoHrg0VVjlb8Ki7ksl28b/ARTrlR8Bpg/PpQB+4F0QmqZhYGAAPT09yMnJwdHREUjCYrFgbm4OTU1N2NzchFIKmqaht7cXfX19KCoqwsHBwUfGHwBW8SawT/Yz9t/V1tYyHA7z8fGR5eXlBEC73c5AIMCLiwtarVYCYHV1NcPhMEOhECsqKhKVN3kpNU3jxMQElVJ0u9202WxfgJmZmdzZ2aFSioODgxRCJCptl2F2UbdYLNzb26NSikNDQ5+A6enpHBsbo1KKa2trNJvNyUSUOLuo2+12np2dkSSDwSCrqqp0YE1NDR8eHkiSBwcHtFgsKQloKlGAEIIul0s/UErJjY0NBoNBXl9fc3t7m5FIhFtbW1RKsaOjIxlwCnhTZtyAvLw8+v1+er1e5uTk0O12kySVUpRSUinF5eVlFhYW8ubmhqenp8zKyko2EOI3uRCCU1NTlFKyp6eHQgiWlZXx/v6eUTs+PmZBQQE1TeP4+DillHS5XEbC8QHAfbyXJSUlDAQCPDk50eUvhODs7KwO7O/v1w93OBy8urri+fk5c3NzEwHvNSSwtLQ0WCwWPD8/QykFAHA4HGhpadFjurq6YLfbAQCvr694eXmB1WqF2WxOdCwMSzo/P08pJTs7O2kymbi0tKTfXfQup6enqWkah4eHKaXk6Oho0pIm7MGCggLe3NzQ6/Wyra2N4XCYOzs7vLu74+3tLS8vLxkKhdjc3Mzr62v6fD46HA4j0fwAkrTFyMgISeojrq6uTu/D1tZWRiIRhsNhKqXY3d1tlJ3eFpUGAczIyKDf7ydJzszMfJo0NpuNKysrJMnT01NdXAbeaHiPAOh0OimlpMfjYXZ29pdZWlxcTL/fz5eXF9bX1yftQV1w8YJyc3Pp9XoZiUTodDr1UfcRKIRge3s7pZQ8PDw0usNGxNinLDVN4+Lioj5NTCZTXCAAms1mrq6uUinFhYUFapqWMLuPH+BVvG1mDgDIz89HQ0MD9vf3MTk5iVAoBAAQQiA/Px8ejwfr6+tQSkEphd3dXVitVgDA3t4enp6eoudeAPgLcT7AQIyAhBC6G9xNstgvpYy1xtjy/qL7ELPPGFkpDAZCirDSVGGx2X4H7EPMKhFr4hvgRgAVeCvTx1X/AsAGgL/xtvYb2n9CYq6zbKoMjgAAAABJRU5ErkJggg==";
 ;// CONCATENATED MODULE: ./src/pages/wrapping/components/Options.tsx
-
 
 
 
@@ -721,23 +718,17 @@ var SegOptions = [{
     })]
   }),
   value: "mrc20"
-}, {
-  label: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-    style: {
-      padding: 4
-    },
-    className: "SegmentedItem",
-    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-      symbol: "BRC20",
-      src: arc20_namespaceObject,
-      size: 28
-    }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-      children: "ARC20"
-    })]
-  }),
-  value: "arc20",
-  disabled: true
 }
+// {
+//   label: (
+//     <div style={{ padding: 4 }} className="SegmentedItem">
+//       <TokenIcon symbol="BRC20" src={arc20} size={28} />
+//       <span>ARC20</span>
+//     </div>
+//   ),
+//   value: "arc20",
+//   disabled: true,
+// },
 // {
 //   label: (
 //     <div style={{ padding: 4 }} className="SegmentedItem">
@@ -1630,11 +1621,11 @@ function _redeemMrc() {
   }));
   return _redeemMrc.apply(this, arguments);
 }
-function wrapping_buildTx(_x21) {
-  return servies_wrapping_buildTx.apply(this, arguments);
+function transferBTC(_x21) {
+  return _transferBTC.apply(this, arguments);
 }
-function servies_wrapping_buildTx() {
-  servies_wrapping_buildTx = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee8(parmas) {
+function _transferBTC() {
+  _transferBTC = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee8(parmas) {
     var ret;
     return regeneratorRuntime_default()().wrap(function _callee8$(_context8) {
       while (1) switch (_context8.prev = _context8.next) {
@@ -1656,7 +1647,7 @@ function servies_wrapping_buildTx() {
       }
     }, _callee8);
   }));
-  return servies_wrapping_buildTx.apply(this, arguments);
+  return _transferBTC.apply(this, arguments);
 }
 function mintBtc(_x22, _x23, _x24, _x25, _x26) {
   return _mintBtc.apply(this, arguments);
@@ -1692,7 +1683,7 @@ function _mintBtc() {
           createResp = _yield$createPrepayOr5.data;
           orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
           _context9.next = 16;
-          return wrapping_buildTx({
+          return transferBTC({
             toAddress: bridgeAddress,
             satoshis: Number(mintAmount),
             options: {

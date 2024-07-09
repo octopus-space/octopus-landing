@@ -37914,7 +37914,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"6465a201","242":"50706a9e","282":"4b103a2b","307":"8da4450e","503":"4545e4d0","717":"b4402877","866":"917c7cbd"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"6465a201","242":"50706a9e","282":"4b103a2b","307":"974feb67","503":"4545e4d0","717":"b4402877","866":"917c7cbd"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -39767,7 +39767,7 @@ function _getRoutes() {
                 return Promise.all(/* import() | p__index */[__webpack_require__.e(208), __webpack_require__.e(242), __webpack_require__.e(866)]).then(__webpack_require__.bind(__webpack_require__, 68606));
               }),
               '2': /*#__PURE__*/react.lazy(function () {
-                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(208), __webpack_require__.e(503), __webpack_require__.e(282), __webpack_require__.e(307)]).then(__webpack_require__.bind(__webpack_require__, 88008));
+                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(208), __webpack_require__.e(503), __webpack_require__.e(282), __webpack_require__.e(307)]).then(__webpack_require__.bind(__webpack_require__, 29208));
               }),
               '@@/global-layout': /*#__PURE__*/react.lazy(function () {
                 return Promise.all(/* import() | layouts__index */[__webpack_require__.e(208), __webpack_require__.e(503), __webpack_require__.e(717)]).then(__webpack_require__.bind(__webpack_require__, 68240));
