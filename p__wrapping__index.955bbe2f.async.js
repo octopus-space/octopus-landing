@@ -118,6 +118,8 @@ var regeneratorRuntime_default = /*#__PURE__*/__webpack_require__.n(regeneratorR
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/asyncToGenerator.js
 var asyncToGenerator = __webpack_require__(99289);
 var asyncToGenerator_default = /*#__PURE__*/__webpack_require__.n(asyncToGenerator);
+// EXTERNAL MODULE: ./node_modules/antd/es/grid/index.js + 2 modules
+var grid = __webpack_require__(74250);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/index.js + 6 modules
 var theme = __webpack_require__(9361);
 // EXTERNAL MODULE: ./node_modules/antd/es/message/index.js + 12 modules
@@ -2994,12 +2996,14 @@ var defalut = {
   }(),
   onClose: function onClose() {}
 };
+var useBreakpoint = grid/* default */.ZP.useBreakpoint;
 /* harmony default export */ var wrapping = (function () {
   var _theme$useToken = theme/* default */.Z.useToken(),
     _theme$useToken$token = _theme$useToken.token,
     colorBgBase = _theme$useToken$token.colorBgBase,
     borderRadius = _theme$useToken$token.borderRadius,
     borderRadiusSM = _theme$useToken$token.borderRadiusSM;
+  var screens = useBreakpoint();
   var _useState = (0,react.useState)(false),
     _useState2 = slicedToArray_default()(_useState, 2),
     historyVisible = _useState2[0],
@@ -3459,12 +3463,10 @@ var defalut = {
   };
   return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
     className: "wrapPage",
-    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(segmented/* default */.Z
-    // defaultValue="mrc20"
-    , {
+    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(segmented/* default */.Z, {
       style: {
         width: 520,
-        maxWidth: "98vw",
+        maxWidth: "92vw",
         marginBottom: 32,
         overflow: 'scroll'
       },
@@ -3474,12 +3476,12 @@ var defalut = {
         setReciveAmount("");
       },
       options: SegOptions,
-      size: "large"
-      // block
+      size: screens.xs ? 'middle' : "large",
+      block: true
     }), /*#__PURE__*/(0,jsx_runtime.jsx)(card/* default */.Z, {
       style: {
         width: 520,
-        maxWidth: "98vw",
+        maxWidth: "92vw",
         position: "relative",
         border: "2px solid #6e66fa",
         minHeight: 666
