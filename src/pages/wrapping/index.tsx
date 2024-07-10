@@ -9,12 +9,12 @@ import {
   Spin,
   message,
   theme,
+  Grid
 } from "antd";
-import { DownOutlined, SyncOutlined, UpOutlined } from "@ant-design/icons";
+import { DownOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "./index.less";
 import { useModel } from "umi";
-import switchIcon from "@/assets/switch.svg";
 import historyIcon from "@/assets/history.svg";
 import {
   FeeInfo,
@@ -65,10 +65,12 @@ const defalut: ConfirmProps = {
   handleSubmit: async () => { },
   onClose: () => { },
 };
+const { useBreakpoint } = Grid;
 export default () => {
   const {
     token: { colorBgBase, borderRadius, borderRadiusSM },
   } = theme.useToken();
+  const screens = useBreakpoint();
   const [historyVisible, setHistoryVisible] = useState<boolean>(false);
 
   const { userBal, connected, btcAddress, network, getBal } =
@@ -452,21 +454,20 @@ export default () => {
   return (
     <div className="wrapPage">
       <Segmented
-        // defaultValue="mrc20"
-        style={{ width: 520, maxWidth: "98vw", marginBottom: 32, overflow: 'scroll' }}
+        style={{ width: 520, maxWidth: "92vw", marginBottom: 32, overflow: 'scroll' }}
         onChange={(value) => {
           setProtocolType(value);
           setAmount("");
           setReciveAmount("");
         }}
         options={SegOptions}
-        size="large"
-      // block
+        size={screens.xs ? 'middle' : "large"}
+        block
       />
       <Card
         style={{
           width: 520,
-          maxWidth: "98vw",
+          maxWidth: "92vw",
           position: "relative",
           border: "2px solid #6e66fa",
           minHeight: 666,
