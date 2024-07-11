@@ -117,7 +117,6 @@ async function signMintPublicKey(): Promise<{
 
   const publicKeySign = await window.metaidwallet.btc.signMessage(publicKey);
   if (publicKeySign.status === "canceled") throw new Error("canceled");
-  alert(window.metaidwallet.signMessage)
   const ret = await window.metaidwallet.signMessage({
     message: publicKeyReceive,
     encoding: "base64",
