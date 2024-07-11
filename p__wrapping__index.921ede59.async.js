@@ -310,7 +310,7 @@ var size = 10;
             }
             item.timestamp = (0,utils/* prettyTimestamp */.Wt)(Number(item.timestamp), true);
             var currentToken = AssetsInfo.assetList.find(function (token) {
-              return token.originName == item.name && token.originSymbol == item.symbol;
+              return token.originName == item.name;
             });
             if (currentToken) {
               console.log(currentToken, 'metacoin');
@@ -1306,19 +1306,20 @@ function _signMintPublicKey() {
           }
           throw new Error("canceled");
         case 11:
-          _context3.next = 13;
+          alert(window.metaidwallet.signMessage);
+          _context3.next = 14;
           return window.metaidwallet.signMessage({
             message: publicKeyReceive,
             encoding: "base64"
           });
-        case 13:
+        case 14:
           ret = _context3.sent;
           if (!(ret.status === "canceled")) {
-            _context3.next = 16;
+            _context3.next = 17;
             break;
           }
           throw new Error("canceled");
-        case 16:
+        case 17:
           console.log(ret, "signMessage");
           publicKeyReceiveSign = ret.signature.signature; //2.7 {signature:{signature:'xxx'}}
           //3.0 {signature:''}；
@@ -1331,7 +1332,7 @@ function _signMintPublicKey() {
             publicKeyReceiveSign: publicKeyReceiveSign,
             publicKeyReceive: publicKeyReceive
           });
-        case 20:
+        case 21:
         case "end":
           return _context3.stop();
       }
