@@ -62,7 +62,7 @@ export default ({ type }: { type: HistoryType }) => {
         item.timestamp = prettyTimestamp(Number(item.timestamp), true);
 
         const currentToken = AssetsInfo.assetList.find((token) => {
-          return token.originName == item.name && token.originSymbol == item.symbol;
+          return token.originName == item.name ;
         });
         if (currentToken) {
           console.log(currentToken, 'metacoin');
