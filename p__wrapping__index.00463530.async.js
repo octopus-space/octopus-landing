@@ -1306,20 +1306,19 @@ function _signMintPublicKey() {
           }
           throw new Error("canceled");
         case 11:
-          alert(window.metaidwallet.signMessage);
-          _context3.next = 14;
+          _context3.next = 13;
           return window.metaidwallet.signMessage({
             message: publicKeyReceive,
             encoding: "base64"
           });
-        case 14:
+        case 13:
           ret = _context3.sent;
           if (!(ret.status === "canceled")) {
-            _context3.next = 17;
+            _context3.next = 16;
             break;
           }
           throw new Error("canceled");
-        case 17:
+        case 16:
           console.log(ret, "signMessage");
           publicKeyReceiveSign = ret.signature.signature; //2.7 {signature:{signature:'xxx'}}
           //3.0 {signature:''}；
@@ -1332,7 +1331,7 @@ function _signMintPublicKey() {
             publicKeyReceiveSign: publicKeyReceiveSign,
             publicKeyReceive: publicKeyReceive
           });
-        case 21:
+        case 20:
         case "end":
           return _context3.stop();
       }
