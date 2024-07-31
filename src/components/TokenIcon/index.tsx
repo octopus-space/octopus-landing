@@ -27,7 +27,7 @@ const TokenIcon: React.FC<Props> = ({ size = 25, src, symbol = "" }) => {
             background: "#000",
           }}
         >
-          {symbol[0].toUpperCase()}
+          {symbol&&symbol[0].toUpperCase()}
         </div>
       )}
     </>
