@@ -2211,6 +2211,8 @@ function isValidGapNumber(size) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   m: function() { return /* binding */ getTransitionName; }
 /* harmony export */ });
+/* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(53124);
+
 // ================== Collapse Motion ==================
 const getCollapsedHeight = () => ({
   height: 0,
@@ -2230,7 +2232,7 @@ const getCurrentHeight = node => ({
 });
 const skipOpacityTransition = (_, event) => (event === null || event === void 0 ? void 0 : event.deadline) === true || event.propertyName === 'height';
 const initCollapseMotion = function () {
-  let rootCls = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'ant';
+  let rootCls = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _config_provider__WEBPACK_IMPORTED_MODULE_0__/* .defaultPrefixCls */ .Rf;
   return {
     motionName: `${rootCls}-motion-collapse`,
     onAppearStart: getCollapsedHeight,
@@ -2383,8 +2385,8 @@ var isVisible = __webpack_require__(5110);
 var context = __webpack_require__(53124);
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/reactNode.js
 var reactNode = __webpack_require__(96159);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
-var genComponentStyleHook = __webpack_require__(27036);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genStyleUtils.js
+var genStyleUtils = __webpack_require__(83559);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/style.js
 
 const genWaveStyle = token => {
@@ -2415,18 +2417,16 @@ const genWaveStyle = token => {
     }
   };
 };
-/* harmony default export */ var style = ((0,genComponentStyleHook/* default */.ZP)('Wave', token => [genWaveStyle(token)]));
+/* harmony default export */ var style = ((0,genStyleUtils/* genComponentStyleHook */.A1)('Wave', token => [genWaveStyle(token)]));
 // EXTERNAL MODULE: ./node_modules/rc-util/es/index.js
 var es = __webpack_require__(56790);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/raf.js
 var raf = __webpack_require__(75164);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/useToken.js + 2 modules
 var useToken = __webpack_require__(25976);
-// EXTERNAL MODULE: ./node_modules/antd/es/config-provider/index.js + 8 modules
-var config_provider = __webpack_require__(88929);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/interface.js
 
-const TARGET_CLS = `${config_provider/* defaultPrefixCls */.Rf}-wave-target`;
+const TARGET_CLS = `${context/* defaultPrefixCls */.Rf}-wave-target`;
 // EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 13 modules
 var rc_motion_es = __webpack_require__(29372);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/React/render.js
@@ -2856,12 +2856,12 @@ const LoadingIcon = props => {
   });
 };
 /* harmony default export */ var button_LoadingIcon = (LoadingIcon);
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
-var cssinjs_es = __webpack_require__(861);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 37 modules
+var cssinjs_es = __webpack_require__(11568);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/index.js
 var es_style = __webpack_require__(14747);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
-var statistic = __webpack_require__(45503);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs-utils/es/index.js + 12 modules
+var cssinjs_utils_es = __webpack_require__(83262);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/button/style/group.js
 const genButtonBorderStyle = (buttonTypeCls, borderColor) => ({
   // Border
@@ -2939,7 +2939,7 @@ const prepareToken = token => {
     onlyIconSize,
     paddingBlock
   } = token;
-  const buttonToken = (0,statistic/* merge */.TS)(token, {
+  const buttonToken = (0,cssinjs_utils_es/* mergeToken */.IX)(token, {
     buttonPaddingHorizontal: paddingInline,
     buttonPaddingVertical: paddingBlock,
     buttonIconOnlyFontSize: onlyIconSize
@@ -3273,14 +3273,14 @@ const genButtonStyle = function (token) {
   }];
 };
 const genSizeBaseButtonStyle = token => {
-  const baseToken = (0,statistic/* merge */.TS)(token, {
+  const baseToken = (0,cssinjs_utils_es/* mergeToken */.IX)(token, {
     fontSize: token.contentFontSize,
     lineHeight: token.contentLineHeight
   });
   return genButtonStyle(baseToken, token.componentCls);
 };
 const genSizeSmallButtonStyle = token => {
-  const smallToken = (0,statistic/* merge */.TS)(token, {
+  const smallToken = (0,cssinjs_utils_es/* mergeToken */.IX)(token, {
     controlHeight: token.controlHeightSM,
     fontSize: token.contentFontSizeSM,
     lineHeight: token.contentLineHeightSM,
@@ -3293,7 +3293,7 @@ const genSizeSmallButtonStyle = token => {
   return genButtonStyle(smallToken, `${token.componentCls}-sm`);
 };
 const genSizeLargeButtonStyle = token => {
-  const largeToken = (0,statistic/* merge */.TS)(token, {
+  const largeToken = (0,cssinjs_utils_es/* mergeToken */.IX)(token, {
     controlHeight: token.controlHeightLG,
     fontSize: token.contentFontSizeLG,
     lineHeight: token.contentLineHeightLG,
@@ -3317,7 +3317,7 @@ const genBlockButtonStyle = token => {
   };
 };
 // ============================== Export ==============================
-/* harmony default export */ var button_style = ((0,genComponentStyleHook/* genStyleHooks */.I$)('Button', token => {
+/* harmony default export */ var button_style = ((0,genStyleUtils/* genStyleHooks */.I$)('Button', token => {
   const buttonToken = prepareToken(token);
   return [
   // Shared
@@ -3434,7 +3434,7 @@ const genButtonCompactStyle = token => {
   };
 };
 // ============================== Export ==============================
-/* harmony default export */ var compactCmp = ((0,genComponentStyleHook/* genSubStyleComponent */.bk)(['Button', 'compact'], token => {
+/* harmony default export */ var compactCmp = ((0,genStyleUtils/* genSubStyleComponent */.bk)(['Button', 'compact'], token => {
   const buttonToken = prepareToken(token);
   return [
   // Space Compact
@@ -3737,8 +3737,8 @@ var useMergedState = __webpack_require__(21770);
 var es_omit = __webpack_require__(98423);
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/hooks/useZIndex.js
 var useZIndex = __webpack_require__(87263);
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
-var cssinjs_es = __webpack_require__(861);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 37 modules
+var cssinjs_es = __webpack_require__(11568);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/style/roundedArrow.js
 
 function getArrowToken(token) {
@@ -4600,10 +4600,10 @@ function genPresetColor(token, genCss) {
     }));
   }, {});
 }
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
-var statistic = __webpack_require__(45503);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
-var genComponentStyleHook = __webpack_require__(27036);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs-utils/es/index.js + 12 modules
+var cssinjs_utils_es = __webpack_require__(83262);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genStyleUtils.js
+var genStyleUtils = __webpack_require__(83559);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/tooltip/style/index.js
 
 
@@ -4699,18 +4699,18 @@ const prepareComponentToken = token => Object.assign(Object.assign({
 }, getArrowOffsetToken({
   contentRadius: token.borderRadius,
   limitVerticalRadius: true
-})), getArrowToken((0,statistic/* merge */.TS)(token, {
+})), getArrowToken((0,cssinjs_utils_es/* mergeToken */.IX)(token, {
   borderRadiusOuter: Math.min(token.borderRadiusOuter, 4)
 })));
 /* harmony default export */ var tooltip_style = (function (prefixCls) {
   let injectStyle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-  const useStyle = (0,genComponentStyleHook/* genStyleHooks */.I$)('Tooltip', token => {
+  const useStyle = (0,genStyleUtils/* genStyleHooks */.I$)('Tooltip', token => {
     const {
       borderRadius,
       colorTextLightSolid,
       colorBgSpotlight
     } = token;
-    const TooltipToken = (0,statistic/* merge */.TS)(token, {
+    const TooltipToken = (0,cssinjs_utils_es/* mergeToken */.IX)(token, {
       // default variables
       tooltipMaxWidth: 250,
       tooltipColor: colorTextLightSolid,
@@ -6070,7 +6070,7 @@ const style_prepareComponentToken = token => {
 /* harmony default export */ var menu_style = (function (prefixCls) {
   let rootCls = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : prefixCls;
   let injectStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-  const useStyle = (0,genComponentStyleHook/* genStyleHooks */.I$)('Menu', token => {
+  const useStyle = (0,genStyleUtils/* genStyleHooks */.I$)('Menu', token => {
     const {
       colorBgElevated,
       controlHeightLG,
@@ -6094,7 +6094,7 @@ const style_prepareComponentToken = token => {
     } = token;
     const menuArrowSize = token.calc(fontSize).div(7).mul(5).equal();
     // Menu Token
-    const menuToken = (0,statistic/* merge */.TS)(token, {
+    const menuToken = (0,cssinjs_utils_es/* mergeToken */.IX)(token, {
       menuArrowSize,
       menuHorizontalHeight: token.calc(controlHeightLG).mul(1.15).equal(),
       menuArrowOffset: token.calc(menuArrowSize).mul(0.25).equal(),
@@ -6102,7 +6102,7 @@ const style_prepareComponentToken = token => {
       calc: token.calc,
       popupBg
     });
-    const menuDarkToken = (0,statistic/* merge */.TS)(menuToken, {
+    const menuDarkToken = (0,cssinjs_utils_es/* mergeToken */.IX)(menuToken, {
       itemColor: darkItemColor,
       itemHoverColor: darkItemHoverColor,
       groupTitleColor: darkGroupTitleColor,
@@ -6717,7 +6717,8 @@ const genBaseStyle = token => {
         [`${menuCls}-item`]: {
           position: 'relative',
           display: 'flex',
-          alignItems: 'center'
+          alignItems: 'center',
+          whiteSpace: 'nowrap'
         },
         [`${menuCls}-item-icon`]: {
           minWidth: fontSize,
@@ -6829,14 +6830,14 @@ const dropdown_style_prepareComponentToken = token => Object.assign(Object.assig
   contentRadius: token.borderRadiusLG,
   limitVerticalRadius: true
 })), getArrowToken(token));
-/* harmony default export */ var dropdown_style = ((0,genComponentStyleHook/* genStyleHooks */.I$)('Dropdown', token => {
+/* harmony default export */ var dropdown_style = ((0,genStyleUtils/* genStyleHooks */.I$)('Dropdown', token => {
   const {
     marginXXS,
     sizePopupArrow,
     paddingXXS,
     componentCls
   } = token;
-  const dropdownToken = (0,statistic/* merge */.TS)(token, {
+  const dropdownToken = (0,cssinjs_utils_es/* mergeToken */.IX)(token, {
     menuCls: `${componentCls}-menu`,
     dropdownArrowDistance: token.calc(sizePopupArrow).div(2).add(marginXXS).equal(),
     dropdownEdgeChildPadding: paddingXXS
@@ -11170,7 +11171,7 @@ function grid_useBreakpoint() {
 
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
 /* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(76745);
-/* harmony import */ var _en_US__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(81570);
+/* harmony import */ var _en_US__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3115);
 
 
 
@@ -12254,8 +12255,8 @@ const Footer = props => {
     disabled: false
   }, footerNode);
 };
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
-var cssinjs_es = __webpack_require__(861);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 37 modules
+var cssinjs_es = __webpack_require__(11568);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/index.js
 var style = __webpack_require__(14747);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/motion/motion.js
@@ -12301,10 +12302,10 @@ const initFadeMotion = function (token) {
 };
 // EXTERNAL MODULE: ./node_modules/antd/es/style/motion/zoom.js
 var zoom = __webpack_require__(50438);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
-var statistic = __webpack_require__(45503);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
-var genComponentStyleHook = __webpack_require__(27036);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs-utils/es/index.js + 12 modules
+var cssinjs_utils_es = __webpack_require__(83262);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genStyleUtils.js
+var genStyleUtils = __webpack_require__(83559);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/modal/style/index.js
 
 
@@ -12539,7 +12540,7 @@ const prepareToken = token => {
   const headerPaddingVertical = token.padding;
   const headerFontSize = token.fontSizeHeading5;
   const headerLineHeight = token.lineHeightHeading5;
-  const modalToken = (0,statistic/* merge */.TS)(token, {
+  const modalToken = (0,cssinjs_utils_es/* mergeToken */.IX)(token, {
     modalHeaderHeight: token.calc(token.calc(headerLineHeight).mul(headerFontSize).equal()).add(token.calc(headerPaddingVertical).mul(2).equal()).equal(),
     modalFooterBorderColorSplit: token.colorSplit,
     modalFooterBorderStyle: token.lineType,
@@ -12573,7 +12574,7 @@ const prepareComponentToken = token => ({
   confirmIconMarginInlineEnd: token.wireframe ? token.margin : token.marginSM,
   confirmBtnsMarginTop: token.wireframe ? token.marginLG : token.marginSM
 });
-/* harmony default export */ var modal_style = ((0,genComponentStyleHook/* genStyleHooks */.I$)('Modal', token => {
+/* harmony default export */ var modal_style = ((0,genStyleUtils/* genStyleHooks */.I$)('Modal', token => {
   const modalToken = prepareToken(token);
   return [genModalStyle(modalToken), genRTLStyle(modalToken), genModalMaskStyle(modalToken), (0,zoom/* initZoomMotion */._y)(modalToken, 'zoom')];
 }, prepareComponentToken, {
@@ -12826,7 +12827,7 @@ const genModalConfirmStyle = token => {
   };
 };
 // ============================== Export ==============================
-/* harmony default export */ var style_confirm = ((0,genComponentStyleHook/* genSubStyleComponent */.bk)(['Modal', 'confirm'], token => {
+/* harmony default export */ var style_confirm = ((0,genStyleUtils/* genSubStyleComponent */.bk)(['Modal', 'confirm'], token => {
   const modalToken = prepareToken(token);
   return [genModalConfirmStyle(modalToken)];
 }, prepareComponentToken, {
@@ -13285,8 +13286,8 @@ function usePatchElement() {
   }, []);
   return [elements, patchElement];
 }
-// EXTERNAL MODULE: ./node_modules/antd/es/locale/en_US.js + 5 modules
-var en_US = __webpack_require__(81570);
+// EXTERNAL MODULE: ./node_modules/antd/es/locale/en_US.js + 6 modules
+var en_US = __webpack_require__(3115);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/modal/useModal/HookModal.js
 "use client";
 
@@ -13552,12 +13553,12 @@ const Element = props => {
   });
 };
 /* harmony default export */ var skeleton_Element = (Element);
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
-var es = __webpack_require__(861);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
-var genComponentStyleHook = __webpack_require__(27036);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
-var statistic = __webpack_require__(45503);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 37 modules
+var es = __webpack_require__(11568);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genStyleUtils.js
+var genStyleUtils = __webpack_require__(83559);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs-utils/es/index.js + 12 modules
+var cssinjs_utils_es = __webpack_require__(83262);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/skeleton/style/index.js
 
 
@@ -13847,12 +13848,12 @@ const prepareComponentToken = token => {
     paragraphLiHeight: token.controlHeight / 2
   };
 };
-/* harmony default export */ var skeleton_style = ((0,genComponentStyleHook/* genStyleHooks */.I$)('Skeleton', token => {
+/* harmony default export */ var skeleton_style = ((0,genStyleUtils/* genStyleHooks */.I$)('Skeleton', token => {
   const {
     componentCls,
     calc
   } = token;
-  const skeletonToken = (0,statistic/* merge */.TS)(token, {
+  const skeletonToken = (0,cssinjs_utils_es/* mergeToken */.IX)(token, {
     skeletonAvatarCls: `${componentCls}-avatar`,
     skeletonTitleCls: `${componentCls}-title`,
     skeletonParagraphCls: `${componentCls}-paragraph`,
@@ -14593,10 +14594,10 @@ __webpack_require__.d(__webpack_exports__, {
 
 // UNUSED EXPORTS: prepareComponentToken
 
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genComponentStyleHook.js + 2 modules
-var genComponentStyleHook = __webpack_require__(27036);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/statistic.js
-var statistic = __webpack_require__(45503);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genStyleUtils.js
+var genStyleUtils = __webpack_require__(83559);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs-utils/es/index.js + 12 modules
+var es = __webpack_require__(83262);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/space/style/compact.js
 const genSpaceCompactStyle = token => {
   const {
@@ -14687,8 +14688,8 @@ const genSpaceGapStyle = token => {
 };
 // ============================== Export ==============================
 const prepareComponentToken = () => ({});
-/* harmony default export */ var style = ((0,genComponentStyleHook/* genStyleHooks */.I$)('Space', token => {
-  const spaceToken = (0,statistic/* merge */.TS)(token, {
+/* harmony default export */ var style = ((0,genStyleUtils/* genStyleHooks */.I$)('Space', token => {
+  const spaceToken = (0,es/* mergeToken */.IX)(token, {
     spaceGapSmallSize: token.paddingXS,
     spaceGapMiddleSize: token.padding,
     spaceGapLargeSize: token.paddingLG
@@ -14831,7 +14832,7 @@ const initMotion = function (motionCls, inKeyframes, outKeyframes, duration) {
 /* harmony export */   oN: function() { return /* binding */ initSlideMotion; }
 /* harmony export */ });
 /* unused harmony exports slideLeftIn, slideLeftOut, slideRightIn, slideRightOut */
-/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(861);
+/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11568);
 /* harmony import */ var _motion__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(93590);
 
 
@@ -14986,7 +14987,7 @@ const initSlideMotion = (token, motionName) => {
 /* harmony export */   _y: function() { return /* binding */ initZoomMotion; }
 /* harmony export */ });
 /* unused harmony exports zoomIn, zoomOut, zoomBigIn, zoomBigOut, zoomUpIn, zoomUpOut, zoomLeftIn, zoomLeftOut, zoomRightIn, zoomRightOut, zoomDownIn, zoomDownOut */
-/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(861);
+/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11568);
 /* harmony import */ var _motion__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(93590);
 
 
@@ -15184,8 +15185,8 @@ __webpack_require__.d(__webpack_exports__, {
   Z: function() { return /* binding */ theme; }
 });
 
-// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 39 modules
-var es = __webpack_require__(861);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 37 modules
+var es = __webpack_require__(11568);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/themes/default/index.js + 5 modules
 var themes_default = __webpack_require__(67164);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/themes/seed.js

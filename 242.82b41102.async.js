@@ -157,9 +157,9 @@ const RowContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createCont
 /* harmony export */   cG: function() { return /* binding */ useColStyle; }
 /* harmony export */ });
 /* unused harmony exports prepareRowComponentToken, prepareColComponentToken */
-/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(861);
-/* harmony import */ var _theme_internal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(27036);
-/* harmony import */ var _theme_internal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(45503);
+/* harmony import */ var _ant_design_cssinjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11568);
+/* harmony import */ var _theme_internal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(83559);
+/* harmony import */ var _theme_internal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(83262);
 
 
 // ============================== Row-Shared ==============================
@@ -302,7 +302,7 @@ const prepareColComponentToken = () => ({});
 // ============================== Export ==============================
 const useRowStyle = (0,_theme_internal__WEBPACK_IMPORTED_MODULE_1__/* .genStyleHooks */ .I$)('Grid', genGridRowStyle, prepareRowComponentToken);
 const useColStyle = (0,_theme_internal__WEBPACK_IMPORTED_MODULE_1__/* .genStyleHooks */ .I$)('Grid', token => {
-  const gridToken = (0,_theme_internal__WEBPACK_IMPORTED_MODULE_2__/* .merge */ .TS)(token, {
+  const gridToken = (0,_theme_internal__WEBPACK_IMPORTED_MODULE_2__/* .mergeToken */ .IX)(token, {
     gridColumns: 24 // Row is divided into 24 parts in Grid
   });
   const gridMediaSizesMap = {

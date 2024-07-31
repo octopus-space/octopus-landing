@@ -205,7 +205,7 @@ var TokenIcon = function TokenIcon(_ref) {
         justifyContent: "center",
         background: "#000"
       },
-      children: symbol[0].toUpperCase()
+      children: symbol && symbol[0].toUpperCase()
     })
   });
 };
