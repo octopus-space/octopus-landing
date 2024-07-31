@@ -71,9 +71,13 @@ export default () => {
   useEffect(() => {
     if (AssetsInfo) {
       let assets: API.AssetItem[] = [];
-      assets = AssetsInfo.assetList.filter(
-        (item) => item.network === protocolType.toUpperCase()
-      );
+      assets = AssetsInfo.assetList
+        .filter((item) => item.network === protocolType.toUpperCase())
+        .map((item) => {
+          item.originName = item.originName || item.originSymbol;
+          item.targetName = item.targetName || item.targetSymbol;
+          return item;
+        });
       if (assets.length > 0) {
         setAssets(assets);
         setAsset((prev) => {
