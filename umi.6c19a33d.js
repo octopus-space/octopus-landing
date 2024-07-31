@@ -588,6 +588,10 @@ var defaultChains = [{
       var _assets = [];
       _assets = AssetsInfo.assetList.filter(function (item) {
         return item.network === protocolType.toUpperCase();
+      }).map(function (item) {
+        item.originName = item.originName || item.originSymbol;
+        item.targetName = item.targetName || item.targetSymbol;
+        return item;
       });
       if (_assets.length > 0) {
         setAssets(_assets);
@@ -37914,7 +37918,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"619b3fc9","242":"82b41102","282":"c14252a8","307":"52fbd881","503":"a52dbc9b","717":"b4402877","866":"917c7cbd"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"619b3fc9","242":"82b41102","282":"c14252a8","307":"c8fcc5da","503":"a52dbc9b","717":"b4402877","866":"917c7cbd"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	

@@ -2366,7 +2366,7 @@ var Search = input/* default */.Z.Search;
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
               size: 30,
               src: "",
-              symbol: type === "origin" ? item.originName : item.targetName
+              symbol: type === "origin" ? item.originName || item.originSymbol : item.targetName || item.targetSymbol
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "symbol",
               children: type === "origin" ? item.originName : item.targetName
@@ -2441,12 +2441,12 @@ const SvgArrowRight = (props) => /* @__PURE__ */ React.createElement("svg", arro
       children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
         className: "summaryWrap",
         children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-          symbol: asset === null || asset === void 0 ? void 0 : asset.originName,
+          symbol: (asset === null || asset === void 0 ? void 0 : asset.originName) || (asset === null || asset === void 0 ? void 0 : asset.originSymbol),
           src: "",
           size: 80
         }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
           className: "symbol",
-          children: [asset.originName, "-", asset.targetName]
+          children: [asset.originName || asset.originSymbol, "-", asset.targetName || asset.targetSymbol]
         }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
           className: "netWrap",
           children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
@@ -2928,9 +2928,9 @@ var InputToken = function InputToken(_ref) {
     bridgeType = _ref.bridgeType;
   var symbol = (0,react.useMemo)(function () {
     if (position === 'send') {
-      return bridgeType === 'mint' ? asset.originName : asset.targetName;
+      return bridgeType === 'mint' ? asset.originName || asset.originSymbol : asset.targetName || asset.targetSymbol;
     } else {
-      return bridgeType === 'mint' ? asset.targetName : asset.originName;
+      return bridgeType === 'mint' ? asset.targetName || asset.targetSymbol : asset.originName || asset.originSymbol;
     }
   }, [asset, bridgeType, position]);
   if (!asset) return /*#__PURE__*/(0,jsx_runtime.jsx)(jsx_runtime.Fragment, {});
