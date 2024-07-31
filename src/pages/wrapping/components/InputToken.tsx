@@ -9,9 +9,9 @@ type Props = {
 const InputToken = ({ position, asset, bridgeType }: Props) => {
     const symbol = useMemo(() => {
         if (position === 'send') {
-            return bridgeType === 'mint' ? asset.originName : asset.targetName
+            return bridgeType === 'mint' ? asset.originName||asset.originSymbol : asset.targetName||asset.targetSymbol
         } else {
-            return bridgeType === 'mint' ? asset.targetName : asset.originName
+            return bridgeType === 'mint' ? asset.targetName||asset.targetSymbol : asset.originName||asset.originSymbol
         }
 
     }, [asset, bridgeType, position])

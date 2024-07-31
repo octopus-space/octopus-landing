@@ -59,7 +59,7 @@ export default ({ onChange, type }: Props) => {
                 size={30}
                 src=""
                 symbol={
-                  type === "origin" ? item.originName : item.targetName
+                  type === "origin" ? item.originName||item.originSymbol : item.targetName||item.targetSymbol
                 }
               />
 
