@@ -27,7 +27,7 @@ export default ({ onInputChange, loading, refresh }: Props) => {
                     type="text"
                     onClick={refresh}
                 >
-                    {brc20Info.message} <SyncOutlined />
+                    {'Server Error'} <SyncOutlined />
                 </Button>
             )}
 

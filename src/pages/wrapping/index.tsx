@@ -711,14 +711,14 @@ export default () => {
 
 
               <div className="item">
-                <span>Minimum Bridging Quantity</span>
-                <span><NumberFormat value={inputRange.minAmount} precision={bridgeType === "mint"?asset.decimals:asset.decimals - asset.trimDecimals}/>   {bridgeType === "mint"
+                <span className="label">Minimum Bridging Quantity</span>
+                <span className="value"><NumberFormat value={inputRange.minAmount} precision={5}/>   {bridgeType === "mint"
                   ? asset.originSymbol
                   : asset.targetSymbol}</span>
               </div>
               <div className="item">
-                <span>Maximum Bridging Quantity</span>
-                <span><NumberFormat value={inputRange.maxAmount} precision={bridgeType === "mint"?asset.decimals:asset.decimals - asset.trimDecimals}/>  {bridgeType === "mint"
+                <span  className="label">Maximum Bridging Quantity</span>
+                <span className="value"><NumberFormat value={inputRange.maxAmount} precision={5}/>  {bridgeType === "mint"
                   ? asset.originSymbol
                   : asset.targetSymbol}</span>
               </div>
