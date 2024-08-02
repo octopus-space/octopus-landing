@@ -9474,11 +9474,14 @@ function _submitPrepayOrderMintMrc() {
 __webpack_require__.d(__webpack_exports__, {
   xo: function() { return /* binding */ amountRaw; },
   AY: function() { return /* binding */ calcMintBrc20Info; },
+  UI: function() { return /* binding */ calcMintBrc20Range; },
   jq: function() { return /* binding */ calcMintBtcInfo; },
+  dD: function() { return /* binding */ calcMintBtcRange; },
   Ds: function() { return /* binding */ calcMintMRC20Info; },
   oj: function() { return /* binding */ calcMintRunesInfo; },
   ug: function() { return /* binding */ calcRedeemBrc20Info; },
   PO: function() { return /* binding */ calcRedeemBtcInfo; },
+  gJ: function() { return /* binding */ calcRedeemBtcRange; },
   tw: function() { return /* binding */ calcRedeemMrc20Info; },
   iF: function() { return /* binding */ calcRedeemRunesInfo; },
   uY: function() { return /* binding */ determineAddressInfo; },
@@ -12575,6 +12578,16 @@ var calcMintBtcInfo = function calcMintBtcInfo(mintAmount, assetInfo) {
     confirmNumber: confirmNumber
   };
 };
+var calcMintBtcRange = function calcMintBtcRange(assetInfo) {
+  var amountLimitMaximum = assetInfo.amountLimitMaximum,
+    amountLimitMinimum = assetInfo.amountLimitMinimum;
+  return [Number(formatSat(amountLimitMinimum)), Number(formatSat(amountLimitMaximum))];
+};
+var calcRedeemBtcRange = function calcRedeemBtcRange(assetInfo) {
+  var amountLimitMaximum = assetInfo.amountLimitMaximum,
+    amountLimitMinimum = assetInfo.amountLimitMinimum;
+  return [Number(formatSat(amountLimitMinimum)), Number(formatSat(amountLimitMaximum))];
+};
 var calcMintBrc20Info = function calcMintBrc20Info(mintAmount, assetInfo, asset) {
   var btcPrice = assetInfo.btcPrice,
     mvcPrice = assetInfo.mvcPrice,
@@ -12612,6 +12625,15 @@ var calcMintBrc20Info = function calcMintBrc20Info(mintAmount, assetInfo, asset)
     totalFee: totalFee,
     confirmNumber: confirmNumber
   };
+};
+var calcMintBrc20Range = function calcMintBrc20Range(assetInfo, asset) {
+  var btcPrice = assetInfo.btcPrice,
+    amountLimitMaximum = assetInfo.amountLimitMaximum,
+    amountLimitMinimum = assetInfo.amountLimitMinimum;
+  var assetRdex = asset;
+  var minAmount = Number(amountLimitMinimum) / 1e8 * btcPrice / assetRdex.price;
+  var maxAmount = Number(amountLimitMaximum) / 1e8 * btcPrice / assetRdex.price;
+  return [minAmount, maxAmount];
 };
 function determineAddressInfo(address) {
   if (address.startsWith("bc1q")) {
@@ -46771,7 +46793,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"d444ff17","242":"82b41102","307":"c8fcc5da","503":"c2382a8e","717":"f64fe8df","866":"917c7cbd","898":"e5809493"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"d444ff17","242":"82b41102","307":"23d4248b","503":"c2382a8e","717":"f64fe8df","866":"917c7cbd","898":"e5809493"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -46780,7 +46802,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.miniCssF = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + {"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] + "." + {"307":"7da4c605","717":"aa4f2523","866":"fe26ca99"}[chunkId] + ".chunk.css";
+/******/ 			return "" + {"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] + "." + {"307":"4c0975a3","717":"aa4f2523","866":"fe26ca99"}[chunkId] + ".chunk.css";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -48624,7 +48646,7 @@ function _getRoutes() {
                 return Promise.all(/* import() | p__index */[__webpack_require__.e(208), __webpack_require__.e(242), __webpack_require__.e(866)]).then(__webpack_require__.bind(__webpack_require__, 68606));
               }),
               '2': /*#__PURE__*/react.lazy(function () {
-                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(208), __webpack_require__.e(503), __webpack_require__.e(898), __webpack_require__.e(307)]).then(__webpack_require__.bind(__webpack_require__, 29208));
+                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(208), __webpack_require__.e(503), __webpack_require__.e(898), __webpack_require__.e(307)]).then(__webpack_require__.bind(__webpack_require__, 13599));
               }),
               '@@/global-layout': /*#__PURE__*/react.lazy(function () {
                 return Promise.all(/* import() | layouts__index */[__webpack_require__.e(208), __webpack_require__.e(503), __webpack_require__.e(717)]).then(__webpack_require__.bind(__webpack_require__, 56356));
@@ -48662,7 +48684,7 @@ var jsx_runtime = __webpack_require__(85893);
 var antIcon = /*#__PURE__*/(0,jsx_runtime.jsx)(LoadingOutlined/* default */.Z, {
   style: {
     fontSize: 24,
-    color: "#d4f66b"
+    color: "#6e66fa"
   },
   spin: true
 });

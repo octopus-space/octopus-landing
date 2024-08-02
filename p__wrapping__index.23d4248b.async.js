@@ -92,7 +92,7 @@ var Popup = function Popup(_ref) {
 
 /***/ }),
 
-/***/ 29208:
+/***/ 13599:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 // ESM COMPAT FLAG
@@ -758,7 +758,7 @@ var createForOfIteratorHelper_default = /*#__PURE__*/__webpack_require__.n(creat
 // EXTERNAL MODULE: ./node_modules/bitcoinjs-lib/src/index.js
 var src = __webpack_require__(17656);
 // EXTERNAL MODULE: ./node_modules/decimal.js/decimal.mjs
-var decimal = __webpack_require__(90482);
+var decimal_js_decimal = __webpack_require__(90482);
 // EXTERNAL MODULE: ./node_modules/@bitcoin-js/tiny-secp256k1-asmjs/lib/index.js + 6 modules
 var lib = __webpack_require__(70155);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/typeof.js
@@ -773,7 +773,7 @@ var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
 
 
 function selectUTXOs(utxos, targetAmount) {
-  var totalAmount = new decimal/* Decimal */.t(0);
+  var totalAmount = new decimal_js_decimal/* Decimal */.t(0);
   var selectedUtxos = [];
   var _iterator = createForOfIteratorHelper_default()(utxos),
     _step;
@@ -799,12 +799,12 @@ function selectUTXOs(utxos, targetAmount) {
 function getTotalSatoshi(utxos) {
   return utxos.reduce(function (total, utxo) {
     return total.add(utxo.satoshis);
-  }, new decimal/* Decimal */.t(0));
+  }, new decimal_js_decimal/* Decimal */.t(0));
 }
 function calculateEstimatedFee(psbt, feeRate) {
   var tx = psbt.extractTransaction();
   var size = tx.virtualSize();
-  return new decimal/* Decimal */.t(size).mul(feeRate);
+  return new decimal_js_decimal/* Decimal */.t(size).mul(feeRate);
 }
 function buildTx(_x, _x2, _x3, _x4, _x5, _x6) {
   return _buildTx.apply(this, arguments);
@@ -932,7 +932,7 @@ var dist = __webpack_require__(35268);
 
 var DUST_SIZE = 546;
 var selectRuneUTXOs = function selectRuneUTXOs(utxos, targetAmount) {
-  var totalAmount = new decimal/* Decimal */.t(0);
+  var totalAmount = new decimal_js_decimal/* Decimal */.t(0);
   var selectedUtxos = [];
   var _iterator = createForOfIteratorHelper_default()(utxos),
     _step;
@@ -999,15 +999,15 @@ var sendRunes = /*#__PURE__*/function () {
               return runeUtxo.txId === utxo.txId && runeUtxo.outputIndex === utxo.outputIndex;
             });
           });
-          selectedRuneUtxos = selectRuneUTXOs(runeUtxos, new decimal/* Decimal */.t(runeAmount));
+          selectedRuneUtxos = selectRuneUTXOs(runeUtxos, new decimal_js_decimal/* Decimal */.t(runeAmount));
           btcNetwork = net === "mainnet" ? src/* networks */.QW.bitcoin : src/* networks */.QW.testnet;
           _context2.next = 16;
-          return buildTx(filteredUtxos, new decimal/* Decimal */.t(outputValue * 2), feeRate, {
+          return buildTx(filteredUtxos, new decimal_js_decimal/* Decimal */.t(outputValue * 2), feeRate, {
             runeId: runeId,
             recipient: recipient,
             runeUtxos: selectedRuneUtxos,
             outputValue: outputValue,
-            runeAmount: new decimal/* Decimal */.t(10).toPower(divisibility).mul(runeAmount)
+            runeAmount: new decimal_js_decimal/* Decimal */.t(10).toPower(divisibility).mul(runeAmount)
           }, senderAddress, /*#__PURE__*/function () {
             var _ref3 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(buildPsbtParams, selectedUTXOs, change, needChange) {
               var runeId, runeUtxos, runeAmount, recipient, _buildPsbtParams$outp, outputValue, psbt, _iterator2, _step2, runeUtxo, psbtInput, _iterator3, _step3, utxo, _psbtInput, _signPsbt, signPsbt;
@@ -1725,7 +1725,7 @@ function _mintBtc() {
 function wrapping_getTotalSatoshi(utxos) {
   return utxos.reduce(function (total, utxo) {
     return total.add(utxo.satoshi);
-  }, new decimal/* default */.Z(0));
+  }, new decimal_js_decimal/* default */.Z(0));
 }
 function _createPayment(_x27, _x28) {
   return _createPayment2.apply(this, arguments);
@@ -1818,7 +1818,7 @@ function _calculateFee(psbt, feeRate) {
   return size * feeRate;
 }
 var wrapping_selectUTXOs = function selectUTXOs(utxos, targetAmount) {
-  var totalAmount = new decimal/* default */.Z(0);
+  var totalAmount = new decimal_js_decimal/* default */.Z(0);
   var selectedUtxos = [];
   var _iterator = createForOfIteratorHelper_default()(utxos),
     _step;
@@ -2946,7 +2946,81 @@ var InputToken = function InputToken(_ref) {
   });
 };
 /* harmony default export */ var components_InputToken = (InputToken);
+;// CONCATENATED MODULE: ./src/components/NumberFormat/index.tsx
+
+
+
+
+
+var NumberFormat = function NumberFormat(props) {
+  var prefix = props.prefix,
+    suffix = props.suffix;
+  var beautyNumber = (0,react.useMemo)(function () {
+    var value = props.value,
+      _props$precision = props.precision,
+      precision = _props$precision === void 0 ? 16 : _props$precision,
+      kmt = props.kmt,
+      _props$isBig = props.isBig,
+      isBig = _props$isBig === void 0 ? false : _props$isBig,
+      decimal = props.decimal,
+      _props$tiny = props.tiny,
+      tiny = _props$tiny === void 0 ? false : _props$tiny,
+      _props$floor = props.floor,
+      floor = _props$floor === void 0 ? false : _props$floor,
+      _props$minDig = props.minDig,
+      minDig = _props$minDig === void 0 ? 0 : _props$minDig;
+    var _value = value;
+    if (Number.isNaN(Number(_value))) return '--';
+    if (isBig && decimal) {
+      if (String(_value).indexOf('.') > -1) {
+        _value = new decimal_js_decimal/* default */.Z(new decimal_js_decimal/* default */.Z(_value).times(1e8)).div(Math.pow(10, Number(decimal) + 8));
+      } else {
+        _value = new decimal_js_decimal/* default */.Z(_value).div(Math.pow(10, Number(decimal)));
+      }
+    }
+    try {
+      if (tiny && Number(_value) < 0.0000001 && Number(_value) > 0) {
+        var string = String(parseFloat(String(_value)));
+        var ret = string.replace('.', '').match(/(\d+)e-(\d+)/);
+        var left = '';
+        var dex = '';
+        if (ret && ret[1] && ret[2]) {
+          left = ret[1].substring(0, precision);
+          dex = String(Number(ret[2]) - 1);
+        }
+        return {
+          type: 'tiny',
+          left: left,
+          dex: dex
+        };
+      }
+    } catch (err) {
+      return '--';
+    }
+    if (floor) {
+      _value = Math.floor(Number(_value) * Math.pow(10, precision)) / Math.pow(10, precision);
+    }
+    return Number(_value).toLocaleString(undefined, {
+      minimumFractionDigits: minDig,
+      maximumFractionDigits: precision
+    });
+  }, [props]);
+  return /*#__PURE__*/(0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
+    children: [prefix, typeof beautyNumber === 'string' ? beautyNumber : /*#__PURE__*/(0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
+      children: ["0.0", /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+        style: {
+          fontSize: '0.8em',
+          top: "0.2em",
+          position: "relative"
+        },
+        children: beautyNumber.dex
+      }), beautyNumber.left]
+    }), suffix]
+  });
+};
+/* harmony default export */ var components_NumberFormat = (NumberFormat);
 ;// CONCATENATED MODULE: ./src/pages/wrapping/index.tsx
+
 
 
 
@@ -3277,6 +3351,68 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
       didCancel = true;
     };
   }, [actionType, brc20OriginSymbol, runesOriginTokenId, network, btcAddress, refreshInput, mrc20OriginTokenId]);
+  var inputRange = (0,react.useMemo)(function () {
+    var minAmount = 0;
+    var maxAmount = 0;
+    if (!AssetsInfo || !asset) return {
+      minAmount: minAmount,
+      maxAmount: maxAmount
+    };
+    switch (actionType) {
+      case 'mintbtc':
+        var _calcMintBtcRange = (0,utils/* calcMintBtcRange */.dD)(AssetsInfo);
+        var _calcMintBtcRange2 = slicedToArray_default()(_calcMintBtcRange, 2);
+        minAmount = _calcMintBtcRange2[0];
+        maxAmount = _calcMintBtcRange2[1];
+        break;
+      case 'redeembtc':
+        var _calcRedeemBtcRange = (0,utils/* calcRedeemBtcRange */.gJ)(AssetsInfo);
+        var _calcRedeemBtcRange2 = slicedToArray_default()(_calcRedeemBtcRange, 2);
+        minAmount = _calcRedeemBtcRange2[0];
+        maxAmount = _calcRedeemBtcRange2[1];
+        break;
+      case "mintbrc20":
+        var _calcMintBrc20Range = (0,utils/* calcMintBrc20Range */.UI)(AssetsInfo, asset);
+        var _calcMintBrc20Range2 = slicedToArray_default()(_calcMintBrc20Range, 2);
+        minAmount = _calcMintBrc20Range2[0];
+        maxAmount = _calcMintBrc20Range2[1];
+        break;
+      case "redeembrc20":
+        var _calcMintBrc20Range3 = (0,utils/* calcMintBrc20Range */.UI)(AssetsInfo, asset);
+        var _calcMintBrc20Range4 = slicedToArray_default()(_calcMintBrc20Range3, 2);
+        minAmount = _calcMintBrc20Range4[0];
+        maxAmount = _calcMintBrc20Range4[1];
+        break;
+      case "mintrunes":
+        var _calcMintBrc20Range5 = (0,utils/* calcMintBrc20Range */.UI)(AssetsInfo, asset);
+        var _calcMintBrc20Range6 = slicedToArray_default()(_calcMintBrc20Range5, 2);
+        minAmount = _calcMintBrc20Range6[0];
+        maxAmount = _calcMintBrc20Range6[1];
+        break;
+      case "redeemrunes":
+        var _calcMintBrc20Range7 = (0,utils/* calcMintBrc20Range */.UI)(AssetsInfo, asset);
+        var _calcMintBrc20Range8 = slicedToArray_default()(_calcMintBrc20Range7, 2);
+        minAmount = _calcMintBrc20Range8[0];
+        maxAmount = _calcMintBrc20Range8[1];
+        break;
+      case "mintmrc20":
+        var _calcMintBrc20Range9 = (0,utils/* calcMintBrc20Range */.UI)(AssetsInfo, asset);
+        var _calcMintBrc20Range10 = slicedToArray_default()(_calcMintBrc20Range9, 2);
+        minAmount = _calcMintBrc20Range10[0];
+        maxAmount = _calcMintBrc20Range10[1];
+        break;
+      case "redeemmrc20":
+        var _calcMintBrc20Range11 = (0,utils/* calcMintBrc20Range */.UI)(AssetsInfo, asset);
+        var _calcMintBrc20Range12 = slicedToArray_default()(_calcMintBrc20Range11, 2);
+        minAmount = _calcMintBrc20Range12[0];
+        maxAmount = _calcMintBrc20Range12[1];
+        break;
+    }
+    return {
+      maxAmount: maxAmount,
+      minAmount: minAmount
+    };
+  }, [asset, actionType, AssetsInfo]);
   var redeem = /*#__PURE__*/function () {
     var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
       var addressInfo, addressType;
@@ -3681,6 +3817,29 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
                   disabled: true
                 })
               })]
+            })]
+          })]
+        }), asset && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+          className: "range",
+          children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            className: "item",
+            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+              children: "Minimum Bridging Quantity"
+            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+              children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_NumberFormat, {
+                value: inputRange.minAmount,
+                precision: bridgeType === "mint" ? asset.decimals : asset.decimals - asset.trimDecimals
+              }), "   ", bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
+            })]
+          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            className: "item",
+            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+              children: "Maximum Bridging Quantity"
+            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+              children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_NumberFormat, {
+                value: inputRange.maxAmount,
+                precision: bridgeType === "mint" ? asset.decimals : asset.decimals - asset.trimDecimals
+              }), "  ", bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
             })]
           })]
         }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
