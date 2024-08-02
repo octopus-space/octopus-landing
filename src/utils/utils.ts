@@ -219,6 +219,22 @@ export const calcMintBtcInfo = (
   };
 };
 
+export const calcMintBtcRange = (assetInfo: API.AssetsData) => {
+  const { amountLimitMaximum, amountLimitMinimum } = assetInfo;
+  return [
+    Number(formatSat(amountLimitMinimum)),
+    Number(formatSat(amountLimitMaximum)),
+  ];
+};
+
+export const calcRedeemBtcRange = (assetInfo: API.AssetsData) => {
+  const { amountLimitMaximum, amountLimitMinimum } = assetInfo;
+  return [
+    Number(formatSat(amountLimitMinimum)),
+    Number(formatSat(amountLimitMaximum)),
+  ];
+};
+
 export const calcMintBrc20Info = (
   mintAmount: number,
   assetInfo: API.AssetsData,
@@ -274,6 +290,23 @@ export const calcMintBrc20Info = (
     totalFee,
     confirmNumber,
   };
+};
+
+export const calcMintBrc20Range = (
+  assetInfo: API.AssetsData,
+  asset: API.AssetItem
+) => {
+  const {
+    btcPrice,
+    amountLimitMaximum,
+    amountLimitMinimum,
+  } = assetInfo;
+  const assetRdex = asset;
+  const minAmount =
+    ((Number(amountLimitMinimum) / 1e8) * btcPrice) / assetRdex.price;
+  const maxAmount =
+    ((Number(amountLimitMaximum) / 1e8) * btcPrice) / assetRdex.price;
+  return [minAmount, maxAmount];
 };
 
 export function determineAddressInfo(address: string): string {
@@ -481,8 +514,7 @@ export const calcRedeemMrc20Info = (
     transactionSize,
   } = assetInfo;
 
-  const brcAmount =
-    redeemAmount / 10 ** (asset.decimals - asset.trimDecimals);
+  const brcAmount = redeemAmount / 10 ** (asset.decimals - asset.trimDecimals);
   const redeemMrc20EqualBtcAmount =
     ((asset.price * Number(brcAmount)) / btcPrice) * 10 ** 8;
 
@@ -549,7 +581,6 @@ export const calcMintMRC20Info = (
     assetList,
   } = assetInfo;
 
-
   const mintRawAmount = new Decimal(mintAmount)
     .mul(10 ** asset.decimals)
     .toFixed(0);
@@ -586,8 +617,8 @@ export const calcMintMRC20Info = (
   return {
     receiveAmount: receiveAmountFixed,
     minerFee: minerFee.toFixed(asset.decimals),
-    bridgeFee:bridgeFee.toFixed(asset.decimals),
-    totalFee:totalFee.toFixed(asset.decimals),
+    bridgeFee: bridgeFee.toFixed(asset.decimals),
+    totalFee: totalFee.toFixed(asset.decimals),
     confirmNumber,
   };
 };

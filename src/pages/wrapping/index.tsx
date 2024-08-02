@@ -20,11 +20,14 @@ import {
   FeeInfo,
   amountRaw,
   calcMintBrc20Info,
+  calcMintBrc20Range,
   calcMintBtcInfo,
+  calcMintBtcRange,
   calcMintMRC20Info,
   calcMintRunesInfo,
   calcRedeemBrc20Info,
   calcRedeemBtcInfo,
+  calcRedeemBtcRange,
   calcRedeemMrc20Info,
   calcRedeemRunesInfo,
   determineAddressInfo,
@@ -55,6 +58,7 @@ import SuccessModel from "@/components/SuccessModel";
 import SwitchChain from "./components/SwitchChain";
 import MintBrc20Input from "./components/MintBrc20Input";
 import InputToken from "./components/InputToken";
+import NumberFormat from "@/components/NumberFormat";
 const defalut: ConfirmProps = {
   show: false,
   amount: "",
@@ -297,6 +301,42 @@ export default () => {
       didCancel = true;
     };
   }, [actionType, brc20OriginSymbol, runesOriginTokenId, network, btcAddress, refreshInput, mrc20OriginTokenId]);
+
+  const inputRange = useMemo(() => {
+    let minAmount = 0;
+    let maxAmount = 0;
+    if (!AssetsInfo || !asset) return { minAmount, maxAmount }
+    switch (actionType) {
+      case 'mintbtc':
+        [minAmount, maxAmount] = calcMintBtcRange(AssetsInfo)
+        break;
+      case 'redeembtc':
+        [minAmount, maxAmount] = calcRedeemBtcRange(AssetsInfo)
+        break;
+      case "mintbrc20":
+        [minAmount, maxAmount] = calcMintBrc20Range(AssetsInfo, asset)
+        break;
+      case "redeembrc20":
+        [minAmount, maxAmount] = calcMintBrc20Range(AssetsInfo, asset)
+        break;
+      case "mintrunes":
+        [minAmount, maxAmount] = calcMintBrc20Range(AssetsInfo, asset)
+        break;
+      case "redeemrunes":
+        [minAmount, maxAmount] = calcMintBrc20Range(AssetsInfo, asset)
+        break;
+      case "mintmrc20":
+        [minAmount, maxAmount] = calcMintBrc20Range(AssetsInfo, asset)
+        break;
+      case "redeemmrc20":
+        [minAmount, maxAmount] = calcMintBrc20Range(AssetsInfo, asset)
+        break;
+    }
+    return {
+      maxAmount,
+      minAmount
+    }
+  }, [asset, actionType, AssetsInfo]);
 
 
 
@@ -665,6 +705,29 @@ export default () => {
               </div>
             </div>
           )}
+          {
+            asset && <div className="range">
+
+
+
+              <div className="item">
+                <span>Minimum Bridging Quantity</span>
+                <span><NumberFormat value={inputRange.minAmount} precision={bridgeType === "mint"?asset.decimals:asset.decimals - asset.trimDecimals}/>   {bridgeType === "mint"
+                  ? asset.originSymbol
+                  : asset.targetSymbol}</span>
+              </div>
+              <div className="item">
+                <span>Maximum Bridging Quantity</span>
+                <span><NumberFormat value={inputRange.maxAmount} precision={bridgeType === "mint"?asset.decimals:asset.decimals - asset.trimDecimals}/>  {bridgeType === "mint"
+                  ? asset.originSymbol
+                  : asset.targetSymbol}</span>
+              </div>
+
+
+
+            </div>
+          }
+
           <div className="submitWrap">
             <FormButton conditions={conditions} onClick={handleConfirm}>
               Bridge

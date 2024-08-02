@@ -5,7 +5,7 @@ import logo from "@/assets/logo.svg";
 import "./global.less";
 
 const antIcon = (
-  <LoadingOutlined style={{ fontSize: 24, color: "#d4f66b" }} spin />
+  <LoadingOutlined style={{ fontSize: 24, color: "#6e66fa" }} spin />
 );
 
 const App: React.FC = () => {
