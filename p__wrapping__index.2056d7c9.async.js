@@ -2878,7 +2878,7 @@ var flex = __webpack_require__(86250);
       children: [brc20Info && brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)(es_button/* default */.ZP, {
         type: "text",
         onClick: refresh,
-        children: [brc20Info.message, " ", /*#__PURE__*/(0,jsx_runtime.jsx)(SyncOutlined/* default */.Z, {})]
+        children: ['Server Error', " ", /*#__PURE__*/(0,jsx_runtime.jsx)(SyncOutlined/* default */.Z, {})]
       }), brc20Info && brc20Info.transferBalanceList.map(function (item) {
         return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
           className: "brcItem ".concat(inscription && inscription.inscriptionId === item.inscriptionId ? "active" : ""),
@@ -3824,21 +3824,25 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
           children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+              className: "label",
               children: "Minimum Bridging Quantity"
             }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+              className: "value",
               children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_NumberFormat, {
                 value: inputRange.minAmount,
-                precision: bridgeType === "mint" ? asset.decimals : asset.decimals - asset.trimDecimals
+                precision: 5
               }), "   ", bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+              className: "label",
               children: "Maximum Bridging Quantity"
             }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+              className: "value",
               children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_NumberFormat, {
                 value: inputRange.maxAmount,
-                precision: bridgeType === "mint" ? asset.decimals : asset.decimals - asset.trimDecimals
+                precision: 5
               }), "  ", bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
             })]
           })]
