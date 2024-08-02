@@ -2259,31 +2259,6 @@ const getTransitionName = (rootPrefixCls, motion, transitionName) => {
 
 /***/ }),
 
-/***/ 96159:
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   M2: function() { return /* binding */ isFragment; },
-/* harmony export */   Tm: function() { return /* binding */ cloneElement; }
-/* harmony export */ });
-/* unused harmony export replaceElement */
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
-
-function isFragment(child) {
-  return child && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.isValidElement(child) && child.type === react__WEBPACK_IMPORTED_MODULE_0__.Fragment;
-}
-const replaceElement = (element, replacement, props) => {
-  if (! /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.isValidElement(element)) {
-    return replacement;
-  }
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.cloneElement(element, typeof props === 'function' ? props(element.props || {}) : props);
-};
-function cloneElement(element, props) {
-  return replaceElement(element, element, props);
-}
-
-/***/ }),
-
 /***/ 33671:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
