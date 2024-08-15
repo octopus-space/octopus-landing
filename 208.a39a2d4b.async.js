@@ -1446,7 +1446,10 @@ const localeValues = {
     scanned: 'Scanned'
   },
   ColorPicker: {
-    presetEmpty: 'Empty'
+    presetEmpty: 'Empty',
+    transparent: 'Transparent',
+    singleColor: 'Single',
+    gradientColor: 'Gradient'
   }
 };
 /* harmony default export */ var es_locale_en_US = (localeValues);
@@ -2971,8 +2974,8 @@ var classCallCheck = __webpack_require__(15671);
 var createClass = __webpack_require__(43144);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
 var inherits = __webpack_require__(60136);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js + 1 modules
-var createSuper = __webpack_require__(18486);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js
+var createSuper = __webpack_require__(29388);
 ;// CONCATENATED MODULE: ./node_modules/rc-motion/es/DomWrapper.js
 
 

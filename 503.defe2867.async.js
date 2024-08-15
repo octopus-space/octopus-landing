@@ -1488,9 +1488,9 @@ function useWinClick(open, clickToHide, targetEle, popupEle, mask, maskClosable,
   // Click to hide is special action since click popup element should not hide
   react.useEffect(function () {
     if (clickToHide && popupEle && (!mask || maskClosable)) {
-      var onTriggerClose = function onTriggerClose(_ref) {
-        var target = _ref.target;
-        if (openRef.current && !inPopupOrChild(target)) {
+      var onTriggerClose = function onTriggerClose(e) {
+        var _e$composedPath;
+        if (openRef.current && !inPopupOrChild(((_e$composedPath = e.composedPath) === null || _e$composedPath === void 0 || (_e$composedPath = _e$composedPath.call(e)) === null || _e$composedPath === void 0 ? void 0 : _e$composedPath[0]) || e.target)) {
           triggerOpen(false);
         }
       };
@@ -2247,6 +2247,7 @@ const initCollapseMotion = function () {
     motionDeadline: 500
   };
 };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SelectPlacements = (/* unused pure expression or super */ null && (['bottomLeft', 'bottomRight', 'topLeft', 'topRight']));
 const getTransitionName = (rootPrefixCls, motion, transitionName) => {
   if (transitionName !== undefined) {
@@ -2328,8 +2329,11 @@ function spaceChildren(children, needInserted) {
   });
   return react__WEBPACK_IMPORTED_MODULE_0__.Children.map(childList, child => splitCNCharsBySpace(child, needInserted));
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ButtonTypes = (/* unused pure expression or super */ null && (['default', 'primary', 'dashed', 'link', 'text']));
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ButtonShapes = (/* unused pure expression or super */ null && (['default', 'circle', 'round']));
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ButtonHTMLTypes = (/* unused pure expression or super */ null && (['submit', 'button', 'reset']));
 
 /***/ }),
@@ -3210,7 +3214,7 @@ const genButtonStyle = function (token) {
   } = token;
   const iconOnlyCls = `${componentCls}-icon-only`;
   return [{
-    [`${prefixCls}`]: {
+    [prefixCls]: {
       fontSize,
       lineHeight,
       height: controlHeight,
@@ -3793,6 +3797,7 @@ const genRoundedArrow = (token, bgColor, boxShadow) => {
 };
 ;// CONCATENATED MODULE: ./node_modules/antd/es/style/placementArrow.js
 
+
 const MAX_VERTICAL_CONTENT_RADIUS = 8;
 function getArrowOffsetToken(options) {
   const {
@@ -3852,16 +3857,22 @@ function getArrowStyle(token, colorBg, options) {
         },
         transform: 'translateX(-50%) translateY(100%) rotate(180deg)'
       },
-      [`&-placement-topLeft > ${componentCls}-arrow`]: {
-        left: {
-          _skip_check_: true,
-          value: arrowOffsetHorizontal
+      '&-placement-topLeft': {
+        '--arrow-offset-horizontal': arrowOffsetHorizontal,
+        [`> ${componentCls}-arrow`]: {
+          left: {
+            _skip_check_: true,
+            value: arrowOffsetHorizontal
+          }
         }
       },
-      [`&-placement-topRight > ${componentCls}-arrow`]: {
-        right: {
-          _skip_check_: true,
-          value: arrowOffsetHorizontal
+      '&-placement-topRight': {
+        '--arrow-offset-horizontal': `calc(100% - ${(0,cssinjs_es/* unit */.bf)(arrowOffsetHorizontal)})`,
+        [`> ${componentCls}-arrow`]: {
+          right: {
+            _skip_check_: true,
+            value: arrowOffsetHorizontal
+          }
         }
       }
     })), isInject(!!arrowPlacement.bottom, {
@@ -3876,16 +3887,22 @@ function getArrowStyle(token, colorBg, options) {
         },
         transform: `translateX(-50%) translateY(-100%)`
       },
-      [`&-placement-bottomLeft > ${componentCls}-arrow`]: {
-        left: {
-          _skip_check_: true,
-          value: arrowOffsetHorizontal
+      '&-placement-bottomLeft': {
+        '--arrow-offset-horizontal': arrowOffsetHorizontal,
+        [`> ${componentCls}-arrow`]: {
+          left: {
+            _skip_check_: true,
+            value: arrowOffsetHorizontal
+          }
         }
       },
-      [`&-placement-bottomRight > ${componentCls}-arrow`]: {
-        right: {
-          _skip_check_: true,
-          value: arrowOffsetHorizontal
+      '&-placement-bottomRight': {
+        '--arrow-offset-horizontal': `calc(100% - ${(0,cssinjs_es/* unit */.bf)(arrowOffsetHorizontal)})`,
+        [`> ${componentCls}-arrow`]: {
+          right: {
+            _skip_check_: true,
+            value: arrowOffsetHorizontal
+          }
         }
       }
     })), isInject(!!arrowPlacement.left, {
@@ -4221,7 +4238,7 @@ const Sider = /*#__PURE__*/(/* unused pure expression or super */ null && (React
         mql = matchMedia(`screen and (max-width: ${dimensionMaxMap[breakpoint]})`);
         try {
           mql.addEventListener('change', responsiveHandler);
-        } catch (error) {
+        } catch (_a) {
           mql.addListener(responsiveHandler);
         }
         responsiveHandler(mql);
@@ -4230,7 +4247,7 @@ const Sider = /*#__PURE__*/(/* unused pure expression or super */ null && (React
     return () => {
       try {
         mql === null || mql === void 0 ? void 0 : mql.removeEventListener('change', responsiveHandler);
-      } catch (error) {
+      } catch (_a) {
         mql === null || mql === void 0 ? void 0 : mql.removeListener(responsiveHandler);
       }
     };
@@ -4608,7 +4625,9 @@ const genTooltipStyle = token => {
       width: 'max-content',
       maxWidth: tooltipMaxWidth,
       visibility: 'visible',
-      transformOrigin: `var(--arrow-x, 50%) var(--arrow-y, 50%)`,
+      // When use `autoArrow`, origin will follow the arrow position
+      '--valid-offset-x': 'var(--arrow-offset-horizontal, var(--arrow-x))',
+      transformOrigin: [`var(--valid-offset-x, 50%)`, `var(--arrow-y, 50%)`].join(' '),
       '&-hidden': {
         display: 'none'
       },
@@ -5717,7 +5736,7 @@ const getBaseStyle = token => {
   // Misc
   {
     '': {
-      [`${componentCls}`]: Object.assign(Object.assign({}, (0,style/* clearFix */.dF)()), {
+      [componentCls]: Object.assign(Object.assign({}, (0,style/* clearFix */.dF)()), {
         // Hidden
         '&-hidden': {
           display: 'none'
@@ -6843,6 +6862,7 @@ const dropdown_style_prepareComponentToken = token => Object.assign(Object.assig
 
 
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Placements = (/* unused pure expression or super */ null && (['topLeft', 'topCenter', 'topRight', 'bottomLeft', 'bottomCenter', 'bottomRight', 'top', 'bottom']));
 const Dropdown = props => {
   var _a;
@@ -7192,8 +7212,8 @@ var createClass = __webpack_require__(43144);
 var assertThisInitialized = __webpack_require__(97326);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
 var inherits = __webpack_require__(60136);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js + 1 modules
-var createSuper = __webpack_require__(18486);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js
+var createSuper = __webpack_require__(29388);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
 var defineProperty = __webpack_require__(4942);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/Children/toArray.js
@@ -9124,7 +9144,7 @@ var Field = /*#__PURE__*/function (_React$Component) {
          */
         case 'remove':
           {
-            if (shouldUpdate) {
+            if (shouldUpdate && requireUpdate(shouldUpdate, prevStore, store, prevValue, curValue, info)) {
               _this.reRender();
               return;
             }
@@ -12423,7 +12443,7 @@ const genModalStyle = token => {
           display: 'flex',
           fontSize: token.fontSizeLG,
           fontStyle: 'normal',
-          lineHeight: `${(0,cssinjs_es/* unit */.bf)(token.modalCloseBtnSize)}`,
+          lineHeight: (0,cssinjs_es/* unit */.bf)(token.modalCloseBtnSize),
           justifyContent: 'center',
           textTransform: 'none',
           textRendering: 'auto'
@@ -13573,7 +13593,7 @@ const genSkeletonElementAvatar = token => {
     controlHeightSM
   } = token;
   return {
-    [`${skeletonAvatarCls}`]: Object.assign({
+    [skeletonAvatarCls]: Object.assign({
       display: 'inline-block',
       verticalAlign: 'top',
       background: gradientFromColor
@@ -13596,7 +13616,7 @@ const genSkeletonElementInput = token => {
     calc
   } = token;
   return {
-    [`${skeletonInputCls}`]: Object.assign({
+    [skeletonInputCls]: Object.assign({
       display: 'inline-block',
       verticalAlign: 'top',
       background: gradientFromColor,
@@ -13618,7 +13638,7 @@ const genSkeletonElementImage = token => {
     calc
   } = token;
   return {
-    [`${skeletonImageCls}`]: Object.assign(Object.assign({
+    [skeletonImageCls]: Object.assign(Object.assign({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -13672,7 +13692,7 @@ const genSkeletonElementButton = token => {
     calc
   } = token;
   return Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({
-    [`${skeletonButtonCls}`]: Object.assign({
+    [skeletonButtonCls]: Object.assign({
       display: 'inline-block',
       verticalAlign: 'top',
       background: gradientFromColor,
@@ -13710,7 +13730,7 @@ const genBaseStyle = token => {
     paragraphMarginTop
   } = token;
   return {
-    [`${componentCls}`]: {
+    [componentCls]: {
       display: 'table',
       width: '100%',
       [`${componentCls}-header`]: {
@@ -13718,7 +13738,7 @@ const genBaseStyle = token => {
         paddingInlineEnd: padding,
         verticalAlign: 'top',
         // Avatar
-        [`${skeletonAvatarCls}`]: Object.assign({
+        [skeletonAvatarCls]: Object.assign({
           display: 'inline-block',
           verticalAlign: 'top',
           background: gradientFromColor
@@ -13734,7 +13754,7 @@ const genBaseStyle = token => {
         width: '100%',
         verticalAlign: 'top',
         // Title
-        [`${skeletonTitleCls}`]: {
+        [skeletonTitleCls]: {
           width: '100%',
           height: titleHeight,
           background: gradientFromColor,
@@ -13744,7 +13764,7 @@ const genBaseStyle = token => {
           }
         },
         // paragraph
-        [`${skeletonParagraphCls}`]: {
+        [skeletonParagraphCls]: {
           padding: 0,
           '> li': {
             width: '100%',
@@ -13769,7 +13789,7 @@ const genBaseStyle = token => {
     },
     [`${componentCls}-with-avatar ${componentCls}-content`]: {
       // Title
-      [`${skeletonTitleCls}`]: {
+      [skeletonTitleCls]: {
         marginBlockStart: marginSM,
         [`+ ${skeletonParagraphCls}`]: {
           marginBlockStart: paragraphMarginTop
@@ -13784,10 +13804,10 @@ const genBaseStyle = token => {
     // Skeleton Block Button, Input
     [`${componentCls}${componentCls}-block`]: {
       width: '100%',
-      [`${skeletonButtonCls}`]: {
+      [skeletonButtonCls]: {
         width: '100%'
       },
-      [`${skeletonInputCls}`]: {
+      [skeletonInputCls]: {
         width: '100%'
       }
     },
@@ -16762,8 +16782,8 @@ var classCallCheck = __webpack_require__(15671);
 var createClass = __webpack_require__(43144);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
 var inherits = __webpack_require__(60136);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js + 1 modules
-var createSuper = __webpack_require__(18486);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js
+var createSuper = __webpack_require__(29388);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/omit.js
 var omit = __webpack_require__(98423);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/ref.js
@@ -19354,8 +19374,8 @@ var classCallCheck = __webpack_require__(15671);
 var createClass = __webpack_require__(43144);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
 var inherits = __webpack_require__(60136);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js + 1 modules
-var createSuper = __webpack_require__(18486);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js
+var createSuper = __webpack_require__(29388);
 ;// CONCATENATED MODULE: ./node_modules/rc-resize-observer/es/SingleObserver/DomWrapper.js
 
 

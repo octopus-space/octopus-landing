@@ -136,6 +136,8 @@ var space = __webpack_require__(42075);
 var dropdown = __webpack_require__(38872);
 // EXTERNAL MODULE: ./node_modules/antd/es/input-number/index.js + 18 modules
 var input_number = __webpack_require__(24435);
+// EXTERNAL MODULE: ./node_modules/antd/es/alert/index.js + 4 modules
+var es_alert = __webpack_require__(40056);
 // EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/DownOutlined.js + 1 modules
 var DownOutlined = __webpack_require__(80882);
 // EXTERNAL MODULE: ./node_modules/react/index.js
@@ -428,11 +430,48 @@ var size = 10;
 
 
 
+
 var items = [{
+  key: "mvcToBtc",
+  label: "BTC",
+  children: /*#__PURE__*/(0,jsx_runtime.jsx)(HistoryPanel, {
+    type: "mvcToBtc"
+  }),
+  destroyInactiveTabPane: true
+}, {
+  key: "mvcToMrc20",
+  label: "MRC-20",
+  children: /*#__PURE__*/(0,jsx_runtime.jsx)(HistoryPanel, {
+    type: "mvcToMrc20"
+  }),
+  destroyInactiveTabPane: true
+}, {
+  key: "mvcToBrc20",
+  label: "BRC20",
+  children: /*#__PURE__*/(0,jsx_runtime.jsx)(HistoryPanel, {
+    type: "mvcToBrc20"
+  }),
+  destroyInactiveTabPane: true
+}, {
+  key: "mvcToRunes",
+  label: "RUNES",
+  children: /*#__PURE__*/(0,jsx_runtime.jsx)(HistoryPanel, {
+    type: "mvcToRunes"
+  }),
+  destroyInactiveTabPane: true
+}];
+var BTC2MVCItems = [{
   key: "btcToMvc",
   label: "BTC",
   children: /*#__PURE__*/(0,jsx_runtime.jsx)(HistoryPanel, {
     type: "btcToMvc"
+  }),
+  destroyInactiveTabPane: true
+}, {
+  key: "mrc20ToMvc",
+  label: "MRC-20",
+  children: /*#__PURE__*/(0,jsx_runtime.jsx)(HistoryPanel, {
+    type: "mrc20ToMvc"
   }),
   destroyInactiveTabPane: true
 }, {
@@ -449,53 +488,29 @@ var items = [{
     type: "runesToMvc"
   }),
   destroyInactiveTabPane: true
-}, {
-  key: "mrc20ToMvc",
-  label: "MRC-20",
-  children: /*#__PURE__*/(0,jsx_runtime.jsx)(HistoryPanel, {
-    type: "mrc20ToMvc"
-  }),
-  destroyInactiveTabPane: true
-}, {
-  key: "mvcToBtc",
-  label: "Redeem BTC",
-  children: /*#__PURE__*/(0,jsx_runtime.jsx)(HistoryPanel, {
-    type: "mvcToBtc"
-  }),
-  destroyInactiveTabPane: true
-}, {
-  key: "mvcToBrc20",
-  label: "Redeem BRC20",
-  children: /*#__PURE__*/(0,jsx_runtime.jsx)(HistoryPanel, {
-    type: "mvcToBrc20"
-  }),
-  destroyInactiveTabPane: true
-}, {
-  key: "mvcToRunes",
-  label: "Redeem RUNES",
-  children: /*#__PURE__*/(0,jsx_runtime.jsx)(HistoryPanel, {
-    type: "mvcToRunes"
-  }),
-  destroyInactiveTabPane: true
-}, {
-  key: "mvcToMrc20",
-  label: "Redeem MRC-20",
-  children: /*#__PURE__*/(0,jsx_runtime.jsx)(HistoryPanel, {
-    type: "mvcToMrc20"
-  }),
-  destroyInactiveTabPane: true
 }];
 /* harmony default export */ var History = (function (_ref) {
   var show = _ref.show,
     onClose = _ref.onClose,
     protocolType = _ref.protocolType,
     bridgeType = _ref.bridgeType;
-  var _useState = (0,react.useState)("btcToMvc"),
+  var _useState = (0,react.useState)("BTC TO MVC"),
     _useState2 = slicedToArray_default()(_useState, 2),
-    activeKey = _useState2[0],
-    setActiveKey = _useState2[1];
+    segmentedValue = _useState2[0],
+    setSegmentedValue = _useState2[1];
+  var _useState3 = (0,react.useState)("btcToMvc"),
+    _useState4 = slicedToArray_default()(_useState3, 2),
+    activeKey = _useState4[0],
+    setActiveKey = _useState4[1];
+  var _useState5 = (0,react.useState)("mvcToBtc"),
+    _useState6 = slicedToArray_default()(_useState5, 2),
+    mvc2btcKey = _useState6[0],
+    setMvc2BtcKey = _useState6[1];
   var onChange = function onChange(key) {
     setActiveKey(key);
+  };
+  var onChange2 = function onChange2(key) {
+    setMvc2BtcKey(key);
   };
   (0,react.useEffect)(function () {
     var key = "";
@@ -513,25 +528,39 @@ var items = [{
       if (protocolType === "mrc20") {
         key += "Mrc20";
       }
+      setSegmentedValue("MVC TO BTC");
+      setMvc2BtcKey(key);
     }
     if (bridgeType === "mint") {
       key += protocolType;
       key += "ToMvc";
+      setSegmentedValue("BTC TO MVC");
+      setActiveKey(key);
     }
-    setActiveKey(key);
   }, [protocolType, bridgeType]);
-  return /*#__PURE__*/(0,jsx_runtime.jsx)(ResponPopup/* default */.Z, {
+  return /*#__PURE__*/(0,jsx_runtime.jsxs)(ResponPopup/* default */.Z, {
     title: "History",
     modalWidth: 520,
     show: show,
     onClose: onClose,
     closable: true,
     className: "historyWrap",
-    children: /*#__PURE__*/(0,jsx_runtime.jsx)(tabs/* default */.Z, {
+    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(segmented/* default */.Z, {
+      options: ['BTC TO MVC', 'MVC TO BTC'],
+      block: true,
+      value: segmentedValue,
+      onChange: function onChange(value) {
+        setSegmentedValue(value);
+      }
+    }), segmentedValue === 'BTC TO MVC' ? /*#__PURE__*/(0,jsx_runtime.jsx)(tabs/* default */.Z, {
       activeKey: activeKey,
-      items: items,
+      items: BTC2MVCItems,
       onChange: onChange
-    })
+    }) : /*#__PURE__*/(0,jsx_runtime.jsx)(tabs/* default */.Z, {
+      activeKey: mvc2btcKey,
+      items: items,
+      onChange: onChange2
+    })]
   });
 });
 ;// CONCATENATED MODULE: ./src/components/FormButton/index.less
@@ -681,6 +710,21 @@ var SegOptions = [{
     },
     className: "SegmentedItem",
     children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
+      symbol: "MRC20",
+      src: metaid_b_y_namespaceObject,
+      size: 28
+    }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+      children: "MRC20"
+    })]
+  }),
+  value: "mrc20"
+}, {
+  label: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+    style: {
+      padding: 4
+    },
+    className: "SegmentedItem",
+    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
       symbol: "BRC20",
       src: brc20_namespaceObject,
       size: 28
@@ -705,22 +749,8 @@ var SegOptions = [{
   }),
   value: "runes",
   disabled: false
-}, {
-  label: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-    style: {
-      padding: 4
-    },
-    className: "SegmentedItem",
-    children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-      symbol: "MRC20",
-      src: metaid_b_y_namespaceObject,
-      size: 28
-    }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-      children: "MRC20"
-    })]
-  }),
-  value: "mrc20"
 }
+
 // {
 //   label: (
 //     <div style={{ padding: 4 }} className="SegmentedItem">
@@ -1174,9 +1204,10 @@ var sleep = function sleep(ms) {
     return setTimeout(resolve, ms);
   });
 };
+// send mvc side token
 function sendToken(_x, _x2, _x3, _x4) {
   return _sendToken.apply(this, arguments);
-}
+} // sign redeem  publicKey
 function _sendToken() {
   _sendToken = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(amount, address, targetTokenCodeHash, targetTokenGenesis) {
     var res;
@@ -1223,7 +1254,7 @@ function _sendToken() {
 }
 function signPublicKey() {
   return _signPublicKey.apply(this, arguments);
-}
+} // sign mint publicKey
 function _signPublicKey() {
   _signPublicKey = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
     var publicKey, publicKeyReceive, publicKeyReceiveSign, ret, publicKeySign;
@@ -1281,7 +1312,7 @@ function _signPublicKey() {
 }
 function signMintPublicKey() {
   return _signMintPublicKey.apply(this, arguments);
-}
+} // 4 redeem methods for 4 different assets types easy to understand
 function _signMintPublicKey() {
   _signMintPublicKey = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
     var publicKeyReceive, publicKey, publicKeySign, ret, publicKeyReceiveSign;
@@ -1555,6 +1586,8 @@ function _redeemRunes() {
 function redeemMrc20(_x17, _x18, _x19, _x20) {
   return _redeemMrc.apply(this, arguments);
 }
+
+// send btc
 function _redeemMrc() {
   _redeemMrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee7(redeemAmount, asset, addressType, network) {
     var _yield$signPublicKey4, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr4, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, txid, submitPrepayOrderRedeemDto, ret;
@@ -1654,6 +1687,8 @@ function _transferBTC() {
 function mintBtc(_x22, _x23, _x24, _x25, _x26) {
   return _mintBtc.apply(this, arguments);
 }
+
+// TODO send BRC20
 function _mintBtc() {
   _mintBtc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee9(mintAmount, btcAsset, addressType, network, assetInfo) {
     var _yield$signMintPublic, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr5, createResp, orderId, bridgeAddress, txHex, submitPrepayOrderMintDto, submitRes;
@@ -3219,7 +3254,7 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
         setFeeInfo(info);
       } catch (err) {
         console.log(err);
-        message/* default */.ZP.error(err.message || "unknown error");
+        // message.error(err.message || "unknown error");
         setReciveAmount("");
         setErrorMsg(err.message || "unknown error");
       }
@@ -3597,6 +3632,12 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
       }
     });
   };
+  var balCheck = (0,react.useMemo)(function () {
+    if (Number(amount) > Number(sendBal)) {
+      return 'Insufficient balance.';
+    }
+    return '';
+  }, [amount, sendBal]);
   return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
     className: "wrapPage",
     children: [/*#__PURE__*/(0,jsx_runtime.jsx)(segmented/* default */.Z, {
@@ -3830,7 +3871,7 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
               className: "value",
               children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_NumberFormat, {
                 value: inputRange.minAmount,
-                precision: 5
+                precision: bridgeType === 'mint' ? asset.decimals : asset.decimals - asset.trimDecimals
               }), "   ", bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
@@ -3842,11 +3883,25 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
               className: "value",
               children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_NumberFormat, {
                 value: inputRange.maxAmount,
-                precision: 5
-              }), "  ", bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
+                precision: bridgeType === 'mint' ? asset.decimals : asset.decimals - asset.trimDecimals
+              }), "   ", bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
             })]
           })]
-        }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+        }), balCheck && /*#__PURE__*/(0,jsx_runtime.jsx)(es_alert/* default */.Z, {
+          message: balCheck,
+          type: "warning",
+          style: {
+            marginTop: 20
+          },
+          showIcon: true
+        }), ErrorMsg && /*#__PURE__*/(0,jsx_runtime.jsx)(es_alert/* default */.Z, {
+          message: ErrorMsg,
+          type: "warning",
+          style: {
+            marginTop: 20
+          },
+          showIcon: true
+        }), asset && /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
           className: "submitWrap",
           children: /*#__PURE__*/(0,jsx_runtime.jsx)(components_FormButton, {
             conditions: conditions,

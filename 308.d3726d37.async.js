@@ -1,4 +1,4 @@
-(self["webpackChunk"] = self["webpackChunk"] || []).push([[898],{
+(self["webpackChunk"] = self["webpackChunk"] || []).push([[308],{
 
 /***/ 80882:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
@@ -3417,6 +3417,7 @@ exports.randomBytes = randomBytes;
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(93967);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_0__);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InputStatuses = (/* unused pure expression or super */ null && (['warning', 'error', '']));
 function getStatusClassNames(prefixCls, status, hasFeedback) {
   return classnames__WEBPACK_IMPORTED_MODULE_0___default()({
@@ -3428,6 +3429,537 @@ function getStatusClassNames(prefixCls, status, hasFeedback) {
   });
 }
 const getMergedStatus = (contextStatus, customStatus) => customStatus || contextStatus;
+
+/***/ }),
+
+/***/ 40056:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  Z: function() { return /* binding */ es_alert; }
+});
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
+// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/CheckCircleFilled.js + 1 modules
+var CheckCircleFilled = __webpack_require__(89739);
+// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/CloseCircleFilled.js + 1 modules
+var CloseCircleFilled = __webpack_require__(4340);
+// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/CloseOutlined.js + 1 modules
+var CloseOutlined = __webpack_require__(97937);
+// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/ExclamationCircleFilled.js + 1 modules
+var ExclamationCircleFilled = __webpack_require__(21640);
+// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/InfoCircleFilled.js + 1 modules
+var InfoCircleFilled = __webpack_require__(78860);
+// EXTERNAL MODULE: ./node_modules/classnames/index.js
+var classnames = __webpack_require__(93967);
+var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
+// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 13 modules
+var es = __webpack_require__(29372);
+// EXTERNAL MODULE: ./node_modules/rc-util/es/pickAttrs.js
+var pickAttrs = __webpack_require__(64217);
+// EXTERNAL MODULE: ./node_modules/rc-util/es/ref.js
+var es_ref = __webpack_require__(42550);
+// EXTERNAL MODULE: ./node_modules/antd/es/_util/reactNode.js
+var reactNode = __webpack_require__(96159);
+// EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
+var context = __webpack_require__(53124);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 37 modules
+var cssinjs_es = __webpack_require__(11568);
+// EXTERNAL MODULE: ./node_modules/antd/es/style/index.js
+var style = __webpack_require__(14747);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genStyleUtils.js
+var genStyleUtils = __webpack_require__(83559);
+;// CONCATENATED MODULE: ./node_modules/antd/es/alert/style/index.js
+
+
+
+const genAlertTypeStyle = (bgColor, borderColor, iconColor, token, alertCls) => ({
+  background: bgColor,
+  border: `${(0,cssinjs_es/* unit */.bf)(token.lineWidth)} ${token.lineType} ${borderColor}`,
+  [`${alertCls}-icon`]: {
+    color: iconColor
+  }
+});
+const genBaseStyle = token => {
+  const {
+    componentCls,
+    motionDurationSlow: duration,
+    marginXS,
+    marginSM,
+    fontSize,
+    fontSizeLG,
+    lineHeight,
+    borderRadiusLG: borderRadius,
+    motionEaseInOutCirc,
+    withDescriptionIconSize,
+    colorText,
+    colorTextHeading,
+    withDescriptionPadding,
+    defaultPadding
+  } = token;
+  return {
+    [componentCls]: Object.assign(Object.assign({}, (0,style/* resetComponent */.Wf)(token)), {
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      padding: defaultPadding,
+      wordWrap: 'break-word',
+      borderRadius,
+      [`&${componentCls}-rtl`]: {
+        direction: 'rtl'
+      },
+      [`${componentCls}-content`]: {
+        flex: 1,
+        minWidth: 0
+      },
+      [`${componentCls}-icon`]: {
+        marginInlineEnd: marginXS,
+        lineHeight: 0
+      },
+      '&-description': {
+        display: 'none',
+        fontSize,
+        lineHeight
+      },
+      '&-message': {
+        color: colorTextHeading
+      },
+      [`&${componentCls}-motion-leave`]: {
+        overflow: 'hidden',
+        opacity: 1,
+        transition: `max-height ${duration} ${motionEaseInOutCirc}, opacity ${duration} ${motionEaseInOutCirc},
+        padding-top ${duration} ${motionEaseInOutCirc}, padding-bottom ${duration} ${motionEaseInOutCirc},
+        margin-bottom ${duration} ${motionEaseInOutCirc}`
+      },
+      [`&${componentCls}-motion-leave-active`]: {
+        maxHeight: 0,
+        marginBottom: '0 !important',
+        paddingTop: 0,
+        paddingBottom: 0,
+        opacity: 0
+      }
+    }),
+    [`${componentCls}-with-description`]: {
+      alignItems: 'flex-start',
+      padding: withDescriptionPadding,
+      [`${componentCls}-icon`]: {
+        marginInlineEnd: marginSM,
+        fontSize: withDescriptionIconSize,
+        lineHeight: 0
+      },
+      [`${componentCls}-message`]: {
+        display: 'block',
+        marginBottom: marginXS,
+        color: colorTextHeading,
+        fontSize: fontSizeLG
+      },
+      [`${componentCls}-description`]: {
+        display: 'block',
+        color: colorText
+      }
+    },
+    [`${componentCls}-banner`]: {
+      marginBottom: 0,
+      border: '0 !important',
+      borderRadius: 0
+    }
+  };
+};
+const genTypeStyle = token => {
+  const {
+    componentCls,
+    colorSuccess,
+    colorSuccessBorder,
+    colorSuccessBg,
+    colorWarning,
+    colorWarningBorder,
+    colorWarningBg,
+    colorError,
+    colorErrorBorder,
+    colorErrorBg,
+    colorInfo,
+    colorInfoBorder,
+    colorInfoBg
+  } = token;
+  return {
+    [componentCls]: {
+      '&-success': genAlertTypeStyle(colorSuccessBg, colorSuccessBorder, colorSuccess, token, componentCls),
+      '&-info': genAlertTypeStyle(colorInfoBg, colorInfoBorder, colorInfo, token, componentCls),
+      '&-warning': genAlertTypeStyle(colorWarningBg, colorWarningBorder, colorWarning, token, componentCls),
+      '&-error': Object.assign(Object.assign({}, genAlertTypeStyle(colorErrorBg, colorErrorBorder, colorError, token, componentCls)), {
+        [`${componentCls}-description > pre`]: {
+          margin: 0,
+          padding: 0
+        }
+      })
+    }
+  };
+};
+const genActionStyle = token => {
+  const {
+    componentCls,
+    iconCls,
+    motionDurationMid,
+    marginXS,
+    fontSizeIcon,
+    colorIcon,
+    colorIconHover
+  } = token;
+  return {
+    [componentCls]: {
+      '&-action': {
+        marginInlineStart: marginXS
+      },
+      [`${componentCls}-close-icon`]: {
+        marginInlineStart: marginXS,
+        padding: 0,
+        overflow: 'hidden',
+        fontSize: fontSizeIcon,
+        lineHeight: (0,cssinjs_es/* unit */.bf)(fontSizeIcon),
+        backgroundColor: 'transparent',
+        border: 'none',
+        outline: 'none',
+        cursor: 'pointer',
+        [`${iconCls}-close`]: {
+          color: colorIcon,
+          transition: `color ${motionDurationMid}`,
+          '&:hover': {
+            color: colorIconHover
+          }
+        }
+      },
+      '&-close-text': {
+        color: colorIcon,
+        transition: `color ${motionDurationMid}`,
+        '&:hover': {
+          color: colorIconHover
+        }
+      }
+    }
+  };
+};
+const prepareComponentToken = token => {
+  const paddingHorizontal = 12; // Fixed value here.
+  return {
+    withDescriptionIconSize: token.fontSizeHeading3,
+    defaultPadding: `${token.paddingContentVerticalSM}px ${paddingHorizontal}px`,
+    withDescriptionPadding: `${token.paddingMD}px ${token.paddingContentHorizontalLG}px`
+  };
+};
+/* harmony default export */ var alert_style = ((0,genStyleUtils/* genStyleHooks */.I$)('Alert', token => [genBaseStyle(token), genTypeStyle(token), genActionStyle(token)], prepareComponentToken));
+;// CONCATENATED MODULE: ./node_modules/antd/es/alert/Alert.js
+"use client";
+
+var __rest = undefined && undefined.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const iconMapFilled = {
+  success: CheckCircleFilled/* default */.Z,
+  info: InfoCircleFilled/* default */.Z,
+  error: CloseCircleFilled/* default */.Z,
+  warning: ExclamationCircleFilled/* default */.Z
+};
+const IconNode = props => {
+  const {
+    icon,
+    prefixCls,
+    type
+  } = props;
+  const iconType = iconMapFilled[type] || null;
+  if (icon) {
+    return (0,reactNode/* replaceElement */.wm)(icon, /*#__PURE__*/react.createElement("span", {
+      className: `${prefixCls}-icon`
+    }, icon), () => ({
+      className: classnames_default()(`${prefixCls}-icon`, {
+        [icon.props.className]: icon.props.className
+      })
+    }));
+  }
+  return /*#__PURE__*/react.createElement(iconType, {
+    className: `${prefixCls}-icon`
+  });
+};
+const CloseIconNode = props => {
+  const {
+    isClosable,
+    prefixCls,
+    closeIcon,
+    handleClose,
+    ariaProps
+  } = props;
+  const mergedCloseIcon = closeIcon === true || closeIcon === undefined ? /*#__PURE__*/react.createElement(CloseOutlined/* default */.Z, null) : closeIcon;
+  return isClosable ? ( /*#__PURE__*/react.createElement("button", Object.assign({
+    type: "button",
+    onClick: handleClose,
+    className: `${prefixCls}-close-icon`,
+    tabIndex: 0
+  }, ariaProps), mergedCloseIcon)) : null;
+};
+const Alert = /*#__PURE__*/react.forwardRef((props, ref) => {
+  const {
+      description,
+      prefixCls: customizePrefixCls,
+      message,
+      banner,
+      className,
+      rootClassName,
+      style,
+      onMouseEnter,
+      onMouseLeave,
+      onClick,
+      afterClose,
+      showIcon,
+      closable,
+      closeText,
+      closeIcon,
+      action,
+      id
+    } = props,
+    otherProps = __rest(props, ["description", "prefixCls", "message", "banner", "className", "rootClassName", "style", "onMouseEnter", "onMouseLeave", "onClick", "afterClose", "showIcon", "closable", "closeText", "closeIcon", "action", "id"]);
+  const [closed, setClosed] = react.useState(false);
+  if (false) {}
+  const internalRef = react.useRef(null);
+  react.useImperativeHandle(ref, () => ({
+    nativeElement: internalRef.current
+  }));
+  const {
+    getPrefixCls,
+    direction,
+    alert
+  } = react.useContext(context/* ConfigContext */.E_);
+  const prefixCls = getPrefixCls('alert', customizePrefixCls);
+  const [wrapCSSVar, hashId, cssVarCls] = alert_style(prefixCls);
+  const handleClose = e => {
+    var _a;
+    setClosed(true);
+    (_a = props.onClose) === null || _a === void 0 ? void 0 : _a.call(props, e);
+  };
+  const type = react.useMemo(() => {
+    if (props.type !== undefined) {
+      return props.type;
+    }
+    // banner mode defaults to 'warning'
+    return banner ? 'warning' : 'info';
+  }, [props.type, banner]);
+  // closeable when closeText or closeIcon is assigned
+  const isClosable = react.useMemo(() => {
+    if (typeof closable === 'object' && closable.closeIcon) return true;
+    if (closeText) {
+      return true;
+    }
+    if (typeof closable === 'boolean') {
+      return closable;
+    }
+    // should be true when closeIcon is 0 or ''
+    if (closeIcon !== false && closeIcon !== null && closeIcon !== undefined) {
+      return true;
+    }
+    return !!(alert === null || alert === void 0 ? void 0 : alert.closable);
+  }, [closeText, closeIcon, closable, alert === null || alert === void 0 ? void 0 : alert.closable]);
+  // banner mode defaults to Icon
+  const isShowIcon = banner && showIcon === undefined ? true : showIcon;
+  const alertCls = classnames_default()(prefixCls, `${prefixCls}-${type}`, {
+    [`${prefixCls}-with-description`]: !!description,
+    [`${prefixCls}-no-icon`]: !isShowIcon,
+    [`${prefixCls}-banner`]: !!banner,
+    [`${prefixCls}-rtl`]: direction === 'rtl'
+  }, alert === null || alert === void 0 ? void 0 : alert.className, className, rootClassName, cssVarCls, hashId);
+  const restProps = (0,pickAttrs/* default */.Z)(otherProps, {
+    aria: true,
+    data: true
+  });
+  const mergedCloseIcon = react.useMemo(() => {
+    var _a, _b;
+    if (typeof closable === 'object' && closable.closeIcon) {
+      return closable.closeIcon;
+    }
+    if (closeText) {
+      return closeText;
+    }
+    if (closeIcon !== undefined) {
+      return closeIcon;
+    }
+    if (typeof (alert === null || alert === void 0 ? void 0 : alert.closable) === 'object' && ((_a = alert === null || alert === void 0 ? void 0 : alert.closable) === null || _a === void 0 ? void 0 : _a.closeIcon)) {
+      return (_b = alert === null || alert === void 0 ? void 0 : alert.closable) === null || _b === void 0 ? void 0 : _b.closeIcon;
+    }
+    return alert === null || alert === void 0 ? void 0 : alert.closeIcon;
+  }, [closeIcon, closable, closeText, alert === null || alert === void 0 ? void 0 : alert.closeIcon]);
+  const mergedAriaProps = react.useMemo(() => {
+    const merged = closable !== null && closable !== void 0 ? closable : alert === null || alert === void 0 ? void 0 : alert.closable;
+    if (typeof merged === 'object') {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {
+          closeIcon: _
+        } = merged,
+        ariaProps = __rest(merged, ["closeIcon"]);
+      return ariaProps;
+    }
+    return {};
+  }, [closable, alert === null || alert === void 0 ? void 0 : alert.closable]);
+  return wrapCSSVar( /*#__PURE__*/react.createElement(es/* default */.ZP, {
+    visible: !closed,
+    motionName: `${prefixCls}-motion`,
+    motionAppear: false,
+    motionEnter: false,
+    onLeaveStart: node => ({
+      maxHeight: node.offsetHeight
+    }),
+    onLeaveEnd: afterClose
+  }, (_ref, setRef) => {
+    let {
+      className: motionClassName,
+      style: motionStyle
+    } = _ref;
+    return /*#__PURE__*/react.createElement("div", Object.assign({
+      id: id,
+      ref: (0,es_ref/* composeRef */.sQ)(internalRef, setRef),
+      "data-show": !closed,
+      className: classnames_default()(alertCls, motionClassName),
+      style: Object.assign(Object.assign(Object.assign({}, alert === null || alert === void 0 ? void 0 : alert.style), style), motionStyle),
+      onMouseEnter: onMouseEnter,
+      onMouseLeave: onMouseLeave,
+      onClick: onClick,
+      role: "alert"
+    }, restProps), isShowIcon ? ( /*#__PURE__*/react.createElement(IconNode, {
+      description: description,
+      icon: props.icon,
+      prefixCls: prefixCls,
+      type: type
+    })) : null, /*#__PURE__*/react.createElement("div", {
+      className: `${prefixCls}-content`
+    }, message ? /*#__PURE__*/react.createElement("div", {
+      className: `${prefixCls}-message`
+    }, message) : null, description ? /*#__PURE__*/react.createElement("div", {
+      className: `${prefixCls}-description`
+    }, description) : null), action ? /*#__PURE__*/react.createElement("div", {
+      className: `${prefixCls}-action`
+    }, action) : null, /*#__PURE__*/react.createElement(CloseIconNode, {
+      isClosable: isClosable,
+      prefixCls: prefixCls,
+      closeIcon: mergedCloseIcon,
+      handleClose: handleClose,
+      ariaProps: mergedAriaProps
+    }));
+  }));
+});
+if (false) {}
+/* harmony default export */ var alert_Alert = (Alert);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
+var classCallCheck = __webpack_require__(15671);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
+var createClass = __webpack_require__(43144);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/getPrototypeOf.js
+var getPrototypeOf = __webpack_require__(61120);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/isNativeReflectConstruct.js
+var isNativeReflectConstruct = __webpack_require__(78814);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/possibleConstructorReturn.js
+var possibleConstructorReturn = __webpack_require__(82963);
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/callSuper.js
+
+
+
+function _callSuper(t, o, e) {
+  return o = (0,getPrototypeOf/* default */.Z)(o), (0,possibleConstructorReturn/* default */.Z)(t, (0,isNativeReflectConstruct/* default */.Z)() ? Reflect.construct(o, e || [], (0,getPrototypeOf/* default */.Z)(t).constructor) : o.apply(t, e));
+}
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
+var inherits = __webpack_require__(60136);
+;// CONCATENATED MODULE: ./node_modules/antd/es/alert/ErrorBoundary.js
+"use client";
+
+
+
+
+
+
+
+let ErrorBoundary = /*#__PURE__*/function (_React$Component) {
+  function ErrorBoundary() {
+    var _this;
+    (0,classCallCheck/* default */.Z)(this, ErrorBoundary);
+    _this = _callSuper(this, ErrorBoundary, arguments);
+    _this.state = {
+      error: undefined,
+      info: {
+        componentStack: ''
+      }
+    };
+    return _this;
+  }
+  (0,inherits/* default */.Z)(ErrorBoundary, _React$Component);
+  return (0,createClass/* default */.Z)(ErrorBoundary, [{
+    key: "componentDidCatch",
+    value: function componentDidCatch(error, info) {
+      this.setState({
+        error,
+        info
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      const {
+        message,
+        description,
+        id,
+        children
+      } = this.props;
+      const {
+        error,
+        info
+      } = this.state;
+      const componentStack = (info === null || info === void 0 ? void 0 : info.componentStack) || null;
+      const errorMessage = typeof message === 'undefined' ? (error || '').toString() : message;
+      const errorDescription = typeof description === 'undefined' ? componentStack : description;
+      if (error) {
+        return /*#__PURE__*/react.createElement(alert_Alert, {
+          id: id,
+          type: "error",
+          message: errorMessage,
+          description: /*#__PURE__*/react.createElement("pre", {
+            style: {
+              fontSize: '0.9em',
+              overflowX: 'auto'
+            }
+          }, errorDescription)
+        });
+      }
+      return children;
+    }
+  }]);
+}(react.Component);
+/* harmony default export */ var alert_ErrorBoundary = (ErrorBoundary);
+;// CONCATENATED MODULE: ./node_modules/antd/es/alert/index.js
+"use client";
+
+
+
+const es_alert_Alert = alert_Alert;
+es_alert_Alert.ErrorBoundary = alert_ErrorBoundary;
+/* harmony default export */ var es_alert = (es_alert_Alert);
 
 /***/ }),
 
@@ -5201,10 +5733,10 @@ function useCursor(input, focused) {
           afterTxt = _selectionRef$current.afterTxt,
           start = _selectionRef$current.start;
         var startPos = value.length;
-        if (value.endsWith(afterTxt)) {
-          startPos = value.length - selectionRef.current.afterTxt.length;
-        } else if (value.startsWith(beforeTxt)) {
+        if (value.startsWith(beforeTxt)) {
           startPos = beforeTxt.length;
+        } else if (value.endsWith(afterTxt)) {
+          startPos = value.length - selectionRef.current.afterTxt.length;
         } else {
           var beforeLastChar = beforeTxt[start - 1];
           var newIndex = value.indexOf(beforeLastChar, start - 1);
@@ -6064,6 +6596,7 @@ const genInputNumberStyles = token => {
     colorTextDescription,
     motionDurationMid,
     handleHoverColor,
+    handleOpacity,
     paddingInline,
     paddingBlock,
     handleBg,
@@ -6072,7 +6605,6 @@ const genInputNumberStyles = token => {
     borderRadiusSM,
     borderRadiusLG,
     controlWidth,
-    handleOpacity,
     handleBorderColor,
     filledHandleBg,
     lineHeightLG,
@@ -6203,30 +6735,32 @@ const genInputNumberStyles = token => {
             appearance: 'none'
           }
         })
+      },
+      [`&:hover ${componentCls}-handler-wrap, &-focused ${componentCls}-handler-wrap`]: {
+        width: token.handleWidth,
+        opacity: 1
       }
     })
   },
   // Handler
   {
     [componentCls]: Object.assign(Object.assign(Object.assign({
-      [`&:hover ${componentCls}-handler-wrap, &-focused ${componentCls}-handler-wrap`]: {
-        opacity: 1
-      },
       [`${componentCls}-handler-wrap`]: {
         position: 'absolute',
         insetBlockStart: 0,
         insetInlineEnd: 0,
-        width: token.handleWidth,
+        width: 0,
+        opacity: handleOpacity,
         height: '100%',
         borderStartStartRadius: 0,
         borderStartEndRadius: borderRadius,
         borderEndEndRadius: borderRadius,
         borderEndStartRadius: 0,
-        opacity: handleOpacity,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'stretch',
-        transition: `opacity ${motionDurationMid} linear ${motionDurationMid}`,
+        transition: `all ${motionDurationMid}`,
+        overflow: 'hidden',
         // Fix input number inside Menu makes icon too large
         // We arise the selector priority by nest selector here
         // https://github.com/ant-design/ant-design/issues/14367
@@ -6317,7 +6851,8 @@ const genAffixWrapperStyles = token => {
     paddingInlineLG,
     paddingInlineSM,
     paddingBlockLG,
-    paddingBlockSM
+    paddingBlockSM,
+    motionDurationMid
   } = token;
   return {
     [`${componentCls}-affix-wrapper`]: Object.assign(Object.assign({
@@ -6328,6 +6863,7 @@ const genAffixWrapperStyles = token => {
       // or number handler will cover form status
       position: 'relative',
       display: 'inline-flex',
+      alignItems: 'center',
       width: controlWidth,
       padding: 0,
       paddingInlineStart: paddingInline,
@@ -6372,6 +6908,7 @@ const genAffixWrapperStyles = token => {
         zIndex: 2
       },
       [componentCls]: {
+        position: 'static',
         color: 'inherit',
         '&-prefix, &-suffix': {
           display: 'flex',
@@ -6383,14 +6920,20 @@ const genAffixWrapperStyles = token => {
           marginInlineEnd: inputAffixPadding
         },
         '&-suffix': {
-          position: 'absolute',
           insetBlockStart: 0,
           insetInlineEnd: 0,
-          zIndex: 1,
           height: '100%',
           marginInlineEnd: paddingInline,
-          marginInlineStart: inputAffixPadding
+          marginInlineStart: inputAffixPadding,
+          transition: `margin ${motionDurationMid}`
         }
+      },
+      [`&:hover ${componentCls}-handler-wrap, &-focused ${componentCls}-handler-wrap`]: {
+        width: token.handleWidth,
+        opacity: 1
+      },
+      [`&:hover ${componentCls}-suffix`]: {
+        marginInlineEnd: token.calc(token.handleWidth).add(paddingInline).equal()
       }
     })
   };
@@ -6451,13 +6994,14 @@ const input_number_InputNumber = /*#__PURE__*/react.forwardRef((props, ref) => {
       addonBefore,
       addonAfter,
       prefix,
+      suffix,
       bordered,
       readOnly,
       status: customStatus,
       controls,
       variant: customVariant
     } = props,
-    others = __rest(props, ["className", "rootClassName", "size", "disabled", "prefixCls", "addonBefore", "addonAfter", "prefix", "bordered", "readOnly", "status", "controls", "variant"]);
+    others = __rest(props, ["className", "rootClassName", "size", "disabled", "prefixCls", "addonBefore", "addonAfter", "prefix", "suffix", "bordered", "readOnly", "status", "controls", "variant"]);
   const prefixCls = getPrefixCls('input-number', customizePrefixCls);
   // Style
   const rootCls = (0,useCSSVarCls/* default */.Z)(prefixCls);
@@ -6515,7 +7059,7 @@ const input_number_InputNumber = /*#__PURE__*/react.forwardRef((props, ref) => {
     readOnly: readOnly,
     controls: controlsTemp,
     prefix: prefix,
-    suffix: suffixNode,
+    suffix: suffixNode || suffix,
     addonBefore: addonBefore && ( /*#__PURE__*/react.createElement(ContextIsolator/* default */.Z, {
       form: true,
       space: true
@@ -6897,7 +7441,7 @@ const genOTPStyle = token => {
     paddingXS
   } = token;
   return {
-    [`${componentCls}`]: {
+    [componentCls]: {
       display: 'inline-flex',
       alignItems: 'center',
       flexWrap: 'nowrap',
@@ -7636,7 +8180,7 @@ function calculateAutoSizeStyle(uiTextNode) {
 
 
 
-var _excluded = ["prefixCls", "onPressEnter", "defaultValue", "value", "autoSize", "onResize", "className", "style", "disabled", "onChange", "onInternalAutoSize"];
+var _excluded = ["prefixCls", "defaultValue", "value", "autoSize", "onResize", "className", "style", "disabled", "onChange", "onInternalAutoSize"];
 
 
 
@@ -7650,7 +8194,6 @@ var RESIZE_STABLE = 2;
 var ResizableTextArea = /*#__PURE__*/react.forwardRef(function (props, ref) {
   var _ref = props,
     prefixCls = _ref.prefixCls,
-    onPressEnter = _ref.onPressEnter,
     defaultValue = _ref.defaultValue,
     value = _ref.value,
     autoSize = _ref.autoSize,
@@ -7816,7 +8359,7 @@ var ResizableTextArea = /*#__PURE__*/react.forwardRef(function (props, ref) {
 
 
 
-var TextArea_excluded = ["defaultValue", "value", "onFocus", "onBlur", "onChange", "allowClear", "maxLength", "onCompositionStart", "onCompositionEnd", "suffix", "prefixCls", "showCount", "count", "className", "style", "disabled", "hidden", "classNames", "styles", "onResize", "readOnly"];
+var TextArea_excluded = ["defaultValue", "value", "onFocus", "onBlur", "onChange", "allowClear", "maxLength", "onCompositionStart", "onCompositionEnd", "suffix", "prefixCls", "showCount", "count", "className", "style", "disabled", "hidden", "classNames", "styles", "onResize", "onClear", "onPressEnter", "readOnly", "autoSize", "onKeyDown"];
 
 
 
@@ -7847,7 +8390,11 @@ var TextArea = /*#__PURE__*/react.forwardRef(function (_ref, ref) {
     classNames = _ref.classNames,
     styles = _ref.styles,
     onResize = _ref.onResize,
+    onClear = _ref.onClear,
+    onPressEnter = _ref.onPressEnter,
     readOnly = _ref.readOnly,
+    autoSize = _ref.autoSize,
+    onKeyDown = _ref.onKeyDown,
     rest = (0,objectWithoutProperties/* default */.Z)(_ref, TextArea_excluded);
   var _useMergedState = (0,useMergedState/* default */.Z)(defaultValue, {
       value: customValue,
@@ -7944,8 +8491,6 @@ var TextArea = /*#__PURE__*/react.forwardRef(function (_ref, ref) {
     triggerChange(e, e.target.value);
   };
   var handleKeyDown = function handleKeyDown(e) {
-    var onPressEnter = rest.onPressEnter,
-      onKeyDown = rest.onKeyDown;
     if (e.key === 'Enter' && onPressEnter) {
       onPressEnter(e);
     }
@@ -7990,7 +8535,7 @@ var TextArea = /*#__PURE__*/react.forwardRef(function (_ref, ref) {
       setTextareaResized(true);
     }
   };
-  var isPureTextArea = !rest.autoSize && !showCount && !allowClear;
+  var isPureTextArea = !autoSize && !showCount && !allowClear;
   return /*#__PURE__*/react.createElement(es/* BaseInput */.Q, {
     ref: holderRef,
     value: formatValue,
@@ -8013,8 +8558,10 @@ var TextArea = /*#__PURE__*/react.forwardRef(function (_ref, ref) {
       }
     },
     hidden: hidden,
-    readOnly: readOnly
+    readOnly: readOnly,
+    onClear: onClear
   }, /*#__PURE__*/react.createElement(es_ResizableTextArea, (0,esm_extends/* default */.Z)({}, rest, {
+    autoSize: autoSize,
     maxLength: maxLength,
     onKeyDown: handleKeyDown,
     onChange: onInternalChange,
@@ -8349,7 +8896,7 @@ const genInputGroupStyle = token => {
         }
       }
     },
-    [`${componentCls}`]: {
+    [componentCls]: {
       width: '100%',
       marginBottom: 0,
       textAlign: 'inherit',
@@ -8439,7 +8986,7 @@ const genInputGroupStyle = token => {
         borderInlineEndWidth: token.lineWidth
       },
       // Undo float for .ant-input-group .ant-input
-      [`${componentCls}`]: {
+      [componentCls]: {
         float: 'none'
       },
       // reset border for Select, DatePicker, AutoComplete, Cascader, Mention, TimePicker, Input
@@ -8605,7 +9152,7 @@ const genAffixStyle = token => {
         visibility: 'hidden',
         content: '"\\a0"'
       },
-      [`${componentCls}`]: {
+      [componentCls]: {
         '&-prefix, &-suffix': {
           display: 'flex',
           flex: 'none',
@@ -8716,7 +9263,7 @@ const genSearchInputStyle = token => {
   const searchPrefixCls = `${componentCls}-search`;
   return {
     [searchPrefixCls]: {
-      [`${componentCls}`]: {
+      [componentCls]: {
         '&:hover, &:focus': {
           borderColor: token.colorPrimaryHover,
           [`+ ${componentCls}-group-addon ${searchPrefixCls}-button:not(${antCls}-btn-primary)`]: {
@@ -21731,7 +22278,8 @@ var BaseInput = /*#__PURE__*/react.forwardRef(function (props, ref) {
     classNames = props.classNames,
     dataAttrs = props.dataAttrs,
     styles = props.styles,
-    components = props.components;
+    components = props.components,
+    onClear = props.onClear;
   var inputElement = children !== null && children !== void 0 ? children : inputEl;
   var AffixWrapperComponent = (components === null || components === void 0 ? void 0 : components.affixWrapper) || 'span';
   var GroupWrapperComponent = (components === null || components === void 0 ? void 0 : components.groupWrapper) || 'span';
@@ -21760,29 +22308,30 @@ var BaseInput = /*#__PURE__*/react.forwardRef(function (props, ref) {
 
   // ================== Prefix & Suffix ================== //
   if (hasAffix) {
-    var _clsx2;
     // ================== Clear Icon ================== //
     var clearIcon = null;
     if (allowClear) {
-      var _clsx;
       var needClear = !disabled && !readOnly && value;
       var clearIconCls = "".concat(prefixCls, "-clear-icon");
       var iconNode = (0,esm_typeof/* default */.Z)(allowClear) === 'object' && allowClear !== null && allowClear !== void 0 && allowClear.clearIcon ? allowClear.clearIcon : '✖';
       clearIcon = /*#__PURE__*/react.createElement("span", {
-        onClick: handleReset
+        onClick: function onClick(event) {
+          handleReset === null || handleReset === void 0 || handleReset(event);
+          onClear === null || onClear === void 0 || onClear();
+        }
         // Do not trigger onBlur when clear input
         // https://github.com/ant-design/ant-design/issues/31200
         ,
         onMouseDown: function onMouseDown(e) {
           return e.preventDefault();
         },
-        className: classnames_default()(clearIconCls, (_clsx = {}, (0,defineProperty/* default */.Z)(_clsx, "".concat(clearIconCls, "-hidden"), !needClear), (0,defineProperty/* default */.Z)(_clsx, "".concat(clearIconCls, "-has-suffix"), !!suffix), _clsx)),
+        className: classnames_default()(clearIconCls, (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, "".concat(clearIconCls, "-hidden"), !needClear), "".concat(clearIconCls, "-has-suffix"), !!suffix)),
         role: "button",
         tabIndex: -1
       }, iconNode);
     }
     var affixWrapperPrefixCls = "".concat(prefixCls, "-affix-wrapper");
-    var affixWrapperCls = classnames_default()(affixWrapperPrefixCls, (_clsx2 = {}, (0,defineProperty/* default */.Z)(_clsx2, "".concat(prefixCls, "-disabled"), disabled), (0,defineProperty/* default */.Z)(_clsx2, "".concat(affixWrapperPrefixCls, "-disabled"), disabled), (0,defineProperty/* default */.Z)(_clsx2, "".concat(affixWrapperPrefixCls, "-focused"), focused), (0,defineProperty/* default */.Z)(_clsx2, "".concat(affixWrapperPrefixCls, "-readonly"), readOnly), (0,defineProperty/* default */.Z)(_clsx2, "".concat(affixWrapperPrefixCls, "-input-with-clear-btn"), suffix && allowClear && value), _clsx2), classes === null || classes === void 0 ? void 0 : classes.affixWrapper, classNames === null || classNames === void 0 ? void 0 : classNames.affixWrapper, classNames === null || classNames === void 0 ? void 0 : classNames.variant);
+    var affixWrapperCls = classnames_default()(affixWrapperPrefixCls, (0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)((0,defineProperty/* default */.Z)({}, "".concat(prefixCls, "-disabled"), disabled), "".concat(affixWrapperPrefixCls, "-disabled"), disabled), "".concat(affixWrapperPrefixCls, "-focused"), focused), "".concat(affixWrapperPrefixCls, "-readonly"), readOnly), "".concat(affixWrapperPrefixCls, "-input-with-clear-btn"), suffix && allowClear && value), classes === null || classes === void 0 ? void 0 : classes.affixWrapper, classNames === null || classNames === void 0 ? void 0 : classNames.affixWrapper, classNames === null || classNames === void 0 ? void 0 : classNames.variant);
     var suffixNode = (suffix || allowClear) && /*#__PURE__*/react.createElement("span", {
       className: classnames_default()("".concat(prefixCls, "-suffix"), classNames === null || classNames === void 0 ? void 0 : classNames.suffix),
       style: styles === null || styles === void 0 ? void 0 : styles.suffix
@@ -21848,7 +22397,7 @@ var useCount = __webpack_require__(82234);
 
 
 
-var _excluded = ["autoComplete", "onChange", "onFocus", "onBlur", "onPressEnter", "onKeyDown", "prefixCls", "disabled", "htmlSize", "className", "maxLength", "suffix", "showCount", "count", "type", "classes", "classNames", "styles", "onCompositionStart", "onCompositionEnd"];
+var _excluded = ["autoComplete", "onChange", "onFocus", "onBlur", "onPressEnter", "onKeyDown", "onKeyUp", "prefixCls", "disabled", "htmlSize", "className", "maxLength", "suffix", "showCount", "count", "type", "classes", "classNames", "styles", "onCompositionStart", "onCompositionEnd"];
 
 
 
@@ -21863,6 +22412,7 @@ var Input = /*#__PURE__*/(0,react.forwardRef)(function (props, ref) {
     onBlur = props.onBlur,
     onPressEnter = props.onPressEnter,
     onKeyDown = props.onKeyDown,
+    onKeyUp = props.onKeyUp,
     _props$prefixCls = props.prefixCls,
     prefixCls = _props$prefixCls === void 0 ? 'rc-input' : _props$prefixCls,
     disabled = props.disabled,
@@ -21885,6 +22435,7 @@ var Input = /*#__PURE__*/(0,react.forwardRef)(function (props, ref) {
     focused = _useState2[0],
     setFocused = _useState2[1];
   var compositionRef = (0,react.useRef)(false);
+  var keyLockRef = (0,react.useRef)(false);
   var inputRef = (0,react.useRef)(null);
   var holderRef = (0,react.useRef)(null);
   var focus = function focus(option) {
@@ -21979,10 +22530,17 @@ var Input = /*#__PURE__*/(0,react.forwardRef)(function (props, ref) {
     onCompositionEnd === null || onCompositionEnd === void 0 || onCompositionEnd(e);
   };
   var handleKeyDown = function handleKeyDown(e) {
-    if (onPressEnter && e.key === 'Enter') {
+    if (onPressEnter && e.key === 'Enter' && !keyLockRef.current) {
+      keyLockRef.current = true;
       onPressEnter(e);
     }
     onKeyDown === null || onKeyDown === void 0 || onKeyDown(e);
+  };
+  var handleKeyUp = function handleKeyUp(e) {
+    if (e.key === 'Enter') {
+      keyLockRef.current = false;
+    }
+    onKeyUp === null || onKeyUp === void 0 || onKeyUp(e);
   };
   var handleFocus = function handleFocus(e) {
     setFocused(true);
@@ -22007,7 +22565,7 @@ var Input = /*#__PURE__*/(0,react.forwardRef)(function (props, ref) {
     var otherProps = (0,omit/* default */.Z)(props, ['prefixCls', 'onPressEnter', 'addonBefore', 'addonAfter', 'prefix', 'suffix', 'allowClear',
     // Input elements must be either controlled or uncontrolled,
     // specify either the value prop, or the defaultValue prop, but not both.
-    'defaultValue', 'showCount', 'count', 'classes', 'htmlSize', 'styles', 'classNames']);
+    'defaultValue', 'showCount', 'count', 'classes', 'htmlSize', 'styles', 'classNames', 'onClear']);
     return /*#__PURE__*/react.createElement("input", (0,esm_extends/* default */.Z)({
       autoComplete: autoComplete
     }, otherProps, {
@@ -22015,6 +22573,7 @@ var Input = /*#__PURE__*/(0,react.forwardRef)(function (props, ref) {
       onFocus: handleFocus,
       onBlur: handleBlur,
       onKeyDown: handleKeyDown,
+      onKeyUp: handleKeyUp,
       className: classnames_default()(prefixCls, (0,defineProperty/* default */.Z)({}, "".concat(prefixCls, "-disabled"), disabled), classNames === null || classNames === void 0 ? void 0 : classNames.input),
       style: styles === null || styles === void 0 ? void 0 : styles.input,
       ref: inputRef,
