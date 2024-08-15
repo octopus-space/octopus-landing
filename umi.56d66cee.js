@@ -6011,39 +6011,51 @@ var defaultChains = [{
     _useState32 = slicedToArray_default()(_useState31, 2),
     feeInfo = _useState32[0],
     setFeeInfo = _useState32[1];
-  var fetchAssets = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee() {
-    var retry,
-      ret,
-      _args = arguments;
-    return regeneratorRuntime_default()().wrap(function _callee$(_context) {
-      while (1) switch (_context.prev = _context.next) {
-        case 0:
-          retry = _args.length > 0 && _args[0] !== undefined ? _args[0] : true;
-          if (!network) {
-            _context.next = 13;
-            break;
+  var _useState33 = (0,react.useState)(false),
+    _useState34 = slicedToArray_default()(_useState33, 2),
+    refetchAssets = _useState34[0],
+    setRefetchAssets = _useState34[1];
+  (0,react.useEffect)(function () {
+    var didCancel = false;
+    var fetchAssets = /*#__PURE__*/function () {
+      var _ref = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee() {
+        var ret;
+        return regeneratorRuntime_default()().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              if (!network) {
+                _context.next = 11;
+                break;
+              }
+              _context.prev = 1;
+              _context.next = 4;
+              return (0,api/* getAssets */.Vh)(network);
+            case 4:
+              ret = _context.sent;
+              if (!didCancel) {
+                setAssetsInfo(ret.data);
+              }
+              _context.next = 11;
+              break;
+            case 8:
+              _context.prev = 8;
+              _context.t0 = _context["catch"](1);
+              console.log(_context.t0);
+            case 11:
+            case "end":
+              return _context.stop();
           }
-          _context.prev = 2;
-          _context.next = 5;
-          return (0,api/* getAssets */.Vh)(network);
-        case 5:
-          ret = _context.sent;
-          setAssetsInfo(ret.data);
-          _context.next = 13;
-          break;
-        case 9:
-          _context.prev = 9;
-          _context.t0 = _context["catch"](2);
-          console.log(_context.t0);
-          if (_context.t0.message === "Request failed with status code 500" && retry === true) {
-            fetchAssets(false);
-          }
-        case 13:
-        case "end":
-          return _context.stop();
-      }
-    }, _callee, null, [[2, 9]]);
-  })), [network]);
+        }, _callee, null, [[1, 8]]);
+      }));
+      return function fetchAssets() {
+        return _ref.apply(this, arguments);
+      };
+    }();
+    fetchAssets();
+    return function () {
+      didCancel = true;
+    };
+  }, [network, refetchAssets]);
   (0,react.useEffect)(function () {
     if (AssetsInfo) {
       var _assets = [];
@@ -6070,7 +6082,20 @@ var defaultChains = [{
       }
     }
   }, [AssetsInfo, protocolType]);
-  var updateAssets = hooks_useIntervalAsync(fetchAssets, 20000);
+  var handleRefetchAssets = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
+    return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
+        case 0:
+          setRefetchAssets(function (prev) {
+            return !prev;
+          });
+        case 1:
+        case "end":
+          return _context2.stop();
+      }
+    }, _callee2);
+  })), []);
+  var updateAssets = hooks_useIntervalAsync(handleRefetchAssets, 20000);
   var resetInput = function resetInput() {
     setAmount("");
     setReciveAmount("");
@@ -46820,7 +46845,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"a39a2d4b","242":"283c4efa","307":"f9402eba","308":"d3726d37","503":"defe2867","717":"f64fe8df","866":"917c7cbd"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"208":"a39a2d4b","242":"283c4efa","307":"9c935f07","308":"d3726d37","503":"defe2867","717":"f64fe8df","866":"917c7cbd"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -46829,7 +46854,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.miniCssF = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + {"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] + "." + {"307":"c45b593c","717":"aa4f2523","866":"fe26ca99"}[chunkId] + ".chunk.css";
+/******/ 			return "" + {"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] + "." + {"307":"7ed7da06","717":"aa4f2523","866":"fe26ca99"}[chunkId] + ".chunk.css";
 /******/ 		};
 /******/ 	}();
 /******/ 	

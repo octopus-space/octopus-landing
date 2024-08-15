@@ -2937,6 +2937,13 @@ var flex = __webpack_require__(86250);
           })]
         }, item.inscriptionId);
       }), brc20Info && brc20Info.transferBalanceList.length === 0 && !brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+        style: {
+          display: 'flex',
+          alignItems: 'center',
+          flexWrap: 'nowrap',
+          whiteSpace: 'nowrap'
+        },
+        className: "Brc20Error",
         children: ["No transferable", /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.ZP, {
           type: "text",
           className: "inscribeBtn",
@@ -2945,6 +2952,7 @@ var flex = __webpack_require__(86250);
             color: "#6E66FA"
           },
           disabled: Number(brc20Info.balance) === 0,
+          size: "small",
           children: "Inscribe"
         })]
       })]
