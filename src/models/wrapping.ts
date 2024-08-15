@@ -48,25 +48,27 @@ export default () => {
     totalFee: "",
     confirmNumber: "",
   });
-  const fetchAssets = useCallback(
-    async (retry: boolean = true) => {
+  const [refetchAssets, setRefetchAssets] = useState(false);
+
+  useEffect(() => {
+    let didCancel = false;
+    const fetchAssets = async () => {
       if (network) {
         try {
           const ret = await getAssets(network);
-          setAssetsInfo(ret.data);
-        } catch (err: any) {
-          console.log(err);
-          if (
-            err.message === "Request failed with status code 500" &&
-            retry === true
-          ) {
-            fetchAssets(false);
+          if (!didCancel) {
+            setAssetsInfo(ret.data);
           }
+        } catch (err) {
+          console.log(err);
         }
       }
-    },
-    [network]
-  );
+    };
+    fetchAssets();
+    return () => {
+      didCancel = true;
+    };
+  }, [network, refetchAssets]);
 
   useEffect(() => {
     if (AssetsInfo) {
@@ -89,13 +91,17 @@ export default () => {
           }
           return assets[0];
         });
-      }else{
-        setAsset(undefined)
+      } else {
+        setAsset(undefined);
       }
     }
   }, [AssetsInfo, protocolType]);
 
-  const updateAssets: any = useIntervalAsync(fetchAssets, 20000);
+  const handleRefetchAssets = useCallback(async () => {
+    setRefetchAssets((prev) => !prev);
+  }, []);
+
+  const updateAssets: any = useIntervalAsync(handleRefetchAssets, 20000);
 
   const resetInput = () => {
     setAmount("");

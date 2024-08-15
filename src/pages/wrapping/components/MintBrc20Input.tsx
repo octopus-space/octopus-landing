@@ -62,14 +62,16 @@ export default ({ onInputChange, loading, refresh }: Props) => {
             {brc20Info &&
                 brc20Info.transferBalanceList.length === 0 &&
                 !brc20Info.message && (
-                    <div>
+                    <div style={{display:'flex',alignItems:'center',flexWrap:'nowrap',whiteSpace:'nowrap'}} className="Brc20Error">
                         No transferable
+
                         <Button
                             type="text"
                             className="inscribeBtn"
                             onClick={Inscribe}
                             style={{ color: "#6E66FA" }}
                             disabled={Number(brc20Info.balance) === 0}
+                            size="small"
                         >
                             Inscribe
                         </Button>
