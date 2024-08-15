@@ -9,7 +9,8 @@ import {
   Spin,
   message,
   theme,
-  Grid
+  Grid,
+  Alert
 } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -221,7 +222,7 @@ export default () => {
         setFeeInfo(info);
       } catch (err: any) {
         console.log(err);
-        message.error(err.message || "unknown error");
+        // message.error(err.message || "unknown error");
         setReciveAmount("");
         setErrorMsg(err.message || "unknown error");
       }
@@ -489,6 +490,13 @@ export default () => {
     });
   };
 
+  const balCheck = useMemo(() => {
+    if (Number(amount) > Number(sendBal)) {
+      return 'Insufficient balance.'
+    }
+    return ''
+  }, [amount, sendBal])
+
 
 
   return (
@@ -712,13 +720,13 @@ export default () => {
 
               <div className="item">
                 <span className="label">Minimum Bridging Quantity</span>
-                <span className="value"><NumberFormat value={inputRange.minAmount} precision={5}/>   {bridgeType === "mint"
+                <span className="value"><NumberFormat value={inputRange.minAmount} precision={bridgeType === 'mint' ? asset.decimals : asset.decimals - asset.trimDecimals} />   {bridgeType === "mint"
                   ? asset.originSymbol
                   : asset.targetSymbol}</span>
               </div>
               <div className="item">
-                <span  className="label">Maximum Bridging Quantity</span>
-                <span className="value"><NumberFormat value={inputRange.maxAmount} precision={5}/>  {bridgeType === "mint"
+                <span className="label">Maximum Bridging Quantity</span>
+                <span className="value"><NumberFormat value={inputRange.maxAmount} precision={bridgeType === 'mint' ? asset.decimals : asset.decimals - asset.trimDecimals} />   {bridgeType === "mint"
                   ? asset.originSymbol
                   : asset.targetSymbol}</span>
               </div>
@@ -727,12 +735,19 @@ export default () => {
 
             </div>
           }
-
-          <div className="submitWrap">
+          {
+            balCheck && <Alert message={balCheck} type='warning' style={{ marginTop: 20 }} showIcon />
+          }
+          {
+            ErrorMsg && <Alert message={ErrorMsg} type="warning" style={{ marginTop: 20 }} showIcon />
+          }
+          {asset && <div className="submitWrap">
             <FormButton conditions={conditions} onClick={handleConfirm}>
               Bridge
             </FormButton>
-          </div>
+          </div>}
+
+
 
           <History
             show={historyVisible}

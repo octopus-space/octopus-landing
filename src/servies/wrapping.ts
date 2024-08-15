@@ -19,7 +19,6 @@ import {
   createPrepayOrderRedeemBtc,
   createPrepayOrderRedeemMrc20,
   createPrepayOrderRedeemRunes,
-  fetchRunesUtxos,
   getRawTx,
   submitPrepayOrderMintBrc20,
   submitPrepayOrderMintBtc,
@@ -43,6 +42,7 @@ export const supportRedeemAddressType: SupportRedeemAddressType[] = [
 export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
+// send mvc side token
 async function sendToken(
   amount: string,
   address: string,
@@ -71,6 +71,7 @@ async function sendToken(
     return "";
   }
 }
+// sign redeem  publicKey
 async function signPublicKey(): Promise<{
   publicKey: string;
   publicKeySign: string;
@@ -79,12 +80,12 @@ async function signPublicKey(): Promise<{
 }> {
   const publicKey = await window.metaidwallet.getPublicKey();
   const publicKeyReceive = await window.metaidwallet.btc.getPublicKey();
-  const publicKeyReceiveSign = await window.metaidwallet.btc.signMessage(
+  const publicKeyReceiveSign: any = await window.metaidwallet.btc.signMessage(
     publicKeyReceive
   );
   if (publicKeyReceiveSign.status === "canceled") throw new Error("canceled");
 
-  const ret = await window.metaidwallet.signMessage({
+  const ret: any = await window.metaidwallet.signMessage({
     message: publicKey,
     encoding: "base64",
   });
@@ -105,7 +106,7 @@ async function signPublicKey(): Promise<{
     publicKeyReceive,
   };
 }
-
+// sign mint publicKey
 async function signMintPublicKey(): Promise<{
   publicKey: string;
   publicKeySign: string;
@@ -115,9 +116,11 @@ async function signMintPublicKey(): Promise<{
   const publicKeyReceive = await window.metaidwallet.getPublicKey();
   const publicKey = await window.metaidwallet.btc.getPublicKey();
 
-  const publicKeySign = await window.metaidwallet.btc.signMessage(publicKey);
+  const publicKeySign: any = await window.metaidwallet.btc.signMessage(
+    publicKey
+  );
   if (publicKeySign.status === "canceled") throw new Error("canceled");
-  const ret = await window.metaidwallet.signMessage({
+  const ret: any = await window.metaidwallet.signMessage({
     message: publicKeyReceive,
     encoding: "base64",
   });
@@ -139,6 +142,9 @@ async function signMintPublicKey(): Promise<{
     publicKeyReceive,
   };
 }
+
+// 4 redeem methods for 4 different assets types easy to understand
+
 export async function redeemBtc(
   redeemAmount: number,
   btcAsset: API.AssetItem,
@@ -148,7 +154,6 @@ export async function redeemBtc(
   try {
     const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
       await signPublicKey();
-
     const createPrepayOrderDto = {
       amount: redeemAmount,
       originTokenId: btcAsset.originTokenId,
@@ -345,6 +350,7 @@ export async function redeemMrc20(
   }
 }
 
+// send btc
 async function transferBTC(parmas: {
   toAddress: string;
   satoshis: number;
@@ -404,11 +410,13 @@ export async function mintBtc(
     if (!submitRes.success) throw new Error(submitRes.msg);
 
     return submitRes;
-    //成功
+    //success
   } catch (error) {
     throw new Error((error as any).message || (error as any).msg);
   }
 }
+
+// TODO send BRC20
 export interface UTXO {
   txId: string;
   vout: number;
@@ -698,7 +706,7 @@ export async function mintBrc(
     );
     if (!submitRes.success) throw new Error(submitRes.msg);
     return submitRes;
-    //成功
+    //success
   } catch (error) {
     throw new Error((error as any).message || (error as any).msg);
   }

@@ -89,6 +89,8 @@ export default () => {
           }
           return assets[0];
         });
+      }else{
+        setAsset(undefined)
       }
     }
   }, [AssetsInfo, protocolType]);

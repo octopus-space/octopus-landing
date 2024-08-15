@@ -96,6 +96,7 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
 }
 
 ul,
@@ -130,3 +131,14 @@ p {
     margin-right: 12px;
   }
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-transition-delay: 111111s;
+  -webkit-transition:
+    color 11111s ease-out,
+    background-color 111111s ease-out;
+}
+

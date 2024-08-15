@@ -58,6 +58,7 @@ declare interface Window {
         pubKey?: string;
         status?: string;
       }>;
+      transferMRC20: (params: any) => Promise<any>;
       getBalance: (chain: string) => Promise<{ total: number }>;
       inscribeTransfer: (tick: string) => Promise<string>;
       signMessage: (message: string) => Promise<string>;

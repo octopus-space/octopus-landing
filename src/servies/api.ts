@@ -9,6 +9,7 @@ const getHost = (network: Network) => {
 
 const ApiHost = "https://www.orders.exchange/api-book/common";
 
+// assetList
 export async function getAssets(
   network: Network,
   options?: { [key: string]: any }
@@ -19,34 +20,7 @@ export async function getAssets(
   });
 }
 
-export async function getUserBRC20(
-  network: Network,
-  params: { address: string; tick: string },
-  options?: { [key: string]: any }
-) {
-  const { address, tick } = params;
-  const url = `https://www.orders.exchange/api-book/brc20/address/${address}/${tick}`;
-  return request<API.Ret<API.BRC20Info>>(url, {
-    method: "GET",
-    params: { net: network },
-    ...(options || {}),
-  });
-}
-
-export async function getRawTx(
-  network: Network,
-  params: { txid: string },
-  options?: { [key: string]: any }
-) {
-  const { txid } = params;
-  const url = `https://www.orders.exchange/api-book/common/tx/raw`;
-  return request<API.Ret<{ rawTx: string }>>(url, {
-    method: "GET",
-    params: { net: network, txId: txid },
-    ...(options || {}),
-  });
-}
-
+// orders
 export async function createPrepayOrderRedeemBtc(
   network: Network,
   data: any,
@@ -183,27 +157,6 @@ export async function submitPrepayOrderMintBrc20(
   });
 }
 
-export async function getBridgeHistory(
-  network: Network,
-  params: {
-    type: string;
-    cursor: number;
-    size: number;
-    order: string;
-    address: string;
-  },
-  options?: { [key: string]: any }
-) {
-  return request<{ txList: API.HsitoryDetail[] }>(
-    `${getHost(network)}/queryTransactionsByAddress`,
-    {
-      method: "GET",
-      params,
-      ...(options || {}),
-    }
-  );
-}
-
 export async function createPrepayOrderMintRunes(
   network: Network,
   data: any,
@@ -220,7 +173,6 @@ export async function createPrepayOrderMintRunes(
     ...(options || {}),
   });
 }
-
 
 export async function createPrepayOrderMintMrc20(
   network: Network,
@@ -323,6 +275,47 @@ export async function submitPrepayOrderRedeemMrc20(
   });
 }
 
+export async function submitPrepayOrderMintMrc20(
+  network: Network,
+  data: any,
+  options?: { [key: string]: any }
+) {
+  return request<
+    API.Ret<{
+      orderId: string;
+      bridgeAddress: string;
+    }>
+  >(`${getHost(network)}/submitPrepayOrderMintMrc20`, {
+    method: "POST",
+    data,
+    ...(options || {}),
+  });
+}
+// history
+export async function getBridgeHistory(
+  network: Network,
+  params: {
+    type: string;
+    cursor: number;
+    size: number;
+    order: string;
+    address: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<{ txList: API.HsitoryDetail[] }>(
+    `${getHost(network)}/queryTransactionsByAddress`,
+    {
+      method: "GET",
+      params,
+      ...(options || {}),
+    }
+  );
+}
+
+
+// TODO need replace with new api
+
 export async function fetchRunesUtxos(
   address: string,
   runeId: string,
@@ -370,19 +363,16 @@ export async function getUserMrc20Balance(
   cursor: number = 0,
   size: number = 50
 ) {
-  return request<API.ListRet<API.MRC20Item>>(
-    ApiHost + "/mrc20/address/utxo",
-    {
-      method: "GET",
-      params: {
-        address,
-        tickId,
-        cursor: cursor * size,
-        size,
-        net: network === "mainnet" ? "livenet" : "testnet",
-      },
-    }
-  );
+  return request<API.ListRet<API.MRC20Item>>(ApiHost + "/mrc20/address/utxo", {
+    method: "GET",
+    params: {
+      address,
+      tickId,
+      cursor: cursor * size,
+      size,
+      net: network === "mainnet" ? "livenet" : "testnet",
+    },
+  });
 }
 
 export async function getUserMrc20Balances(
@@ -405,19 +395,31 @@ export async function getUserMrc20Balances(
   );
 }
 
-export async function submitPrepayOrderMintMrc20(
+
+export async function getUserBRC20(
   network: Network,
-  data: any,
+  params: { address: string; tick: string },
   options?: { [key: string]: any }
 ) {
-  return request<
-    API.Ret<{
-      orderId: string;
-      bridgeAddress: string;
-    }>
-  >(`${getHost(network)}/submitPrepayOrderMintMrc20`, {
-    method: "POST",
-    data,
+  const { address, tick } = params;
+  const url = `https://www.orders.exchange/api-book/brc20/address/${address}/${tick}`;
+  return request<API.Ret<API.BRC20Info>>(url, {
+    method: "GET",
+    params: { net: network },
+    ...(options || {}),
+  });
+}
+
+export async function getRawTx(
+  network: Network,
+  params: { txid: string },
+  options?: { [key: string]: any }
+) {
+  const { txid } = params;
+  const url = `https://www.orders.exchange/api-book/common/tx/raw`;
+  return request<API.Ret<{ rawTx: string }>>(url, {
+    method: "GET",
+    params: { net: network, txId: txid },
     ...(options || {}),
   });
 }

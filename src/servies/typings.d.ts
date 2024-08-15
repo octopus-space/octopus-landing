@@ -42,6 +42,7 @@ declare namespace API {
     success: boolean;
     code:number;
     message: string;
+    msg: string;
     data: T;
   }
   interface ListRet<T> {

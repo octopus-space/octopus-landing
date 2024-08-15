@@ -52,7 +52,6 @@ export default () => {
       //btc
       const btcBal = await window.metaidwallet.btc.getBalance(network);
       const tokens = await window.metaidwallet.token.getBalance();
-      console.log(btcBal, tokens,'https://octopus.space/');
       const _bals: Record<string, any> = {
         btc: formatSat(btcBal.total),
       };
@@ -68,11 +67,8 @@ export default () => {
     }
   }, [network, connected]);
   const init = useCallback(async () => {
-    console.log("init", walletName, window.metaidwallet);
     if (walletName === "metalet" && window.metaidwallet) {
       const isConnected = await window.metaidwallet.isConnected();
-      console.log("init", isConnected);
-
       if (isConnected === true) {
         const _mvc = await window.metaidwallet.getAddress();
         const { network } = await window.metaidwallet.getNetwork();
