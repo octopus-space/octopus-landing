@@ -92,7 +92,7 @@ var Popup = function Popup(_ref) {
 
 /***/ }),
 
-/***/ 13599:
+/***/ 37086:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 // ESM COMPAT FLAG
@@ -627,12 +627,6 @@ var FormButton = function FormButton(_ref) {
       onClick: function onClick() {
         setLoginModalShow(true);
       }
-    }, {
-      condition: network !== 'testnet',
-      text: "Switch Network",
-      type: "primary",
-      danger: false,
-      onClick: function onClick() {}
     }].concat(toConsumableArray_default()(conditions));
   }, [conditions, connected]);
   (0,react.useEffect)(function () {
@@ -794,159 +788,8 @@ var lib = __webpack_require__(70155);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/typeof.js
 var helpers_typeof = __webpack_require__(52677);
 var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
-;// CONCATENATED MODULE: ./src/utils/psbtBuild.ts
-/* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
-
-
-
-
-
-
-function selectUTXOs(utxos, targetAmount) {
-  var totalAmount = new decimal_js_decimal/* Decimal */.t(0);
-  var selectedUtxos = [];
-  var _iterator = createForOfIteratorHelper_default()(utxos),
-    _step;
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var utxo = _step.value;
-      selectedUtxos.push(utxo);
-      totalAmount = totalAmount.add(utxo.satoshis);
-      if (totalAmount.gte(targetAmount)) {
-        break;
-      }
-    }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
-  }
-  if (totalAmount.lt(targetAmount)) {
-    throw new Error("Insufficient funds to reach the target amount");
-  }
-  return selectedUtxos;
-}
-function getTotalSatoshi(utxos) {
-  return utxos.reduce(function (total, utxo) {
-    return total.add(utxo.satoshis);
-  }, new decimal_js_decimal/* Decimal */.t(0));
-}
-function calculateEstimatedFee(psbt, feeRate) {
-  var tx = psbt.extractTransaction();
-  var size = tx.virtualSize();
-  return new decimal_js_decimal/* Decimal */.t(size).mul(feeRate);
-}
-function buildTx(_x, _x2, _x3, _x4, _x5, _x6) {
-  return _buildTx.apply(this, arguments);
-}
-function _buildTx() {
-  _buildTx = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(utxos, amount, feeRate, buildPsbtParams, address, buildPsbt) {
-    var selectedUTXOs, total, psbt, estimatedFee;
-    return regeneratorRuntime_default()().wrap(function _callee$(_context) {
-      while (1) switch (_context.prev = _context.next) {
-        case 0:
-          selectedUTXOs = selectUTXOs(utxos, amount);
-          total = getTotalSatoshi(selectedUTXOs);
-          _context.next = 4;
-          return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount), true);
-        case 4:
-          psbt = _context.sent;
-          estimatedFee = calculateEstimatedFee(psbt, feeRate);
-        case 6:
-          if (!total.lt(amount.add(estimatedFee))) {
-            _context.next = 17;
-            break;
-          }
-          if (!(selectedUTXOs.length === utxos.length)) {
-            _context.next = 9;
-            break;
-          }
-          throw new Error("Insufficient funds");
-        case 9:
-          selectedUTXOs = selectUTXOs(utxos, amount.add(estimatedFee));
-          total = getTotalSatoshi(selectedUTXOs);
-          _context.next = 13;
-          return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount.add(estimatedFee)), true);
-        case 13:
-          psbt = _context.sent;
-          estimatedFee = calculateEstimatedFee(psbt, feeRate);
-          _context.next = 6;
-          break;
-        case 17:
-          _context.next = 19;
-          return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount.add(estimatedFee)), false);
-        case 19:
-          psbt = _context.sent;
-          return _context.abrupt("return", {
-            psbt: psbt,
-            fee: total.minus(psbt.txOutputs.reduce(function (acc, cur) {
-              return acc + Number(cur.value);
-            }, 0)).toString(),
-            txId: psbt.extractTransaction().getId(),
-            rawTx: psbt.extractTransaction().toHex(),
-            txInputs: selectedUTXOs.map(function (utxo) {
-              return {
-                address: address,
-                value: utxo.satoshis
-              };
-            }),
-            txOutputs: psbt.txOutputs.map(function (out) {
-              return {
-                address: out.address || "",
-                value: out.value
-              };
-            })
-          });
-        case 21:
-        case "end":
-          return _context.stop();
-      }
-    }, _callee);
-  }));
-  return _buildTx.apply(this, arguments);
-}
-function getWitnessUtxo(out) {
-  delete out.address;
-  out.script = Buffer.from(out.script, "hex");
-  return out;
-}
-function createPsbtInput(_x7) {
-  return _createPsbtInput.apply(this, arguments);
-}
-function _createPsbtInput() {
-  _createPsbtInput = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2(_ref) {
-    var utxo, addressType, network, payInput, _yield$getRawTx, rawTx, tx;
-    return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
-        case 0:
-          utxo = _ref.utxo, addressType = _ref.addressType, network = _ref.network;
-          payInput = {
-            hash: utxo.txId,
-            index: utxo.vout || utxo.outputIndex
-          };
-          _context2.next = 4;
-          return (0,api/* getRawTx */.V5)(network, {
-            txid: utxo.txId
-          });
-        case 4:
-          _yield$getRawTx = _context2.sent;
-          rawTx = _yield$getRawTx.data.rawTx;
-          tx = src/* Transaction */.YW.fromHex(rawTx);
-          if (["P2WPKH"].includes(addressType)) {
-            payInput["witnessUtxo"] = getWitnessUtxo(tx.outs[utxo.vout || utxo.outputIndex]);
-          }
-          if (["P2PKH"].includes(addressType)) {
-            payInput["nonWitnessUtxo"] = tx.toBuffer();
-          }
-          return _context2.abrupt("return", payInput);
-        case 10:
-        case "end":
-          return _context2.stop();
-      }
-    }, _callee2);
-  }));
-  return _createPsbtInput.apply(this, arguments);
-}
+// EXTERNAL MODULE: ./src/utils/psbtBuild.ts
+var psbtBuild = __webpack_require__(62245);
 // EXTERNAL MODULE: ./node_modules/@magiceden-oss/runestone-lib/dist/index.js
 var dist = __webpack_require__(35268);
 ;// CONCATENATED MODULE: ./src/utils/runes.ts
@@ -1021,7 +864,7 @@ var sendRunes = /*#__PURE__*/function () {
           _yield$fetchRunesUtxo = _context2.sent;
           runeUtxos = _yield$fetchRunesUtxo.data.list;
           _context2.next = 10;
-          return window.metaidwallet.btc.getUtxos();
+          return (0,psbtBuild/* getUtxos */.t4)(senderAddress);
         case 10:
           utxos = _context2.sent;
           filteredUtxos = utxos.filter(function (utxo) {
@@ -1032,7 +875,7 @@ var sendRunes = /*#__PURE__*/function () {
           selectedRuneUtxos = selectRuneUTXOs(runeUtxos, new decimal_js_decimal/* Decimal */.t(runeAmount));
           btcNetwork = net === "mainnet" ? src/* networks */.QW.bitcoin : src/* networks */.QW.testnet;
           _context2.next = 16;
-          return buildTx(filteredUtxos, new decimal_js_decimal/* Decimal */.t(outputValue * 2), feeRate, {
+          return (0,psbtBuild/* buildTx */.lE)(filteredUtxos, new decimal_js_decimal/* Decimal */.t(outputValue * 2), feeRate, {
             runeId: runeId,
             recipient: recipient,
             runeUtxos: selectedRuneUtxos,
@@ -1064,7 +907,7 @@ var sendRunes = /*#__PURE__*/function () {
                     }
                     runeUtxo = _step2.value;
                     _context.next = 11;
-                    return createPsbtInput({
+                    return (0,psbtBuild/* createPsbtInput */.o2)({
                       utxo: runeUtxo,
                       network: net,
                       addressType: addressType
@@ -1097,7 +940,7 @@ var sendRunes = /*#__PURE__*/function () {
                     }
                     utxo = _step3.value;
                     _context.next = 30;
-                    return createPsbtInput({
+                    return (0,psbtBuild/* createPsbtInput */.o2)({
                       utxo: utxo,
                       network: net,
                       addressType: addressType
@@ -1150,7 +993,7 @@ var sendRunes = /*#__PURE__*/function () {
                     });
                   case 48:
                     _signPsbt = _context.sent;
-                    if (!(typeof_default()(_signPsbt) === 'object')) {
+                    if (!(typeof_default()(_signPsbt) === "object")) {
                       _context.next = 53;
                       break;
                     }
@@ -1160,7 +1003,7 @@ var sendRunes = /*#__PURE__*/function () {
                     }
                     throw new Error("canceled");
                   case 52:
-                    throw new Error('');
+                    throw new Error("");
                   case 53:
                     signPsbt = src/* Psbt */._B.fromHex(_signPsbt);
                     return _context.abrupt("return", signPsbt);
@@ -1188,7 +1031,8 @@ var sendRunes = /*#__PURE__*/function () {
   };
 }();
 ;// CONCATENATED MODULE: ./src/servies/wrapping.ts
-/* provided dependency */ var wrapping_Buffer = __webpack_require__(48764)["Buffer"];
+/* provided dependency */ var Buffer = __webpack_require__(48764)["Buffer"];
+
 
 
 
@@ -1757,7 +1601,7 @@ function _mintBtc() {
   }));
   return _mintBtc.apply(this, arguments);
 }
-function wrapping_getTotalSatoshi(utxos) {
+function getTotalSatoshi(utxos) {
   return utxos.reduce(function (total, utxo) {
     return total.add(utxo.satoshi);
   }, new decimal_js_decimal/* default */.Z(0));
@@ -1777,7 +1621,7 @@ function _createPayment2() {
           return window.metaidwallet.btc.getPublicKey();
         case 4:
           publicKeyString = _context10.sent;
-          publicKey = wrapping_Buffer.from(publicKeyString, "hex");
+          publicKey = Buffer.from(publicKeyString, "hex");
           addressType = (0,utils/* determineAddressInfo */.uY)(address);
           _context10.t0 = addressType.toUpperCase();
           _context10.next = _context10.t0 === "P2PKH" ? 10 : _context10.t0 === "P2WPKH" ? 11 : 12;
@@ -1805,9 +1649,9 @@ function _createPayment2() {
   }));
   return _createPayment2.apply(this, arguments);
 }
-function wrapping_getWitnessUtxo(out) {
+function getWitnessUtxo(out) {
   delete out.address;
-  out.script = wrapping_Buffer.from(out.script, "hex");
+  out.script = Buffer.from(out.script, "hex");
   return out;
 }
 function _createPayInput(_x29) {
@@ -1833,7 +1677,7 @@ function _createPayInput2() {
           rawTx = _yield$getRawTx.data.rawTx;
           tx = src/* Transaction */.YW.fromHex(rawTx);
           if (["P2WPKH"].includes(addressType)) {
-            payInput["witnessUtxo"] = wrapping_getWitnessUtxo(tx.outs[utxo.vout]);
+            payInput["witnessUtxo"] = getWitnessUtxo(tx.outs[utxo.vout]);
           }
           if (["P2PKH"].includes(addressType)) {
             payInput["nonWitnessUtxo"] = tx.toBuffer();
@@ -1852,7 +1696,7 @@ function _calculateFee(psbt, feeRate) {
   var size = tx.virtualSize();
   return size * feeRate;
 }
-var wrapping_selectUTXOs = function selectUTXOs(utxos, targetAmount) {
+var selectUTXOs = function selectUTXOs(utxos, targetAmount) {
   var totalAmount = new decimal_js_decimal/* default */.Z(0);
   var selectedUtxos = [];
   var _iterator = createForOfIteratorHelper_default()(utxos),
@@ -1885,7 +1729,7 @@ function _sendBRC() {
     return regeneratorRuntime_default()().wrap(function _callee13$(_context13) {
       while (1) switch (_context13.prev = _context13.next) {
         case 0:
-          amount = wrapping_getTotalSatoshi([utxo]);
+          amount = getTotalSatoshi([utxo]);
           btcNetwork = net === "mainnet" ? src/* networks */.QW.bitcoin : src/* networks */.QW.testnet;
           _context13.next = 4;
           return window.metaidwallet.btc.getAddress();
@@ -1897,7 +1741,7 @@ function _sendBRC() {
         case 8:
           payment = _context13.sent;
           _context13.next = 11;
-          return window.metaidwallet.btc.getUtxos();
+          return (0,psbtBuild/* getUtxos */.t4)(address);
         case 11:
           utxos = _context13.sent;
           if (utxos.length) {
@@ -1995,14 +1839,14 @@ function _sendBRC() {
             };
           }();
           selecedtUTXOs = [utxos[0]];
-          total = wrapping_getTotalSatoshi(selecedtUTXOs);
+          total = getTotalSatoshi(selecedtUTXOs);
           _context13.next = 20;
           return buildPsbt(selecedtUTXOs, total.minus(amount));
         case 20:
           psbt = _context13.sent;
           fee = _calculateFee(psbt, feeRate);
         case 22:
-          if (!wrapping_getTotalSatoshi(selecedtUTXOs).lt(amount.add(fee))) {
+          if (!getTotalSatoshi(selecedtUTXOs).lt(amount.add(fee))) {
             _context13.next = 33;
             break;
           }
@@ -2012,8 +1856,8 @@ function _sendBRC() {
           }
           throw new Error("Insufficient funds");
         case 25:
-          selecedtUTXOs = wrapping_selectUTXOs(utxos, amount.add(fee));
-          total = wrapping_getTotalSatoshi(selecedtUTXOs);
+          selecedtUTXOs = selectUTXOs(utxos, amount.add(fee));
+          total = getTotalSatoshi(selecedtUTXOs);
           _context13.next = 29;
           return buildPsbt(selecedtUTXOs, total.minus(amount).minus(fee));
         case 29:
@@ -2038,7 +1882,7 @@ function _sendBRC() {
 var getOutput = function getOutput(pubkey) {
   var _network = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "mainnet";
   var _addressType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "P2PKH";
-  var publicKeyBuffer = wrapping_Buffer.from(pubkey, "hex");
+  var publicKeyBuffer = Buffer.from(pubkey, "hex");
   var _output;
   var network = _network === "mainnet" ? networks.bitcoin : networks.testnet;
   if (_addressType === "P2PKH") {
