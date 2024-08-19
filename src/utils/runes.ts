@@ -1,5 +1,5 @@
 import { Decimal } from "decimal.js";
-import { buildTx, createPsbtInput } from "./psbtBuild";
+import { buildTx, createPsbtInput, getUtxos } from "./psbtBuild";
 import { networks, Psbt } from "bitcoinjs-lib";
 import { encodeRunestone } from "@magiceden-oss/runestone-lib";
 import { fetchRunesUtxos } from "@/servies/api";
@@ -54,7 +54,7 @@ export const sendRunes = async ({
   const {
     data: { list: runeUtxos },
   } = await fetchRunesUtxos(senderAddress, runeId, net);
-  const utxos = await window.metaidwallet.btc.getUtxos();
+  const utxos = await getUtxos(senderAddress);
   const filteredUtxos = utxos.filter((utxo: API.UTXO) => {
     return !runeUtxos.some((runeUtxo) => {
       return (
@@ -157,9 +157,9 @@ export const sendRunes = async ({
       const _signPsbt = await window.metaidwallet.btc.signPsbt({
         psbtHex: psbt.toHex(),
       });
-      if(typeof _signPsbt ==='object'){
+      if (typeof _signPsbt === "object") {
         if (_signPsbt.status === "canceled") throw new Error("canceled");
-        throw new Error('');
+        throw new Error("");
       }
       const signPsbt = Psbt.fromHex(_signPsbt);
       return signPsbt;

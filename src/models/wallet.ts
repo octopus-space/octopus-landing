@@ -1,3 +1,4 @@
+import { getUtxoBalance } from "@/utils/psbtBuild";
 import { formatSat } from "@/utils/utils";
 import { useCallback, useEffect, useState } from "react";
 export type Network = "mainnet" | "testnet";
@@ -50,10 +51,10 @@ export default () => {
   const getBal = useCallback(async () => {
     if (network && connected) {
       //btc
-      const btcBal = await window.metaidwallet.btc.getBalance(network);
+      const btcBal = await getUtxoBalance();
       const tokens = await window.metaidwallet.token.getBalance();
       const _bals: Record<string, any> = {
-        btc: formatSat(btcBal.total),
+        btc: formatSat(btcBal),
       };
       tokens.forEach((item: any) => {
         const balance =

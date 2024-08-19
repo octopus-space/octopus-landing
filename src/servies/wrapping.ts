@@ -31,6 +31,7 @@ import {
 } from "./api";
 import { determineAddressInfo } from "@/utils/utils";
 import { sendRunes } from "@/utils/runes";
+import { getUtxos } from "@/utils/psbtBuild";
 
 export type SupportRedeemAddressType = "P2TR" | "P2WPKH" | "P2PKH";
 export const supportRedeemAddressType: SupportRedeemAddressType[] = [
@@ -521,7 +522,7 @@ async function sendBRC(
   const address = await window.metaidwallet.btc.getAddress();
   const addressType = determineAddressInfo(address);
   const payment = await _createPayment(net, address);
-  const utxos = await window.metaidwallet.btc.getUtxos();
+  const utxos = await getUtxos(address);
 
   if (!utxos.length) {
     throw new Error("your account currently has no available UTXO.");

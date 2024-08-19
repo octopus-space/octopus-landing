@@ -1,6 +1,7 @@
 import { Decimal } from "decimal.js";
 import { Psbt, Transaction } from "bitcoinjs-lib";
 import { getRawTx } from "@/servies/api";
+import { determineAddressInfo } from "./utils";
 
 function selectUTXOs(utxos: API.UTXO[], targetAmount: Decimal) {
   let totalAmount = new Decimal(0);
@@ -135,3 +136,25 @@ export async function createPsbtInput({
   }
   return payInput;
 }
+
+export const getUtxos = async (address?: string) => {
+  if (!address) {
+    address = await window.metaidwallet.btc.getAddress();
+  }
+  const addressType = determineAddressInfo(address).toUpperCase();
+  const utxos = await window.metaidwallet.btc.getUtxos({
+    needRawTx: ["P2PKH"].includes(addressType),
+    useUnconfirmed: true,
+  });
+  console.log(utxos, "utxos");
+
+  return utxos;
+};
+
+export const getUtxoBalance = async (address?: string) => {
+  if (!address) {
+    address = await window.metaidwallet.btc.getAddress();
+  }
+  const utxos = await getUtxos(address);
+  return utxos.reduce((acc, cur) => acc + cur.satoshis, 0);
+};

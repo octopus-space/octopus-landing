@@ -68,15 +68,15 @@ const FormButton: React.FC<Props> = ({
           setLoginModalShow(true);
         },
       },
-      {
-        condition: network!=='testnet',
-        text: "Switch Network",
-        type: "primary",
-        danger: false,
-        onClick: () => {
+      // {
+      //   condition: network!=='testnet',
+      //   text: "Switch Network",
+      //   type: "primary",
+      //   danger: false,
+      //   onClick: () => {
           
-        },
-      },
+      //   },
+      // },
       ...conditions,
     ];
   }, [conditions, connected]);

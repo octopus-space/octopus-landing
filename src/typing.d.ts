@@ -71,7 +71,7 @@ declare interface Window {
       }) => Promise<string|{status:string}>;
       pushPsbt: (psbt: string) => Promise<string>;
       signPsbts: (psbtHexs: string[], options?: any[]) => Promise<string[]>;
-      getUtxos: () => Promise<API.UTXO[]>;
+      getUtxos: (params:any) => Promise<API.UTXO[]>;
     };
     token: {
       getBalance: () => Promise<any>;
