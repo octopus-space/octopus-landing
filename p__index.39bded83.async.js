@@ -115,9 +115,12 @@ const SvgBgCricle = (props) => /* @__PURE__ */ React.createElement("svg", bgCric
 
 // EXTERNAL MODULE: ./node_modules/antd/es/message/index.js + 12 modules
 var message = __webpack_require__(68872);
+// EXTERNAL MODULE: ./src/.umi-production/exports.ts + 33 modules
+var _umi_production_exports = __webpack_require__(82195);
 // EXTERNAL MODULE: ./node_modules/react/jsx-runtime.js
 var jsx_runtime = __webpack_require__(85893);
 ;// CONCATENATED MODULE: ./src/components/HomePage1/index.tsx
+
 
 
 
@@ -178,10 +181,7 @@ var tags = ["BRC20", "Runes", "Atomicals", "MRC20"];
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
               className: "button primary",
               onClick: function onClick() {
-                message/* default */.ZP.info({
-                  content: "coming soon",
-                  icon: "🚀"
-                });
+                return _umi_production_exports.history.push('/wrapping');
               },
               children: "Wrapping"
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {

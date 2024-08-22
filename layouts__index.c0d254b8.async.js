@@ -246,8 +246,8 @@ var items = [{
 var config_provider = __webpack_require__(88929);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/index.js + 6 modules
 var theme = __webpack_require__(9361);
-// EXTERNAL MODULE: ./node_modules/antd/es/message/index.js + 12 modules
-var message = __webpack_require__(68872);
+// EXTERNAL MODULE: ./node_modules/antd/es/alert/index.js + 4 modules
+var es_alert = __webpack_require__(40056);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/regeneratorRuntime.js
 var regeneratorRuntime = __webpack_require__(15009);
 var regeneratorRuntime_default = /*#__PURE__*/__webpack_require__.n(regeneratorRuntime);
@@ -261,6 +261,8 @@ var metalet = __webpack_require__(91198);
 ;// CONCATENATED MODULE: ./src/components/LoginModal/index.less
 // extracted by mini-css-extract-plugin
 
+// EXTERNAL MODULE: ./node_modules/antd/es/message/index.js + 12 modules
+var message = __webpack_require__(68872);
 // EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 15 modules
 var es_button = __webpack_require__(45093);
 ;// CONCATENATED MODULE: ./src/components/LoginModal/index.tsx
@@ -591,11 +593,21 @@ var _themes = {
 };
 function Layout() {
   var location = (0,_umi_production_exports.useLocation)();
-  return /*#__PURE__*/(0,jsx_runtime.jsx)(config_provider/* default */.ZP, {
+  var _useModel = (0,_umi_production_exports.useModel)('wallet'),
+    network = _useModel.network;
+  return /*#__PURE__*/(0,jsx_runtime.jsxs)(config_provider/* default */.ZP, {
     theme: objectSpread2_default()({
       algorithm: theme/* default */.Z.darkAlgorithm
     }, _themes),
-    children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+    children: [network === 'testnet' && /*#__PURE__*/(0,jsx_runtime.jsx)(es_alert/* default */.Z, {
+      type: "error",
+      message: "This is a test network. Coins have no value.",
+      banner: true,
+      showIcon: false,
+      style: {
+        textAlign: 'center'
+      }
+    }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
       className: "page",
       children: [location.pathname !== "/" ? /*#__PURE__*/(0,jsx_runtime.jsx)(Header, {}) : /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
         className: "header",
@@ -613,10 +625,7 @@ function Layout() {
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)(Nav, {}), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
               className: "entryBtn",
               onClick: function onClick() {
-                message/* default */.ZP.info({
-                  content: "coming soon",
-                  icon: "🚀"
-                });
+                return _umi_production_exports.history.push('/wrapping');
               },
               children: "Enter APP"
             })]
@@ -641,7 +650,7 @@ function Layout() {
           })]
         })
       })]
-    })
+    })]
   });
 }
 
