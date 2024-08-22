@@ -2708,7 +2708,7 @@ function parse (value, root, parent, rule, rules, rulesets, pseudo, points, decl
 					case 0: case 125: scanning = 0
 					// ;
 					case 59 + offset: if (ampersand == -1) characters = replace(characters, /\f/g, '')
-						if (property > 0 && (strlen(characters) - length))
+						if (property > 0 && (strlen(characters) - length || (variable == 0 && previous == 47)))
 							Utility_append(property > 32 ? declaration(characters + ';', rule, parent, length - 1, declarations) : declaration(replace(characters, ' ', '') + ';', rule, parent, length - 2, declarations), declarations)
 						break
 					// @ ;
@@ -2792,7 +2792,7 @@ function ruleset (value, root, parent, index, offset, rules, points, type, props
 
 	for (var i = 0, j = 0, k = 0; i < index; ++i)
 		for (var x = 0, y = substr(value, post + 1, post = abs(j = points[i])), z = value; x < size; ++x)
-			if (z = trim(j > 0 ? rule[x] + ' ' + y : replace(y, /&\f/g, rule[x])))
+			if (z = trim(j > 0 ? rule[x] + ' ' + y : replace(y, parent ? /&\f/g : /\f/g, rule[x])))
 				props[k++] = z
 
 	return node(value, root, parent, offset === 0 ? RULESET : type, props, children, length, siblings)
@@ -6823,6 +6823,8 @@ var defaultChains = [{
       var _assets = [];
       _assets = AssetsInfo.assetList.filter(function (item) {
         return item.network === protocolType.toUpperCase();
+      }).filter(function (item) {
+        return protocolType === "btc" || item.price !== 0;
       }).map(function (item) {
         item.originName = item.originName || item.originSymbol;
         item.targetName = item.targetName || item.targetSymbol;
@@ -16115,7 +16117,7 @@ var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 37 modules
 var es = __webpack_require__(11568);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/version/version.js
-/* harmony default export */ var version = ('5.20.1');
+/* harmony default export */ var version = ('5.20.2');
 ;// CONCATENATED MODULE: ./node_modules/antd/es/version/index.js
 "use client";
 
@@ -57599,7 +57601,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"127":"a0734af5","208":"a39a2d4b","242":"283c4efa","307":"c50312da","503":"defe2867","717":"f64fe8df","866":"917c7cbd"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"127":"dc8be480","208":"a39a2d4b","242":"283c4efa","307":"c50312da","503":"4a3301bc","717":"f64fe8df","866":"917c7cbd"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	

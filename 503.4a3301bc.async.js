@@ -4112,11 +4112,11 @@ function getPlacements(config) {
           break;
         case 'leftTop':
         case 'rightTop':
-          placementInfo.offset[1] = -arrowOffset.arrowOffsetHorizontal - halfArrowWidth;
+          placementInfo.offset[1] = -arrowOffset.arrowOffsetHorizontal * 2 + halfArrowWidth;
           break;
         case 'leftBottom':
         case 'rightBottom':
-          placementInfo.offset[1] = arrowOffset.arrowOffsetHorizontal + halfArrowWidth;
+          placementInfo.offset[1] = arrowOffset.arrowOffsetHorizontal * 2 - halfArrowWidth;
           break;
       }
     }
@@ -8561,7 +8561,10 @@ var AsyncValidator = es;
  *   `I'm ${name}` + { name: 'bamboo' } = I'm bamboo
  */
 function replaceMessage(template, kv) {
-  return template.replace(/\$\{\w+\}/g, function (str) {
+  return template.replace(/\\?\$\{\w+\}/g, function (str) {
+    if (str.startsWith('\\')) {
+      return str.slice(1);
+    }
     var key = str.slice(2, -1);
     return kv[key];
   });

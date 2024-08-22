@@ -6173,7 +6173,7 @@ const genAffixWrapperStyles = token => {
         width: token.handleWidth,
         opacity: 1
       },
-      [`&:hover ${componentCls}-suffix`]: {
+      [`&:not(${componentCls}-affix-wrapper-without-controls):hover ${componentCls}-suffix`]: {
         marginInlineEnd: token.calc(token.handleWidth).add(paddingInline).equal()
       }
     })
@@ -6317,7 +6317,8 @@ const input_number_InputNumber = /*#__PURE__*/react.forwardRef((props, ref) => {
       affixWrapper: classnames_default()({
         [`${prefixCls}-affix-wrapper-sm`]: mergedSize === 'small',
         [`${prefixCls}-affix-wrapper-lg`]: mergedSize === 'large',
-        [`${prefixCls}-affix-wrapper-rtl`]: direction === 'rtl'
+        [`${prefixCls}-affix-wrapper-rtl`]: direction === 'rtl',
+        [`${prefixCls}-affix-wrapper-without-controls`]: controls === false
       }, hashId),
       wrapper: classnames_default()({
         [`${wrapperClassName}-rtl`]: direction === 'rtl'
