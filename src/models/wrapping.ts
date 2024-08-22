@@ -75,6 +75,7 @@ export default () => {
       let assets: API.AssetItem[] = [];
       assets = AssetsInfo.assetList
         .filter((item) => item.network === protocolType.toUpperCase())
+        .filter((item) => protocolType === "btc" || item.price !== 0)
         .map((item) => {
           item.originName = item.originName || item.originSymbol;
           item.targetName = item.targetName || item.targetSymbol;
