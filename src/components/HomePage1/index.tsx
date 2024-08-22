@@ -4,6 +4,7 @@ import card from "@/assets/card.png";
 import bg from "@/assets/bgCricle.svg";
 import "./index.less";
 import { message } from "antd";
+import { history } from "umi";
 const tags = ["BRC20", "Runes", "Atomicals", "MRC20"];
 export default () => {
   return (
@@ -35,9 +36,7 @@ export default () => {
               ))}
             </div>
             <div className="buttonWrap" key="btns">
-              <div className="button primary" onClick={() => {
-                message.info({ content: "coming soon",icon: "🚀", });
-              }}>Wrapping</div>
+              <div className="button primary" onClick={()=>history.push('/wrapping')}>Wrapping</div>
               <div className="button line" onClick={() => {
                 message.info({ content: "coming soon" ,icon: "🚀",});
               }}>Mapping</div>

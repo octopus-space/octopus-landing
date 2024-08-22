@@ -55,12 +55,7 @@ export default function Layout() {
                 <Nav />
                 <div
                   className="entryBtn"
-                  onClick={() => {
-                    message.info({
-                      content: "coming soon",
-                      icon: "🚀",
-                    });
-                  }}
+                  onClick={()=>history.push('/wrapping')}
                 >
                   Enter APP
                 </div>
