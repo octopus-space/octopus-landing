@@ -1,8 +1,8 @@
-import { Link, Outlet, history, useLocation } from "umi";
+import { Link, Outlet, history, useLocation, useModel } from "umi";
 import "./index.less";
 import logo from "@/assets/logo.svg";
 import Nav from "./components/Nav";
-import { ConfigProvider, message, theme } from "antd";
+import { Alert, ConfigProvider, message, theme } from "antd";
 import Header from "./components/Header";
 const _themes = {
   token: {
@@ -37,6 +37,7 @@ const _themes = {
 };
 export default function Layout() {
   const location = useLocation();
+  const {network}=useModel('wallet')
   return (
     <ConfigProvider
       theme={{
@@ -44,6 +45,7 @@ export default function Layout() {
         ..._themes,
       }}
     >
+      {network === 'testnet' && <Alert type="error" message="This is a test network. Coins have no value." banner showIcon={false} style={{ textAlign: 'center' }} />}
       <div className="page">
         {location.pathname !== "/" ? (
           <Header />
