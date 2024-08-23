@@ -13941,12 +13941,12 @@ var calcMintInfo = function calcMintInfo(amount, assetInfo, asset) {
     _calculateQuantityLim4 = slicedToArray_default()(_calculateQuantityLim3, 2),
     minAmount = _calculateQuantityLim4[0],
     maxAmount = _calculateQuantityLim4[1];
-  // if (amount < minAmount) {
-  //   throw new Error("amount less than minimum amount");
-  // }
-  // if (amount > maxAmount) {
-  //   throw new Error("amount greater than maximum amount");
-  // }
+  if (amount < minAmount) {
+    throw new Error("amount less than minimum amount");
+  }
+  if (amount > maxAmount) {
+    throw new Error("amount greater than maximum amount");
+  }
   var bridgeFeeConst = BigInt(Math.floor(asset.feeRateConstMint / Math.pow(10, 8) * btcPrice / price * Math.pow(10, decimals)));
   // 按比例收取的费用
   var bridgeFeePercent = BigInt(bigIntAmount) * BigInt(asset.feeRateNumeratorMint) / 10000n;
