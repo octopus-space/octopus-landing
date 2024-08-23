@@ -649,7 +649,7 @@ export const calculateQuantityLimitRange = (
   asset: API.AssetItem
 ) => {
   const { btcPrice, amountLimitMaximum, amountLimitMinimum } = assetInfo;
-  const price = asset.network === "BTC" ? btcPrice : asset.price;
+  const price = asset.network === "BTC" ? btcPrice : asset.price || 0;
   const minAmount = new Decimal(amountLimitMinimum)
     .div(1e8)
     .mul(btcPrice)
@@ -733,12 +733,12 @@ export const calcMintInfo = (
   // 资产价格
   const price = asset.network === "BTC" ? btcPrice : asset.price;
   const [minAmount, maxAmount] = calculateQuantityLimitRange(assetInfo, asset);
-  if (amount < minAmount) {
-    throw new Error("amount less than minimum amount");
-  }
-  if (amount > maxAmount) {
-    throw new Error("amount greater than maximum amount");
-  }
+  // if (amount < minAmount) {
+  //   throw new Error("amount less than minimum amount");
+  // }
+  // if (amount > maxAmount) {
+  //   throw new Error("amount greater than maximum amount");
+  // }
   const bridgeFeeConst = BigInt(
     Math.floor(
       (((asset.feeRateConstMint / 10 ** 8) * btcPrice) / price) * 10 ** decimals
