@@ -3070,33 +3070,10 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
     if (AssetsInfo && asset) {
       var info;
       try {
-        switch (bridgeType + protocolType) {
-          case "redeembtc":
-            info = (0,utils/* calcRedeemBtcInfo */.PO)(Number((0,utils/* amountRaw */.xo)(String(value), asset.decimals)), AssetsInfo);
-            break;
-          case "redeembrc20":
-            info = info = (0,utils/* calcRedeemBrc20Info */.ug)(Number((0,utils/* amountRaw */.xo)(String(value), asset.decimals - asset.trimDecimals)), AssetsInfo, asset);
-            break;
-          case "mintbtc":
-            info = info = (0,utils/* calcMintBtcInfo */.jq)(Number((0,utils/* amountRaw */.xo)(String(value), 8)), AssetsInfo);
-            break;
-          case "mintbrc20":
-            info = (0,utils/* calcMintBrc20Info */.AY)(Number(value), AssetsInfo, asset);
-            break;
-          case "mintrunes":
-            info = (0,utils/* calcMintRunesInfo */.oj)(Number(value), AssetsInfo, asset);
-            break;
-          case "redeemrunes":
-            info = (0,utils/* calcRedeemRunesInfo */.iF)(Number((0,utils/* amountRaw */.xo)(String(value), asset.decimals - asset.trimDecimals)), AssetsInfo, asset);
-            break;
-          case "mintmrc20":
-            info = (0,utils/* calcMintMRC20Info */.Ds)(Number(value), AssetsInfo, asset);
-            break;
-          case "redeemmrc20":
-            info = (0,utils/* calcRedeemMrc20Info */.tw)(Number((0,utils/* amountRaw */.xo)(String(value), asset.decimals - asset.trimDecimals)), AssetsInfo, asset);
-            break;
-          default:
-            throw new Error("unsupport protocol");
+        if (bridgeType === 'mint') {
+          info = (0,utils/* calcMintInfo */.U1)(Number(value), AssetsInfo, asset);
+        } else {
+          info = (0,utils/* calcRedeemInfo */.Gb)(Number(value), AssetsInfo, asset);
         }
         if (Number(info.receiveAmount) < 0) {
           throw new Error("low send amount");
@@ -3106,7 +3083,6 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
         setFeeInfo(info);
       } catch (err) {
         console.log(err);
-        // message.error(err.message || "unknown error");
         setReciveAmount("");
         setErrorMsg(err.message || "unknown error");
       }
@@ -3241,59 +3217,11 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
   var inputRange = (0,react.useMemo)(function () {
     var minAmount = 0;
     var maxAmount = 0;
-    if (!AssetsInfo || !asset) return {
-      minAmount: minAmount,
-      maxAmount: maxAmount
-    };
-    switch (actionType) {
-      case 'mintbtc':
-        var _calcMintBtcRange = (0,utils/* calcMintBtcRange */.dD)(AssetsInfo);
-        var _calcMintBtcRange2 = slicedToArray_default()(_calcMintBtcRange, 2);
-        minAmount = _calcMintBtcRange2[0];
-        maxAmount = _calcMintBtcRange2[1];
-        break;
-      case 'redeembtc':
-        var _calcRedeemBtcRange = (0,utils/* calcRedeemBtcRange */.gJ)(AssetsInfo);
-        var _calcRedeemBtcRange2 = slicedToArray_default()(_calcRedeemBtcRange, 2);
-        minAmount = _calcRedeemBtcRange2[0];
-        maxAmount = _calcRedeemBtcRange2[1];
-        break;
-      case "mintbrc20":
-        var _calcMintBrc20Range = (0,utils/* calcMintBrc20Range */.UI)(AssetsInfo, asset);
-        var _calcMintBrc20Range2 = slicedToArray_default()(_calcMintBrc20Range, 2);
-        minAmount = _calcMintBrc20Range2[0];
-        maxAmount = _calcMintBrc20Range2[1];
-        break;
-      case "redeembrc20":
-        var _calcMintBrc20Range3 = (0,utils/* calcMintBrc20Range */.UI)(AssetsInfo, asset);
-        var _calcMintBrc20Range4 = slicedToArray_default()(_calcMintBrc20Range3, 2);
-        minAmount = _calcMintBrc20Range4[0];
-        maxAmount = _calcMintBrc20Range4[1];
-        break;
-      case "mintrunes":
-        var _calcMintBrc20Range5 = (0,utils/* calcMintBrc20Range */.UI)(AssetsInfo, asset);
-        var _calcMintBrc20Range6 = slicedToArray_default()(_calcMintBrc20Range5, 2);
-        minAmount = _calcMintBrc20Range6[0];
-        maxAmount = _calcMintBrc20Range6[1];
-        break;
-      case "redeemrunes":
-        var _calcMintBrc20Range7 = (0,utils/* calcMintBrc20Range */.UI)(AssetsInfo, asset);
-        var _calcMintBrc20Range8 = slicedToArray_default()(_calcMintBrc20Range7, 2);
-        minAmount = _calcMintBrc20Range8[0];
-        maxAmount = _calcMintBrc20Range8[1];
-        break;
-      case "mintmrc20":
-        var _calcMintBrc20Range9 = (0,utils/* calcMintBrc20Range */.UI)(AssetsInfo, asset);
-        var _calcMintBrc20Range10 = slicedToArray_default()(_calcMintBrc20Range9, 2);
-        minAmount = _calcMintBrc20Range10[0];
-        maxAmount = _calcMintBrc20Range10[1];
-        break;
-      case "redeemmrc20":
-        var _calcMintBrc20Range11 = (0,utils/* calcMintBrc20Range */.UI)(AssetsInfo, asset);
-        var _calcMintBrc20Range12 = slicedToArray_default()(_calcMintBrc20Range11, 2);
-        minAmount = _calcMintBrc20Range12[0];
-        maxAmount = _calcMintBrc20Range12[1];
-        break;
+    if (AssetsInfo && asset) {
+      var _calculateQuantityLim = (0,utils/* calculateQuantityLimitRange */._C)(AssetsInfo, asset);
+      var _calculateQuantityLim2 = slicedToArray_default()(_calculateQuantityLim, 2);
+      minAmount = _calculateQuantityLim2[0];
+      maxAmount = _calculateQuantityLim2[1];
     }
     return {
       maxAmount: maxAmount,

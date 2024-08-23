@@ -2693,6 +2693,7 @@ function parse (value, root, parent, rule, rules, rulesets, pseudo, points, decl
 				switch (peek()) {
 					case 42: case 47:
 						Utility_append(comment(commenter(next(), caret()), root, parent, declarations), declarations)
+						if ((token(previous || 1) == 5 || token(peek() || 1) == 5) && strlen(characters) && substr(characters, -1, void 0) !== ' ') characters += ' '
 						break
 					default:
 						characters += '/'
@@ -2708,7 +2709,7 @@ function parse (value, root, parent, rule, rules, rulesets, pseudo, points, decl
 					case 0: case 125: scanning = 0
 					// ;
 					case 59 + offset: if (ampersand == -1) characters = replace(characters, /\f/g, '')
-						if (property > 0 && (strlen(characters) - length || (variable == 0 && previous == 47)))
+						if (property > 0 && (strlen(characters) - length || (variable === 0 && previous === 47)))
 							Utility_append(property > 32 ? declaration(characters + ';', rule, parent, length - 1, declarations) : declaration(replace(characters, ' ', '') + ';', rule, parent, length - 2, declarations), declarations)
 						break
 					// @ ;
@@ -2792,7 +2793,7 @@ function ruleset (value, root, parent, index, offset, rules, points, type, props
 
 	for (var i = 0, j = 0, k = 0; i < index; ++i)
 		for (var x = 0, y = substr(value, post + 1, post = abs(j = points[i])), z = value; x < size; ++x)
-			if (z = trim(j > 0 ? rule[x] + ' ' + y : replace(y, parent ? /&\f/g : /\f/g, rule[x])))
+			if (z = trim(j > 0 ? rule[x] + ' ' + y : replace(y, /&\f/g, rule[x])))
 				props[k++] = z
 
 	return node(value, root, parent, offset === 0 ? RULESET : type, props, children, length, siblings)
@@ -3197,6 +3198,9 @@ var parseStyle = function parseStyle(interpolation) {
             if (mergedKey.startsWith('@')) {
               // 略过媒体查询，交给子节点继续插入 hashId
               subInjectHash = true;
+            } else if (mergedKey === '&') {
+              // 抹掉 root selector 上的单个 &
+              mergedKey = injectSelectorHash('', hashId, hashPriority);
             } else {
               // 注入 hashId
               mergedKey = injectSelectorHash(key, hashId, hashPriority);
@@ -10511,31 +10515,22 @@ var getUtxoBalance = /*#__PURE__*/function () {
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   xo: function() { return /* binding */ amountRaw; },
-  AY: function() { return /* binding */ calcMintBrc20Info; },
-  UI: function() { return /* binding */ calcMintBrc20Range; },
-  jq: function() { return /* binding */ calcMintBtcInfo; },
-  dD: function() { return /* binding */ calcMintBtcRange; },
-  Ds: function() { return /* binding */ calcMintMRC20Info; },
-  oj: function() { return /* binding */ calcMintRunesInfo; },
-  ug: function() { return /* binding */ calcRedeemBrc20Info; },
-  PO: function() { return /* binding */ calcRedeemBtcInfo; },
-  gJ: function() { return /* binding */ calcRedeemBtcRange; },
-  tw: function() { return /* binding */ calcRedeemMrc20Info; },
-  iF: function() { return /* binding */ calcRedeemRunesInfo; },
+  U1: function() { return /* binding */ calcMintInfo; },
+  Gb: function() { return /* binding */ calcRedeemInfo; },
+  _C: function() { return /* binding */ calculateQuantityLimitRange; },
   uY: function() { return /* binding */ determineAddressInfo; },
   gB: function() { return /* binding */ formatSat; },
   hq: function() { return /* binding */ formatUnitToBtc; },
   Wt: function() { return /* binding */ prettyTimestamp; }
 });
 
-// UNUSED EXPORTS: formatUnitToSats
+// UNUSED EXPORTS: calcMintBrc20Info, calcMintBrc20Range, calcMintBtcInfo, calcMintBtcRange, calcMintMRC20Info, calcMintRunesInfo, calcRedeemBrc20Info, calcRedeemBtcInfo, calcRedeemBtcRange, calcRedeemMrc20Info, calcRedeemRunesInfo, formatUnitToSats
 
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/slicedToArray.js
 var slicedToArray = __webpack_require__(5574);
 var slicedToArray_default = /*#__PURE__*/__webpack_require__.n(slicedToArray);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/createForOfIteratorHelper.js
 var createForOfIteratorHelper = __webpack_require__(64599);
-var createForOfIteratorHelper_default = /*#__PURE__*/__webpack_require__.n(createForOfIteratorHelper);
 // EXTERNAL MODULE: ./node_modules/decimal.js/decimal.mjs
 var decimal_js_decimal = __webpack_require__(90482);
 ;// CONCATENATED MODULE: ./node_modules/bignumber.js/bignumber.mjs
@@ -13477,12 +13472,12 @@ function amountRaw(amount, decimals, maxValue) {
   return _amountRaw.toFixed(0);
 }
 var confirmNumberBySeqAndAmount = function confirmNumberBySeqAndAmount(amount, seq, network) {
-  var _iterator = createForOfIteratorHelper_default()(seq),
+  var _iterator = _createForOfIteratorHelper(seq),
     _step;
   try {
     for (_iterator.s(); !(_step = _iterator.n()).done;) {
       var item = _step.value;
-      var _item = slicedToArray_default()(item, 4),
+      var _item = _slicedToArray(item, 4),
         start = _item[0],
         end = _item[1],
         confirmBtc = _item[2],
@@ -13729,7 +13724,7 @@ var calcMintRunesInfo = function calcMintRunesInfo(mintAmount, assetInfo, asset)
     transactionSize = assetInfo.transactionSize,
     assetList = assetInfo.assetList;
   console.log("asset:", asset);
-  console.log(new decimal_js_decimal/* default */.Z(mintAmount).mul(Math.pow(10, asset.decimals)));
+  console.log(new Decimal(mintAmount).mul(Math.pow(10, asset.decimals)));
 
   // // 转换成btc价值
   var mintRunesEqualBtcAmount = asset.price * Number(mintAmount) / btcPrice * Math.pow(10, 8);
@@ -13835,7 +13830,7 @@ var calcMintMRC20Info = function calcMintMRC20Info(mintAmount, assetInfo, asset)
     confirmSequence = assetInfo.confirmSequence,
     transactionSize = assetInfo.transactionSize,
     assetList = assetInfo.assetList;
-  var mintRawAmount = new decimal_js_decimal/* default */.Z(mintAmount).mul(Math.pow(10, asset.decimals)).toFixed(0);
+  var mintRawAmount = new Decimal(mintAmount).mul(Math.pow(10, asset.decimals)).toFixed(0);
   var mintMrc20EqualBtcAmount = asset.price * Number(mintAmount) / btcPrice * Math.pow(10, 8);
   if (Number(mintMrc20EqualBtcAmount) < Number(amountLimitMinimum)) {
     throw new Error("amount less than minimum amount");
@@ -13861,6 +13856,111 @@ var calcMintMRC20Info = function calcMintMRC20Info(mintAmount, assetInfo, asset)
     bridgeFee: bridgeFee.toFixed(asset.decimals),
     totalFee: totalFee.toFixed(asset.decimals),
     confirmNumber: confirmNumber
+  };
+};
+var getTransactionSize = function getTransactionSize(transactionSize, actionType) {
+  switch (actionType) {
+    case "mintbtc":
+      return transactionSize.BTC_MINT;
+    case "mintbrc20":
+      return transactionSize.BTC_MINT;
+    case "mintmrc20":
+      return transactionSize.BTC_MINT;
+    case "mintrunes":
+      return transactionSize.BTC_MINT;
+    case "redeembtc":
+      return transactionSize.BTC_REDEEM;
+    case "redeembrc20":
+      return transactionSize.BRC20_REDEEM;
+    case "redeemrunes":
+      return transactionSize.BRC20_REDEEM;
+    case "redeemmrc20":
+      return transactionSize.BRC20_REDEEM;
+    default:
+      console.log(actionType);
+      throw new Error("unsupport protocol");
+  }
+};
+var calculateQuantityLimitRange = function calculateQuantityLimitRange(assetInfo, asset) {
+  var btcPrice = assetInfo.btcPrice,
+    amountLimitMaximum = assetInfo.amountLimitMaximum,
+    amountLimitMinimum = assetInfo.amountLimitMinimum;
+  var price = asset.network === "BTC" ? btcPrice : asset.price;
+  var minAmount = new decimal_js_decimal/* default */.Z(amountLimitMinimum).div(1e8).mul(btcPrice).div(price).toNumber();
+  var maxAmount = new decimal_js_decimal/* default */.Z(amountLimitMaximum).div(1e8).mul(btcPrice).div(price).toNumber();
+  return [minAmount, maxAmount];
+};
+var calcRedeemInfo = function calcRedeemInfo(amount, assetInfo, asset) {
+  var btcPrice = assetInfo.btcPrice,
+    feeBtc = assetInfo.feeBtc,
+    transactionSize = assetInfo.transactionSize;
+  var decimals = asset.decimals - asset.trimDecimals;
+  var bigIntAmount = new decimal_js_decimal/* default */.Z(amount).mul(Math.pow(10, decimals)).toFixed(0);
+  // 资产价格
+  var price = asset.network === "BTC" ? btcPrice : asset.price;
+
+  // 判断是否在限额范围内
+  var _calculateQuantityLim = calculateQuantityLimitRange(assetInfo, asset),
+    _calculateQuantityLim2 = slicedToArray_default()(_calculateQuantityLim, 2),
+    minAmount = _calculateQuantityLim2[0],
+    maxAmount = _calculateQuantityLim2[1];
+  if (amount < minAmount) {
+    throw new Error("amount less than minimum amount");
+  }
+  if (amount > maxAmount) {
+    throw new Error("amount greater than maximum amount");
+  }
+  // 固定费用
+  var bridgeFeeConst = BigInt(Math.floor(asset.feeRateConstRedeem / Math.pow(10, 8) * btcPrice / price * Math.pow(10, decimals)));
+  // 按比例收取的费用
+  var bridgeFeePercent = BigInt(bigIntAmount) * BigInt(asset.feeRateNumeratorRedeem) / 10000n;
+  // 桥费
+  var bridgeFee = bridgeFeeConst + bridgeFeePercent;
+  var tragetTransactionSize = getTransactionSize(transactionSize, "redeem".concat(asset.network.toLowerCase()));
+  // target tx 矿工费
+  var minerFee = BigInt(Math.floor(tragetTransactionSize / Math.pow(10, 8) * feeBtc * btcPrice / asset.price * Math.pow(10, decimals)));
+  var totalFee = bridgeFee + minerFee;
+  var receiveAmount = BigInt(bigIntAmount) - totalFee;
+  return {
+    receiveAmount: new decimal_js_decimal/* default */.Z(receiveAmount.toString()).div(Math.pow(10, decimals)).toFixed(decimals),
+    minerFee: new decimal_js_decimal/* default */.Z(minerFee.toString()).div(Math.pow(10, decimals)).toFixed(decimals),
+    bridgeFee: new decimal_js_decimal/* default */.Z(bridgeFee.toString()).div(Math.pow(10, decimals)).toFixed(decimals),
+    totalFee: new decimal_js_decimal/* default */.Z(totalFee.toString()).div(Math.pow(10, decimals)).toFixed(decimals)
+  };
+};
+var calcMintInfo = function calcMintInfo(amount, assetInfo, asset) {
+  var btcPrice = assetInfo.btcPrice,
+    mvcPrice = assetInfo.mvcPrice,
+    feeMvc = assetInfo.feeMvc,
+    transactionSize = assetInfo.transactionSize;
+  var decimals = asset.decimals;
+  var bigIntAmount = new decimal_js_decimal/* default */.Z(amount).mul(Math.pow(10, decimals)).toFixed(0);
+  // 资产价格
+  var price = asset.network === "BTC" ? btcPrice : asset.price;
+  var _calculateQuantityLim3 = calculateQuantityLimitRange(assetInfo, asset),
+    _calculateQuantityLim4 = slicedToArray_default()(_calculateQuantityLim3, 2),
+    minAmount = _calculateQuantityLim4[0],
+    maxAmount = _calculateQuantityLim4[1];
+  if (amount < minAmount) {
+    throw new Error("amount less than minimum amount");
+  }
+  if (amount > maxAmount) {
+    throw new Error("amount greater than maximum amount");
+  }
+  var bridgeFeeConst = BigInt(Math.floor(asset.feeRateConstMint / Math.pow(10, 8) * btcPrice / price * Math.pow(10, decimals)));
+  // 按比例收取的费用
+  var bridgeFeePercent = BigInt(bigIntAmount) * BigInt(asset.feeRateNumeratorMint) / 10000n;
+  var bridgeFee = bridgeFeeConst + bridgeFeePercent;
+  var tragetTransactionSize = getTransactionSize(transactionSize, "mint".concat(asset.network.toLowerCase()));
+  // target tx 矿工费
+  var minerFee = BigInt(Math.floor(tragetTransactionSize / Math.pow(10, 8) * feeMvc * mvcPrice / price * Math.pow(10, decimals)));
+  var totalFee = bridgeFee + minerFee;
+  var receiveAmount = BigInt(bigIntAmount) - totalFee;
+  return {
+    receiveAmount: new decimal_js_decimal/* default */.Z(receiveAmount.toString()).div(Math.pow(10, decimals)).toFixed(asset.decimals - asset.trimDecimals),
+    minerFee: new decimal_js_decimal/* default */.Z(minerFee.toString()).div(Math.pow(10, decimals)).toFixed(decimals),
+    bridgeFee: new decimal_js_decimal/* default */.Z(bridgeFee.toString()).div(Math.pow(10, decimals)).toFixed(decimals),
+    totalFee: new decimal_js_decimal/* default */.Z(totalFee.toString()).div(Math.pow(10, decimals)).toFixed(decimals)
   };
 };
 
@@ -57601,7 +57701,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"206":"7b9dcfd5","208":"a39a2d4b","230":"ceea204e","242":"283c4efa","307":"c50312da","717":"c0d254b8","866":"39bded83"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"206":"7b9dcfd5","208":"a39a2d4b","230":"ceea204e","242":"c0a97206","307":"2d882a9f","717":"c0d254b8","866":"39bded83"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -59609,7 +59709,7 @@ function _render() {
 render();
 if (typeof window !== 'undefined') {
   window.g_umi = {
-    version: '4.3.14'
+    version: '4.3.15'
   };
 }
 }();
