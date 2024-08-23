@@ -6828,7 +6828,7 @@ var defaultChains = [{
       _assets = AssetsInfo.assetList.filter(function (item) {
         return item.network === protocolType.toUpperCase();
       }).filter(function (item) {
-        return protocolType === "btc" || item.price !== 0;
+        return protocolType === "btc" || item.price;
       }).map(function (item) {
         item.originName = item.originName || item.originSymbol;
         item.targetName = item.targetName || item.targetSymbol;
@@ -13885,7 +13885,7 @@ var calculateQuantityLimitRange = function calculateQuantityLimitRange(assetInfo
   var btcPrice = assetInfo.btcPrice,
     amountLimitMaximum = assetInfo.amountLimitMaximum,
     amountLimitMinimum = assetInfo.amountLimitMinimum;
-  var price = asset.network === "BTC" ? btcPrice : asset.price;
+  var price = asset.network === "BTC" ? btcPrice : asset.price || 0;
   var minAmount = new decimal_js_decimal/* default */.Z(amountLimitMinimum).div(1e8).mul(btcPrice).div(price).toNumber();
   var maxAmount = new decimal_js_decimal/* default */.Z(amountLimitMaximum).div(1e8).mul(btcPrice).div(price).toNumber();
   return [minAmount, maxAmount];
@@ -13941,12 +13941,12 @@ var calcMintInfo = function calcMintInfo(amount, assetInfo, asset) {
     _calculateQuantityLim4 = slicedToArray_default()(_calculateQuantityLim3, 2),
     minAmount = _calculateQuantityLim4[0],
     maxAmount = _calculateQuantityLim4[1];
-  if (amount < minAmount) {
-    throw new Error("amount less than minimum amount");
-  }
-  if (amount > maxAmount) {
-    throw new Error("amount greater than maximum amount");
-  }
+  // if (amount < minAmount) {
+  //   throw new Error("amount less than minimum amount");
+  // }
+  // if (amount > maxAmount) {
+  //   throw new Error("amount greater than maximum amount");
+  // }
   var bridgeFeeConst = BigInt(Math.floor(asset.feeRateConstMint / Math.pow(10, 8) * btcPrice / price * Math.pow(10, decimals)));
   // 按比例收取的费用
   var bridgeFeePercent = BigInt(bigIntAmount) * BigInt(asset.feeRateNumeratorMint) / 10000n;
