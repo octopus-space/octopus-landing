@@ -698,9 +698,10 @@ export const calcRedeemInfo = (
     `redeem${asset.network.toLowerCase()}`
   );
   // target tx 矿工费
+ 
   const minerFee = BigInt(
     Math.floor(
-      (((tragetTransactionSize / 10 ** 8) * feeBtc * btcPrice) / asset.price) *
+      (((tragetTransactionSize / 10 ** 8) * feeBtc * btcPrice) / price) *
         10 ** decimals
     )
   );
