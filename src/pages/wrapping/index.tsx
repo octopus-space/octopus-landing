@@ -639,9 +639,6 @@ export default () => {
           )}
           {
             asset && <div className="range">
-
-
-
               <div className="item">
                 <span className="label">Minimum Bridging Quantity</span>
                 <span className="value"><NumberFormat value={inputRange.minAmount} precision={bridgeType === 'mint' ? asset.decimals : asset.decimals - asset.trimDecimals} />   {bridgeType === "mint"

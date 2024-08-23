@@ -799,7 +799,7 @@ export async function mintMrc20(
     ]),
     amount: String(mintAmount),
     mrc20TickId: asset.originTokenId,
-    flag: network === "mainnet" ? "metaid" : "testid",
+    flag: 'metaid',
     revealAddr: bridgeAddress,
     commitFeeRate: assetInfo.feeBtc,
     revealFeeRate: assetInfo.feeBtc,
