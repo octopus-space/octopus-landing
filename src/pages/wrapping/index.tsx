@@ -24,13 +24,16 @@ import {
   calcMintBrc20Range,
   calcMintBtcInfo,
   calcMintBtcRange,
+  calcMintInfo,
   calcMintMRC20Info,
   calcMintRunesInfo,
   calcRedeemBrc20Info,
   calcRedeemBtcInfo,
   calcRedeemBtcRange,
+  calcRedeemInfo,
   calcRedeemMrc20Info,
   calcRedeemRunesInfo,
+  calculateQuantityLimitRange,
   determineAddressInfo,
   formatSat,
 } from "@/utils/utils";
@@ -170,59 +173,19 @@ export default () => {
     if (AssetsInfo && asset) {
       let info: FeeInfo;
       try {
-        switch (bridgeType + protocolType) {
-          case "redeembtc":
-            info = calcRedeemBtcInfo(
-              Number(amountRaw(String(value), asset.decimals)),
-              AssetsInfo
-            );
-            break;
-          case "redeembrc20":
-            info = info = calcRedeemBrc20Info(
-              Number(amountRaw(String(value), asset.decimals - asset.trimDecimals)),
-              AssetsInfo,
-              asset
-            );
-            break;
-          case "mintbtc":
-            info = info = calcMintBtcInfo(Number(amountRaw(String(value), 8)), AssetsInfo);
-            break;
-          case "mintbrc20":
-            info = calcMintBrc20Info(Number(value), AssetsInfo, asset);
-            break;
-          case "mintrunes":
-            info = calcMintRunesInfo(Number(value), AssetsInfo, asset);
-            break;
-          case "redeemrunes":
-            info = calcRedeemRunesInfo(
-              Number(amountRaw(String(value), asset.decimals - asset.trimDecimals)),
-              AssetsInfo,
-              asset
-            );
-            break
-          case "mintmrc20":
-            info = calcMintMRC20Info(Number(value), AssetsInfo, asset);
-            break;
-          case "redeemmrc20":
-            info = calcRedeemMrc20Info(
-              Number(amountRaw(String(value), asset.decimals - asset.trimDecimals)),
-              AssetsInfo,
-              asset
-            );
-            break
-          default:
-            throw new Error("unsupport protocol");
+        if (bridgeType === 'mint') {
+          info = calcMintInfo(Number(value), AssetsInfo, asset)
+        } else {
+          info = calcRedeemInfo(Number(value), AssetsInfo, asset)
         }
         if (Number(info.receiveAmount) < 0) {
           throw new Error("low send amount");
         }
         setErrorMsg("");
-
         setReciveAmount(info.receiveAmount);
         setFeeInfo(info);
       } catch (err: any) {
         console.log(err);
-        // message.error(err.message || "unknown error");
         setReciveAmount("");
         setErrorMsg(err.message || "unknown error");
       }
@@ -306,32 +269,8 @@ export default () => {
   const inputRange = useMemo(() => {
     let minAmount = 0;
     let maxAmount = 0;
-    if (!AssetsInfo || !asset) return { minAmount, maxAmount }
-    switch (actionType) {
-      case 'mintbtc':
-        [minAmount, maxAmount] = calcMintBtcRange(AssetsInfo)
-        break;
-      case 'redeembtc':
-        [minAmount, maxAmount] = calcRedeemBtcRange(AssetsInfo)
-        break;
-      case "mintbrc20":
-        [minAmount, maxAmount] = calcMintBrc20Range(AssetsInfo, asset)
-        break;
-      case "redeembrc20":
-        [minAmount, maxAmount] = calcMintBrc20Range(AssetsInfo, asset)
-        break;
-      case "mintrunes":
-        [minAmount, maxAmount] = calcMintBrc20Range(AssetsInfo, asset)
-        break;
-      case "redeemrunes":
-        [minAmount, maxAmount] = calcMintBrc20Range(AssetsInfo, asset)
-        break;
-      case "mintmrc20":
-        [minAmount, maxAmount] = calcMintBrc20Range(AssetsInfo, asset)
-        break;
-      case "redeemmrc20":
-        [minAmount, maxAmount] = calcMintBrc20Range(AssetsInfo, asset)
-        break;
+    if (AssetsInfo && asset) {
+      [minAmount, maxAmount] = calculateQuantityLimitRange(AssetsInfo, asset)
     }
     return {
       maxAmount,

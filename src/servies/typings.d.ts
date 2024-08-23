@@ -19,6 +19,14 @@ declare namespace API {
     targetTokenId: string;
     trimDecimals: number;
   };
+  type TransactionSize = {
+    BRC20_MINT: number;
+    BRC20_REDEEM: number;
+    BTC_MINT: number;
+    BTC_REDEEM: number;
+    RUNES_REDEEM: number;
+    RUNES_MINT: number;
+  };
   type AssetsData = {
     amountLimitMaximum: string;
     amountLimitMinimum: string;
@@ -29,18 +37,11 @@ declare namespace API {
     feeBtc: number;
     feeMvc: number;
     net: string;
-    transactionSize: {
-      BRC20_MINT: number;
-      BRC20_REDEEM: number;
-      BTC_MINT: number;
-      BTC_REDEEM: number;
-      RUNES_REDEEM: number;
-      RUNES_MINT: number;
-    };
+    transactionSize: TransactionSize;
   };
   interface Ret<T> {
     success: boolean;
-    code:number;
+    code: number;
     message: string;
     msg: string;
     data: T;

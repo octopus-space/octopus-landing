@@ -62,7 +62,6 @@ export type FeeInfo = {
   minerFee: number | string;
   bridgeFee: number | string;
   totalFee: number | string;
-  confirmNumber: number | string;
 };
 export const calcRedeemBtcInfo = (
   redeemAmount: number,
@@ -296,11 +295,7 @@ export const calcMintBrc20Range = (
   assetInfo: API.AssetsData,
   asset: API.AssetItem
 ) => {
-  const {
-    btcPrice,
-    amountLimitMaximum,
-    amountLimitMinimum,
-  } = assetInfo;
+  const { btcPrice, amountLimitMaximum, amountLimitMinimum } = assetInfo;
   const assetRdex = asset;
   const minAmount =
     ((Number(amountLimitMinimum) / 1e8) * btcPrice) / assetRdex.price;
@@ -620,5 +615,164 @@ export const calcMintMRC20Info = (
     bridgeFee: bridgeFee.toFixed(asset.decimals),
     totalFee: totalFee.toFixed(asset.decimals),
     confirmNumber,
+  };
+};
+
+const getTransactionSize = (
+  transactionSize: API.TransactionSize,
+  actionType: string
+) => {
+  switch (actionType) {
+    case "mintbtc":
+      return transactionSize.BTC_MINT;
+    case "mintbrc20":
+      return transactionSize.BTC_MINT;
+    case "mintmrc20":
+      return transactionSize.BTC_MINT;
+    case "mintrunes":
+      return transactionSize.BTC_MINT;
+    case "redeembtc":
+      return transactionSize.BTC_REDEEM;
+    case "redeembrc20":
+      return transactionSize.BRC20_REDEEM;
+    case "redeemrunes":
+      return transactionSize.BRC20_REDEEM;
+    case "redeemmrc20":
+      return transactionSize.BRC20_REDEEM;
+    default:
+      console.log(actionType);
+      throw new Error("unsupport protocol");
+  }
+};
+export const calculateQuantityLimitRange = (
+  assetInfo: API.AssetsData,
+  asset: API.AssetItem
+) => {
+  const { btcPrice, amountLimitMaximum, amountLimitMinimum } = assetInfo;
+  const price = asset.network === "BTC" ? btcPrice : asset.price;
+  const minAmount = new Decimal(amountLimitMinimum)
+    .div(1e8)
+    .mul(btcPrice)
+    .div(price)
+    .toNumber();
+  const maxAmount = new Decimal(amountLimitMaximum)
+    .div(1e8)
+    .mul(btcPrice)
+    .div(price)
+    .toNumber();
+  return [minAmount, maxAmount];
+};
+export const calcRedeemInfo = (
+  amount: number,
+  assetInfo: API.AssetsData,
+  asset: API.AssetItem
+) => {
+  const { btcPrice, feeBtc, transactionSize } = assetInfo;
+  const decimals = asset.decimals - asset.trimDecimals;
+  const bigIntAmount = new Decimal(amount).mul(10 ** decimals).toFixed(0);
+  // 资产价格
+  const price = asset.network === "BTC" ? btcPrice : asset.price;
+
+  // 判断是否在限额范围内
+  const [minAmount, maxAmount] = calculateQuantityLimitRange(assetInfo, asset);
+  if (amount < minAmount) {
+    throw new Error("amount less than minimum amount");
+  }
+  if (amount > maxAmount) {
+    throw new Error("amount greater than maximum amount");
+  }
+  // 固定费用
+  const bridgeFeeConst = BigInt(
+    Math.floor(
+      (((asset.feeRateConstRedeem / 10 ** 8) * btcPrice) / price) *
+        10 ** decimals
+    )
+  );
+  // 按比例收取的费用
+  const bridgeFeePercent =
+    (BigInt(bigIntAmount) * BigInt(asset.feeRateNumeratorRedeem)) / 10000n;
+  // 桥费
+  const bridgeFee = bridgeFeeConst + bridgeFeePercent;
+  const tragetTransactionSize = getTransactionSize(
+    transactionSize,
+    `redeem${asset.network.toLowerCase()}`
+  );
+  // target tx 矿工费
+  const minerFee = BigInt(
+    Math.floor(
+      (((tragetTransactionSize / 10 ** 8) * feeBtc * btcPrice) / asset.price) *
+        10 ** decimals
+    )
+  );
+  const totalFee = bridgeFee + minerFee;
+  const receiveAmount = BigInt(bigIntAmount) - totalFee;
+  return {
+    receiveAmount: new Decimal(receiveAmount.toString())
+      .div(10 ** decimals)
+      .toFixed(decimals),
+    minerFee: new Decimal(minerFee.toString())
+      .div(10 ** decimals)
+      .toFixed(decimals),
+    bridgeFee: new Decimal(bridgeFee.toString())
+      .div(10 ** decimals)
+      .toFixed(decimals),
+    totalFee: new Decimal(totalFee.toString())
+      .div(10 ** decimals)
+      .toFixed(decimals),
+  };
+};
+
+export const calcMintInfo = (
+  amount: number,
+  assetInfo: API.AssetsData,
+  asset: API.AssetItem
+) => {
+  const { btcPrice, mvcPrice, feeMvc, transactionSize } = assetInfo;
+  const decimals = asset.decimals;
+  const bigIntAmount = new Decimal(amount).mul(10 ** decimals).toFixed(0);
+  // 资产价格
+  const price = asset.network === "BTC" ? btcPrice : asset.price;
+  const [minAmount, maxAmount] = calculateQuantityLimitRange(assetInfo, asset);
+  if (amount < minAmount) {
+    throw new Error("amount less than minimum amount");
+  }
+  if (amount > maxAmount) {
+    throw new Error("amount greater than maximum amount");
+  }
+  const bridgeFeeConst = BigInt(
+    Math.floor(
+      (((asset.feeRateConstMint / 10 ** 8) * btcPrice) / price) * 10 ** decimals
+    )
+  );
+  // 按比例收取的费用
+  const bridgeFeePercent =
+    (BigInt(bigIntAmount) * BigInt(asset.feeRateNumeratorMint)) / 10000n;
+  const bridgeFee = bridgeFeeConst + bridgeFeePercent;
+  const tragetTransactionSize = getTransactionSize(
+    transactionSize,
+    `mint${asset.network.toLowerCase()}`
+  );
+  // target tx 矿工费
+  const minerFee = BigInt(
+    Math.floor(
+      (((tragetTransactionSize / 10 ** 8) * feeMvc * mvcPrice) / price) *
+        10 ** decimals
+    )
+  );
+  const totalFee = bridgeFee + minerFee;
+  const receiveAmount = BigInt(bigIntAmount) - totalFee;
+  return {
+    receiveAmount: new Decimal(receiveAmount.toString())
+      .div(10 ** decimals)
+      .toFixed(asset.decimals - asset.trimDecimals),
+    minerFee: new Decimal(minerFee.toString())
+      .div(10 ** decimals)
+      .toFixed(decimals),
+    bridgeFee: new Decimal(bridgeFee.toString())
+      .div(10 ** decimals)
+      .toFixed(decimals),
+    totalFee: new Decimal(totalFee.toString())
+      .div(10 ** decimals)
+      .toFixed(decimals),
   };
 };
