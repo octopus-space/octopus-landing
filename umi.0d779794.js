@@ -13918,7 +13918,8 @@ var calcRedeemInfo = function calcRedeemInfo(amount, assetInfo, asset) {
   var bridgeFee = bridgeFeeConst + bridgeFeePercent;
   var tragetTransactionSize = getTransactionSize(transactionSize, "redeem".concat(asset.network.toLowerCase()));
   // target tx 矿工费
-  var minerFee = BigInt(Math.floor(tragetTransactionSize / Math.pow(10, 8) * feeBtc * btcPrice / asset.price * Math.pow(10, decimals)));
+
+  var minerFee = BigInt(Math.floor(tragetTransactionSize / Math.pow(10, 8) * feeBtc * btcPrice / price * Math.pow(10, decimals)));
   var totalFee = bridgeFee + minerFee;
   var receiveAmount = BigInt(bigIntAmount) - totalFee;
   return {
