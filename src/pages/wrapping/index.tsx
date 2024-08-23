@@ -20,29 +20,14 @@ import historyIcon from "@/assets/history.svg";
 import {
   FeeInfo,
   amountRaw,
-  calcMintBrc20Info,
-  calcMintBrc20Range,
-  calcMintBtcInfo,
-  calcMintBtcRange,
   calcMintInfo,
-  calcMintMRC20Info,
-  calcMintRunesInfo,
-  calcRedeemBrc20Info,
-  calcRedeemBtcInfo,
-  calcRedeemBtcRange,
   calcRedeemInfo,
-  calcRedeemMrc20Info,
-  calcRedeemRunesInfo,
   calculateQuantityLimitRange,
   determineAddressInfo,
-  formatSat,
 } from "@/utils/utils";
-import TokenIcon from "@/components/TokenIcon";
 import History from "./components/History";
 import FormButton from "@/components/FormButton";
 import { SegOptions } from "./components/Options";
-import SelectNet from "@/components/SelectNet";
-import { Chain } from "@/models/wrapping";
 import {
   SupportRedeemAddressType,
   mintBrc,
