@@ -48,6 +48,7 @@ import SwitchChain from "./components/SwitchChain";
 import MintBrc20Input from "./components/MintBrc20Input";
 import InputToken from "./components/InputToken";
 import NumberFormat from "@/components/NumberFormat";
+import { checkWalletAddress } from "@/utils/psbtBuild";
 const defalut: ConfirmProps = {
   show: false,
   amount: "",
@@ -270,6 +271,8 @@ export default () => {
 
     try {
       setSubmitting(true);
+      const { status, message } = await checkWalletAddress(btcAddress);
+      if (!status) throw new Error(message)
       const addressInfo = determineAddressInfo(btcAddress);
       const addressType: SupportRedeemAddressType =
         addressInfo.toUpperCase() as SupportRedeemAddressType;
@@ -323,6 +326,8 @@ export default () => {
 
     try {
       setSubmitting(true);
+      const { status, message } = await checkWalletAddress(btcAddress);
+      if (!status) throw new Error(message)
       const addressInfo = determineAddressInfo(btcAddress);
       const addressType: SupportRedeemAddressType =
         addressInfo.toUpperCase() as SupportRedeemAddressType;

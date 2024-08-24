@@ -65,6 +65,7 @@ async function sendToken(
     .catch((e) => {
       throw new Error(e as any);
     });
+  console.log(res, "sendToken");
   if (res.status) throw new Error(res.status);
   if (res.res[0].txid) {
     return res.res[0].txid;

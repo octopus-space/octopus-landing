@@ -158,3 +158,12 @@ export const getUtxoBalance = async (address?: string) => {
   const utxos = await getUtxos(address);
   return utxos.reduce((acc, cur) => acc + cur.satoshis, 0);
 };
+
+
+export const checkWalletAddress = async (address: string) => {
+  const _address = await window.metaidwallet.btc.getAddress()
+  if (address !== _address) {
+    return { status: false, message: 'Wallet address is not matched' }
+  }
+  return { status: true }
+}
