@@ -1,6 +1,11 @@
 import Decimal from "decimal.js";
 import BigNumber from "bignumber.js";
 import dayjs from "dayjs";
+import { message } from "antd";
+import {
+  SupportRedeemAddressType,
+  supportRedeemAddressType,
+} from "@/servies/wrapping";
 export const formatSat = (value: string | number, dec = 8) => {
   if (!value) return "0";
 
@@ -698,7 +703,7 @@ export const calcRedeemInfo = (
     `redeem${asset.network.toLowerCase()}`
   );
   // target tx 矿工费
- 
+
   const minerFee = BigInt(
     Math.floor(
       (((tragetTransactionSize / 10 ** 8) * feeBtc * btcPrice) / price) *
@@ -775,5 +780,18 @@ export const calcMintInfo = (
     totalFee: new Decimal(totalFee.toString())
       .div(10 ** decimals)
       .toFixed(decimals),
+  };
+};
+
+export const checkAddressType = (address: string) => {
+  const addressType = determineAddressInfo(
+    address
+  ).toUpperCase() as SupportRedeemAddressType;
+  if (supportRedeemAddressType.includes(addressType)) {
+    return { pass: true, message: "" };
+  }
+  return {
+    pass: false,
+    message: `Only ${supportRedeemAddressType.join(",")} address is supported`,
   };
 };

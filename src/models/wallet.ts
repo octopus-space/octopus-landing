@@ -1,5 +1,5 @@
 import { getUtxoBalance } from "@/utils/psbtBuild";
-import { formatSat } from "@/utils/utils";
+import { checkAddressType, formatSat } from "@/utils/utils";
 import { useCallback, useEffect, useState } from "react";
 export type Network = "mainnet" | "testnet";
 type WalletName = "metalet";
@@ -36,7 +36,10 @@ export default () => {
         throw new Error(ret.status);
       }
     }
-    await init();
+    const { pass, message } = await init();
+    if (!pass) {
+      throw new Error(message);
+    }
   };
 
   const disConnect = async () => {
@@ -74,13 +77,19 @@ export default () => {
         const _mvc = await window.metaidwallet.getAddress();
         const { network } = await window.metaidwallet.getNetwork();
         const btcAddress = await window.metaidwallet.btc.getAddress();
+        const { pass, message } = checkAddressType(btcAddress);
+        if (!pass) {
+          return { pass, message };
+        }
         setConnected(true);
         setMVCAddress(_mvc);
         setNetwork(network);
         setBTCAddress(btcAddress);
         getBal();
+        return { pass, message };
       }
     }
+    return { pass: true, message: "" };
   }, [walletName]);
   useEffect(() => {
     //
