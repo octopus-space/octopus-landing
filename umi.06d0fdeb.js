@@ -10269,6 +10269,7 @@ function _getRawTx() {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   XI: function() { return /* binding */ checkWalletAddress; },
 /* harmony export */   lE: function() { return /* binding */ buildTx; },
 /* harmony export */   o2: function() { return /* binding */ createPsbtInput; },
 /* harmony export */   t4: function() { return /* binding */ getUtxos; },
@@ -10330,44 +10331,44 @@ function buildTx(_x, _x2, _x3, _x4, _x5, _x6) {
   return _buildTx.apply(this, arguments);
 }
 function _buildTx() {
-  _buildTx = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee3(utxos, amount, feeRate, buildPsbtParams, address, buildPsbt) {
+  _buildTx = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee4(utxos, amount, feeRate, buildPsbtParams, address, buildPsbt) {
     var selectedUTXOs, total, psbt, estimatedFee;
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee3$(_context3) {
-      while (1) switch (_context3.prev = _context3.next) {
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee4$(_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
         case 0:
           selectedUTXOs = selectUTXOs(utxos, amount);
           total = getTotalSatoshi(selectedUTXOs);
-          _context3.next = 4;
+          _context4.next = 4;
           return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount), true);
         case 4:
-          psbt = _context3.sent;
+          psbt = _context4.sent;
           estimatedFee = calculateEstimatedFee(psbt, feeRate);
         case 6:
           if (!total.lt(amount.add(estimatedFee))) {
-            _context3.next = 17;
+            _context4.next = 17;
             break;
           }
           if (!(selectedUTXOs.length === utxos.length)) {
-            _context3.next = 9;
+            _context4.next = 9;
             break;
           }
           throw new Error("Insufficient funds");
         case 9:
           selectedUTXOs = selectUTXOs(utxos, amount.add(estimatedFee));
           total = getTotalSatoshi(selectedUTXOs);
-          _context3.next = 13;
+          _context4.next = 13;
           return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount.add(estimatedFee)), true);
         case 13:
-          psbt = _context3.sent;
+          psbt = _context4.sent;
           estimatedFee = calculateEstimatedFee(psbt, feeRate);
-          _context3.next = 6;
+          _context4.next = 6;
           break;
         case 17:
-          _context3.next = 19;
+          _context4.next = 19;
           return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount.add(estimatedFee)), false);
         case 19:
-          psbt = _context3.sent;
-          return _context3.abrupt("return", {
+          psbt = _context4.sent;
+          return _context4.abrupt("return", {
             psbt: psbt,
             fee: total.minus(psbt.txOutputs.reduce(function (acc, cur) {
               return acc + Number(cur.value);
@@ -10389,9 +10390,9 @@ function _buildTx() {
           });
         case 21:
         case "end":
-          return _context3.stop();
+          return _context4.stop();
       }
-    }, _callee3);
+    }, _callee4);
   }));
   return _buildTx.apply(this, arguments);
 }
@@ -10404,22 +10405,22 @@ function createPsbtInput(_x7) {
   return _createPsbtInput.apply(this, arguments);
 }
 function _createPsbtInput() {
-  _createPsbtInput = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee4(_ref) {
+  _createPsbtInput = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee5(_ref) {
     var utxo, addressType, network, payInput, _yield$getRawTx, rawTx, tx;
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee4$(_context4) {
-      while (1) switch (_context4.prev = _context4.next) {
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee5$(_context5) {
+      while (1) switch (_context5.prev = _context5.next) {
         case 0:
           utxo = _ref.utxo, addressType = _ref.addressType, network = _ref.network;
           payInput = {
             hash: utxo.txId,
             index: utxo.vout || utxo.outputIndex
           };
-          _context4.next = 4;
+          _context5.next = 4;
           return (0,_servies_api__WEBPACK_IMPORTED_MODULE_5__/* .getRawTx */ .V5)(network, {
             txid: utxo.txId
           });
         case 4:
-          _yield$getRawTx = _context4.sent;
+          _yield$getRawTx = _context5.sent;
           rawTx = _yield$getRawTx.data.rawTx;
           tx = bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .Transaction */ .YW.fromHex(rawTx);
           if (["P2WPKH"].includes(addressType)) {
@@ -10428,12 +10429,12 @@ function _createPsbtInput() {
           if (["P2PKH"].includes(addressType)) {
             payInput["nonWitnessUtxo"] = tx.toBuffer();
           }
-          return _context4.abrupt("return", payInput);
+          return _context5.abrupt("return", payInput);
         case 10:
         case "end":
-          return _context4.stop();
+          return _context5.stop();
       }
-    }, _callee4);
+    }, _callee5);
   }));
   return _createPsbtInput.apply(this, arguments);
 }
@@ -10502,6 +10503,38 @@ var getUtxoBalance = /*#__PURE__*/function () {
   }));
   return function getUtxoBalance(_x9) {
     return _ref3.apply(this, arguments);
+  };
+}();
+var checkWalletAddress = /*#__PURE__*/function () {
+  var _ref4 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee3(address) {
+    var _address;
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
+        case 0:
+          _context3.next = 2;
+          return window.metaidwallet.btc.getAddress();
+        case 2:
+          _address = _context3.sent;
+          if (!(address !== _address)) {
+            _context3.next = 5;
+            break;
+          }
+          return _context3.abrupt("return", {
+            status: false,
+            message: 'Wallet address is not matched'
+          });
+        case 5:
+          return _context3.abrupt("return", {
+            status: true
+          });
+        case 6:
+        case "end":
+          return _context3.stop();
+      }
+    }, _callee3);
+  }));
+  return function checkWalletAddress(_x10) {
+    return _ref4.apply(this, arguments);
   };
 }();
 
@@ -57702,7 +57735,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"206":"7b9dcfd5","208":"a39a2d4b","230":"ceea204e","242":"c0a97206","307":"5a218b2b","717":"c0d254b8","866":"39bded83"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"206":"7b9dcfd5","208":"a39a2d4b","230":"ceea204e","242":"c0a97206","307":"92daa8a3","717":"c0d254b8","866":"39bded83"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	

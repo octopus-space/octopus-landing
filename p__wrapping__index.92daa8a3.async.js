@@ -1075,20 +1075,21 @@ function _sendToken() {
           });
         case 2:
           res = _context.sent;
+          console.log(res, "sendToken");
           if (!res.status) {
-            _context.next = 5;
+            _context.next = 6;
             break;
           }
           throw new Error(res.status);
-        case 5:
+        case 6:
           if (!res.res[0].txid) {
-            _context.next = 9;
+            _context.next = 10;
             break;
           }
           return _context.abrupt("return", res.res[0].txid);
-        case 9:
-          return _context.abrupt("return", "");
         case 10:
+          return _context.abrupt("return", "");
+        case 11:
         case "end":
           return _context.stop();
       }
@@ -2933,6 +2934,7 @@ var NumberFormat = function NumberFormat(props) {
 
 
 
+
 var defalut = {
   show: false,
   amount: "",
@@ -3230,7 +3232,7 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
   }, [asset, actionType, AssetsInfo]);
   var redeem = /*#__PURE__*/function () {
     var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
-      var addressInfo, addressType;
+      var _yield$checkWalletAdd, status, _message, addressInfo, addressType;
       return regeneratorRuntime_default()().wrap(function _callee3$(_context3) {
         while (1) switch (_context3.prev = _context3.next) {
           case 0:
@@ -3242,60 +3244,72 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
           case 2:
             _context3.prev = 2;
             setSubmitting(true);
-            addressInfo = (0,utils/* determineAddressInfo */.uY)(btcAddress);
-            addressType = addressInfo.toUpperCase();
-            if (supportRedeemAddressType.includes(addressType)) {
-              _context3.next = 8;
-              break;
-            }
-            throw new Error("unsupport address type");
-          case 8:
-            if (!(bridgeType === "redeem" && protocolType === "btc")) {
+            _context3.next = 6;
+            return (0,psbtBuild/* checkWalletAddress */.XI)(btcAddress);
+          case 6:
+            _yield$checkWalletAdd = _context3.sent;
+            status = _yield$checkWalletAdd.status;
+            _message = _yield$checkWalletAdd.message;
+            if (status) {
               _context3.next = 11;
               break;
             }
-            _context3.next = 11;
-            return redeemBtc((0,utils/* amountRaw */.xo)(String(amount), asset.decimals), asset, addressType, network);
+            throw new Error(_message);
           case 11:
+            addressInfo = (0,utils/* determineAddressInfo */.uY)(btcAddress);
+            addressType = addressInfo.toUpperCase();
+            if (supportRedeemAddressType.includes(addressType)) {
+              _context3.next = 15;
+              break;
+            }
+            throw new Error("unsupport address type");
+          case 15:
+            if (!(bridgeType === "redeem" && protocolType === "btc")) {
+              _context3.next = 18;
+              break;
+            }
+            _context3.next = 18;
+            return redeemBtc((0,utils/* amountRaw */.xo)(String(amount), asset.decimals), asset, addressType, network);
+          case 18:
             if (!(asset && bridgeType === "redeem" && protocolType === "brc20")) {
-              _context3.next = 14;
+              _context3.next = 21;
               break;
             }
-            _context3.next = 14;
+            _context3.next = 21;
             return redeemBrc20((0,utils/* amountRaw */.xo)(String(amount), asset.decimals - asset.trimDecimals), asset, addressType, network);
-          case 14:
+          case 21:
             if (!(asset && bridgeType === "redeem" && protocolType === "runes")) {
-              _context3.next = 17;
+              _context3.next = 24;
               break;
             }
-            _context3.next = 17;
+            _context3.next = 24;
             return redeemRunes((0,utils/* amountRaw */.xo)(String(amount), asset.decimals - asset.trimDecimals), asset, addressType, network);
-          case 17:
+          case 24:
             if (!(asset && bridgeType === "redeem" && protocolType === "mrc20")) {
-              _context3.next = 20;
+              _context3.next = 27;
               break;
             }
-            _context3.next = 20;
+            _context3.next = 27;
             return redeemMrc20((0,utils/* amountRaw */.xo)(String(amount), asset.decimals - asset.trimDecimals), asset, addressType, network);
-          case 20:
+          case 27:
             setSuccessVisible(true);
-            _context3.next = 23;
+            _context3.next = 30;
             return getBal();
-          case 23:
-            _context3.next = 29;
+          case 30:
+            _context3.next = 36;
             break;
-          case 25:
-            _context3.prev = 25;
+          case 32:
+            _context3.prev = 32;
             _context3.t0 = _context3["catch"](2);
             console.log(_context3.t0);
             message/* default */.ZP.error(_context3.t0.message || "unknown error");
-          case 29:
+          case 36:
             setSubmitting(false);
-          case 30:
+          case 37:
           case "end":
             return _context3.stop();
         }
-      }, _callee3, null, [[2, 25]]);
+      }, _callee3, null, [[2, 32]]);
     }));
     return function redeem() {
       return _ref2.apply(this, arguments);
@@ -3303,7 +3317,7 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
   }();
   var mint = /*#__PURE__*/function () {
     var _ref3 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4() {
-      var addressInfo, addressType, ret, _ret3, _ret4, _ret5;
+      var _yield$checkWalletAdd2, status, _message2, addressInfo, addressType, ret, _ret3, _ret4, _ret5;
       return regeneratorRuntime_default()().wrap(function _callee4$(_context4) {
         while (1) switch (_context4.prev = _context4.next) {
           case 0:
@@ -3315,62 +3329,74 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
           case 2:
             _context4.prev = 2;
             setSubmitting(true);
+            _context4.next = 6;
+            return (0,psbtBuild/* checkWalletAddress */.XI)(btcAddress);
+          case 6:
+            _yield$checkWalletAdd2 = _context4.sent;
+            status = _yield$checkWalletAdd2.status;
+            _message2 = _yield$checkWalletAdd2.message;
+            if (status) {
+              _context4.next = 11;
+              break;
+            }
+            throw new Error(_message2);
+          case 11:
             addressInfo = (0,utils/* determineAddressInfo */.uY)(btcAddress);
             addressType = addressInfo.toUpperCase();
             if (!(bridgeType === "mint" && protocolType === "btc")) {
-              _context4.next = 10;
+              _context4.next = 17;
               break;
             }
-            _context4.next = 9;
+            _context4.next = 16;
             return mintBtc((0,utils/* amountRaw */.xo)(String(amount), 8), asset, addressType, network, AssetsInfo);
-          case 9:
+          case 16:
             ret = _context4.sent;
-          case 10:
-            if (!(inscription && bridgeType === "mint" && protocolType === "brc20")) {
-              _context4.next = 14;
-              break;
-            }
-            _context4.next = 13;
-            return mintBrc(Number(inscription.amount), asset, addressType, network, AssetsInfo, inscription);
-          case 13:
-            _ret3 = _context4.sent;
-          case 14:
-            if (!(bridgeType === "mint" && protocolType === "runes")) {
-              _context4.next = 18;
-              break;
-            }
-            _context4.next = 17;
-            return mintRunes(amount, asset, addressType, network, AssetsInfo);
           case 17:
-            _ret4 = _context4.sent;
-          case 18:
-            if (!(actionType === 'mintmrc20')) {
-              _context4.next = 22;
+            if (!(inscription && bridgeType === "mint" && protocolType === "brc20")) {
+              _context4.next = 21;
               break;
             }
-            _context4.next = 21;
-            return mintMrc20(Number(amount), asset, addressType, network, AssetsInfo);
+            _context4.next = 20;
+            return mintBrc(Number(inscription.amount), asset, addressType, network, AssetsInfo, inscription);
+          case 20:
+            _ret3 = _context4.sent;
           case 21:
-            _ret5 = _context4.sent;
-          case 22:
-            setSuccessVisible(true);
-            _context4.next = 25;
-            return getBal();
+            if (!(bridgeType === "mint" && protocolType === "runes")) {
+              _context4.next = 25;
+              break;
+            }
+            _context4.next = 24;
+            return mintRunes(amount, asset, addressType, network, AssetsInfo);
+          case 24:
+            _ret4 = _context4.sent;
           case 25:
-            _context4.next = 31;
+            if (!(actionType === 'mintmrc20')) {
+              _context4.next = 29;
+              break;
+            }
+            _context4.next = 28;
+            return mintMrc20(Number(amount), asset, addressType, network, AssetsInfo);
+          case 28:
+            _ret5 = _context4.sent;
+          case 29:
+            setSuccessVisible(true);
+            _context4.next = 32;
+            return getBal();
+          case 32:
+            _context4.next = 38;
             break;
-          case 27:
-            _context4.prev = 27;
+          case 34:
+            _context4.prev = 34;
             _context4.t0 = _context4["catch"](2);
             console.log(_context4.t0);
             message/* default */.ZP.error(_context4.t0.message || "unknown error");
-          case 31:
+          case 38:
             setSubmitting(false);
-          case 32:
+          case 39:
           case "end":
             return _context4.stop();
         }
-      }, _callee4, null, [[2, 27]]);
+      }, _callee4, null, [[2, 34]]);
     }));
     return function mint() {
       return _ref3.apply(this, arguments);
