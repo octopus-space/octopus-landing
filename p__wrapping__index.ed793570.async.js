@@ -2017,7 +2017,7 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
   var conditions = (0,react.useMemo)(function () {
     return [{
       condition: !amount,
-      text: "Entry Amount",
+      text: "Enter Amount",
       type: "primary",
       onClick: function onClick() {}
     }, {
