@@ -47,8 +47,10 @@ export const sleep = (ms: number) => {
 async function sendToken(
   amount: string,
   address: string,
+
   targetTokenCodeHash: string,
-  targetTokenGenesis: string
+  targetTokenGenesis: string,
+  decimal: number = 0
 ): Promise<string> {
   const res = await window.metaidwallet
     .transfer({
@@ -58,7 +60,7 @@ async function sendToken(
           type: "token",
           codehash: targetTokenCodeHash,
           genesis: targetTokenGenesis,
-          receivers: [{ address, amount }],
+          receivers: [{ address, amount, decimal }],
         },
       ],
     })
@@ -175,7 +177,8 @@ export async function redeemBtc(
       String(redeemAmount),
       bridgeAddress,
       targetTokenCodeHash,
-      targetTokenGenesis
+      targetTokenGenesis,
+      btcAsset.decimals - btcAsset.trimDecimals
     );
 
     const submitPrepayOrderRedeemDto = {
@@ -227,7 +230,8 @@ export async function redeemBrc20(
       String(redeemAmount),
       bridgeAddress,
       targetTokenCodeHash,
-      targetTokenGenesis
+      targetTokenGenesis,
+      asset.decimals - asset.trimDecimals
     );
     const submitPrepayOrderRedeemDto = {
       orderId,
@@ -278,7 +282,8 @@ export async function redeemRunes(
       String(redeemAmount),
       bridgeAddress,
       targetTokenCodeHash,
-      targetTokenGenesis
+      targetTokenGenesis,
+      asset.decimals - asset.trimDecimals
     );
     const submitPrepayOrderRedeemDto = {
       orderId,
@@ -329,7 +334,8 @@ export async function redeemMrc20(
       String(redeemAmount),
       bridgeAddress,
       targetTokenCodeHash,
-      targetTokenGenesis
+      targetTokenGenesis,
+      asset.decimals - asset.trimDecimals
     );
     const submitPrepayOrderRedeemDto = {
       orderId,
@@ -800,7 +806,7 @@ export async function mintMrc20(
     ]),
     amount: String(mintAmount),
     mrc20TickId: asset.originTokenId,
-    flag: 'metaid',
+    flag: "metaid",
     revealAddr: bridgeAddress,
     commitFeeRate: assetInfo.feeBtc,
     revealFeeRate: assetInfo.feeBtc,
