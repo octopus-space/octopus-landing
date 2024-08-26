@@ -47078,11 +47078,14 @@ function sendToken(_x, _x2, _x3, _x4) {
 } // sign redeem  publicKey
 function _sendToken() {
   _sendToken = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(amount, address, targetTokenCodeHash, targetTokenGenesis) {
-    var res;
+    var decimal,
+      res,
+      _args = arguments;
     return regeneratorRuntime_default()().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
-          _context.next = 2;
+          decimal = _args.length > 4 && _args[4] !== undefined ? _args[4] : 0;
+          _context.next = 3;
           return window.metaidwallet.transfer({
             broadcast: true,
             tasks: [{
@@ -47091,29 +47094,30 @@ function _sendToken() {
               genesis: targetTokenGenesis,
               receivers: [{
                 address: address,
-                amount: amount
+                amount: amount,
+                decimal: decimal
               }]
             }]
           })["catch"](function (e) {
             throw new Error(e);
           });
-        case 2:
+        case 3:
           res = _context.sent;
           console.log(res, "sendToken");
           if (!res.status) {
-            _context.next = 6;
+            _context.next = 7;
             break;
           }
           throw new Error(res.status);
-        case 6:
+        case 7:
           if (!res.res[0].txid) {
-            _context.next = 10;
+            _context.next = 11;
             break;
           }
           return _context.abrupt("return", res.res[0].txid);
-        case 10:
-          return _context.abrupt("return", "");
         case 11:
+          return _context.abrupt("return", "");
+        case 12:
         case "end":
           return _context.stop();
       }
@@ -47274,7 +47278,7 @@ function _redeemBtc() {
           orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
           targetTokenCodeHash = btcAsset.targetTokenCodeHash, targetTokenGenesis = btcAsset.targetTokenGenesis;
           _context4.next = 17;
-          return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis);
+          return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis, btcAsset.decimals - btcAsset.trimDecimals);
         case 17:
           txid = _context4.sent;
           submitPrepayOrderRedeemDto = {
@@ -47345,7 +47349,7 @@ function _redeemBrc() {
           orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
           targetTokenCodeHash = asset.targetTokenCodeHash, targetTokenGenesis = asset.targetTokenGenesis;
           _context5.next = 17;
-          return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis);
+          return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis, asset.decimals - asset.trimDecimals);
         case 17:
           txid = _context5.sent;
           submitPrepayOrderRedeemDto = {
@@ -47416,7 +47420,7 @@ function _redeemRunes() {
           orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
           targetTokenCodeHash = asset.targetTokenCodeHash, targetTokenGenesis = asset.targetTokenGenesis;
           _context6.next = 17;
-          return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis);
+          return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis, asset.decimals - asset.trimDecimals);
         case 17:
           txid = _context6.sent;
           submitPrepayOrderRedeemDto = {
@@ -47489,7 +47493,7 @@ function _redeemMrc() {
           orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
           targetTokenCodeHash = asset.targetTokenCodeHash, targetTokenGenesis = asset.targetTokenGenesis;
           _context7.next = 17;
-          return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis);
+          return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis, asset.decimals - asset.trimDecimals);
         case 17:
           txid = _context7.sent;
           submitPrepayOrderRedeemDto = {
@@ -48158,7 +48162,7 @@ function _mintMrc() {
             }]),
             amount: String(mintAmount),
             mrc20TickId: asset.originTokenId,
-            flag: 'metaid',
+            flag: "metaid",
             revealAddr: bridgeAddress,
             commitFeeRate: assetInfo.feeBtc,
             revealFeeRate: assetInfo.feeBtc
