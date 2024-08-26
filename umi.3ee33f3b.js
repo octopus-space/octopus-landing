@@ -9378,6 +9378,9 @@ var defaultChains = [{
       }).map(function (item) {
         item.originName = item.originName || item.originSymbol;
         item.targetName = item.targetName || item.targetSymbol;
+        if (item.network === 'BTC') {
+          item.targetName = 'WBTC';
+        }
         return item;
       });
       if (_assets.length > 0) {
@@ -97690,7 +97693,7 @@ function _render() {
 render();
 if (typeof window !== 'undefined') {
   window.g_umi = {
-    version: '4.3.15'
+    version: '4.3.16'
   };
 }
 }();
