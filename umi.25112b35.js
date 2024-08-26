@@ -54205,7 +54205,7 @@ var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 37 modules
 var es = __webpack_require__(11568);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/version/version.js
-/* harmony default export */ var version = ('5.20.2');
+/* harmony default export */ var version = ('5.20.3');
 ;// CONCATENATED MODULE: ./node_modules/antd/es/version/index.js
 "use client";
 
@@ -95689,7 +95689,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"206":"7b9dcfd5","208":"a39a2d4b","242":"c0a97206","307":"ed793570","717":"c0d254b8","866":"39bded83","972":"421ae3b5"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"206":"befdac4b","208":"a39a2d4b","242":"c0a97206","307":"60ab1dc2","717":"c0d254b8","866":"39bded83","972":"421ae3b5"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -97697,7 +97697,7 @@ function _render() {
 render();
 if (typeof window !== 'undefined') {
   window.g_umi = {
-    version: '4.3.16'
+    version: '4.3.17'
   };
 }
 }();

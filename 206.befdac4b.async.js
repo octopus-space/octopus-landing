@@ -15887,15 +15887,23 @@ function theme_useToken() {
   };
 }
 /* harmony default export */ var theme = ({
-  /** @private Test Usage. Do not use in production. */
-  defaultConfig: context/* defaultConfig */.u_,
   /** Default seedToken */
   defaultSeed: context/* defaultConfig */.u_.token,
   useToken: theme_useToken,
   defaultAlgorithm: themes_default/* default */.Z,
   darkAlgorithm: dark,
   compactAlgorithm: compact,
-  getDesignToken: theme_getDesignToken
+  getDesignToken: theme_getDesignToken,
+  /**
+   * @private Private variable
+   * @warring 🔥 Do not use in production. 🔥
+   */
+  defaultConfig: context/* defaultConfig */.u_,
+  /**
+   * @private Private variable
+   * @warring 🔥 Do not use in production. 🔥
+   */
+  _internalContext: context/* DesignTokenContext */.Mj
 });
 
 /***/ }),

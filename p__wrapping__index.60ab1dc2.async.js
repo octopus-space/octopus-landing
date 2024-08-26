@@ -1832,10 +1832,12 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
     var minAmount = 0;
     var maxAmount = 0;
     if (AssetsInfo && asset) {
-      var _calculateQuantityLim = (0,utils/* calculateQuantityLimitRange */._C)(AssetsInfo, asset);
-      var _calculateQuantityLim2 = slicedToArray_default()(_calculateQuantityLim, 2);
-      minAmount = _calculateQuantityLim2[0];
-      maxAmount = _calculateQuantityLim2[1];
+      try {
+        var _calculateQuantityLim = (0,utils/* calculateQuantityLimitRange */._C)(AssetsInfo, asset);
+        var _calculateQuantityLim2 = slicedToArray_default()(_calculateQuantityLim, 2);
+        minAmount = _calculateQuantityLim2[0];
+        maxAmount = _calculateQuantityLim2[1];
+      } catch (err) {}
     }
     return {
       maxAmount: maxAmount,
