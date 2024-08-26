@@ -79,6 +79,9 @@ export default () => {
         .map((item) => {
           item.originName = item.originName || item.originSymbol;
           item.targetName = item.targetName || item.targetSymbol;
+          if(item.network === 'BTC'){
+            item.targetName = 'WBTC'
+          }
           return item;
         });
       if (assets.length > 0) {
