@@ -654,7 +654,7 @@ export const calculateQuantityLimitRange = (
   asset: API.AssetItem
 ) => {
   const { btcPrice, amountLimitMaximum, amountLimitMinimum } = assetInfo;
-  const price = asset.network === "BTC" ? btcPrice : asset.price || 0;
+  const price = asset.network === "BTC" ? btcPrice : asset.price || 0
   const minAmount = new Decimal(amountLimitMinimum)
     .div(1e8)
     .mul(btcPrice)

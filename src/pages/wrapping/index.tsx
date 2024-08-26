@@ -256,7 +256,12 @@ export default () => {
     let minAmount = 0;
     let maxAmount = 0;
     if (AssetsInfo && asset) {
-      [minAmount, maxAmount] = calculateQuantityLimitRange(AssetsInfo, asset)
+      try{
+        [minAmount, maxAmount] = calculateQuantityLimitRange(AssetsInfo, asset)
+      }catch(err){
+
+      }
+      
     }
     return {
       maxAmount,
