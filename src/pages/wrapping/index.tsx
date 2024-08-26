@@ -384,7 +384,7 @@ export default () => {
     return [
       {
         condition: !amount,
-        text: "Entry Amount",
+        text: "Enter Amount",
         type: "primary",
         onClick: () => { },
       },
