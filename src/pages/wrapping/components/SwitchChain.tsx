@@ -2,7 +2,7 @@ import { useModel } from "umi";
 import SelectNet from "@/components/SelectNet";
 import TokenIcon from "@/components/TokenIcon";
 import { DownOutlined } from "@ant-design/icons";
-import { Button, Dropdown, theme } from "antd";
+import { Button, Dropdown, Tag, theme } from "antd";
 import { Chain } from "@/models/wrapping";
 import switchIcon from "@/assets/switch.svg";
 
@@ -29,16 +29,16 @@ export default () => {
 
     const handleChainChange = (chainType: "from" | "to", chain: Chain) => {
         if (chainType === "from") {
-          if (fromChain.key !== chain.key) {
-            switchChain();
-          }
+            if (fromChain.key !== chain.key) {
+                switchChain();
+            }
         }
         if (chainType === "to") {
-          if (toChain.key !== chain.key) {
-            switchChain();
-          }
+            if (toChain.key !== chain.key) {
+                switchChain();
+            }
         }
-      };
+    };
     return <div className="chains">
         <div className="from chain">
             <div className="label">From</div>
@@ -73,8 +73,9 @@ export default () => {
                             src={fromChain.icon}
                             symbol={fromChain.label}
                         />
-                        <span style={{ margin: "0 10px 0 5px" }}>
+                        <span style={{ margin: "0 10px 0 5px",position:'relative' }}>
                             {fromChain.label}
+                            {fromChain.key !== 'btc' && <Tag bordered={false} style={{borderRadius:6,fontSize:8,lineHeight:'12px',position:'absolute',left:0,bottom:-12,color:'#F7931A',background:'rgba(247, 147, 26, 0.2)'}}>Bitcoin sidechain</Tag>}
                         </span>
                         <div
                             className={
@@ -128,9 +129,14 @@ export default () => {
                             src={toChain.icon}
                             symbol={toChain.label}
                         />
-                        <span style={{ margin: "0 10px 0 5px" }}>
-                            {toChain.label}
-                        </span>
+                       
+                            <span style={{ margin: "0 10px 0 5px",position:'relative' }}>
+                                {toChain.label}
+                                {toChain.key !== 'btc' && <Tag bordered={false} style={{borderRadius:6,fontSize:8,lineHeight:'12px',position:'absolute',left:0,bottom:-12,color:'#F7931A',background:'rgba(247, 147, 26, 0.2)'}}>Bitcoin sidechain</Tag>}
+                            </span>
+                            
+                      
+
                         <div
                             className={chainType == "to" ? "spanRotate" : "spanReset"}
                         >
