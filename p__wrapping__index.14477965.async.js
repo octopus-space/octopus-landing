@@ -1093,7 +1093,10 @@ const SvgCheckFill = (props) => /* @__PURE__ */ React.createElement("svg", check
 ;// CONCATENATED MODULE: ./src/components/SelectNet/index.less
 // extracted by mini-css-extract-plugin
 
+// EXTERNAL MODULE: ./node_modules/antd/es/tag/index.js + 5 modules
+var tag = __webpack_require__(66309);
 ;// CONCATENATED MODULE: ./src/components/SelectNet/index.tsx
+
 
 
 
@@ -1116,16 +1119,30 @@ const SvgCheckFill = (props) => /* @__PURE__ */ React.createElement("svg", check
           src: item.icon,
           symbol: item.label,
           size: 30
-        }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+        }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
           className: "name",
-          children: item.label
+          style: {
+            position: 'relative'
+          },
+          children: [item.label, item.key !== 'btc' && /*#__PURE__*/(0,jsx_runtime.jsx)(tag/* default */.Z, {
+            bordered: false,
+            style: {
+              borderRadius: 6,
+              fontSize: 8,
+              lineHeight: '12px',
+              position: 'absolute',
+              left: 0,
+              bottom: -12,
+              color: '#F7931A',
+              background: 'rgba(247, 147, 26, 0.2)'
+            },
+            children: "Bitcoin sidechain"
+          })]
         })]
       }, item.key);
     })
   });
 });
-// EXTERNAL MODULE: ./node_modules/antd/es/tag/index.js + 5 modules
-var tag = __webpack_require__(66309);
 ;// CONCATENATED MODULE: ./src/assets/switch.svg
 var switch_defProp = Object.defineProperty;
 var switch_getOwnPropSymbols = Object.getOwnPropertySymbols;
