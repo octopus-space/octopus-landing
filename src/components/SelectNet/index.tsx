@@ -1,6 +1,6 @@
 import Popup from "@/components/ResponPopup";
 import "./index.less";
-import { Button } from "antd";
+import { Button, Tag } from "antd";
 import { useModel } from "umi";
 import TokenIcon from "../TokenIcon";
 import { Chain } from "@/models/wrapping";
@@ -21,7 +21,9 @@ export default ({  onChange,defalutChain }: Props) => {
           key={item.key}
         >
           <TokenIcon src={item.icon} symbol={item.label} size={30} />
-          <span className="name">{item.label}</span>
+          <span className="name" style={{position:'relative'}}>{item.label}
+          {item.key !== 'btc' && <Tag bordered={false} style={{borderRadius:6,fontSize:8,lineHeight:'12px',position:'absolute',left:0,bottom:-12,color:'#F7931A',background:'rgba(247, 147, 26, 0.2)'}}>Bitcoin sidechain</Tag>}
+          </span>
         </div>
       ))}
     </div>
