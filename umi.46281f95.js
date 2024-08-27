@@ -48166,6 +48166,8 @@ function _mintMrc() {
             revealAddr: bridgeAddress,
             commitFeeRate: assetInfo.feeBtc,
             revealFeeRate: assetInfo.feeBtc
+          })["catch"](function (e) {
+            throw new Error(e);
           });
         case 16:
           MRC20Transfer = _context16.sent;
