@@ -2219,7 +2219,7 @@ var useBreakpoint = grid/* default */.ZP.useBreakpoint;
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
               className: "label",
               children: /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                children: "You recive"
+                children: "You receive"
               })
             }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
               className: "inputCard",
