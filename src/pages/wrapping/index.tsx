@@ -587,7 +587,7 @@ export default () => {
 
               <div className="recive inputCardWrap">
                 <div className="label">
-                  <span>You recive</span>
+                  <span>You receive</span>
                 </div>
                 <div
                   className="inputCard"
