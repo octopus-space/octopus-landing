@@ -796,21 +796,25 @@ export async function mintMrc20(
   );
   console.log("createResp", createResp);
   const { orderId, bridgeAddress } = createResp;
-  const MRC20Transfer = await window.metaidwallet.btc.transferMRC20({
-    body: JSON.stringify([
-      {
-        amount: String(mintAmount),
-        vout: 1,
-        id: asset.originTokenId,
-      },
-    ]),
-    amount: String(mintAmount),
-    mrc20TickId: asset.originTokenId,
-    flag: "metaid",
-    revealAddr: bridgeAddress,
-    commitFeeRate: assetInfo.feeBtc,
-    revealFeeRate: assetInfo.feeBtc,
-  });
+  const MRC20Transfer = await window.metaidwallet.btc
+    .transferMRC20({
+      body: JSON.stringify([
+        {
+          amount: String(mintAmount),
+          vout: 1,
+          id: asset.originTokenId,
+        },
+      ]),
+      amount: String(mintAmount),
+      mrc20TickId: asset.originTokenId,
+      flag: "metaid",
+      revealAddr: bridgeAddress,
+      commitFeeRate: assetInfo.feeBtc,
+      revealFeeRate: assetInfo.feeBtc,
+    })
+    .catch((e) => {
+      throw new Error(e as any);
+    });
   if (MRC20Transfer.status) throw new Error(MRC20Transfer.status);
   const { commitTx, revealTx } = MRC20Transfer;
   console.log("commitTx", commitTx);
