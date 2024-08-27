@@ -95689,7 +95689,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"206":"befdac4b","208":"a39a2d4b","242":"c0a97206","307":"5de0494c","717":"c0d254b8","866":"39bded83","972":"421ae3b5"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"47":"4dc9215d","208":"a39a2d4b","242":"c0a97206","307":"a58357a4","432":"fe30f0b9","717":"65d3dd6e","866":"39bded83"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -97542,10 +97542,10 @@ function _getRoutes() {
                 return Promise.all(/* import() | p__index */[__webpack_require__.e(208), __webpack_require__.e(242), __webpack_require__.e(866)]).then(__webpack_require__.bind(__webpack_require__, 68606));
               }),
               '2': /*#__PURE__*/react.lazy(function () {
-                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(208), __webpack_require__.e(206), __webpack_require__.e(972), __webpack_require__.e(307)]).then(__webpack_require__.bind(__webpack_require__, 87054));
+                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(208), __webpack_require__.e(47), __webpack_require__.e(432), __webpack_require__.e(307)]).then(__webpack_require__.bind(__webpack_require__, 87054));
               }),
               '@@/global-layout': /*#__PURE__*/react.lazy(function () {
-                return Promise.all(/* import() | layouts__index */[__webpack_require__.e(208), __webpack_require__.e(206), __webpack_require__.e(717)]).then(__webpack_require__.bind(__webpack_require__, 56356));
+                return Promise.all(/* import() | layouts__index */[__webpack_require__.e(208), __webpack_require__.e(47), __webpack_require__.e(717)]).then(__webpack_require__.bind(__webpack_require__, 56356));
               })
             }
           });

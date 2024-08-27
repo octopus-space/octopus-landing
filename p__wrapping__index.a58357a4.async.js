@@ -15,8 +15,8 @@ var objectSpread2 = __webpack_require__(97857);
 var objectSpread2_default = /*#__PURE__*/__webpack_require__.n(objectSpread2);
 // EXTERNAL MODULE: ./node_modules/antd/es/grid/index.js + 2 modules
 var grid = __webpack_require__(74250);
-// EXTERNAL MODULE: ./node_modules/antd/es/modal/index.js + 30 modules
-var modal = __webpack_require__(72003);
+// EXTERNAL MODULE: ./node_modules/antd/es/modal/index.js + 29 modules
+var modal = __webpack_require__(53107);
 // EXTERNAL MODULE: ./node_modules/react/index.js
 var react = __webpack_require__(67294);
 ;// CONCATENATED MODULE: ./src/components/ResponPopup/index.less
@@ -132,8 +132,8 @@ var card = __webpack_require__(4393);
 var spin = __webpack_require__(74330);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/index.js + 2 modules
 var space = __webpack_require__(42075);
-// EXTERNAL MODULE: ./node_modules/antd/es/dropdown/index.js + 35 modules
-var dropdown = __webpack_require__(38872);
+// EXTERNAL MODULE: ./node_modules/antd/es/dropdown/index.js + 32 modules
+var dropdown = __webpack_require__(17180);
 // EXTERNAL MODULE: ./node_modules/antd/es/input-number/index.js + 18 modules
 var input_number = __webpack_require__(24435);
 // EXTERNAL MODULE: ./node_modules/antd/es/alert/index.js + 4 modules
@@ -224,8 +224,8 @@ var arrowRight_namespaceObject = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA
 var empty = __webpack_require__(32983);
 // EXTERNAL MODULE: ./node_modules/antd/es/skeleton/index.js + 12 modules
 var skeleton = __webpack_require__(21687);
-// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 15 modules
-var es_button = __webpack_require__(45093);
+// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 9 modules
+var es_button = __webpack_require__(14726);
 ;// CONCATENATED MODULE: ./src/pages/wrapping/components/index.less
 // extracted by mini-css-extract-plugin
 
@@ -1124,6 +1124,8 @@ const SvgCheckFill = (props) => /* @__PURE__ */ React.createElement("svg", check
     })
   });
 });
+// EXTERNAL MODULE: ./node_modules/antd/es/tag/index.js + 5 modules
+var tag = __webpack_require__(66309);
 ;// CONCATENATED MODULE: ./src/assets/switch.svg
 var switch_defProp = Object.defineProperty;
 var switch_getOwnPropSymbols = Object.getOwnPropertySymbols;
@@ -1233,11 +1235,25 @@ const SvgSwitch = (props) => /* @__PURE__ */ React.createElement("svg", switch_s
               size: 30,
               src: fromChain.icon,
               symbol: fromChain.label
-            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
               style: {
-                margin: "0 10px 0 5px"
+                margin: "0 10px 0 5px",
+                position: 'relative'
               },
-              children: fromChain.label
+              children: [fromChain.label, fromChain.key !== 'btc' && /*#__PURE__*/(0,jsx_runtime.jsx)(tag/* default */.Z, {
+                bordered: false,
+                style: {
+                  borderRadius: 6,
+                  fontSize: 8,
+                  lineHeight: '12px',
+                  position: 'absolute',
+                  left: 0,
+                  bottom: -12,
+                  color: '#F7931A',
+                  background: 'rgba(247, 147, 26, 0.2)'
+                },
+                children: "Bitcoin sidechain"
+              })]
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
               className: chainType == "from" ? "spanRotate" : "spanReset",
               children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})
@@ -1296,11 +1312,25 @@ const SvgSwitch = (props) => /* @__PURE__ */ React.createElement("svg", switch_s
               size: 30,
               src: toChain.icon,
               symbol: toChain.label
-            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
               style: {
-                margin: "0 10px 0 5px"
+                margin: "0 10px 0 5px",
+                position: 'relative'
               },
-              children: toChain.label
+              children: [toChain.label, toChain.key !== 'btc' && /*#__PURE__*/(0,jsx_runtime.jsx)(tag/* default */.Z, {
+                bordered: false,
+                style: {
+                  borderRadius: 6,
+                  fontSize: 8,
+                  lineHeight: '12px',
+                  position: 'absolute',
+                  left: 0,
+                  bottom: -12,
+                  color: '#F7931A',
+                  background: 'rgba(247, 147, 26, 0.2)'
+                },
+                children: "Bitcoin sidechain"
+              })]
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
               className: chainType == "to" ? "spanRotate" : "spanReset",
               children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.Z, {})

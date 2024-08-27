@@ -1,5 +1,5 @@
 "use strict";
-(self["webpackChunk"] = self["webpackChunk"] || []).push([[206],{
+(self["webpackChunk"] = self["webpackChunk"] || []).push([[47],{
 
 /***/ 89705:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
@@ -2185,6 +2185,38 @@ const genPurePanel = (Component, defaultPrefixCls, getDropdownCls, postProps) =>
 
 /***/ }),
 
+/***/ 98787:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   o2: function() { return /* binding */ isPresetColor; },
+/* harmony export */   yT: function() { return /* binding */ isPresetStatusColor; }
+/* harmony export */ });
+/* unused harmony export PresetStatusColorTypes */
+/* harmony import */ var _babel_runtime_helpers_esm_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(74902);
+/* harmony import */ var _theme_interface__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8796);
+
+
+const inverseColors = _theme_interface__WEBPACK_IMPORTED_MODULE_0__/* .PresetColors */ .i.map(color => `${color}-inverse`);
+const PresetStatusColorTypes = ['success', 'processing', 'error', 'default', 'warning'];
+/**
+ * determine if the color keyword belongs to the `Ant Design` {@link PresetColors}.
+ * @param color color to be judged
+ * @param includeInverse whether to include reversed colors
+ */
+function isPresetColor(color) {
+  let includeInverse = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  if (includeInverse) {
+    return [].concat((0,_babel_runtime_helpers_esm_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(inverseColors), (0,_babel_runtime_helpers_esm_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(_theme_interface__WEBPACK_IMPORTED_MODULE_0__/* .PresetColors */ .i)).includes(color);
+  }
+  return _theme_interface__WEBPACK_IMPORTED_MODULE_0__/* .PresetColors */ .i.includes(color);
+}
+function isPresetStatusColor(color) {
+  return PresetStatusColorTypes.includes(color);
+}
+
+/***/ }),
+
 /***/ 98065:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -2201,6 +2233,134 @@ function isValidGapNumber(size) {
     return false;
   }
   return typeof size === 'number' && !Number.isNaN(size);
+}
+
+/***/ }),
+
+/***/ 69760:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Z: function() { return /* binding */ useClosable; },
+/* harmony export */   w: function() { return /* binding */ pickClosable; }
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
+/* harmony import */ var _ant_design_icons_es_icons_CloseOutlined__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(97937);
+/* harmony import */ var rc_util_es_pickAttrs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(64217);
+"use client";
+
+
+
+
+function pickClosable(context) {
+  if (!context) {
+    return undefined;
+  }
+  return {
+    closable: context.closable,
+    closeIcon: context.closeIcon
+  };
+}
+/** Convert `closable` and `closeIcon` to config object */
+function useClosableConfig(closableCollection) {
+  const {
+    closable,
+    closeIcon
+  } = closableCollection || {};
+  return react__WEBPACK_IMPORTED_MODULE_0__.useMemo(() => {
+    if (
+    // If `closable`, whatever rest be should be true
+    !closable && (closable === false || closeIcon === false || closeIcon === null)) {
+      return false;
+    }
+    if (closable === undefined && closeIcon === undefined) {
+      return null;
+    }
+    let closableConfig = {
+      closeIcon: typeof closeIcon !== 'boolean' && closeIcon !== null ? closeIcon : undefined
+    };
+    if (closable && typeof closable === 'object') {
+      closableConfig = Object.assign(Object.assign({}, closableConfig), closable);
+    }
+    return closableConfig;
+  }, [closable, closeIcon]);
+}
+/**
+ * Assign object without `undefined` field. Will skip if is `false`.
+ * This helps to handle both closableConfig or false
+ */
+function assignWithoutUndefined() {
+  const target = {};
+  for (var _len = arguments.length, objList = new Array(_len), _key = 0; _key < _len; _key++) {
+    objList[_key] = arguments[_key];
+  }
+  objList.forEach(obj => {
+    if (obj) {
+      Object.keys(obj).forEach(key => {
+        if (obj[key] !== undefined) {
+          target[key] = obj[key];
+        }
+      });
+    }
+  });
+  return target;
+}
+/** Use same object to support `useMemo` optimization */
+const EmptyFallbackCloseCollection = {};
+function useClosable(propCloseCollection, contextCloseCollection) {
+  let fallbackCloseCollection = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EmptyFallbackCloseCollection;
+  // Align the `props`, `context` `fallback` to config object first
+  const propCloseConfig = useClosableConfig(propCloseCollection);
+  const contextCloseConfig = useClosableConfig(contextCloseCollection);
+  const mergedFallbackCloseCollection = react__WEBPACK_IMPORTED_MODULE_0__.useMemo(() => Object.assign({
+    closeIcon: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_ant_design_icons_es_icons_CloseOutlined__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z, null)
+  }, fallbackCloseCollection), [fallbackCloseCollection]);
+  // Use fallback logic to fill the config
+  const mergedClosableConfig = react__WEBPACK_IMPORTED_MODULE_0__.useMemo(() => {
+    // ================ Props First ================
+    // Skip if prop is disabled
+    if (propCloseConfig === false) {
+      return false;
+    }
+    if (propCloseConfig) {
+      return assignWithoutUndefined(mergedFallbackCloseCollection, contextCloseConfig, propCloseConfig);
+    }
+    // =============== Context Second ==============
+    // Skip if context is disabled
+    if (contextCloseConfig === false) {
+      return false;
+    }
+    if (contextCloseConfig) {
+      return assignWithoutUndefined(mergedFallbackCloseCollection, contextCloseConfig);
+    }
+    // ============= Fallback Default ==============
+    return !mergedFallbackCloseCollection.closable ? false : mergedFallbackCloseCollection;
+  }, [propCloseConfig, contextCloseConfig, mergedFallbackCloseCollection]);
+  // Calculate the final closeIcon
+  return react__WEBPACK_IMPORTED_MODULE_0__.useMemo(() => {
+    if (mergedClosableConfig === false) {
+      return [false, null];
+    }
+    const {
+      closeIconRender
+    } = mergedFallbackCloseCollection;
+    const {
+      closeIcon
+    } = mergedClosableConfig;
+    let mergedCloseIcon = closeIcon;
+    if (mergedCloseIcon !== null && mergedCloseIcon !== undefined) {
+      // Wrap the closeIcon if needed
+      if (closeIconRender) {
+        mergedCloseIcon = closeIconRender(closeIcon);
+      }
+      // Wrap the closeIcon with aria props
+      const ariaProps = (0,rc_util_es_pickAttrs__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(mergedClosableConfig, true);
+      if (Object.keys(ariaProps).length) {
+        mergedCloseIcon = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.isValidElement(mergedCloseIcon) ? ( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.cloneElement(mergedCloseIcon, ariaProps)) : ( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", Object.assign({}, ariaProps), mergedCloseIcon));
+      }
+    }
+    return [true, mergedCloseIcon];
+  }, [mergedClosableConfig, mergedFallbackCloseCollection]);
 }
 
 /***/ }),
@@ -2257,6 +2417,341 @@ const getTransitionName = (rootPrefixCls, motion, transitionName) => {
 };
 
 /* harmony default export */ __webpack_exports__.Z = (initCollapseMotion);
+
+/***/ }),
+
+/***/ 36728:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  Z: function() { return /* binding */ wave; }
+});
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
+// EXTERNAL MODULE: ./node_modules/classnames/index.js
+var classnames = __webpack_require__(93967);
+var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
+// EXTERNAL MODULE: ./node_modules/rc-util/es/Dom/isVisible.js
+var isVisible = __webpack_require__(5110);
+// EXTERNAL MODULE: ./node_modules/rc-util/es/ref.js
+var es_ref = __webpack_require__(42550);
+// EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
+var context = __webpack_require__(53124);
+// EXTERNAL MODULE: ./node_modules/antd/es/_util/reactNode.js
+var reactNode = __webpack_require__(96159);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genStyleUtils.js
+var genStyleUtils = __webpack_require__(83559);
+;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/style.js
+
+const genWaveStyle = token => {
+  const {
+    componentCls,
+    colorPrimary
+  } = token;
+  return {
+    [componentCls]: {
+      position: 'absolute',
+      background: 'transparent',
+      pointerEvents: 'none',
+      boxSizing: 'border-box',
+      color: `var(--wave-color, ${colorPrimary})`,
+      boxShadow: `0 0 0 0 currentcolor`,
+      opacity: 0.2,
+      // =================== Motion ===================
+      '&.wave-motion-appear': {
+        transition: [`box-shadow 0.4s ${token.motionEaseOutCirc}`, `opacity 2s ${token.motionEaseOutCirc}`].join(','),
+        '&-active': {
+          boxShadow: `0 0 0 6px currentcolor`,
+          opacity: 0
+        },
+        '&.wave-quick': {
+          transition: [`box-shadow ${token.motionDurationSlow} ${token.motionEaseInOut}`, `opacity ${token.motionDurationSlow} ${token.motionEaseInOut}`].join(',')
+        }
+      }
+    }
+  };
+};
+/* harmony default export */ var style = ((0,genStyleUtils/* genComponentStyleHook */.A1)('Wave', token => [genWaveStyle(token)]));
+// EXTERNAL MODULE: ./node_modules/rc-util/es/index.js
+var es = __webpack_require__(56790);
+// EXTERNAL MODULE: ./node_modules/rc-util/es/raf.js
+var raf = __webpack_require__(75164);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/useToken.js + 2 modules
+var useToken = __webpack_require__(25976);
+;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/interface.js
+
+const TARGET_CLS = `${context/* defaultPrefixCls */.Rf}-wave-target`;
+// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 13 modules
+var rc_motion_es = __webpack_require__(29372);
+// EXTERNAL MODULE: ./node_modules/rc-util/es/React/render.js
+var render = __webpack_require__(38135);
+;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/util.js
+function isNotGrey(color) {
+  // eslint-disable-next-line no-useless-escape
+  const match = (color || '').match(/rgba?\((\d*), (\d*), (\d*)(, [\d.]*)?\)/);
+  // biome-ignore lint/complexity/useOptionalChain: this is way is more simple
+  if (match && match[1] && match[2] && match[3]) {
+    return !(match[1] === match[2] && match[2] === match[3]);
+  }
+  return true;
+}
+function isValidWaveColor(color) {
+  return color && color !== '#fff' && color !== '#ffffff' && color !== 'rgb(255, 255, 255)' && color !== 'rgba(255, 255, 255, 1)' && isNotGrey(color) && !/rgba\((?:\d*, ){3}0\)/.test(color) &&
+  // any transparent rgba color
+  color !== 'transparent';
+}
+function getTargetWaveColor(node) {
+  const {
+    borderTopColor,
+    borderColor,
+    backgroundColor
+  } = getComputedStyle(node);
+  if (isValidWaveColor(borderTopColor)) {
+    return borderTopColor;
+  }
+  if (isValidWaveColor(borderColor)) {
+    return borderColor;
+  }
+  if (isValidWaveColor(backgroundColor)) {
+    return backgroundColor;
+  }
+  return null;
+}
+;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/WaveEffect.js
+"use client";
+
+
+
+
+
+
+
+
+
+function validateNum(value) {
+  return Number.isNaN(value) ? 0 : value;
+}
+const WaveEffect = props => {
+  const {
+    className,
+    target,
+    component
+  } = props;
+  const divRef = react.useRef(null);
+  const [color, setWaveColor] = react.useState(null);
+  const [borderRadius, setBorderRadius] = react.useState([]);
+  const [left, setLeft] = react.useState(0);
+  const [top, setTop] = react.useState(0);
+  const [width, setWidth] = react.useState(0);
+  const [height, setHeight] = react.useState(0);
+  const [enabled, setEnabled] = react.useState(false);
+  const waveStyle = {
+    left,
+    top,
+    width,
+    height,
+    borderRadius: borderRadius.map(radius => `${radius}px`).join(' ')
+  };
+  if (color) {
+    waveStyle['--wave-color'] = color;
+  }
+  function syncPos() {
+    const nodeStyle = getComputedStyle(target);
+    // Get wave color from target
+    setWaveColor(getTargetWaveColor(target));
+    const isStatic = nodeStyle.position === 'static';
+    // Rect
+    const {
+      borderLeftWidth,
+      borderTopWidth
+    } = nodeStyle;
+    setLeft(isStatic ? target.offsetLeft : validateNum(-parseFloat(borderLeftWidth)));
+    setTop(isStatic ? target.offsetTop : validateNum(-parseFloat(borderTopWidth)));
+    setWidth(target.offsetWidth);
+    setHeight(target.offsetHeight);
+    // Get border radius
+    const {
+      borderTopLeftRadius,
+      borderTopRightRadius,
+      borderBottomLeftRadius,
+      borderBottomRightRadius
+    } = nodeStyle;
+    setBorderRadius([borderTopLeftRadius, borderTopRightRadius, borderBottomRightRadius, borderBottomLeftRadius].map(radius => validateNum(parseFloat(radius))));
+  }
+  react.useEffect(() => {
+    if (target) {
+      // We need delay to check position here
+      // since UI may change after click
+      const id = (0,raf/* default */.Z)(() => {
+        syncPos();
+        setEnabled(true);
+      });
+      // Add resize observer to follow size
+      let resizeObserver;
+      if (typeof ResizeObserver !== 'undefined') {
+        resizeObserver = new ResizeObserver(syncPos);
+        resizeObserver.observe(target);
+      }
+      return () => {
+        raf/* default */.Z.cancel(id);
+        resizeObserver === null || resizeObserver === void 0 ? void 0 : resizeObserver.disconnect();
+      };
+    }
+  }, []);
+  if (!enabled) {
+    return null;
+  }
+  const isSmallComponent = (component === 'Checkbox' || component === 'Radio') && (target === null || target === void 0 ? void 0 : target.classList.contains(TARGET_CLS));
+  return /*#__PURE__*/react.createElement(rc_motion_es/* default */.ZP, {
+    visible: true,
+    motionAppear: true,
+    motionName: "wave-motion",
+    motionDeadline: 5000,
+    onAppearEnd: (_, event) => {
+      var _a;
+      if (event.deadline || event.propertyName === 'opacity') {
+        const holder = (_a = divRef.current) === null || _a === void 0 ? void 0 : _a.parentElement;
+        (0,render/* unmount */.v)(holder).then(() => {
+          holder === null || holder === void 0 ? void 0 : holder.remove();
+        });
+      }
+      return false;
+    }
+  }, (_ref, ref) => {
+    let {
+      className: motionClassName
+    } = _ref;
+    return /*#__PURE__*/react.createElement("div", {
+      ref: (0,es_ref/* composeRef */.sQ)(divRef, ref),
+      className: classnames_default()(className, motionClassName, {
+        'wave-quick': isSmallComponent
+      }),
+      style: waveStyle
+    });
+  });
+};
+const showWaveEffect = (target, info) => {
+  var _a;
+  const {
+    component
+  } = info;
+  // Skip for unchecked checkbox
+  if (component === 'Checkbox' && !((_a = target.querySelector('input')) === null || _a === void 0 ? void 0 : _a.checked)) {
+    return;
+  }
+  // Create holder
+  const holder = document.createElement('div');
+  holder.style.position = 'absolute';
+  holder.style.left = '0px';
+  holder.style.top = '0px';
+  target === null || target === void 0 ? void 0 : target.insertBefore(holder, target === null || target === void 0 ? void 0 : target.firstChild);
+  (0,render/* render */.s)( /*#__PURE__*/react.createElement(WaveEffect, Object.assign({}, info, {
+    target: target
+  })), holder);
+};
+/* harmony default export */ var wave_WaveEffect = (showWaveEffect);
+;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/useWave.js
+
+
+
+
+
+
+
+const useWave = (nodeRef, className, component) => {
+  const {
+    wave
+  } = react.useContext(context/* ConfigContext */.E_);
+  const [, token, hashId] = (0,useToken/* default */.ZP)();
+  const showWave = (0,es/* useEvent */.zX)(event => {
+    const node = nodeRef.current;
+    if ((wave === null || wave === void 0 ? void 0 : wave.disabled) || !node) {
+      return;
+    }
+    const targetNode = node.querySelector(`.${TARGET_CLS}`) || node;
+    const {
+      showEffect
+    } = wave || {};
+    // Customize wave effect
+    (showEffect || wave_WaveEffect)(targetNode, {
+      className,
+      token,
+      component,
+      event,
+      hashId
+    });
+  });
+  const rafId = react.useRef();
+  // Merge trigger event into one for each frame
+  const showDebounceWave = event => {
+    raf/* default */.Z.cancel(rafId.current);
+    rafId.current = (0,raf/* default */.Z)(() => {
+      showWave(event);
+    });
+  };
+  return showDebounceWave;
+};
+/* harmony default export */ var wave_useWave = (useWave);
+;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/index.js
+
+
+
+
+
+
+
+
+const Wave = props => {
+  const {
+    children,
+    disabled,
+    component
+  } = props;
+  const {
+    getPrefixCls
+  } = (0,react.useContext)(context/* ConfigContext */.E_);
+  const containerRef = (0,react.useRef)(null);
+  // ============================== Style ===============================
+  const prefixCls = getPrefixCls('wave');
+  const [, hashId] = style(prefixCls);
+  // =============================== Wave ===============================
+  const showWave = wave_useWave(containerRef, classnames_default()(prefixCls, hashId), component);
+  // ============================== Effect ==============================
+  react.useEffect(() => {
+    const node = containerRef.current;
+    if (!node || node.nodeType !== 1 || disabled) {
+      return;
+    }
+    // Click handler
+    const onClick = e => {
+      // Fix radio button click twice
+      if (!(0,isVisible/* default */.Z)(e.target) ||
+      // No need wave
+      !node.getAttribute || node.getAttribute('disabled') || node.disabled || node.className.includes('disabled') || node.className.includes('-leave')) {
+        return;
+      }
+      showWave(e);
+    };
+    // Bind events
+    node.addEventListener('click', onClick, true);
+    return () => {
+      node.removeEventListener('click', onClick, true);
+    };
+  }, [disabled]);
+  // ============================== Render ==============================
+  if (! /*#__PURE__*/react.isValidElement(children)) {
+    return children !== null && children !== void 0 ? children : null;
+  }
+  const ref = (0,es_ref/* supportRef */.Yr)(children) ? (0,es_ref/* composeRef */.sQ)(children.ref, containerRef) : containerRef;
+  return (0,reactNode/* cloneElement */.Tm)(children, {
+    ref
+  });
+};
+if (false) {}
+/* harmony default export */ var wave = (Wave);
 
 /***/ }),
 
@@ -2868,7 +3363,7 @@ const ButtonHTMLTypes = (/* unused pure expression or super */ null && (['submit
 
 /***/ }),
 
-/***/ 45093:
+/***/ 14726:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 
@@ -2888,328 +3383,18 @@ var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
 var omit = __webpack_require__(98423);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/ref.js
 var es_ref = __webpack_require__(42550);
-// EXTERNAL MODULE: ./node_modules/rc-util/es/Dom/isVisible.js
-var isVisible = __webpack_require__(5110);
+// EXTERNAL MODULE: ./node_modules/antd/es/_util/wave/index.js + 5 modules
+var wave = __webpack_require__(36728);
 // EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
 var context = __webpack_require__(53124);
-// EXTERNAL MODULE: ./node_modules/antd/es/_util/reactNode.js
-var reactNode = __webpack_require__(96159);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genStyleUtils.js
-var genStyleUtils = __webpack_require__(83559);
-;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/style.js
-
-const genWaveStyle = token => {
-  const {
-    componentCls,
-    colorPrimary
-  } = token;
-  return {
-    [componentCls]: {
-      position: 'absolute',
-      background: 'transparent',
-      pointerEvents: 'none',
-      boxSizing: 'border-box',
-      color: `var(--wave-color, ${colorPrimary})`,
-      boxShadow: `0 0 0 0 currentcolor`,
-      opacity: 0.2,
-      // =================== Motion ===================
-      '&.wave-motion-appear': {
-        transition: [`box-shadow 0.4s ${token.motionEaseOutCirc}`, `opacity 2s ${token.motionEaseOutCirc}`].join(','),
-        '&-active': {
-          boxShadow: `0 0 0 6px currentcolor`,
-          opacity: 0
-        },
-        '&.wave-quick': {
-          transition: [`box-shadow ${token.motionDurationSlow} ${token.motionEaseInOut}`, `opacity ${token.motionDurationSlow} ${token.motionEaseInOut}`].join(',')
-        }
-      }
-    }
-  };
-};
-/* harmony default export */ var style = ((0,genStyleUtils/* genComponentStyleHook */.A1)('Wave', token => [genWaveStyle(token)]));
-// EXTERNAL MODULE: ./node_modules/rc-util/es/index.js
-var es = __webpack_require__(56790);
-// EXTERNAL MODULE: ./node_modules/rc-util/es/raf.js
-var raf = __webpack_require__(75164);
-// EXTERNAL MODULE: ./node_modules/antd/es/theme/useToken.js + 2 modules
-var useToken = __webpack_require__(25976);
-;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/interface.js
-
-const TARGET_CLS = `${context/* defaultPrefixCls */.Rf}-wave-target`;
-// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 13 modules
-var rc_motion_es = __webpack_require__(29372);
-// EXTERNAL MODULE: ./node_modules/rc-util/es/React/render.js
-var render = __webpack_require__(38135);
-;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/util.js
-function isNotGrey(color) {
-  // eslint-disable-next-line no-useless-escape
-  const match = (color || '').match(/rgba?\((\d*), (\d*), (\d*)(, [\d.]*)?\)/);
-  // biome-ignore lint/complexity/useOptionalChain: this is way is more simple
-  if (match && match[1] && match[2] && match[3]) {
-    return !(match[1] === match[2] && match[2] === match[3]);
-  }
-  return true;
-}
-function isValidWaveColor(color) {
-  return color && color !== '#fff' && color !== '#ffffff' && color !== 'rgb(255, 255, 255)' && color !== 'rgba(255, 255, 255, 1)' && isNotGrey(color) && !/rgba\((?:\d*, ){3}0\)/.test(color) &&
-  // any transparent rgba color
-  color !== 'transparent';
-}
-function getTargetWaveColor(node) {
-  const {
-    borderTopColor,
-    borderColor,
-    backgroundColor
-  } = getComputedStyle(node);
-  if (isValidWaveColor(borderTopColor)) {
-    return borderTopColor;
-  }
-  if (isValidWaveColor(borderColor)) {
-    return borderColor;
-  }
-  if (isValidWaveColor(backgroundColor)) {
-    return backgroundColor;
-  }
-  return null;
-}
-;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/WaveEffect.js
-"use client";
-
-
-
-
-
-
-
-
-
-function validateNum(value) {
-  return Number.isNaN(value) ? 0 : value;
-}
-const WaveEffect = props => {
-  const {
-    className,
-    target,
-    component
-  } = props;
-  const divRef = react.useRef(null);
-  const [color, setWaveColor] = react.useState(null);
-  const [borderRadius, setBorderRadius] = react.useState([]);
-  const [left, setLeft] = react.useState(0);
-  const [top, setTop] = react.useState(0);
-  const [width, setWidth] = react.useState(0);
-  const [height, setHeight] = react.useState(0);
-  const [enabled, setEnabled] = react.useState(false);
-  const waveStyle = {
-    left,
-    top,
-    width,
-    height,
-    borderRadius: borderRadius.map(radius => `${radius}px`).join(' ')
-  };
-  if (color) {
-    waveStyle['--wave-color'] = color;
-  }
-  function syncPos() {
-    const nodeStyle = getComputedStyle(target);
-    // Get wave color from target
-    setWaveColor(getTargetWaveColor(target));
-    const isStatic = nodeStyle.position === 'static';
-    // Rect
-    const {
-      borderLeftWidth,
-      borderTopWidth
-    } = nodeStyle;
-    setLeft(isStatic ? target.offsetLeft : validateNum(-parseFloat(borderLeftWidth)));
-    setTop(isStatic ? target.offsetTop : validateNum(-parseFloat(borderTopWidth)));
-    setWidth(target.offsetWidth);
-    setHeight(target.offsetHeight);
-    // Get border radius
-    const {
-      borderTopLeftRadius,
-      borderTopRightRadius,
-      borderBottomLeftRadius,
-      borderBottomRightRadius
-    } = nodeStyle;
-    setBorderRadius([borderTopLeftRadius, borderTopRightRadius, borderBottomRightRadius, borderBottomLeftRadius].map(radius => validateNum(parseFloat(radius))));
-  }
-  react.useEffect(() => {
-    if (target) {
-      // We need delay to check position here
-      // since UI may change after click
-      const id = (0,raf/* default */.Z)(() => {
-        syncPos();
-        setEnabled(true);
-      });
-      // Add resize observer to follow size
-      let resizeObserver;
-      if (typeof ResizeObserver !== 'undefined') {
-        resizeObserver = new ResizeObserver(syncPos);
-        resizeObserver.observe(target);
-      }
-      return () => {
-        raf/* default */.Z.cancel(id);
-        resizeObserver === null || resizeObserver === void 0 ? void 0 : resizeObserver.disconnect();
-      };
-    }
-  }, []);
-  if (!enabled) {
-    return null;
-  }
-  const isSmallComponent = (component === 'Checkbox' || component === 'Radio') && (target === null || target === void 0 ? void 0 : target.classList.contains(TARGET_CLS));
-  return /*#__PURE__*/react.createElement(rc_motion_es/* default */.ZP, {
-    visible: true,
-    motionAppear: true,
-    motionName: "wave-motion",
-    motionDeadline: 5000,
-    onAppearEnd: (_, event) => {
-      var _a;
-      if (event.deadline || event.propertyName === 'opacity') {
-        const holder = (_a = divRef.current) === null || _a === void 0 ? void 0 : _a.parentElement;
-        (0,render/* unmount */.v)(holder).then(() => {
-          holder === null || holder === void 0 ? void 0 : holder.remove();
-        });
-      }
-      return false;
-    }
-  }, (_ref, ref) => {
-    let {
-      className: motionClassName
-    } = _ref;
-    return /*#__PURE__*/react.createElement("div", {
-      ref: (0,es_ref/* composeRef */.sQ)(divRef, ref),
-      className: classnames_default()(className, motionClassName, {
-        'wave-quick': isSmallComponent
-      }),
-      style: waveStyle
-    });
-  });
-};
-const showWaveEffect = (target, info) => {
-  var _a;
-  const {
-    component
-  } = info;
-  // Skip for unchecked checkbox
-  if (component === 'Checkbox' && !((_a = target.querySelector('input')) === null || _a === void 0 ? void 0 : _a.checked)) {
-    return;
-  }
-  // Create holder
-  const holder = document.createElement('div');
-  holder.style.position = 'absolute';
-  holder.style.left = '0px';
-  holder.style.top = '0px';
-  target === null || target === void 0 ? void 0 : target.insertBefore(holder, target === null || target === void 0 ? void 0 : target.firstChild);
-  (0,render/* render */.s)( /*#__PURE__*/react.createElement(WaveEffect, Object.assign({}, info, {
-    target: target
-  })), holder);
-};
-/* harmony default export */ var wave_WaveEffect = (showWaveEffect);
-;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/useWave.js
-
-
-
-
-
-
-
-const useWave = (nodeRef, className, component) => {
-  const {
-    wave
-  } = react.useContext(context/* ConfigContext */.E_);
-  const [, token, hashId] = (0,useToken/* default */.ZP)();
-  const showWave = (0,es/* useEvent */.zX)(event => {
-    const node = nodeRef.current;
-    if ((wave === null || wave === void 0 ? void 0 : wave.disabled) || !node) {
-      return;
-    }
-    const targetNode = node.querySelector(`.${TARGET_CLS}`) || node;
-    const {
-      showEffect
-    } = wave || {};
-    // Customize wave effect
-    (showEffect || wave_WaveEffect)(targetNode, {
-      className,
-      token,
-      component,
-      event,
-      hashId
-    });
-  });
-  const rafId = react.useRef();
-  // Merge trigger event into one for each frame
-  const showDebounceWave = event => {
-    raf/* default */.Z.cancel(rafId.current);
-    rafId.current = (0,raf/* default */.Z)(() => {
-      showWave(event);
-    });
-  };
-  return showDebounceWave;
-};
-/* harmony default export */ var wave_useWave = (useWave);
-;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/index.js
-
-
-
-
-
-
-
-
-const Wave = props => {
-  const {
-    children,
-    disabled,
-    component
-  } = props;
-  const {
-    getPrefixCls
-  } = (0,react.useContext)(context/* ConfigContext */.E_);
-  const containerRef = (0,react.useRef)(null);
-  // ============================== Style ===============================
-  const prefixCls = getPrefixCls('wave');
-  const [, hashId] = style(prefixCls);
-  // =============================== Wave ===============================
-  const showWave = wave_useWave(containerRef, classnames_default()(prefixCls, hashId), component);
-  // ============================== Effect ==============================
-  react.useEffect(() => {
-    const node = containerRef.current;
-    if (!node || node.nodeType !== 1 || disabled) {
-      return;
-    }
-    // Click handler
-    const onClick = e => {
-      // Fix radio button click twice
-      if (!(0,isVisible/* default */.Z)(e.target) ||
-      // No need wave
-      !node.getAttribute || node.getAttribute('disabled') || node.disabled || node.className.includes('disabled') || node.className.includes('-leave')) {
-        return;
-      }
-      showWave(e);
-    };
-    // Bind events
-    node.addEventListener('click', onClick, true);
-    return () => {
-      node.removeEventListener('click', onClick, true);
-    };
-  }, [disabled]);
-  // ============================== Render ==============================
-  if (! /*#__PURE__*/react.isValidElement(children)) {
-    return children !== null && children !== void 0 ? children : null;
-  }
-  const ref = (0,es_ref/* supportRef */.Yr)(children) ? (0,es_ref/* composeRef */.sQ)(children.ref, containerRef) : containerRef;
-  return (0,reactNode/* cloneElement */.Tm)(children, {
-    ref
-  });
-};
-if (false) {}
-/* harmony default export */ var wave = (Wave);
 // EXTERNAL MODULE: ./node_modules/antd/es/config-provider/DisabledContext.js
 var DisabledContext = __webpack_require__(98866);
 // EXTERNAL MODULE: ./node_modules/antd/es/config-provider/hooks/useSize.js
 var useSize = __webpack_require__(98675);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/Compact.js
 var Compact = __webpack_require__(4173);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/useToken.js + 2 modules
+var useToken = __webpack_require__(25976);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/button/button-group.js
 "use client";
 
@@ -3287,6 +3472,8 @@ const IconWrapper = /*#__PURE__*/(0,react.forwardRef)((props, ref) => {
 /* harmony default export */ var button_IconWrapper = (IconWrapper);
 // EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/LoadingOutlined.js + 1 modules
 var LoadingOutlined = __webpack_require__(50888);
+// EXTERNAL MODULE: ./node_modules/rc-motion/es/index.js + 13 modules
+var es = __webpack_require__(29372);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/button/LoadingIcon.js
 "use client";
 
@@ -3338,7 +3525,7 @@ const LoadingIcon = props => {
       style: style
     });
   }
-  return /*#__PURE__*/react.createElement(rc_motion_es/* default */.ZP, {
+  return /*#__PURE__*/react.createElement(es/* default */.ZP, {
     visible: visible,
     // We do not really use this motionName
     motionName: `${prefixCls}-loading-icon-motion`,
@@ -3368,9 +3555,11 @@ const LoadingIcon = props => {
 // EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 37 modules
 var cssinjs_es = __webpack_require__(11568);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/index.js
-var es_style = __webpack_require__(14747);
+var style = __webpack_require__(14747);
 // EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs-utils/es/index.js + 12 modules
 var cssinjs_utils_es = __webpack_require__(83262);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genStyleUtils.js
+var genStyleUtils = __webpack_require__(83559);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/button/style/group.js
 const genButtonBorderStyle = (buttonTypeCls, borderColor) => ({
   // Border
@@ -3548,7 +3737,7 @@ const genSharedButtonStyle = token => {
       '> a': {
         color: 'currentColor'
       },
-      '&:not(:disabled)': Object.assign({}, (0,es_style/* genFocusStyle */.Qy)(token)),
+      '&:not(:disabled)': Object.assign({}, (0,style/* genFocusStyle */.Qy)(token)),
       [`&${componentCls}-two-chinese-chars::first-letter`]: {
         letterSpacing: '0.34em'
       },
@@ -4146,7 +4335,7 @@ const InternalCompoundedButton = /*#__PURE__*/react.forwardRef((props, ref) => {
     prefixCls: prefixCls
   }));
   if (!(0,buttonHelpers/* isUnBorderedButtonType */.Te)(mergedType)) {
-    buttonNode = /*#__PURE__*/react.createElement(wave, {
+    buttonNode = /*#__PURE__*/react.createElement(wave/* default */.Z, {
       component: "Button",
       disabled: innerLoading
     }, buttonNode);
@@ -4194,7 +4383,7 @@ const useSize = customSize => {
 
 /***/ }),
 
-/***/ 38872:
+/***/ 17180:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 
@@ -5104,24 +5293,8 @@ var useToken = __webpack_require__(25976);
 var style = __webpack_require__(14747);
 // EXTERNAL MODULE: ./node_modules/antd/es/style/motion/zoom.js
 var zoom = __webpack_require__(50438);
-;// CONCATENATED MODULE: ./node_modules/antd/es/theme/interface/presetColors.js
-const PresetColors = ['blue', 'purple', 'cyan', 'green', 'magenta', 'pink', 'red', 'orange', 'yellow', 'volcano', 'geekblue', 'lime', 'gold'];
-;// CONCATENATED MODULE: ./node_modules/antd/es/theme/util/genPresetColor.js
-
-function genPresetColor(token, genCss) {
-  return PresetColors.reduce((prev, colorKey) => {
-    const lightColor = token[`${colorKey}1`];
-    const lightBorderColor = token[`${colorKey}3`];
-    const darkColor = token[`${colorKey}6`];
-    const textColor = token[`${colorKey}7`];
-    return Object.assign(Object.assign({}, prev), genCss(colorKey, {
-      lightColor,
-      lightBorderColor,
-      darkColor,
-      textColor
-    }));
-  }, {});
-}
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genPresetColor.js
+var genPresetColor = __webpack_require__(98719);
 // EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs-utils/es/index.js + 12 modules
 var cssinjs_utils_es = __webpack_require__(83262);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genStyleUtils.js
@@ -5185,7 +5358,7 @@ const genTooltipStyle = token => {
       [`${componentCls}-content`]: {
         position: 'relative'
       }
-    }), genPresetColor(token, (colorKey, _ref) => {
+    }), (0,genPresetColor/* default */.Z)(token, (colorKey, _ref) => {
       let {
         darkColor
       } = _ref;
@@ -5249,34 +5422,14 @@ const prepareComponentToken = token => Object.assign(Object.assign({
   });
   return useStyle(prefixCls);
 });
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js + 2 modules
-var toConsumableArray = __webpack_require__(74902);
-;// CONCATENATED MODULE: ./node_modules/antd/es/_util/colors.js
-
-
-const inverseColors = PresetColors.map(color => `${color}-inverse`);
-const PresetStatusColorTypes = (/* unused pure expression or super */ null && (['success', 'processing', 'error', 'default', 'warning']));
-/**
- * determine if the color keyword belongs to the `Ant Design` {@link PresetColors}.
- * @param color color to be judged
- * @param includeInverse whether to include reversed colors
- */
-function isPresetColor(color) {
-  let includeInverse = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-  if (includeInverse) {
-    return [].concat((0,toConsumableArray/* default */.Z)(inverseColors), (0,toConsumableArray/* default */.Z)(PresetColors)).includes(color);
-  }
-  return PresetColors.includes(color);
-}
-function isPresetStatusColor(color) {
-  return PresetStatusColorTypes.includes(color);
-}
+// EXTERNAL MODULE: ./node_modules/antd/es/_util/colors.js
+var colors = __webpack_require__(98787);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/tooltip/util.js
 /* eslint-disable import/prefer-default-export */
 
 
 function parseColor(prefixCls, color) {
-  const isInternalColor = isPresetColor(color);
+  const isInternalColor = (0,colors/* isPresetColor */.o2)(color);
   const className = classnames_default()({
     [`${prefixCls}-${color}`]: color && isInternalColor
   });
@@ -7575,8 +7728,8 @@ const WrapPurePanel = props => ( /*#__PURE__*/react.createElement(dropdown_PureP
 Dropdown._InternalPanelDoNotUseOrYouWillBeFired = WrapPurePanel;
 if (false) {}
 /* harmony default export */ var dropdown = (Dropdown);
-// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 15 modules
-var es_button = __webpack_require__(45093);
+// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 9 modules
+var es_button = __webpack_require__(14726);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/index.js + 2 modules
 var space = __webpack_require__(42075);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/Compact.js
@@ -11725,7 +11878,7 @@ const useLocale = (componentName, defaultLocale) => {
 
 /***/ }),
 
-/***/ 72003:
+/***/ 53107:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 
@@ -11765,8 +11918,8 @@ var useLocale = __webpack_require__(10110);
 var useToken = __webpack_require__(25976);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/hooks/useState.js
 var useState = __webpack_require__(30470);
-// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 15 modules
-var es_button = __webpack_require__(45093);
+// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 9 modules
+var es_button = __webpack_require__(14726);
 // EXTERNAL MODULE: ./node_modules/antd/es/button/buttonHelpers.js
 var buttonHelpers = __webpack_require__(33671);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/ActionButton.js
@@ -12521,122 +12674,8 @@ DialogWrap.displayName = 'Dialog';
 /* harmony default export */ var rc_dialog_es = (es_DialogWrap);
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/ContextIsolator.js
 var ContextIsolator = __webpack_require__(89942);
-;// CONCATENATED MODULE: ./node_modules/antd/es/_util/hooks/useClosable.js
-"use client";
-
-
-
-
-function pickClosable(context) {
-  if (!context) {
-    return undefined;
-  }
-  return {
-    closable: context.closable,
-    closeIcon: context.closeIcon
-  };
-}
-/** Convert `closable` and `closeIcon` to config object */
-function useClosableConfig(closableCollection) {
-  const {
-    closable,
-    closeIcon
-  } = closableCollection || {};
-  return react.useMemo(() => {
-    if (
-    // If `closable`, whatever rest be should be true
-    !closable && (closable === false || closeIcon === false || closeIcon === null)) {
-      return false;
-    }
-    if (closable === undefined && closeIcon === undefined) {
-      return null;
-    }
-    let closableConfig = {
-      closeIcon: typeof closeIcon !== 'boolean' && closeIcon !== null ? closeIcon : undefined
-    };
-    if (closable && typeof closable === 'object') {
-      closableConfig = Object.assign(Object.assign({}, closableConfig), closable);
-    }
-    return closableConfig;
-  }, [closable, closeIcon]);
-}
-/**
- * Assign object without `undefined` field. Will skip if is `false`.
- * This helps to handle both closableConfig or false
- */
-function assignWithoutUndefined() {
-  const target = {};
-  for (var _len = arguments.length, objList = new Array(_len), _key = 0; _key < _len; _key++) {
-    objList[_key] = arguments[_key];
-  }
-  objList.forEach(obj => {
-    if (obj) {
-      Object.keys(obj).forEach(key => {
-        if (obj[key] !== undefined) {
-          target[key] = obj[key];
-        }
-      });
-    }
-  });
-  return target;
-}
-/** Use same object to support `useMemo` optimization */
-const EmptyFallbackCloseCollection = {};
-function useClosable(propCloseCollection, contextCloseCollection) {
-  let fallbackCloseCollection = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EmptyFallbackCloseCollection;
-  // Align the `props`, `context` `fallback` to config object first
-  const propCloseConfig = useClosableConfig(propCloseCollection);
-  const contextCloseConfig = useClosableConfig(contextCloseCollection);
-  const mergedFallbackCloseCollection = react.useMemo(() => Object.assign({
-    closeIcon: /*#__PURE__*/react.createElement(CloseOutlined/* default */.Z, null)
-  }, fallbackCloseCollection), [fallbackCloseCollection]);
-  // Use fallback logic to fill the config
-  const mergedClosableConfig = react.useMemo(() => {
-    // ================ Props First ================
-    // Skip if prop is disabled
-    if (propCloseConfig === false) {
-      return false;
-    }
-    if (propCloseConfig) {
-      return assignWithoutUndefined(mergedFallbackCloseCollection, contextCloseConfig, propCloseConfig);
-    }
-    // =============== Context Second ==============
-    // Skip if context is disabled
-    if (contextCloseConfig === false) {
-      return false;
-    }
-    if (contextCloseConfig) {
-      return assignWithoutUndefined(mergedFallbackCloseCollection, contextCloseConfig);
-    }
-    // ============= Fallback Default ==============
-    return !mergedFallbackCloseCollection.closable ? false : mergedFallbackCloseCollection;
-  }, [propCloseConfig, contextCloseConfig, mergedFallbackCloseCollection]);
-  // Calculate the final closeIcon
-  return react.useMemo(() => {
-    if (mergedClosableConfig === false) {
-      return [false, null];
-    }
-    const {
-      closeIconRender
-    } = mergedFallbackCloseCollection;
-    const {
-      closeIcon
-    } = mergedClosableConfig;
-    let mergedCloseIcon = closeIcon;
-    if (mergedCloseIcon !== null && mergedCloseIcon !== undefined) {
-      // Wrap the closeIcon if needed
-      if (closeIconRender) {
-        mergedCloseIcon = closeIconRender(closeIcon);
-      }
-      // Wrap the closeIcon with aria props
-      const ariaProps = (0,pickAttrs/* default */.Z)(mergedClosableConfig, true);
-      if (Object.keys(ariaProps).length) {
-        mergedCloseIcon = /*#__PURE__*/react.isValidElement(mergedCloseIcon) ? ( /*#__PURE__*/react.cloneElement(mergedCloseIcon, ariaProps)) : ( /*#__PURE__*/react.createElement("span", Object.assign({}, ariaProps), mergedCloseIcon));
-      }
-    }
-    return [true, mergedCloseIcon];
-  }, [mergedClosableConfig, mergedFallbackCloseCollection]);
-}
+// EXTERNAL MODULE: ./node_modules/antd/es/_util/hooks/useClosable.js
+var useClosable = __webpack_require__(69760);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/Dom/canUseDom.js
 var canUseDom = __webpack_require__(98924);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/styleChecker.js
@@ -13210,7 +13249,7 @@ const Modal = props => {
     onOk: handleOk,
     onCancel: handleCancel
   }))) : null;
-  const [mergedClosable, mergedCloseIcon] = useClosable(pickClosable(props), pickClosable(modalContext), {
+  const [mergedClosable, mergedCloseIcon] = (0,useClosable/* default */.Z)((0,useClosable/* pickClosable */.w)(props), (0,useClosable/* pickClosable */.w)(modalContext), {
     closable: true,
     closeIcon: /*#__PURE__*/react.createElement(CloseOutlined/* default */.Z, {
       className: `${prefixCls}-close-icon`
@@ -15905,6 +15944,41 @@ function theme_useToken() {
    */
   _internalContext: context/* DesignTokenContext */.Mj
 });
+
+/***/ }),
+
+/***/ 8796:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   i: function() { return /* binding */ PresetColors; }
+/* harmony export */ });
+const PresetColors = ['blue', 'purple', 'cyan', 'green', 'magenta', 'pink', 'red', 'orange', 'yellow', 'volcano', 'geekblue', 'lime', 'gold'];
+
+/***/ }),
+
+/***/ 98719:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Z: function() { return /* binding */ genPresetColor; }
+/* harmony export */ });
+/* harmony import */ var _interface__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8796);
+
+function genPresetColor(token, genCss) {
+  return _interface__WEBPACK_IMPORTED_MODULE_0__/* .PresetColors */ .i.reduce((prev, colorKey) => {
+    const lightColor = token[`${colorKey}1`];
+    const lightBorderColor = token[`${colorKey}3`];
+    const darkColor = token[`${colorKey}6`];
+    const textColor = token[`${colorKey}7`];
+    return Object.assign(Object.assign({}, prev), genCss(colorKey, {
+      lightColor,
+      lightBorderColor,
+      darkColor,
+      textColor
+    }));
+  }, {});
+}
 
 /***/ }),
 
