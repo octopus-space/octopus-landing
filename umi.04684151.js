@@ -9051,7 +9051,7 @@ var checkExtension = function checkExtension() {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
           if (!(network && connected)) {
-            _context3.next = 10;
+            _context3.next = 11;
             break;
           }
           _context3.next = 3;
@@ -9062,6 +9062,7 @@ var checkExtension = function checkExtension() {
           return window.metaidwallet.token.getBalance();
         case 6:
           tokens = _context3.sent;
+          console.log(tokens, "tokens");
           _bals = {
             btc: (0,utils/* formatSat */.gB)(btcBal)
           };
@@ -9070,7 +9071,7 @@ var checkExtension = function checkExtension() {
             _bals[item.genesis] = (0,utils/* formatSat */.gB)(balance.toString(), item.decimal);
           });
           setUserBal(_bals);
-        case 10:
+        case 11:
         case "end":
           return _context3.stop();
       }
@@ -47087,7 +47088,7 @@ function _sendToken() {
           decimal = _args.length > 4 && _args[4] !== undefined ? _args[4] : 0;
           _context.next = 3;
           return window.metaidwallet.transfer({
-            broadcast: true,
+            broadcast: false,
             tasks: [{
               type: "token",
               codehash: targetTokenCodeHash,
@@ -47103,21 +47104,23 @@ function _sendToken() {
           });
         case 3:
           res = _context.sent;
-          console.log(res, "sendToken");
           if (!res.status) {
-            _context.next = 7;
+            _context.next = 6;
             break;
           }
           throw new Error(res.status);
-        case 7:
-          if (!res.res[0].txid) {
-            _context.next = 11;
+        case 6:
+          if (!(!res.res[0] || !res.res[0].routeCheckTxHex)) {
+            _context.next = 8;
             break;
           }
-          return _context.abrupt("return", res.res[0].txid);
-        case 11:
-          return _context.abrupt("return", "");
-        case 12:
+          throw new Error("send token failed");
+        case 8:
+          return _context.abrupt("return", {
+            txHexList: [res.res[0].routeCheckTxHex, res.res[0].txHex],
+            txid: res.res[0].txid
+          });
+        case 9:
         case "end":
           return _context.stop();
       }
@@ -47248,7 +47251,7 @@ function redeemBtc(_x5, _x6, _x7, _x8) {
 }
 function _redeemBtc() {
   _redeemBtc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4(redeemAmount, btcAsset, addressType, network) {
-    var _yield$signPublicKey, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, txid, submitPrepayOrderRedeemDto, ret;
+    var _yield$signPublicKey, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, _yield$sendToken, txHexList, txid, submitPrepayOrderRedeemDto, ret;
     return regeneratorRuntime_default()().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
@@ -47280,37 +47283,40 @@ function _redeemBtc() {
           _context4.next = 17;
           return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis, btcAsset.decimals - btcAsset.trimDecimals);
         case 17:
-          txid = _context4.sent;
+          _yield$sendToken = _context4.sent;
+          txHexList = _yield$sendToken.txHexList;
+          txid = _yield$sendToken.txid;
           submitPrepayOrderRedeemDto = {
             orderId: orderId,
+            txHexList: txHexList,
             txid: txid
           };
-          _context4.next = 21;
-          return sleep(3000);
-        case 21:
           _context4.next = 23;
-          return (0,api/* submitPrepayOrderRedeemBtc */.aU)(network, submitPrepayOrderRedeemDto);
+          return sleep(3000);
         case 23:
+          _context4.next = 25;
+          return (0,api/* submitPrepayOrderRedeemBtc */.aU)(network, submitPrepayOrderRedeemDto);
+        case 25:
           ret = _context4.sent;
           if (ret.success) {
-            _context4.next = 26;
+            _context4.next = 28;
             break;
           }
           throw new Error(ret.msg);
-        case 26:
+        case 28:
           return _context4.abrupt("return", {
             orderId: orderId,
-            txid: txid
+            txid: ""
           });
-        case 29:
-          _context4.prev = 29;
+        case 31:
+          _context4.prev = 31;
           _context4.t0 = _context4["catch"](0);
           throw new Error(_context4.t0);
-        case 32:
+        case 34:
         case "end":
           return _context4.stop();
       }
-    }, _callee4, null, [[0, 29]]);
+    }, _callee4, null, [[0, 31]]);
   }));
   return _redeemBtc.apply(this, arguments);
 }
@@ -47319,7 +47325,7 @@ function redeemBrc20(_x9, _x10, _x11, _x12) {
 }
 function _redeemBrc() {
   _redeemBrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee5(redeemAmount, asset, addressType, network) {
-    var _yield$signPublicKey2, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr2, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, txid, submitPrepayOrderRedeemDto, ret;
+    var _yield$signPublicKey2, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr2, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, _yield$sendToken2, txHexList, txid, submitPrepayOrderRedeemDto, ret;
     return regeneratorRuntime_default()().wrap(function _callee5$(_context5) {
       while (1) switch (_context5.prev = _context5.next) {
         case 0:
@@ -47351,37 +47357,40 @@ function _redeemBrc() {
           _context5.next = 17;
           return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis, asset.decimals - asset.trimDecimals);
         case 17:
-          txid = _context5.sent;
+          _yield$sendToken2 = _context5.sent;
+          txHexList = _yield$sendToken2.txHexList;
+          txid = _yield$sendToken2.txid;
           submitPrepayOrderRedeemDto = {
             orderId: orderId,
-            txid: txid
+            txid: txid,
+            txHexList: txHexList
           };
-          _context5.next = 21;
-          return sleep(3000);
-        case 21:
           _context5.next = 23;
-          return (0,api/* submitPrepayOrderRedeemBrc20 */.T9)(network, submitPrepayOrderRedeemDto);
+          return sleep(3000);
         case 23:
+          _context5.next = 25;
+          return (0,api/* submitPrepayOrderRedeemBrc20 */.T9)(network, submitPrepayOrderRedeemDto);
+        case 25:
           ret = _context5.sent;
           if (ret.success) {
-            _context5.next = 26;
+            _context5.next = 28;
             break;
           }
           throw new Error(ret.msg);
-        case 26:
+        case 28:
           return _context5.abrupt("return", {
             orderId: orderId,
             txid: txid
           });
-        case 29:
-          _context5.prev = 29;
+        case 31:
+          _context5.prev = 31;
           _context5.t0 = _context5["catch"](0);
           throw new Error(_context5.t0);
-        case 32:
+        case 34:
         case "end":
           return _context5.stop();
       }
-    }, _callee5, null, [[0, 29]]);
+    }, _callee5, null, [[0, 31]]);
   }));
   return _redeemBrc.apply(this, arguments);
 }
@@ -47390,7 +47399,7 @@ function redeemRunes(_x13, _x14, _x15, _x16) {
 }
 function _redeemRunes() {
   _redeemRunes = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee6(redeemAmount, asset, addressType, network) {
-    var _yield$signPublicKey3, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr3, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, txid, submitPrepayOrderRedeemDto, ret;
+    var _yield$signPublicKey3, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr3, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, _yield$sendToken3, txHexList, txid, submitPrepayOrderRedeemDto, ret;
     return regeneratorRuntime_default()().wrap(function _callee6$(_context6) {
       while (1) switch (_context6.prev = _context6.next) {
         case 0:
@@ -47422,37 +47431,40 @@ function _redeemRunes() {
           _context6.next = 17;
           return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis, asset.decimals - asset.trimDecimals);
         case 17:
-          txid = _context6.sent;
+          _yield$sendToken3 = _context6.sent;
+          txHexList = _yield$sendToken3.txHexList;
+          txid = _yield$sendToken3.txid;
           submitPrepayOrderRedeemDto = {
             orderId: orderId,
-            txid: txid
+            txid: txid,
+            txHexList: txHexList
           };
-          _context6.next = 21;
-          return sleep(3000);
-        case 21:
           _context6.next = 23;
-          return (0,api/* submitPrepayOrderRedeemRunes */.s7)(network, submitPrepayOrderRedeemDto);
+          return sleep(3000);
         case 23:
+          _context6.next = 25;
+          return (0,api/* submitPrepayOrderRedeemRunes */.s7)(network, submitPrepayOrderRedeemDto);
+        case 25:
           ret = _context6.sent;
           if (ret.success) {
-            _context6.next = 26;
+            _context6.next = 28;
             break;
           }
           throw new Error(ret.msg);
-        case 26:
+        case 28:
           return _context6.abrupt("return", {
             orderId: orderId,
             txid: txid
           });
-        case 29:
-          _context6.prev = 29;
+        case 31:
+          _context6.prev = 31;
           _context6.t0 = _context6["catch"](0);
           throw new Error(_context6.t0);
-        case 32:
+        case 34:
         case "end":
           return _context6.stop();
       }
-    }, _callee6, null, [[0, 29]]);
+    }, _callee6, null, [[0, 31]]);
   }));
   return _redeemRunes.apply(this, arguments);
 }
@@ -47463,7 +47475,7 @@ function redeemMrc20(_x17, _x18, _x19, _x20) {
 // send btc
 function _redeemMrc() {
   _redeemMrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee7(redeemAmount, asset, addressType, network) {
-    var _yield$signPublicKey4, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr4, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, txid, submitPrepayOrderRedeemDto, ret;
+    var _yield$signPublicKey4, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr4, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, _yield$sendToken4, txHexList, txid, submitPrepayOrderRedeemDto, ret;
     return regeneratorRuntime_default()().wrap(function _callee7$(_context7) {
       while (1) switch (_context7.prev = _context7.next) {
         case 0:
@@ -47495,37 +47507,40 @@ function _redeemMrc() {
           _context7.next = 17;
           return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis, asset.decimals - asset.trimDecimals);
         case 17:
-          txid = _context7.sent;
+          _yield$sendToken4 = _context7.sent;
+          txHexList = _yield$sendToken4.txHexList;
+          txid = _yield$sendToken4.txid;
           submitPrepayOrderRedeemDto = {
             orderId: orderId,
-            txid: txid
+            txid: txid,
+            txHexList: txHexList
           };
-          _context7.next = 21;
-          return sleep(3000);
-        case 21:
           _context7.next = 23;
-          return (0,api/* submitPrepayOrderRedeemMrc20 */.t0)(network, submitPrepayOrderRedeemDto);
+          return sleep(3000);
         case 23:
+          _context7.next = 25;
+          return (0,api/* submitPrepayOrderRedeemMrc20 */.t0)(network, submitPrepayOrderRedeemDto);
+        case 25:
           ret = _context7.sent;
           if (ret.success) {
-            _context7.next = 26;
+            _context7.next = 28;
             break;
           }
           throw new Error(ret.msg);
-        case 26:
+        case 28:
           return _context7.abrupt("return", {
             orderId: orderId,
             txid: txid
           });
-        case 29:
-          _context7.prev = 29;
+        case 31:
+          _context7.prev = 31;
           _context7.t0 = _context7["catch"](0);
           throw new Error(_context7.t0);
-        case 32:
+        case 34:
         case "end":
           return _context7.stop();
       }
-    }, _callee7, null, [[0, 29]]);
+    }, _callee7, null, [[0, 31]]);
   }));
   return _redeemMrc.apply(this, arguments);
 }
@@ -95691,7 +95706,7 @@ PI = new Decimal(PI);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"47":"4dc9215d","208":"a39a2d4b","242":"c0a97206","307":"14477965","432":"fe30f0b9","717":"65d3dd6e","866":"39bded83"}[chunkId] + ".async.js";
+/******/ 			return "" + ({"307":"p__wrapping__index","717":"layouts__index","866":"p__index"}[chunkId] || chunkId) + "." + {"47":"4dc9215d","208":"a39a2d4b","242":"c0a97206","307":"b3ad0316","432":"fe30f0b9","717":"65d3dd6e","866":"39bded83"}[chunkId] + ".async.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	

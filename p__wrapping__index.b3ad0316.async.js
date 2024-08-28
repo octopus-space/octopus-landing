@@ -315,7 +315,6 @@ var size = 10;
               return token.originName == item.name;
             });
             if (currentToken) {
-              console.log(currentToken, 'metacoin');
               item.amount = String((0,utils/* formatUnitToBtc */.hq)(Number(item.amount), item.originNetwork === "BTC" || item.originNetwork === "MVC" && item.decimals <= 8 ? item.decimals : item.decimals - currentToken.trimDecimals));
             }
             return item;
