@@ -7,7 +7,12 @@ const getHost = (network: Network) => {
     return "https://api.octopus.space/api-bridge-testnet";
 };
 
-const ApiHost = "https://www.orders.exchange/api-book/common";
+const getOrdersHost = (network: Network) => {
+  if (network === "mainnet")
+    return "https://api.octopus.space/api-bridge-repost";
+  if (network === "testnet")
+    return "https://api.octopus.space/api-bridge-repost-testnet";
+};
 
 // assetList
 export async function getAssets(
@@ -313,7 +318,6 @@ export async function getBridgeHistory(
   );
 }
 
-
 // TODO need replace with new api
 
 export async function fetchRunesUtxos(
@@ -324,7 +328,7 @@ export async function fetchRunesUtxos(
   limit: number = 50
 ) {
   return request<API.Ret<{ list: API.UTXO[] }>>(
-    ApiHost + "/runes/address/utxo",
+    getOrdersHost(network) + "/common/runes/address/utxo",
     {
       method: "GET",
       params: {
@@ -344,7 +348,7 @@ export async function getUserRunesBalance(
   runeId: string
 ) {
   return request<API.Ret<API.RUNESItem>>(
-    ApiHost + "/runes/address/balance-info",
+    getOrdersHost(network) + "/common/runes/address/balance-info",
     {
       method: "GET",
       params: {
@@ -363,16 +367,19 @@ export async function getUserMrc20Balance(
   cursor: number = 0,
   size: number = 50
 ) {
-  return request<API.ListRet<API.MRC20Item>>(ApiHost + "/mrc20/address/utxo", {
-    method: "GET",
-    params: {
-      address,
-      tickId,
-      cursor: cursor * size,
-      size,
-      net: network === "mainnet" ? "livenet" : "testnet",
-    },
-  });
+  return request<API.ListRet<API.MRC20Item>>(
+    getOrdersHost(network) + "/common/mrc20/address/utxo",
+    {
+      method: "GET",
+      params: {
+        address,
+        tickId,
+        cursor: cursor * size,
+        size,
+        net: network === "mainnet" ? "livenet" : "testnet",
+      },
+    }
+  );
 }
 
 export async function getUserMrc20Balances(
@@ -382,7 +389,7 @@ export async function getUserMrc20Balances(
   size: number = 50
 ) {
   return request<API.ListRet<API.Mrc20BalItem>>(
-    ApiHost + "/mrc20/address/balance-list",
+    getOrdersHost(network) + "/common/mrc20/address/balance-list",
     {
       method: "GET",
       params: {
@@ -395,14 +402,13 @@ export async function getUserMrc20Balances(
   );
 }
 
-
 export async function getUserBRC20(
   network: Network,
   params: { address: string; tick: string },
   options?: { [key: string]: any }
 ) {
   const { address, tick } = params;
-  const url = `https://www.orders.exchange/api-book/brc20/address/${address}/${tick}`;
+  const url = getOrdersHost(network) + `/brc20/address/${address}/${tick}`;
   return request<API.Ret<API.BRC20Info>>(url, {
     method: "GET",
     params: { net: network },
@@ -416,7 +422,7 @@ export async function getRawTx(
   options?: { [key: string]: any }
 ) {
   const { txid } = params;
-  const url = `https://www.orders.exchange/api-book/common/tx/raw`;
+  const url =  getOrdersHost(network) + `/tx/raw`;
   return request<API.Ret<{ rawTx: string }>>(url, {
     method: "GET",
     params: { net: network, txId: txid },
