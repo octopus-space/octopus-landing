@@ -65,7 +65,6 @@ export default ({ type }: { type: HistoryType }) => {
           return token.originName == item.name ;
         });
         if (currentToken) {
-          console.log(currentToken, 'metacoin');
           item.amount = String(
             formatUnitToBtc(
               Number(item.amount),

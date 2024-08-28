@@ -47,14 +47,16 @@ export const sleep = (ms: number) => {
 async function sendToken(
   amount: string,
   address: string,
-
   targetTokenCodeHash: string,
   targetTokenGenesis: string,
   decimal: number = 0
-): Promise<string> {
+): Promise<{
+  txHexList: string[];
+  txid: string;
+}> {
   const res = await window.metaidwallet
     .transfer({
-      broadcast: true,
+      broadcast: false,
       tasks: [
         {
           type: "token",
@@ -67,13 +69,19 @@ async function sendToken(
     .catch((e) => {
       throw new Error(e as any);
     });
-  console.log(res, "sendToken");
   if (res.status) throw new Error(res.status);
-  if (res.res[0].txid) {
-    return res.res[0].txid;
-  } else {
-    return "";
-  }
+  if (!res.res[0] || !res.res[0].routeCheckTxHex)
+    throw new Error("send token failed");
+  return {
+    txHexList: [res.res[0].routeCheckTxHex, res.res[0].txHex],
+    txid: res.res[0].txid,
+  };
+  // debugger;
+  // if (res.res[0].txid) {
+  //   return res.res[0].txid;
+  // } else {
+  //   return "";
+  // }
 }
 // sign redeem  publicKey
 async function signPublicKey(): Promise<{
@@ -173,7 +181,7 @@ export async function redeemBtc(
     );
     const { orderId, bridgeAddress } = createResp;
     const { targetTokenCodeHash, targetTokenGenesis } = btcAsset;
-    const txid = await sendToken(
+    const { txHexList, txid } = await sendToken(
       String(redeemAmount),
       bridgeAddress,
       targetTokenCodeHash,
@@ -183,7 +191,8 @@ export async function redeemBtc(
 
     const submitPrepayOrderRedeemDto = {
       orderId,
-      txid: txid,
+      txHexList,
+      txid,
     };
     await sleep(3000);
     const ret = await submitPrepayOrderRedeemBtc(
@@ -195,7 +204,7 @@ export async function redeemBtc(
     }
     return {
       orderId,
-      txid,
+      txid: "",
     };
   } catch (error) {
     throw new Error(error as any);
@@ -226,7 +235,7 @@ export async function redeemBrc20(
     );
     const { orderId, bridgeAddress } = createResp;
     const { targetTokenCodeHash, targetTokenGenesis } = asset;
-    const txid = await sendToken(
+    const { txHexList, txid }= await sendToken(
       String(redeemAmount),
       bridgeAddress,
       targetTokenCodeHash,
@@ -236,6 +245,7 @@ export async function redeemBrc20(
     const submitPrepayOrderRedeemDto = {
       orderId,
       txid: txid,
+      txHexList
     };
     await sleep(3000);
     const ret = await submitPrepayOrderRedeemBrc20(
@@ -278,7 +288,7 @@ export async function redeemRunes(
     );
     const { orderId, bridgeAddress } = createResp;
     const { targetTokenCodeHash, targetTokenGenesis } = asset;
-    const txid = await sendToken(
+    const { txHexList, txid }= await sendToken(
       String(redeemAmount),
       bridgeAddress,
       targetTokenCodeHash,
@@ -288,6 +298,7 @@ export async function redeemRunes(
     const submitPrepayOrderRedeemDto = {
       orderId,
       txid: txid,
+      txHexList
     };
     await sleep(3000);
     const ret = await submitPrepayOrderRedeemRunes(
@@ -330,7 +341,7 @@ export async function redeemMrc20(
     );
     const { orderId, bridgeAddress } = createResp;
     const { targetTokenCodeHash, targetTokenGenesis } = asset;
-    const txid = await sendToken(
+    const { txHexList, txid }= await sendToken(
       String(redeemAmount),
       bridgeAddress,
       targetTokenCodeHash,
@@ -340,6 +351,7 @@ export async function redeemMrc20(
     const submitPrepayOrderRedeemDto = {
       orderId,
       txid: txid,
+      txHexList
     };
     await sleep(3000);
     const ret = await submitPrepayOrderRedeemMrc20(

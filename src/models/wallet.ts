@@ -56,6 +56,7 @@ export default () => {
       //btc
       const btcBal = await getUtxoBalance();
       const tokens = await window.metaidwallet.token.getBalance();
+      console.log(tokens, "tokens");
       const _bals: Record<string, any> = {
         btc: formatSat(btcBal),
       };
