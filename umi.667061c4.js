@@ -12276,7 +12276,10 @@ var getHost = function getHost(network) {
   if (network === "mainnet") return "https://api.octopus.space/api-bridge";
   if (network === "testnet") return "https://api.octopus.space/api-bridge-testnet";
 };
-var ApiHost = "https://www.orders.exchange/api-book/common";
+var getOrdersHost = function getOrdersHost(network) {
+  if (network === "mainnet") return "https://api.octopus.space/api-bridge-repost";
+  if (network === "testnet") return "https://api.octopus.space/api-bridge-repost-testnet";
+};
 
 // assetList
 function getAssets(_x, _x2) {
@@ -12656,7 +12659,7 @@ function _fetchRunesUtxos() {
         case 0:
           offset = _args19.length > 3 && _args19[3] !== undefined ? _args19[3] : 0;
           limit = _args19.length > 4 && _args19[4] !== undefined ? _args19[4] : 50;
-          return _context19.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(ApiHost + "/runes/address/utxo", {
+          return _context19.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(getOrdersHost(network) + "/common/runes/address/utxo", {
             method: "GET",
             params: {
               address: address,
@@ -12682,7 +12685,7 @@ function _getUserRunesBalance() {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee20$(_context20) {
       while (1) switch (_context20.prev = _context20.next) {
         case 0:
-          return _context20.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(ApiHost + "/runes/address/balance-info", {
+          return _context20.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(getOrdersHost(network) + "/common/runes/address/balance-info", {
             method: "GET",
             params: {
               address: address,
@@ -12711,7 +12714,7 @@ function _getUserMrc20Balance() {
         case 0:
           cursor = _args21.length > 3 && _args21[3] !== undefined ? _args21[3] : 0;
           size = _args21.length > 4 && _args21[4] !== undefined ? _args21[4] : 50;
-          return _context21.abrupt("return", request(ApiHost + "/mrc20/address/utxo", {
+          return _context21.abrupt("return", request(getOrdersHost(network) + "/common/mrc20/address/utxo", {
             method: "GET",
             params: {
               address: address,
@@ -12742,7 +12745,7 @@ function _getUserMrc20Balances() {
         case 0:
           cursor = _args22.length > 2 && _args22[2] !== undefined ? _args22[2] : 0;
           size = _args22.length > 3 && _args22[3] !== undefined ? _args22[3] : 50;
-          return _context22.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(ApiHost + "/mrc20/address/balance-list", {
+          return _context22.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(getOrdersHost(network) + "/common/mrc20/address/balance-list", {
             method: "GET",
             params: {
               address: address,
@@ -12769,7 +12772,7 @@ function _getUserBRC() {
       while (1) switch (_context23.prev = _context23.next) {
         case 0:
           address = params.address, tick = params.tick;
-          url = "https://www.orders.exchange/api-book/brc20/address/".concat(address, "/").concat(tick);
+          url = getOrdersHost(network) + "/brc20/address/".concat(address, "/").concat(tick);
           return _context23.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(url, _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "GET",
             params: {
@@ -12794,7 +12797,7 @@ function _getRawTx() {
       while (1) switch (_context24.prev = _context24.next) {
         case 0:
           txid = params.txid;
-          url = "https://www.orders.exchange/api-book/common/tx/raw";
+          url = getOrdersHost(network) + "/tx/raw";
           return _context24.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(url, _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "GET",
             params: {
