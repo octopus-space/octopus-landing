@@ -379,7 +379,7 @@ async function transferBTC(parmas: {
     feeRate: number;
   };
 }) {
-  const ret = await window.metaidwallet.btc.transfer(parmas);
+  const ret = await window.metaidwallet.btc.transfer(parmas).catch((e: any) => {throw new Error(e)});
   if (ret.status) throw new Error(ret.status);
   return ret.txHex;
 }
