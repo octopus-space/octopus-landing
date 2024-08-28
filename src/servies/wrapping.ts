@@ -32,6 +32,7 @@ import {
 import { determineAddressInfo } from "@/utils/utils";
 import { sendRunes } from "@/utils/runes";
 import { getUtxos } from "@/utils/psbtBuild";
+import { transferBTCs } from "@/utils/btc";
 
 export type SupportRedeemAddressType = "P2TR" | "P2WPKH" | "P2PKH";
 export const supportRedeemAddressType: SupportRedeemAddressType[] = [
@@ -92,9 +93,8 @@ async function signPublicKey(): Promise<{
 }> {
   const publicKey = await window.metaidwallet.getPublicKey();
   const publicKeyReceive = await window.metaidwallet.btc.getPublicKey();
-  const publicKeyReceiveSign: any = await window.metaidwallet.btc.signMessage(
-    publicKeyReceive
-  );
+  const publicKeyReceiveSign: any =
+    await window.metaidwallet.btc.signMessage(publicKeyReceive);
   if (publicKeyReceiveSign.status === "canceled") throw new Error("canceled");
 
   const ret: any = await window.metaidwallet.signMessage({
@@ -128,9 +128,8 @@ async function signMintPublicKey(): Promise<{
   const publicKeyReceive = await window.metaidwallet.getPublicKey();
   const publicKey = await window.metaidwallet.btc.getPublicKey();
 
-  const publicKeySign: any = await window.metaidwallet.btc.signMessage(
-    publicKey
-  );
+  const publicKeySign: any =
+    await window.metaidwallet.btc.signMessage(publicKey);
   if (publicKeySign.status === "canceled") throw new Error("canceled");
   const ret: any = await window.metaidwallet.signMessage({
     message: publicKeyReceive,
@@ -235,7 +234,7 @@ export async function redeemBrc20(
     );
     const { orderId, bridgeAddress } = createResp;
     const { targetTokenCodeHash, targetTokenGenesis } = asset;
-    const { txHexList, txid }= await sendToken(
+    const { txHexList, txid } = await sendToken(
       String(redeemAmount),
       bridgeAddress,
       targetTokenCodeHash,
@@ -245,7 +244,7 @@ export async function redeemBrc20(
     const submitPrepayOrderRedeemDto = {
       orderId,
       txid: txid,
-      txHexList
+      txHexList,
     };
     await sleep(3000);
     const ret = await submitPrepayOrderRedeemBrc20(
@@ -288,7 +287,7 @@ export async function redeemRunes(
     );
     const { orderId, bridgeAddress } = createResp;
     const { targetTokenCodeHash, targetTokenGenesis } = asset;
-    const { txHexList, txid }= await sendToken(
+    const { txHexList, txid } = await sendToken(
       String(redeemAmount),
       bridgeAddress,
       targetTokenCodeHash,
@@ -298,7 +297,7 @@ export async function redeemRunes(
     const submitPrepayOrderRedeemDto = {
       orderId,
       txid: txid,
-      txHexList
+      txHexList,
     };
     await sleep(3000);
     const ret = await submitPrepayOrderRedeemRunes(
@@ -341,7 +340,7 @@ export async function redeemMrc20(
     );
     const { orderId, bridgeAddress } = createResp;
     const { targetTokenCodeHash, targetTokenGenesis } = asset;
-    const { txHexList, txid }= await sendToken(
+    const { txHexList, txid } = await sendToken(
       String(redeemAmount),
       bridgeAddress,
       targetTokenCodeHash,
@@ -351,7 +350,7 @@ export async function redeemMrc20(
     const submitPrepayOrderRedeemDto = {
       orderId,
       txid: txid,
-      txHexList
+      txHexList,
     };
     await sleep(3000);
     const ret = await submitPrepayOrderRedeemMrc20(
@@ -379,7 +378,9 @@ async function transferBTC(parmas: {
     feeRate: number;
   };
 }) {
-  const ret = await window.metaidwallet.btc.transfer(parmas).catch((e: any) => {throw new Error(e)});
+  const ret = await window.metaidwallet.btc.transfer(parmas).catch((e: any) => {
+    throw new Error(e);
+  });
   if (ret.status) throw new Error(ret.status);
   return ret.txHex;
 }
@@ -408,15 +409,31 @@ export async function mintBtc(
       createPrepayOrderDto
     );
 
-    const { orderId, bridgeAddress } = createResp;
-
-    const txHex = await transferBTC({
-      toAddress: bridgeAddress,
-      satoshis: Number(mintAmount),
-      options: {
-        noBroadcast: true,
-        feeRate: assetInfo.feeBtc,
+    const {
+      orderId,
+      bridgeAddress,
+      bridgeRuleServiceAddress,
+      bridgeRuleServiceMintFee,
+    } = createResp;
+    const transfers = [
+      {
+        toAddress: bridgeAddress,
+        satoshis: Number(mintAmount),
       },
+    ];
+    if (bridgeRuleServiceAddress && bridgeRuleServiceMintFee) {
+      transfers.push({
+        toAddress: bridgeRuleServiceAddress,
+        satoshis: bridgeRuleServiceMintFee,
+      });
+    }
+    // transfer btc to bridge address and service address
+    const txHex = await transferBTCs({
+      transfers,
+      address: await window.metaidwallet.btc.getAddress(),
+      feeRate: assetInfo.feeBtc,
+      addressType,
+      network,
     });
 
     const submitPrepayOrderMintDto = {
@@ -807,23 +824,36 @@ export async function mintMrc20(
     createPrepayOrderDto
   );
   console.log("createResp", createResp);
-  const { orderId, bridgeAddress } = createResp;
+  // transfer mrc-20  to bridge address and serviceFee to service address
+  const {
+    orderId,
+    bridgeAddress,
+    bridgeRuleServiceAddress,
+    bridgeRuleServiceMintFee,
+  } = createResp;
+  const params: any = {
+    body: JSON.stringify([
+      {
+        amount: String(mintAmount),
+        vout: 1,
+        id: asset.originTokenId,
+      },
+    ]),
+    amount: String(mintAmount),
+    mrc20TickId: asset.originTokenId,
+    flag: "metaid",
+    revealAddr: bridgeAddress,
+    commitFeeRate: assetInfo.feeBtc,
+    revealFeeRate: assetInfo.feeBtc,
+  };
+  if (bridgeRuleServiceAddress && bridgeRuleServiceMintFee) {
+    params.service = {
+      address: bridgeRuleServiceAddress,
+      satoshis: bridgeRuleServiceMintFee,
+    };
+  }
   const MRC20Transfer = await window.metaidwallet.btc
-    .transferMRC20({
-      body: JSON.stringify([
-        {
-          amount: String(mintAmount),
-          vout: 1,
-          id: asset.originTokenId,
-        },
-      ]),
-      amount: String(mintAmount),
-      mrc20TickId: asset.originTokenId,
-      flag: "metaid",
-      revealAddr: bridgeAddress,
-      commitFeeRate: assetInfo.feeBtc,
-      revealFeeRate: assetInfo.feeBtc,
-    })
+    .transferMRC20(params)
     .catch((e) => {
       throw new Error(e as any);
     });

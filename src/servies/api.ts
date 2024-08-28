@@ -103,8 +103,10 @@ export async function createPrepayOrderMintBtc(
     API.Ret<{
       orderId: string;
       bridgeAddress: string;
+      bridgeRuleServiceAddress?: string
+      bridgeRuleServiceMintFee?: number
     }>
-  >(`${getHost(network)}/createPrepayOrderMintBtc`, {
+  >(`${getOrdersHost(network)}/bridge/createPrepayOrderMintBtc`, {
     method: "POST",
     data,
     ...(options || {}),
@@ -138,7 +140,7 @@ export async function submitPrepayOrderMintBtc(
       orderId: string;
       bridgeAddress: string;
     }>
-  >(`${getHost(network)}/submitPrepayOrderMintBtc`, {
+  >(`${getOrdersHost(network)}/bridge/submitPrepayOrderMintBtc`, {
     method: "POST",
     data,
     ...(options || {}),
@@ -188,8 +190,10 @@ export async function createPrepayOrderMintMrc20(
     API.Ret<{
       orderId: string;
       bridgeAddress: string;
+      bridgeRuleServiceAddress?: string
+      bridgeRuleServiceMintFee?: number
     }>
-  >(`${getHost(network)}/createPrepayOrderMintMrc20`, {
+  >(`${getOrdersHost(network)}/bridge/createPrepayOrderMintMrc20`, {
     method: "POST",
     data,
     ...(options || {}),
@@ -290,7 +294,7 @@ export async function submitPrepayOrderMintMrc20(
       orderId: string;
       bridgeAddress: string;
     }>
-  >(`${getHost(network)}/submitPrepayOrderMintMrc20`, {
+  >(`${getOrdersHost(network)}/bridge/submitPrepayOrderMintMrc20`, {
     method: "POST",
     data,
     ...(options || {}),

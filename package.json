@@ -12,6 +12,7 @@
     "@ant-design/icons": "^5.3.6",
     "@bitcoin-js/tiny-secp256k1-asmjs": "^2.2.3",
     "@magiceden-oss/runestone-lib": "^1.0.2",
+    "@mempool/mempool.js": "^2.3.0",
     "antd": "^5.15.4",
     "bignumber.js": "^9.1.2",
     "bitcoinjs-lib": "^6.1.5",
