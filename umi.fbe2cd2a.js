@@ -47556,7 +47556,9 @@ function _transferBTC() {
       while (1) switch (_context8.prev = _context8.next) {
         case 0:
           _context8.next = 2;
-          return window.metaidwallet.btc.transfer(parmas);
+          return window.metaidwallet.btc.transfer(parmas)["catch"](function (e) {
+            throw new Error(e);
+          });
         case 2:
           ret = _context8.sent;
           if (!ret.status) {
