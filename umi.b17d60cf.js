@@ -9051,7 +9051,7 @@ var checkExtension = function checkExtension() {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
           if (!(network && connected)) {
-            _context3.next = 11;
+            _context3.next = 10;
             break;
           }
           _context3.next = 3;
@@ -9062,7 +9062,6 @@ var checkExtension = function checkExtension() {
           return window.metaidwallet.token.getBalance();
         case 6:
           tokens = _context3.sent;
-          console.log(tokens, "tokens");
           _bals = {
             btc: (0,utils/* formatSat */.gB)(btcBal)
           };
@@ -9071,7 +9070,7 @@ var checkExtension = function checkExtension() {
             _bals[item.genesis] = (0,utils/* formatSat */.gB)(balance.toString(), item.decimal);
           });
           setUserBal(_bals);
-        case 11:
+        case 10:
         case "end":
           return _context3.stop();
       }
