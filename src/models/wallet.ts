@@ -18,7 +18,7 @@ export default () => {
   const [mvcAddress, setMVCAddress] = useState<string>();
   const [btcAddress, setBTCAddress] = useState<string>();
   const [loginModalShow, setLoginModalShow] = useState<boolean>(false);
-  const [network, setNetwork] = useState<Network>("testnet");
+  const [network, setNetwork] = useState<Network>("mainnet");
   const [connected, setConnected] = useState<boolean>(false);
   const [userBal, setUserBal] = useState<Record<string, any>>({});
 
