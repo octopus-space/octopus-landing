@@ -77,6 +77,7 @@ declare namespace API {
     timestamp: string;
     status: PrepayOrderStatus;
     symbol: string;
+    name: string;
     originTxid: string;
     targetTxid: string;
     originNetwork: "BTC" | "MVC";
