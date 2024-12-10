@@ -84,6 +84,8 @@ declare namespace API {
     targetNetwork: "BTC" | "MVC";
     decimals: number;
     blockHeight: number;
+    originTokenId: string;
+    targetTokenId: string;
   };
   type RUNESItem = {
     amount: string;

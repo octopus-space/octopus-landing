@@ -62,7 +62,7 @@ export default ({ type }: { type: HistoryType }) => {
         item.timestamp = prettyTimestamp(Number(item.timestamp), true);
 
         const currentToken = AssetsInfo.assetList.find((token) => {
-          return token.originName === item.name;
+          return token.originTokenId === item.originTokenId && token.targetTokenId === item.targetTokenId;
         });
         if (currentToken) {
           item.amount = String(
