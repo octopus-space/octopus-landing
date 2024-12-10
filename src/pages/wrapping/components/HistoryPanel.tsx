@@ -62,7 +62,7 @@ export default ({ type }: { type: HistoryType }) => {
         item.timestamp = prettyTimestamp(Number(item.timestamp), true);
 
         const currentToken = AssetsInfo.assetList.find((token) => {
-          return token.originName == item.name ;
+          return token.originName === item.name;
         });
         if (currentToken) {
           item.amount = String(
@@ -74,7 +74,9 @@ export default ({ type }: { type: HistoryType }) => {
                 : item.decimals - currentToken.trimDecimals
             )
           );
+          item.symbol = item.symbol || currentToken.originSymbol || currentToken.originName;
         }
+
         return item;
       });
       setList((prev) => {
