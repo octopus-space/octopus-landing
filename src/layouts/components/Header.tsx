@@ -32,7 +32,7 @@ export default () => {
               <img src={wrapping} alt="" />
               <div className="desc">
                 <div className="title">Wrapping {network === 'testnet' && <div className="beta">BETA</div>}</div>
-                <div className="subTitle">Smartcontrat Bridging</div>
+                <div className="subTitle">Smartcontract Bridging</div>
               </div>
             </div>
             <div className="item disabled">
