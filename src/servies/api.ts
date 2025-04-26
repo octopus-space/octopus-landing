@@ -2,7 +2,7 @@ import { Network } from "@/models/wallet";
 import { request } from "umi";
 
 const getHost = (network: Network) => {
-  if (network === "mainnet") return "https://api.octopus.space/api-bridge";
+  if (network === "mainnet") return "https://api.octopus.space/api-bridge-v3";
   if (network === "testnet")
     return "https://api.octopus.space/api-bridge-testnet";
 };
