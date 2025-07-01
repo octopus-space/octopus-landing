@@ -34,16 +34,16 @@ export const SegOptions: SegmentedOptions<any> = [
     ),
     value: "brc20",
   },
-  {
-    label: (
-      <div style={{ padding: 4 }} className="SegmentedItem">
-        <TokenIcon symbol="Runes" src={runes} size={28} />
-        <span>Runes</span>
-      </div>
-    ),
-    value: "runes",
-    disabled: false,
-  },
+  // {
+  //   label: (
+  //     <div style={{ padding: 4 }} className="SegmentedItem">
+  //       <TokenIcon symbol="Runes" src={runes} size={28} />
+  //       <span>Runes</span>
+  //     </div>
+  //   ),
+  //   value: "runes",
+  //   disabled: false,
+  // },
   
   // {
   //   label: (
