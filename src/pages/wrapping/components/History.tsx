@@ -29,12 +29,12 @@ const items: TabsProps["items"] = [
     children: <HistoryPanel type="mvcToBrc20" />,
     destroyInactiveTabPane: true
   },
-  {
-    key: "mvcToRunes",
-    label: "RUNES",
-    children: <HistoryPanel type="mvcToRunes" />,
-    destroyInactiveTabPane: true
-  },
+  // {
+  //   key: "mvcToRunes",
+  //   label: "RUNES",
+  //   children: <HistoryPanel type="mvcToRunes" />,
+  //   destroyInactiveTabPane: true
+  // },
   
 ];
 
@@ -57,12 +57,12 @@ const BTC2MVCItems: TabsProps["items"] = [
     children: <HistoryPanel type="brc20ToMvc" />,
     destroyInactiveTabPane: true
   },
-  {
-    key: "runesToMvc",
-    label: "RUNES",
-    children: <HistoryPanel type="runesToMvc" />,
-    destroyInactiveTabPane: true
-  },
+  // {
+  //   key: "runesToMvc",
+  //   label: "RUNES",
+  //   children: <HistoryPanel type="runesToMvc" />,
+  //   destroyInactiveTabPane: true
+  // },
   
 ];
 export default ({ show, onClose, protocolType, bridgeType }: Props) => {
