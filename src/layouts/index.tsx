@@ -45,6 +45,7 @@ export default function Layout() {
         ..._themes,
       }}
     >
+      <Alert type="error" message="System upgrade in progress, expected to resume normal operation on Monday." banner showIcon={false} style={{ textAlign: 'center' }} />
       {network === 'testnet' && <Alert type="error" message="This is a test network. Coins have no value." banner showIcon={false} style={{ textAlign: 'center' }} />}
       <div className="page">
         {location.pathname !== "/" ? (
