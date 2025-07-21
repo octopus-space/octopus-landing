@@ -33,11 +33,15 @@ const _themes = {
       activeBorderColor: "rgb(110, 102, 250)",
       colorBgContainer: "rgb(8, 7, 49)",
     },
+    "Progress": {
+      "colorSuccess": "#8CFF95",
+      defaultColor: "#8CFF95",
+    }
   },
 };
 export default function Layout() {
   const location = useLocation();
-  const {network}=useModel('wallet')
+  const { network } = useModel('wallet')
   return (
     <ConfigProvider
       theme={{
@@ -53,12 +57,12 @@ export default function Layout() {
         ) : (
           <div className="header">
             <div className="headerwrap">
-              <img src={logo} alt="" className="logo" onClick={()=>history.push('/')}/>
+              <img src={logo} alt="" className="logo" onClick={() => history.push('/')} />
               <div className="navWrap">
                 <Nav />
                 <div
                   className="entryBtn"
-                  onClick={()=>history.push('/wrapping')}
+                  onClick={() => history.push('/wrapping')}
                 >
                   Enter APP
                 </div>
@@ -72,11 +76,11 @@ export default function Layout() {
 
         <div className="footer">
           <div className="footwrap">
-           
+
             <div className="navWrap">
               <Nav />
             </div>
-            <div className="corp" onClick={()=>history.push('/wrapping')}>Octopus.space@2024 All Rights Reserved</div>
+            <div className="corp" onClick={() => history.push('/wrapping')}>Octopus.space@2024 All Rights Reserved</div>
           </div>
         </div>
       </div>

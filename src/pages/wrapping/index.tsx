@@ -420,7 +420,10 @@ export default () => {
       bridgeFee: String(feeInfo.bridgeFee),
       totalFee: String(feeInfo.totalFee),
       handleSubmit,
-      onClose: () => setConfirmProps(defalut),
+      onClose: () => {
+        setConfirmProps(defalut)
+
+      },
     });
   };
 
@@ -698,6 +701,7 @@ export default () => {
           setReciveAmount("");
           setInscription(undefined);
           setConfirmProps(defalut);
+          setHistoryVisible(true)
         }}
       />
     </div>

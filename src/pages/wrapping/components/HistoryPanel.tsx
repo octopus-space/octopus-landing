@@ -6,9 +6,10 @@ import { useModel } from "umi";
 import btc from "@/assets/btc.png";
 import mvc from "@/assets/mvc.png";
 import arrow from "@/assets/arrowRight.png";
-import { Button, Divider, Empty, Skeleton, Space } from "antd";
+import { Button, Divider, Empty, Progress, Skeleton, Space } from "antd";
 import "./index.less";
 import empty from "@/assets/empty.png";
+import useIntervalAsync from "@/hooks/useIntervalAsync";
 type HistoryType =
   | "btcToMvc"
   | "brc20ToMvc"
@@ -59,6 +60,11 @@ export default ({ type }: { type: HistoryType }) => {
           item.originNetwork = "MVC";
           item.targetNetwork = "BTC";
         }
+        // item.status = 'doing';
+        // item.progess =10
+        const timeD = ((new Date().getTime() - Number(item.timestamp) * 1000) / 1000 / 60 / 20 * 100)
+        item.progess = item.status === 'success' ? 100 : timeD > 98 ? 98 : Math.ceil(timeD);
+        item.progess = item.status === 'failed' ? 0 : item.progess;
         item.timestamp = prettyTimestamp(Number(item.timestamp), true);
 
         const currentToken = AssetsInfo.assetList.find((token) => {
@@ -79,17 +85,19 @@ export default ({ type }: { type: HistoryType }) => {
 
         return item;
       });
+      const originTxids = _list.map((item) => item.originTxid);
       setList((prev) => {
-        return [...prev, ..._list];
+        return [...prev.filter(item=>!originTxids.includes(item.originTxid)), ..._list];
       });
     } catch (err) {
       console.log(err);
     }
     setLoading(false);
   }, [page]);
-  useEffect(() => {
-    fetchHistory();
-  }, [fetchHistory]);
+  // useEffect(() => {
+  //   fetchHistory();
+  // }, [fetchHistory]);
+  const updateHistory = useIntervalAsync(fetchHistory, 30 * 1000)
   return (
     <div
       style={{ minHeight: 500, height: 500, overflowY: "scroll" }}
@@ -107,7 +115,7 @@ export default ({ type }: { type: HistoryType }) => {
 
       {list.map((item) => (
         <div className="historyCard" key={item.originTxid}>
-          <div className="top">
+          <div className="top" style={{ gap: 16 }}>
             <div className="left">
               <div className="net">
                 <TokenIcon
@@ -131,9 +139,12 @@ export default ({ type }: { type: HistoryType }) => {
               className="right"
               style={{
                 color: item.status === "success" ? "#8CFF95" : "#F7931A",
+                flexGrow: 1,
+                textAlign: "right",
               }}
             >
               {item.status === "doing" ? "pending" : item.status}
+              <Progress percent={item.progess} size="small" status={item.status === "failed" ? "exception" : item.status === 'success' ? "success" : "active"} />
             </div>
           </div>
           <div className="divider"></div>

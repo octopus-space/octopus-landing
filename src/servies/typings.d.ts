@@ -86,6 +86,7 @@ declare namespace API {
     blockHeight: number;
     originTokenId: string;
     targetTokenId: string;
+    progess?: number;
   };
   type RUNESItem = {
     amount: string;
