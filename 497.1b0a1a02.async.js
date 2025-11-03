@@ -445,10 +445,10 @@ const genCardStyle = token => {
         fontWeight: 'normal',
         fontSize: token.fontSize
       },
-      [`${componentCls}-body`]: Object.assign({
+      [`${componentCls}-body`]: {
         padding: bodyPadding,
         borderRadius: `0 0 ${(0,es/* unit */.bf)(token.borderRadiusLG)} ${(0,es/* unit */.bf)(token.borderRadiusLG)}`
-      }, (0,style/* clearFix */.dF)()),
+      },
       [`${componentCls}-grid`]: genCardGridStyle(token),
       [`${componentCls}-cover`]: {
         '> *': {
@@ -837,6 +837,8 @@ var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
+// EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
+var context = __webpack_require__(53124);
 // EXTERNAL MODULE: ./node_modules/antd/es/locale/useLocale.js
 var useLocale = __webpack_require__(10110);
 // EXTERNAL MODULE: ./node_modules/@ant-design/fast-color/es/index.js + 1 modules
@@ -1035,10 +1037,8 @@ const genSharedEmptyStyle = token => {
     emptyImgHeightMD: controlHeightLG,
     emptyImgHeightSM: calc(controlHeightLG).mul(0.875).equal()
   });
-  return [genSharedEmptyStyle(emptyToken)];
+  return genSharedEmptyStyle(emptyToken);
 }));
-// EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
-var context = __webpack_require__(53124);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/empty/index.js
 "use client";
 
@@ -1061,11 +1061,12 @@ var __rest = undefined && undefined.__rest || function (s, e) {
 const defaultEmptyImg = /*#__PURE__*/react.createElement(empty, null);
 const simpleEmptyImg = /*#__PURE__*/react.createElement(simple, null);
 const empty_Empty = props => {
+  var _a;
   const {
       className,
       rootClassName,
       prefixCls: customizePrefixCls,
-      image = defaultEmptyImg,
+      image,
       description,
       children,
       imageStyle,
@@ -1080,27 +1081,30 @@ const empty_Empty = props => {
     className: contextClassName,
     style: contextStyle,
     classNames: contextClassNames,
-    styles: contextStyles
+    styles: contextStyles,
+    image: contextImage
   } = (0,context/* useComponentConfig */.dj)('empty');
   const prefixCls = getPrefixCls('empty', customizePrefixCls);
   const [wrapCSSVar, hashId, cssVarCls] = empty_style(prefixCls);
   const [locale] = (0,useLocale/* default */.Z)('Empty');
   const des = typeof description !== 'undefined' ? description : locale === null || locale === void 0 ? void 0 : locale.description;
   const alt = typeof des === 'string' ? des : 'empty';
+  const mergedImage = (_a = image !== null && image !== void 0 ? image : contextImage) !== null && _a !== void 0 ? _a : defaultEmptyImg;
   let imageNode = null;
-  if (typeof image === 'string') {
+  if (typeof mergedImage === 'string') {
     imageNode = /*#__PURE__*/react.createElement("img", {
+      draggable: false,
       alt: alt,
-      src: image
+      src: mergedImage
     });
   } else {
-    imageNode = image;
+    imageNode = mergedImage;
   }
   // ============================= Warning ==============================
   if (false) {}
   return wrapCSSVar(/*#__PURE__*/react.createElement("div", Object.assign({
     className: classnames_default()(hashId, cssVarCls, prefixCls, contextClassName, {
-      [`${prefixCls}-normal`]: image === simpleEmptyImg,
+      [`${prefixCls}-normal`]: mergedImage === simpleEmptyImg,
       [`${prefixCls}-rtl`]: direction === 'rtl'
     }, className, rootClassName, contextClassNames.root, emptyClassNames === null || emptyClassNames === void 0 ? void 0 : emptyClassNames.root),
     style: Object.assign(Object.assign(Object.assign(Object.assign({}, contextStyles.root), contextStyle), styles === null || styles === void 0 ? void 0 : styles.root), style)
@@ -1300,9 +1304,10 @@ const Flex = /*#__PURE__*/react.forwardRef((props, ref) => {
       flex,
       gap,
       vertical = false,
-      component: Component = 'div'
+      component: Component = 'div',
+      children
     } = props,
-    othersProps = __rest(props, ["prefixCls", "rootClassName", "className", "style", "flex", "gap", "vertical", "component"]);
+    othersProps = __rest(props, ["prefixCls", "rootClassName", "className", "style", "flex", "gap", "vertical", "component", "children"]);
   const {
     flex: ctxFlex,
     direction: ctxDirection,
@@ -1327,7 +1332,7 @@ const Flex = /*#__PURE__*/react.forwardRef((props, ref) => {
     ref: ref,
     className: mergedCls,
     style: mergedStyle
-  }, (0,omit/* default */.Z)(othersProps, ['justify', 'wrap', 'align']))));
+  }, (0,omit/* default */.Z)(othersProps, ['justify', 'wrap', 'align'])), children));
 });
 if (false) {}
 /* harmony default export */ var flex = (Flex);
@@ -1339,15 +1344,15 @@ if (false) {}
 
 "use strict";
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67294);
-/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(60566);
 /* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(53124);
+/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(60566);
 
 
 
 /**
  * Compatible for legacy `bordered` prop.
  */
-const useVariant = (component, variant, legacyBordered = undefined) => {
+const useVariant = (component, variant, legacyBordered) => {
   var _a, _b;
   const {
     variant: configVariant,
@@ -3308,7 +3313,7 @@ const input_number_InputNumber = /*#__PURE__*/react.forwardRef((props, ref) => {
         [`${prefixCls}-affix-wrapper-sm`]: mergedSize === 'small',
         [`${prefixCls}-affix-wrapper-lg`]: mergedSize === 'large',
         [`${prefixCls}-affix-wrapper-rtl`]: direction === 'rtl',
-        [`${prefixCls}-affix-wrapper-without-controls`]: controls === false || mergedDisabled
+        [`${prefixCls}-affix-wrapper-without-controls`]: controls === false || mergedDisabled || readOnly
       }, hashId),
       wrapper: classnames_default()({
         [`${wrapperClassName}-rtl`]: direction === 'rtl'
@@ -3674,7 +3679,7 @@ const genOTPStyle = token => {
         },
         [`${componentCls}-mask-input`]: {
           color: 'transparent',
-          caretColor: 'var(--ant-color-text)'
+          caretColor: token.colorText
         },
         [`${componentCls}-mask-input[type=number]::-webkit-inner-spin-button`]: {
           '-webkit-appearance': 'none',
@@ -3704,7 +3709,7 @@ const genOTPStyle = token => {
 // ============================== Export ==============================
 /* harmony default export */ var otp = ((0,genStyleUtils/* genStyleHooks */.I$)(['Input', 'OTP'], token => {
   const inputToken = (0,cssinjs_utils_es/* mergeToken */.IX)(token, (0,style_token/* initInputToken */.e)(token));
-  return [genOTPStyle(inputToken)];
+  return genOTPStyle(inputToken);
 }, style_token/* initComponentToken */.T));
 // EXTERNAL MODULE: ./node_modules/rc-util/es/raf.js
 var raf = __webpack_require__(75164);
@@ -3769,11 +3774,7 @@ const OTPInput = /*#__PURE__*/react.forwardRef((props, ref) => {
       onActiveChange(index + 1);
     } else if (key === 'z' && (ctrlKey || metaKey)) {
       event.preventDefault();
-    }
-    syncSelection();
-  };
-  const onInternalKeyUp = e => {
-    if (e.key === 'Backspace' && !value) {
+    } else if (key === 'Backspace' && !value) {
       onActiveChange(index - 1);
     }
     syncSelection();
@@ -3794,7 +3795,6 @@ const OTPInput = /*#__PURE__*/react.forwardRef((props, ref) => {
     onInput: onInternalChange,
     onFocus: syncSelection,
     onKeyDown: onInternalKeyDown,
-    onKeyUp: onInternalKeyUp,
     onMouseDown: syncSelection,
     onMouseUp: syncSelection,
     className: classnames_default()(className, {
@@ -4099,7 +4099,8 @@ const Password = /*#__PURE__*/react.forwardRef((props, ref) => {
     disabled: customDisabled,
     action = 'click',
     visibilityToggle = true,
-    iconRender = defaultIconRender
+    iconRender = defaultIconRender,
+    suffix
   } = props;
   // ===================== Disabled =====================
   const disabled = react.useContext(DisabledContext/* default */.Z);
@@ -4168,7 +4169,7 @@ const Password = /*#__PURE__*/react.forwardRef((props, ref) => {
     type: visible ? 'text' : 'password',
     className: inputClassName,
     prefixCls: inputPrefixCls,
-    suffix: suffixIcon
+    suffix: (/*#__PURE__*/react.createElement(react.Fragment, null, suffixIcon, suffix))
   });
   if (size) {
     omittedProps.size = size;
@@ -4183,8 +4184,8 @@ if (false) {}
 var SearchOutlined = __webpack_require__(68795);
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/reactNode.js
 var reactNode = __webpack_require__(96159);
-// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 25 modules
-var es_button = __webpack_require__(77683);
+// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 10 modules
+var es_button = __webpack_require__(75398);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/input/Search.js
 "use client";
 
@@ -4541,33 +4542,6 @@ var ResizableTextArea = /*#__PURE__*/react.forwardRef(function (props, ref) {
     maxRows = _React$useMemo2[1];
   var needAutoSize = !!autoSize;
 
-  // =============================== Scroll ===============================
-  // https://github.com/ant-design/ant-design/issues/21870
-  var fixFirefoxAutoScroll = function fixFirefoxAutoScroll() {
-    try {
-      // FF has bug with jump of scroll to top. We force back here.
-      if (document.activeElement === textareaRef.current) {
-        var _textareaRef$current = textareaRef.current,
-          selectionStart = _textareaRef$current.selectionStart,
-          selectionEnd = _textareaRef$current.selectionEnd,
-          scrollTop = _textareaRef$current.scrollTop;
-
-        // Fix Safari bug which not rollback when break line
-        // This makes Chinese IME can't input. Do not fix this
-        // const { value: tmpValue } = textareaRef.current;
-        // textareaRef.current.value = '';
-        // textareaRef.current.value = tmpValue;
-
-        textareaRef.current.setSelectionRange(selectionStart, selectionEnd);
-        textareaRef.current.scrollTop = scrollTop;
-      }
-    } catch (e) {
-      // Fix error in Chrome:
-      // Failed to read the 'selectionStart' property from 'HTMLInputElement'
-      // http://stackoverflow.com/q/21177489/3040605
-    }
-  };
-
   // =============================== Resize ===============================
   var _React$useState = react.useState(RESIZE_STABLE),
     _React$useState2 = (0,slicedToArray/* default */.Z)(_React$useState, 2),
@@ -4609,7 +4583,8 @@ var ResizableTextArea = /*#__PURE__*/react.forwardRef(function (props, ref) {
       setResizeState(RESIZE_STABLE);
       setAutoSizeStyle(textareaStyles);
     } else {
-      fixFirefoxAutoScroll();
+      // https://github.com/react-component/textarea/pull/23
+      // Firefox has blink issue before but fixed in latest version.
     }
   }, [resizeState]);
 
@@ -4991,7 +4966,7 @@ const genTextAreaStyle = token => {
 // ============================== Export ==============================
 /* harmony default export */ var style_textarea = ((0,genStyleUtils/* genStyleHooks */.I$)(['Input', 'TextArea'], token => {
   const inputToken = (0,cssinjs_utils_es/* mergeToken */.IX)(token, (0,style_token/* initInputToken */.e)(token));
-  return [genTextAreaStyle(inputToken)];
+  return genTextAreaStyle(inputToken);
 }, style_token/* initComponentToken */.T, {
   resetFont: false
 }));
@@ -5738,7 +5713,7 @@ const genSearchInputStyle = token => {
   return {
     [searchPrefixCls]: {
       [componentCls]: {
-        '&:hover, &:focus': {
+        '&:not([disabled]):hover, &:not([disabled]):focus': {
           [`+ ${componentCls}-group-addon ${searchPrefixCls}-button:not(${antCls}-btn-color-primary):not(${antCls}-btn-variant-text)`]: {
             borderInlineStartColor: token.colorPrimaryHover
           }
@@ -5767,7 +5742,7 @@ const genSearchInputStyle = token => {
           },
           [`${searchPrefixCls}-button:not(${antCls}-btn-color-primary)`]: {
             color: token.colorTextDescription,
-            '&:hover': {
+            '&:not([disabled]):hover': {
               color: token.colorPrimaryHover
             },
             '&:active': {
@@ -6710,8 +6685,8 @@ if (false) {}
   Line: es_Line,
   Circle: es_Circle
 });
-// EXTERNAL MODULE: ./node_modules/antd/es/tooltip/index.js + 7 modules
-var tooltip = __webpack_require__(46041);
+// EXTERNAL MODULE: ./node_modules/antd/es/tooltip/index.js + 8 modules
+var tooltip = __webpack_require__(42697);
 // EXTERNAL MODULE: ./node_modules/@ant-design/colors/es/index.js + 2 modules
 var colors_es = __webpack_require__(84898);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/progress/utils.js
@@ -7217,7 +7192,7 @@ var __rest = undefined && undefined.__rest || function (s, e) {
 const sortGradient = gradients => {
   let tempArr = [];
   Object.keys(gradients).forEach(key => {
-    const formattedKey = parseFloat(key.replace(/%/g, ''));
+    const formattedKey = Number.parseFloat(key.replace(/%/g, ''));
     if (!Number.isNaN(formattedKey)) {
       tempArr.push({
         key: formattedKey,
@@ -7443,7 +7418,7 @@ const Progress = /*#__PURE__*/react.forwardRef((props, ref) => {
   const percentNumber = react.useMemo(() => {
     var _a, _b;
     const successPercent = getSuccessPercent(props);
-    return parseInt(successPercent !== undefined ? (_a = successPercent !== null && successPercent !== void 0 ? successPercent : 0) === null || _a === void 0 ? void 0 : _a.toString() : (_b = percent !== null && percent !== void 0 ? percent : 0) === null || _b === void 0 ? void 0 : _b.toString(), 10);
+    return Number.parseInt(successPercent !== undefined ? (_a = successPercent !== null && successPercent !== void 0 ? successPercent : 0) === null || _a === void 0 ? void 0 : _a.toString() : (_b = percent !== null && percent !== void 0 ? percent : 0) === null || _b === void 0 ? void 0 : _b.toString(), 10);
   }, [percent, props.success, props.successPercent]);
   const progressStatus = react.useMemo(() => {
     if (!ProgressStatuses.includes(status) && percentNumber >= 100) {
@@ -8009,7 +7984,7 @@ function getItemDisabledStyle(cls, token) {
 }
 function getItemSelectedStyle(token) {
   return {
-    backgroundColor: token.itemSelectedBg,
+    background: token.itemSelectedBg,
     boxShadow: token.boxShadowTertiary
   };
 }
@@ -8031,7 +8006,7 @@ const genSegmentedStyle = token => {
       color: token.itemColor,
       background: token.trackBg,
       borderRadius: token.borderRadius,
-      transition: `all ${token.motionDurationMid} ${token.motionEaseInOut}`
+      transition: `all ${token.motionDurationMid}`
     }), (0,style/* genFocusStyle */.Qy)(token)), {
       [`${componentCls}-group`]: {
         position: 'relative',
@@ -8068,7 +8043,7 @@ const genSegmentedStyle = token => {
         position: 'relative',
         textAlign: 'center',
         cursor: 'pointer',
-        transition: `color ${token.motionDurationMid} ${token.motionEaseInOut}`,
+        transition: `color ${token.motionDurationMid}`,
         borderRadius: token.borderRadiusSM,
         // Fix Safari render bug
         // https://github.com/ant-design/ant-design/issues/45250
@@ -8076,7 +8051,7 @@ const genSegmentedStyle = token => {
         '&-selected': Object.assign(Object.assign({}, getItemSelectedStyle(token)), {
           color: token.itemSelectedColor
         }),
-        '&-focused': Object.assign({}, (0,style/* genFocusOutline */.oN)(token)),
+        '&-focused': (0,style/* genFocusOutline */.oN)(token),
         '&::after': {
           content: '""',
           position: 'absolute',
@@ -8087,21 +8062,20 @@ const genSegmentedStyle = token => {
           insetInlineStart: 0,
           borderRadius: 'inherit',
           opacity: 0,
-          transition: `opacity ${token.motionDurationMid}`,
+          transition: `opacity ${token.motionDurationMid}, background-color ${token.motionDurationMid}`,
           // This is mandatory to make it not clickable or hoverable
           // Ref: https://github.com/ant-design/ant-design/issues/40888
           pointerEvents: 'none'
         },
-        [`&:hover:not(${componentCls}-item-selected):not(${componentCls}-item-disabled)`]: {
-          color: token.itemHoverColor,
-          '&::after': {
+        [`&:not(${componentCls}-item-selected):not(${componentCls}-item-disabled)`]: {
+          '&:hover, &:active': {
+            color: token.itemHoverColor
+          },
+          '&:hover::after': {
             opacity: 1,
             backgroundColor: token.itemHoverBg
-          }
-        },
-        [`&:active:not(${componentCls}-item-selected):not(${componentCls}-item-disabled)`]: {
-          color: token.itemHoverColor,
-          '&::after': {
+          },
+          '&:active::after': {
             opacity: 1,
             backgroundColor: token.itemActiveBg
           }
@@ -8134,7 +8108,6 @@ const genSegmentedStyle = token => {
         height: '100%',
         padding: `${(0,cssinjs_es/* unit */.bf)(token.paddingXXS)} 0`,
         borderRadius: token.borderRadiusSM,
-        transition: `transform ${token.motionDurationSlow} ${token.motionEaseInOut}, height ${token.motionDurationSlow} ${token.motionEaseInOut}`,
         [`& ~ ${componentCls}-item:not(${componentCls}-item-selected):not(${componentCls}-item-disabled)::after`]: {
           backgroundColor: 'transparent'
         }
@@ -8209,7 +8182,7 @@ const prepareComponentToken = token => {
     segmentedPaddingHorizontal: calc(token.controlPaddingHorizontal).sub(lineWidth).equal(),
     segmentedPaddingHorizontalSM: calc(token.controlPaddingHorizontalSM).sub(lineWidth).equal()
   });
-  return [genSegmentedStyle(segmentedToken)];
+  return genSegmentedStyle(segmentedToken);
 }, prepareComponentToken));
 ;// CONCATENATED MODULE: ./node_modules/antd/es/segmented/index.js
 "use client";
@@ -8770,7 +8743,7 @@ function useVisibleRange(tabOffsets, visibleTabContentValue, transform, tabConte
         break;
       }
     }
-    return startIndex >= endIndex ? [0, 0] : [startIndex, endIndex];
+    return startIndex > endIndex ? [0, -1] : [startIndex, endIndex];
   }, [tabOffsets, visibleTabContentValue, tabContentSizeValue, addNodeSizeValue, operationNodeSizeValue, transformSize, tabPosition, tabs.map(function (tab) {
     return tab.key;
   }).join('_'), rtl]);
@@ -9466,6 +9439,35 @@ var TabNavList = /*#__PURE__*/react.forwardRef(function (props, ref) {
     var newKey = enabledTabs[nextIndex];
     setFocusKey(newKey);
   };
+  var handleRemoveTab = function handleRemoveTab(removalTabKey, e) {
+    var removeIndex = enabledTabs.indexOf(removalTabKey);
+    var removeTab = tabs.find(function (tab) {
+      return tab.key === removalTabKey;
+    });
+    var removable = getRemovable(removeTab === null || removeTab === void 0 ? void 0 : removeTab.closable, removeTab === null || removeTab === void 0 ? void 0 : removeTab.closeIcon, editable, removeTab === null || removeTab === void 0 ? void 0 : removeTab.disabled);
+    if (removable) {
+      e.preventDefault();
+      e.stopPropagation();
+      editable.onEdit('remove', {
+        key: removalTabKey,
+        event: e
+      });
+
+      // when remove last tab, focus previous tab
+      if (removeIndex === enabledTabs.length - 1) {
+        onOffset(-1);
+      } else {
+        onOffset(1);
+      }
+    }
+  };
+  var handleMouseDown = function handleMouseDown(key, e) {
+    setIsMouse(true);
+    // Middle mouse button
+    if (e.button === 1) {
+      handleRemoveTab(key, e);
+    }
+  };
   var handleKeyDown = function handleKeyDown(e) {
     var code = e.code;
     var isRTL = rtl && tabPositionTopOrBottom;
@@ -9538,25 +9540,7 @@ var TabNavList = /*#__PURE__*/react.forwardRef(function (props, ref) {
       case 'Backspace':
       case 'Delete':
         {
-          var removeIndex = enabledTabs.indexOf(focusKey);
-          var removeTab = tabs.find(function (tab) {
-            return tab.key === focusKey;
-          });
-          var removable = getRemovable(removeTab === null || removeTab === void 0 ? void 0 : removeTab.closable, removeTab === null || removeTab === void 0 ? void 0 : removeTab.closeIcon, editable, removeTab === null || removeTab === void 0 ? void 0 : removeTab.disabled);
-          if (removable) {
-            e.preventDefault();
-            e.stopPropagation();
-            editable.onEdit('remove', {
-              key: focusKey,
-              event: e
-            });
-            // when remove last tab, focus previous tab
-            if (removeIndex === enabledTabs.length - 1) {
-              onOffset(-1);
-            } else {
-              onOffset(1);
-            }
-          }
+          handleRemoveTab(focusKey, e);
           break;
         }
     }
@@ -9608,8 +9592,8 @@ var TabNavList = /*#__PURE__*/react.forwardRef(function (props, ref) {
       onBlur: function onBlur() {
         setFocusKey(undefined);
       },
-      onMouseDown: function onMouseDown() {
-        setIsMouse(true);
+      onMouseDown: function onMouseDown(e) {
+        return handleMouseDown(key, e);
       },
       onMouseUp: function onMouseUp() {
         setIsMouse(false);
@@ -10776,6 +10760,7 @@ const genTabStyle = token => {
       },
       '&-remove': Object.assign({
         flex: 'none',
+        lineHeight: 1,
         marginRight: {
           _skip_check_: true,
           value: token.calc(token.marginXXS).mul(-1).equal()
@@ -10813,7 +10798,8 @@ const genTabStyle = token => {
         }
       },
       [`& ${tabCls}-remove ${iconCls}`]: {
-        margin: 0
+        margin: 0,
+        verticalAlign: 'middle'
       },
       [`${iconCls}:not(:last-child)`]: {
         marginRight: {
@@ -11147,7 +11133,7 @@ var tabs_rest = undefined && undefined.__rest || function (s, e) {
 
 
 
-const tabs_Tabs = props => {
+const InternalTabs = /*#__PURE__*/react.forwardRef((props, ref) => {
   var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
   const {
       type,
@@ -11184,6 +11170,10 @@ const tabs_Tabs = props => {
   const prefixCls = getPrefixCls('tabs', customizePrefixCls);
   const rootCls = (0,useCSSVarCls/* default */.Z)(prefixCls);
   const [wrapCSSVar, hashId, cssVarCls] = tabs_style(prefixCls, rootCls);
+  const tabsRef = react.useRef(null);
+  react.useImperativeHandle(ref, () => ({
+    nativeElement: tabsRef.current
+  }));
   let editable;
   if (type === 'editable-card') {
     editable = {
@@ -11209,6 +11199,7 @@ const tabs_Tabs = props => {
     size: (_g = (_e = (_d = indicator === null || indicator === void 0 ? void 0 : indicator.size) !== null && _d !== void 0 ? _d : indicatorSize) !== null && _e !== void 0 ? _e : (_f = tabs === null || tabs === void 0 ? void 0 : tabs.indicator) === null || _f === void 0 ? void 0 : _f.size) !== null && _g !== void 0 ? _g : tabs === null || tabs === void 0 ? void 0 : tabs.indicatorSize
   };
   return wrapCSSVar(/*#__PURE__*/react.createElement(rc_tabs_es, Object.assign({
+    ref: tabsRef,
     direction: direction,
     getPopupContainer: getPopupContainer
   }, otherProps, {
@@ -11232,7 +11223,8 @@ const tabs_Tabs = props => {
     // TODO: In the future, destroyInactiveTabPane in rc-tabs needs to be upgrade to destroyOnHidden
     destroyInactiveTabPane: destroyOnHidden !== null && destroyOnHidden !== void 0 ? destroyOnHidden : destroyInactiveTabPane
   })));
-};
+});
+const tabs_Tabs = InternalTabs;
 tabs_Tabs.TabPane = tabs_TabPane;
 if (false) {}
 /* harmony default export */ var tabs = (tabs_Tabs);
@@ -11416,10 +11408,12 @@ const CheckableTag = /*#__PURE__*/react.forwardRef((props, ref) => {
       style,
       className,
       checked,
+      children,
+      icon,
       onChange,
       onClick
     } = props,
-    restProps = __rest(props, ["prefixCls", "style", "className", "checked", "onChange", "onClick"]);
+    restProps = __rest(props, ["prefixCls", "style", "className", "checked", "children", "icon", "onChange", "onClick"]);
   const {
     getPrefixCls,
     tag
@@ -11439,7 +11433,7 @@ const CheckableTag = /*#__PURE__*/react.forwardRef((props, ref) => {
     style: Object.assign(Object.assign({}, style), tag === null || tag === void 0 ? void 0 : tag.style),
     className: cls,
     onClick: handleClick
-  })));
+  }), icon, /*#__PURE__*/react.createElement("span", null, children)));
 });
 /* harmony default export */ var tag_CheckableTag = (CheckableTag);
 // EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genPresetColor.js
@@ -11581,7 +11575,7 @@ const InternalTag = /*#__PURE__*/react.forwardRef((tagProps, ref) => {
     }
     setVisible(false);
   };
-  const [, mergedCloseIcon] = (0,useClosable/* default */.Z)((0,useClosable/* pickClosable */.w)(tagProps), (0,useClosable/* pickClosable */.w)(tagContext), {
+  const [, mergedCloseIcon] = (0,useClosable/* useClosable */.b)((0,useClosable/* pickClosable */.w)(tagProps), (0,useClosable/* pickClosable */.w)(tagContext), {
     closable: false,
     closeIconRender: iconNode => {
       const replacement = /*#__PURE__*/react.createElement("span", {

@@ -425,7 +425,7 @@ const useResponsiveObserver = () => {
         subscribers.clear();
       }
     };
-  }, [token]);
+  }, [responsiveMap]);
 };
 /* harmony default export */ var responsiveObserver = (useResponsiveObserver);
 
@@ -1002,7 +1002,7 @@ const useResetIconStyle = (iconPrefixCls, csp) => {
     layer: {
       name: 'antd'
     }
-  }, () => [(0,style/* genIconStyle */.JT)(iconPrefixCls)]);
+  }, () => (0,style/* genIconStyle */.JT)(iconPrefixCls));
 };
 /* harmony default export */ var util_useResetIconStyle = (useResetIconStyle);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/config-provider/index.js
@@ -1183,6 +1183,7 @@ const ProviderChildren = props => {
     tooltip,
     popover,
     popconfirm,
+    floatButton,
     floatButtonGroup,
     variant,
     inputNumber,
@@ -1276,6 +1277,7 @@ const ProviderChildren = props => {
     tooltip,
     popover,
     popconfirm,
+    floatButton,
     floatButtonGroup,
     variant,
     inputNumber,
@@ -1440,10 +1442,9 @@ var react = __webpack_require__(67294);
 var useLayoutEffect = __webpack_require__(8410);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/hooks/useForceUpdate.js
 
-function useForceUpdate() {
-  const [, forceUpdate] = react.useReducer(x => x + 1, 0);
-  return forceUpdate;
-}
+const useForceUpdate = () => {
+  return react.useReducer(ori => ori + 1, 0);
+};
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/responsiveObserver.js + 1 modules
 var _util_responsiveObserver = __webpack_require__(13913);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/grid/hooks/useBreakpoint.js
@@ -1455,7 +1456,7 @@ var _util_responsiveObserver = __webpack_require__(13913);
 
 function useBreakpoint(refreshOnChange = true, defaultScreens = {}) {
   const screensRef = (0,react.useRef)(defaultScreens);
-  const forceUpdate = useForceUpdate();
+  const [, forceUpdate] = useForceUpdate();
   const responsiveObserver = (0,_util_responsiveObserver/* default */.ZP)();
   (0,useLayoutEffect/* default */.Z)(() => {
     const token = responsiveObserver.subscribe(supportScreens => {
@@ -2785,7 +2786,7 @@ const prepareComponentToken = token => ({
   const combinedToken = (0,cssinjs_utils_es/* mergeToken */.IX)(token, {
     height: 150
   });
-  return [genMessageStyle(combinedToken)];
+  return genMessageStyle(combinedToken);
 }, prepareComponentToken));
 ;// CONCATENATED MODULE: ./node_modules/antd/es/message/PurePanel.js
 "use client";
@@ -2996,6 +2997,7 @@ function useInternalMessage(messageConfig) {
       if (!holderRef.current) {
          false ? 0 : void 0;
         const fakeResult = () => {};
+        // eslint-disable-next-line react-hooks/immutability
         fakeResult.then = () => {};
         return fakeResult;
       }
@@ -3178,7 +3180,7 @@ const GlobalHolderWrapper = /*#__PURE__*/react.forwardRef((_, ref) => {
     theme: theme
   }, global.holderRender ? global.holderRender(dom) : dom);
 });
-function flushNotice() {
+const flushMessageQueue = () => {
   if (!message) {
     const holderFragment = document.createDocumentFragment();
     const newMessage = {
@@ -3199,7 +3201,7 @@ function flushNotice() {
             if (!newMessage.instance && instance) {
               newMessage.instance = instance;
               newMessage.sync = sync;
-              flushNotice();
+              flushMessageQueue();
             }
           });
         }
@@ -3250,7 +3252,7 @@ function flushNotice() {
   });
   // Clean up
   taskQueue = [];
-}
+};
 // ==============================================================================
 // ==                                  Export                                  ==
 // ==============================================================================
@@ -3284,7 +3286,7 @@ function message_open(config) {
       }
     };
   });
-  flushNotice();
+  flushMessageQueue();
   return result;
 }
 function typeOpen(type, args) {
@@ -3311,7 +3313,7 @@ function typeOpen(type, args) {
       }
     };
   });
-  flushNotice();
+  flushMessageQueue();
   return result;
 }
 const destroy = key => {
@@ -3319,7 +3321,7 @@ const destroy = key => {
     type: 'destroy',
     key
   });
-  flushNotice();
+  flushMessageQueue();
 };
 const methods = ['success', 'info', 'warning', 'error', 'loading'];
 const baseStaticMethods = {
@@ -5109,19 +5111,17 @@ function _regeneratorDefine(e, r, n, t) {
     i = 0;
   }
   _regeneratorDefine = function regeneratorDefine(e, r, n, t) {
-    if (r) i ? i(e, r, {
+    function o(r, n) {
+      _regeneratorDefine(e, r, function (e) {
+        return this._invoke(r, n, e);
+      });
+    }
+    r ? i ? i(e, r, {
       value: n,
       enumerable: !t,
       configurable: !t,
       writable: !t
-    }) : e[r] = n;else {
-      var o = function o(r, n) {
-        _regeneratorDefine(e, r, function (e) {
-          return this._invoke(r, n, e);
-        });
-      };
-      o("next", 0), o("throw", 1), o("return", 2);
-    }
+    }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, _regeneratorDefine(e, r, n, t);
 }
 

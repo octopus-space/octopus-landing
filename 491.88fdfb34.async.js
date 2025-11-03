@@ -38,6 +38,9 @@ var __rest = undefined && undefined.__rest || function (s, e) {
 
 
 function parseFlex(flex) {
+  if (flex === 'auto') {
+    return '1 1 auto';
+  }
   if (typeof flex === 'number') {
     return `${flex} ${flex} auto`;
   }
@@ -107,8 +110,8 @@ const Col = /*#__PURE__*/react.forwardRef((props, ref) => {
   }, className, sizeClassObj, hashId, cssVarCls);
   const mergedStyle = {};
   // Horizontal gutter use padding
-  if (gutter && gutter[0] > 0) {
-    const horizontalGutter = gutter[0] / 2;
+  if (gutter === null || gutter === void 0 ? void 0 : gutter[0]) {
+    const horizontalGutter = typeof gutter[0] === 'number' ? `${gutter[0] / 2}px` : `calc(${gutter[0]} / 2)`;
     mergedStyle.paddingLeft = horizontalGutter;
     mergedStyle.paddingRight = horizontalGutter;
   }
@@ -280,8 +283,8 @@ const Row = /*#__PURE__*/react.forwardRef((props, ref) => {
   }, className, hashId, cssVarCls);
   // Add gutter related style
   const rowStyle = {};
-  const horizontalGutter = gutters[0] != null && gutters[0] > 0 ? gutters[0] / -2 : undefined;
-  if (horizontalGutter) {
+  if (gutters === null || gutters === void 0 ? void 0 : gutters[0]) {
+    const horizontalGutter = typeof gutters[0] === 'number' ? `${gutters[0] / -2}px` : `calc(${gutters[0]} / -2)`;
     rowStyle.marginLeft = horizontalGutter;
     rowStyle.marginRight = horizontalGutter;
   }
@@ -10798,19 +10801,17 @@ function _regeneratorDefine(e, r, n, t) {
     i = 0;
   }
   module.exports = _regeneratorDefine = function regeneratorDefine(e, r, n, t) {
-    if (r) i ? i(e, r, {
+    function o(r, n) {
+      _regeneratorDefine(e, r, function (e) {
+        return this._invoke(r, n, e);
+      });
+    }
+    r ? i ? i(e, r, {
       value: n,
       enumerable: !t,
       configurable: !t,
       writable: !t
-    }) : e[r] = n;else {
-      var o = function o(r, n) {
-        _regeneratorDefine(e, r, function (e) {
-          return this._invoke(r, n, e);
-        });
-      };
-      o("next", 0), o("throw", 1), o("return", 2);
-    }
+    }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, module.exports.__esModule = true, module.exports["default"] = module.exports, _regeneratorDefine(e, r, n, t);
 }
 module.exports = _regeneratorDefine, module.exports.__esModule = true, module.exports["default"] = module.exports;

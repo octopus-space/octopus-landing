@@ -43,6 +43,735 @@ if (false) {}
 
 /***/ }),
 
+/***/ 39899:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  Il: function() { return /* reexport */ color_Color; }
+});
+
+// UNUSED EXPORTS: ColorBlock, default
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(67294);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
+var classCallCheck = __webpack_require__(15671);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
+var createClass = __webpack_require__(43144);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
+var inherits = __webpack_require__(60136);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js
+var createSuper = __webpack_require__(29388);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/objectSpread2.js
+var objectSpread2 = __webpack_require__(1413);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js + 1 modules
+var objectWithoutProperties = __webpack_require__(91);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
+var esm_typeof = __webpack_require__(71002);
+// EXTERNAL MODULE: ./node_modules/@ant-design/fast-color/es/index.js + 1 modules
+var es = __webpack_require__(15063);
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/color.js
+
+
+
+
+
+
+
+var _excluded = ["b"],
+  _excluded2 = ["v"];
+
+var getRoundNumber = function getRoundNumber(value) {
+  return Math.round(Number(value || 0));
+};
+var convertHsb2Hsv = function convertHsb2Hsv(color) {
+  if (color instanceof es/* FastColor */.t) {
+    return color;
+  }
+  if (color && (0,esm_typeof/* default */.Z)(color) === 'object' && 'h' in color && 'b' in color) {
+    var _ref = color,
+      b = _ref.b,
+      resets = (0,objectWithoutProperties/* default */.Z)(_ref, _excluded);
+    return (0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({}, resets), {}, {
+      v: b
+    });
+  }
+  if (typeof color === 'string' && /hsb/.test(color)) {
+    return color.replace(/hsb/, 'hsv');
+  }
+  return color;
+};
+var color_Color = /*#__PURE__*/function (_FastColor) {
+  (0,inherits/* default */.Z)(Color, _FastColor);
+  var _super = (0,createSuper/* default */.Z)(Color);
+  function Color(color) {
+    (0,classCallCheck/* default */.Z)(this, Color);
+    return _super.call(this, convertHsb2Hsv(color));
+  }
+  (0,createClass/* default */.Z)(Color, [{
+    key: "toHsbString",
+    value: function toHsbString() {
+      var hsb = this.toHsb();
+      var saturation = getRoundNumber(hsb.s * 100);
+      var lightness = getRoundNumber(hsb.b * 100);
+      var hue = getRoundNumber(hsb.h);
+      var alpha = hsb.a;
+      var hsbString = "hsb(".concat(hue, ", ").concat(saturation, "%, ").concat(lightness, "%)");
+      var hsbaString = "hsba(".concat(hue, ", ").concat(saturation, "%, ").concat(lightness, "%, ").concat(alpha.toFixed(alpha === 0 ? 0 : 2), ")");
+      return alpha === 1 ? hsbString : hsbaString;
+    }
+  }, {
+    key: "toHsb",
+    value: function toHsb() {
+      var _this$toHsv = this.toHsv(),
+        v = _this$toHsv.v,
+        resets = (0,objectWithoutProperties/* default */.Z)(_this$toHsv, _excluded2);
+      return (0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({}, resets), {}, {
+        b: v,
+        a: this.a
+      });
+    }
+  }]);
+  return Color;
+}(es/* FastColor */.t);
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/util.js
+
+
+var util_ColorPickerPrefixCls = 'rc-color-picker';
+var util_generateColor = function generateColor(color) {
+  if (color instanceof color_Color) {
+    return color;
+  }
+  return new color_Color(color);
+};
+var util_defaultColor = util_generateColor('#1677ff');
+var util_calculateColor = function calculateColor(props) {
+  var offset = props.offset,
+    targetRef = props.targetRef,
+    containerRef = props.containerRef,
+    color = props.color,
+    type = props.type;
+  var _containerRef$current = containerRef.current.getBoundingClientRect(),
+    width = _containerRef$current.width,
+    height = _containerRef$current.height;
+  var _targetRef$current$ge = targetRef.current.getBoundingClientRect(),
+    targetWidth = _targetRef$current$ge.width,
+    targetHeight = _targetRef$current$ge.height;
+  var centerOffsetX = targetWidth / 2;
+  var centerOffsetY = targetHeight / 2;
+  var saturation = (offset.x + centerOffsetX) / width;
+  var bright = 1 - (offset.y + centerOffsetY) / height;
+  var hsb = color.toHsb();
+  var alphaOffset = saturation;
+  var hueOffset = (offset.x + centerOffsetX) / width * 360;
+  if (type) {
+    switch (type) {
+      case 'hue':
+        return util_generateColor(_objectSpread(_objectSpread({}, hsb), {}, {
+          h: hueOffset <= 0 ? 0 : hueOffset
+        }));
+      case 'alpha':
+        return util_generateColor(_objectSpread(_objectSpread({}, hsb), {}, {
+          a: alphaOffset <= 0 ? 0 : alphaOffset
+        }));
+    }
+  }
+  return util_generateColor({
+    h: hsb.h,
+    s: saturation <= 0 ? 0 : saturation,
+    b: bright >= 1 ? 1 : bright,
+    a: hsb.a
+  });
+};
+var util_calcOffset = function calcOffset(color, type) {
+  var hsb = color.toHsb();
+  switch (type) {
+    case 'hue':
+      return {
+        x: hsb.h / 360 * 100,
+        y: 50
+      };
+    case 'alpha':
+      return {
+        x: color.a * 100,
+        y: 50
+      };
+
+    // Picker panel
+    default:
+      return {
+        x: hsb.s * 100,
+        y: (1 - hsb.b) * 100
+      };
+  }
+};
+// EXTERNAL MODULE: ./node_modules/classnames/index.js
+var classnames = __webpack_require__(93967);
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/ColorBlock.js
+
+
+var ColorBlock_ColorBlock = function ColorBlock(_ref) {
+  var color = _ref.color,
+    prefixCls = _ref.prefixCls,
+    className = _ref.className,
+    style = _ref.style,
+    onClick = _ref.onClick;
+  var colorBlockCls = "".concat(prefixCls, "-color-block");
+  return /*#__PURE__*/React.createElement("div", {
+    className: classNames(colorBlockCls, className),
+    style: style,
+    onClick: onClick
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "".concat(colorBlockCls, "-inner"),
+    style: {
+      background: color
+    }
+  }));
+};
+/* harmony default export */ var components_ColorBlock = ((/* unused pure expression or super */ null && (ColorBlock_ColorBlock)));
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/hooks/useColorDrag.js
+
+
+function getPosition(e) {
+  var obj = 'touches' in e ? e.touches[0] : e;
+  var scrollXOffset = document.documentElement.scrollLeft || document.body.scrollLeft || window.pageXOffset;
+  var scrollYOffset = document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset;
+  return {
+    pageX: obj.pageX - scrollXOffset,
+    pageY: obj.pageY - scrollYOffset
+  };
+}
+function useColorDrag_useColorDrag(props) {
+  var targetRef = props.targetRef,
+    containerRef = props.containerRef,
+    direction = props.direction,
+    onDragChange = props.onDragChange,
+    onDragChangeComplete = props.onDragChangeComplete,
+    calculate = props.calculate,
+    color = props.color,
+    disabledDrag = props.disabledDrag;
+  var _useState = useState({
+      x: 0,
+      y: 0
+    }),
+    _useState2 = _slicedToArray(_useState, 2),
+    offsetValue = _useState2[0],
+    setOffsetValue = _useState2[1];
+  var mouseMoveRef = useRef(null);
+  var mouseUpRef = useRef(null);
+
+  // Always get position from `color`
+  useEffect(function () {
+    setOffsetValue(calculate());
+  }, [color]);
+  useEffect(function () {
+    return function () {
+      document.removeEventListener('mousemove', mouseMoveRef.current);
+      document.removeEventListener('mouseup', mouseUpRef.current);
+      document.removeEventListener('touchmove', mouseMoveRef.current);
+      document.removeEventListener('touchend', mouseUpRef.current);
+      mouseMoveRef.current = null;
+      mouseUpRef.current = null;
+    };
+  }, []);
+  var updateOffset = function updateOffset(e) {
+    var _getPosition = getPosition(e),
+      pageX = _getPosition.pageX,
+      pageY = _getPosition.pageY;
+    var _containerRef$current = containerRef.current.getBoundingClientRect(),
+      rectX = _containerRef$current.x,
+      rectY = _containerRef$current.y,
+      width = _containerRef$current.width,
+      height = _containerRef$current.height;
+    var _targetRef$current$ge = targetRef.current.getBoundingClientRect(),
+      targetWidth = _targetRef$current$ge.width,
+      targetHeight = _targetRef$current$ge.height;
+    var centerOffsetX = targetWidth / 2;
+    var centerOffsetY = targetHeight / 2;
+    var offsetX = Math.max(0, Math.min(pageX - rectX, width)) - centerOffsetX;
+    var offsetY = Math.max(0, Math.min(pageY - rectY, height)) - centerOffsetY;
+    var calcOffset = {
+      x: offsetX,
+      y: direction === 'x' ? offsetValue.y : offsetY
+    };
+
+    // Exclusion of boundary cases
+    if (targetWidth === 0 && targetHeight === 0 || targetWidth !== targetHeight) {
+      return false;
+    }
+    onDragChange === null || onDragChange === void 0 || onDragChange(calcOffset);
+  };
+  var onDragMove = function onDragMove(e) {
+    e.preventDefault();
+    updateOffset(e);
+  };
+  var onDragStop = function onDragStop(e) {
+    e.preventDefault();
+    document.removeEventListener('mousemove', mouseMoveRef.current);
+    document.removeEventListener('mouseup', mouseUpRef.current);
+    document.removeEventListener('touchmove', mouseMoveRef.current);
+    document.removeEventListener('touchend', mouseUpRef.current);
+    mouseMoveRef.current = null;
+    mouseUpRef.current = null;
+    onDragChangeComplete === null || onDragChangeComplete === void 0 || onDragChangeComplete();
+  };
+  var onDragStart = function onDragStart(e) {
+    // https://github.com/ant-design/ant-design/issues/43529
+    document.removeEventListener('mousemove', mouseMoveRef.current);
+    document.removeEventListener('mouseup', mouseUpRef.current);
+    if (disabledDrag) {
+      return;
+    }
+    updateOffset(e);
+    document.addEventListener('mousemove', onDragMove);
+    document.addEventListener('mouseup', onDragStop);
+    document.addEventListener('touchmove', onDragMove);
+    document.addEventListener('touchend', onDragStop);
+    mouseMoveRef.current = onDragMove;
+    mouseUpRef.current = onDragStop;
+  };
+  return [offsetValue, onDragStart];
+}
+/* harmony default export */ var hooks_useColorDrag = ((/* unused pure expression or super */ null && (useColorDrag_useColorDrag)));
+// EXTERNAL MODULE: ./node_modules/rc-util/es/index.js
+var rc_util_es = __webpack_require__(56790);
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/Handler.js
+
+
+
+var Handler_Handler = function Handler(_ref) {
+  var _ref$size = _ref.size,
+    size = _ref$size === void 0 ? 'default' : _ref$size,
+    color = _ref.color,
+    prefixCls = _ref.prefixCls;
+  return /*#__PURE__*/React.createElement("div", {
+    className: classNames("".concat(prefixCls, "-handler"), _defineProperty({}, "".concat(prefixCls, "-handler-sm"), size === 'small')),
+    style: {
+      backgroundColor: color
+    }
+  });
+};
+/* harmony default export */ var components_Handler = ((/* unused pure expression or super */ null && (Handler_Handler)));
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/Palette.js
+
+
+var Palette_Palette = function Palette(_ref) {
+  var children = _ref.children,
+    style = _ref.style,
+    prefixCls = _ref.prefixCls;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "".concat(prefixCls, "-palette"),
+    style: _objectSpread({
+      position: 'relative'
+    }, style)
+  }, children);
+};
+/* harmony default export */ var components_Palette = ((/* unused pure expression or super */ null && (Palette_Palette)));
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/Transform.js
+
+var Transform_Transform = /*#__PURE__*/(/* unused pure expression or super */ null && (forwardRef(function (props, ref) {
+  var children = props.children,
+    x = props.x,
+    y = props.y;
+  return /*#__PURE__*/React.createElement("div", {
+    ref: ref,
+    style: {
+      position: 'absolute',
+      left: "".concat(x, "%"),
+      top: "".concat(y, "%"),
+      zIndex: 1,
+      transform: 'translate(-50%, -50%)'
+    }
+  }, children);
+})));
+/* harmony default export */ var components_Transform = ((/* unused pure expression or super */ null && (Transform_Transform)));
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/Picker.js
+
+
+
+
+
+
+
+
+var Picker_Picker = function Picker(_ref) {
+  var color = _ref.color,
+    onChange = _ref.onChange,
+    prefixCls = _ref.prefixCls,
+    onChangeComplete = _ref.onChangeComplete,
+    disabled = _ref.disabled;
+  var pickerRef = useRef();
+  var transformRef = useRef();
+  var colorRef = useRef(color);
+  var onDragChange = useEvent(function (offsetValue) {
+    var calcColor = calculateColor({
+      offset: offsetValue,
+      targetRef: transformRef,
+      containerRef: pickerRef,
+      color: color
+    });
+    colorRef.current = calcColor;
+    onChange(calcColor);
+  });
+  var _useColorDrag = useColorDrag({
+      color: color,
+      containerRef: pickerRef,
+      targetRef: transformRef,
+      calculate: function calculate() {
+        return calcOffset(color);
+      },
+      onDragChange: onDragChange,
+      onDragChangeComplete: function onDragChangeComplete() {
+        return onChangeComplete === null || onChangeComplete === void 0 ? void 0 : onChangeComplete(colorRef.current);
+      },
+      disabledDrag: disabled
+    }),
+    _useColorDrag2 = _slicedToArray(_useColorDrag, 2),
+    offset = _useColorDrag2[0],
+    dragStartHandle = _useColorDrag2[1];
+  return /*#__PURE__*/React.createElement("div", {
+    ref: pickerRef,
+    className: "".concat(prefixCls, "-select"),
+    onMouseDown: dragStartHandle,
+    onTouchStart: dragStartHandle
+  }, /*#__PURE__*/React.createElement(Palette, {
+    prefixCls: prefixCls
+  }, /*#__PURE__*/React.createElement(Transform, {
+    x: offset.x,
+    y: offset.y,
+    ref: transformRef
+  }, /*#__PURE__*/React.createElement(Handler, {
+    color: color.toRgbString(),
+    prefixCls: prefixCls
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "".concat(prefixCls, "-saturation"),
+    style: {
+      backgroundColor: "hsl(".concat(color.toHsb().h, ",100%, 50%)"),
+      backgroundImage: 'linear-gradient(0deg, #000, transparent),linear-gradient(90deg, #fff, hsla(0, 0%, 100%, 0))'
+    }
+  })));
+};
+/* harmony default export */ var components_Picker = ((/* unused pure expression or super */ null && (Picker_Picker)));
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/hooks/useColorState.js
+
+
+
+
+var useColorState_useColorState = function useColorState(defaultValue, value) {
+  var _useMergedState = useMergedState(defaultValue, {
+      value: value
+    }),
+    _useMergedState2 = _slicedToArray(_useMergedState, 2),
+    mergedValue = _useMergedState2[0],
+    setValue = _useMergedState2[1];
+  var color = useMemo(function () {
+    return generateColor(mergedValue);
+  }, [mergedValue]);
+  return [color, setValue];
+};
+/* harmony default export */ var hooks_useColorState = ((/* unused pure expression or super */ null && (useColorState_useColorState)));
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/Gradient.js
+
+
+
+var Gradient_Gradient = function Gradient(_ref) {
+  var colors = _ref.colors,
+    children = _ref.children,
+    _ref$direction = _ref.direction,
+    direction = _ref$direction === void 0 ? 'to right' : _ref$direction,
+    type = _ref.type,
+    prefixCls = _ref.prefixCls;
+  var gradientColors = useMemo(function () {
+    return colors.map(function (color, idx) {
+      var result = generateColor(color);
+      if (type === 'alpha' && idx === colors.length - 1) {
+        result = new Color(result.setA(1));
+      }
+      return result.toRgbString();
+    }).join(',');
+  }, [colors, type]);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "".concat(prefixCls, "-gradient"),
+    style: {
+      position: 'absolute',
+      inset: 0,
+      background: "linear-gradient(".concat(direction, ", ").concat(gradientColors, ")")
+    }
+  }, children);
+};
+/* harmony default export */ var components_Gradient = ((/* unused pure expression or super */ null && (Gradient_Gradient)));
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/Slider.js
+
+
+
+
+
+
+
+
+
+
+
+var Slider_Slider = function Slider(props) {
+  var prefixCls = props.prefixCls,
+    colors = props.colors,
+    disabled = props.disabled,
+    onChange = props.onChange,
+    onChangeComplete = props.onChangeComplete,
+    color = props.color,
+    type = props.type;
+  var sliderRef = useRef();
+  var transformRef = useRef();
+  var colorRef = useRef(color);
+  var getValue = function getValue(c) {
+    return type === 'hue' ? c.getHue() : c.a * 100;
+  };
+  var onDragChange = useEvent(function (offsetValue) {
+    var calcColor = calculateColor({
+      offset: offsetValue,
+      targetRef: transformRef,
+      containerRef: sliderRef,
+      color: color,
+      type: type
+    });
+    colorRef.current = calcColor;
+    onChange(getValue(calcColor));
+  });
+  var _useColorDrag = useColorDrag({
+      color: color,
+      targetRef: transformRef,
+      containerRef: sliderRef,
+      calculate: function calculate() {
+        return calcOffset(color, type);
+      },
+      onDragChange: onDragChange,
+      onDragChangeComplete: function onDragChangeComplete() {
+        onChangeComplete(getValue(colorRef.current));
+      },
+      direction: 'x',
+      disabledDrag: disabled
+    }),
+    _useColorDrag2 = _slicedToArray(_useColorDrag, 2),
+    offset = _useColorDrag2[0],
+    dragStartHandle = _useColorDrag2[1];
+  var handleColor = React.useMemo(function () {
+    if (type === 'hue') {
+      var hsb = color.toHsb();
+      hsb.s = 1;
+      hsb.b = 1;
+      hsb.a = 1;
+      var lightColor = new Color(hsb);
+      return lightColor;
+    }
+    return color;
+  }, [color, type]);
+
+  // ========================= Gradient =========================
+  var gradientList = React.useMemo(function () {
+    return colors.map(function (info) {
+      return "".concat(info.color, " ").concat(info.percent, "%");
+    });
+  }, [colors]);
+
+  // ========================== Render ==========================
+  return /*#__PURE__*/React.createElement("div", {
+    ref: sliderRef,
+    className: classNames("".concat(prefixCls, "-slider"), "".concat(prefixCls, "-slider-").concat(type)),
+    onMouseDown: dragStartHandle,
+    onTouchStart: dragStartHandle
+  }, /*#__PURE__*/React.createElement(Palette, {
+    prefixCls: prefixCls
+  }, /*#__PURE__*/React.createElement(Transform, {
+    x: offset.x,
+    y: offset.y,
+    ref: transformRef
+  }, /*#__PURE__*/React.createElement(Handler, {
+    size: "small",
+    color: handleColor.toHexString(),
+    prefixCls: prefixCls
+  })), /*#__PURE__*/React.createElement(Gradient, {
+    colors: gradientList,
+    type: type,
+    prefixCls: prefixCls
+  })));
+};
+/* harmony default export */ var components_Slider = ((/* unused pure expression or super */ null && (Slider_Slider)));
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/hooks/useComponent.js
+
+
+function useComponent_useComponent(components) {
+  return React.useMemo(function () {
+    var _ref = components || {},
+      slider = _ref.slider;
+    return [slider || Slider];
+  }, [components]);
+}
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/ColorPicker.js
+
+
+
+
+
+
+
+
+
+
+
+var HUE_COLORS = [{
+  color: 'rgb(255, 0, 0)',
+  percent: 0
+}, {
+  color: 'rgb(255, 255, 0)',
+  percent: 17
+}, {
+  color: 'rgb(0, 255, 0)',
+  percent: 33
+}, {
+  color: 'rgb(0, 255, 255)',
+  percent: 50
+}, {
+  color: 'rgb(0, 0, 255)',
+  percent: 67
+}, {
+  color: 'rgb(255, 0, 255)',
+  percent: 83
+}, {
+  color: 'rgb(255, 0, 0)',
+  percent: 100
+}];
+var ColorPicker_ColorPicker = /*#__PURE__*/(/* unused pure expression or super */ null && (forwardRef(function (props, ref) {
+  var value = props.value,
+    defaultValue = props.defaultValue,
+    _props$prefixCls = props.prefixCls,
+    prefixCls = _props$prefixCls === void 0 ? ColorPickerPrefixCls : _props$prefixCls,
+    onChange = props.onChange,
+    onChangeComplete = props.onChangeComplete,
+    className = props.className,
+    style = props.style,
+    panelRender = props.panelRender,
+    _props$disabledAlpha = props.disabledAlpha,
+    disabledAlpha = _props$disabledAlpha === void 0 ? false : _props$disabledAlpha,
+    _props$disabled = props.disabled,
+    disabled = _props$disabled === void 0 ? false : _props$disabled,
+    components = props.components;
+
+  // ========================== Components ==========================
+  var _useComponent = useComponent(components),
+    _useComponent2 = _slicedToArray(_useComponent, 1),
+    Slider = _useComponent2[0];
+
+  // ============================ Color =============================
+  var _useColorState = useColorState(defaultValue || defaultColor, value),
+    _useColorState2 = _slicedToArray(_useColorState, 2),
+    colorValue = _useColorState2[0],
+    setColorValue = _useColorState2[1];
+  var alphaColor = useMemo(function () {
+    return colorValue.setA(1).toRgbString();
+  }, [colorValue]);
+
+  // ============================ Events ============================
+  var handleChange = function handleChange(data, type) {
+    if (!value) {
+      setColorValue(data);
+    }
+    onChange === null || onChange === void 0 || onChange(data, type);
+  };
+
+  // Convert
+  var getHueColor = function getHueColor(hue) {
+    return new Color(colorValue.setHue(hue));
+  };
+  var getAlphaColor = function getAlphaColor(alpha) {
+    return new Color(colorValue.setA(alpha / 100));
+  };
+
+  // Slider change
+  var onHueChange = function onHueChange(hue) {
+    handleChange(getHueColor(hue), {
+      type: 'hue',
+      value: hue
+    });
+  };
+  var onAlphaChange = function onAlphaChange(alpha) {
+    handleChange(getAlphaColor(alpha), {
+      type: 'alpha',
+      value: alpha
+    });
+  };
+
+  // Complete
+  var onHueChangeComplete = function onHueChangeComplete(hue) {
+    if (onChangeComplete) {
+      onChangeComplete(getHueColor(hue));
+    }
+  };
+  var onAlphaChangeComplete = function onAlphaChangeComplete(alpha) {
+    if (onChangeComplete) {
+      onChangeComplete(getAlphaColor(alpha));
+    }
+  };
+
+  // ============================ Render ============================
+  var mergeCls = classNames("".concat(prefixCls, "-panel"), className, _defineProperty({}, "".concat(prefixCls, "-panel-disabled"), disabled));
+  var sharedSliderProps = {
+    prefixCls: prefixCls,
+    disabled: disabled,
+    color: colorValue
+  };
+  var defaultPanel = /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Picker, _extends({
+    onChange: handleChange
+  }, sharedSliderProps, {
+    onChangeComplete: onChangeComplete
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "".concat(prefixCls, "-slider-container")
+  }, /*#__PURE__*/React.createElement("div", {
+    className: classNames("".concat(prefixCls, "-slider-group"), _defineProperty({}, "".concat(prefixCls, "-slider-group-disabled-alpha"), disabledAlpha))
+  }, /*#__PURE__*/React.createElement(Slider, _extends({}, sharedSliderProps, {
+    type: "hue",
+    colors: HUE_COLORS,
+    min: 0,
+    max: 359,
+    value: colorValue.getHue(),
+    onChange: onHueChange,
+    onChangeComplete: onHueChangeComplete
+  })), !disabledAlpha && /*#__PURE__*/React.createElement(Slider, _extends({}, sharedSliderProps, {
+    type: "alpha",
+    colors: [{
+      percent: 0,
+      color: 'rgba(255, 0, 4, 0)'
+    }, {
+      percent: 100,
+      color: alphaColor
+    }],
+    min: 0,
+    max: 100,
+    value: colorValue.a * 100,
+    onChange: onAlphaChange,
+    onChangeComplete: onAlphaChangeComplete
+  }))), /*#__PURE__*/React.createElement(ColorBlock, {
+    color: colorValue.toRgbString(),
+    prefixCls: prefixCls
+  })));
+  return /*#__PURE__*/React.createElement("div", {
+    className: mergeCls,
+    style: style,
+    ref: ref
+  }, typeof panelRender === 'function' ? panelRender(defaultPanel) : defaultPanel);
+})));
+if (false) {}
+/* harmony default export */ var es_ColorPicker = ((/* unused pure expression or super */ null && (ColorPicker_ColorPicker)));
+;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/index.js
+
+
+
+
+/* harmony default export */ var color_picker_es = ((/* unused pure expression or super */ null && (ColorPicker)));
+
+/***/ }),
+
 /***/ 54535:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -2180,7 +2909,7 @@ const genPurePanel = (Component, alignPropName, postProps, defaultPrefixCls, get
           resizeObserver.disconnect();
         };
       }
-    }, []);
+    }, [prefixCls]);
     let mergedProps = Object.assign(Object.assign({}, props), {
       style: Object.assign(Object.assign({}, style), {
         margin: 0
@@ -2275,8 +3004,8 @@ function isValidGapNumber(size) {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  Z: function() { return /* binding */ useClosable; },
-  w: function() { return /* binding */ pickClosable; }
+  w: function() { return /* binding */ pickClosable; },
+  b: function() { return /* binding */ useClosable; }
 });
 
 // EXTERNAL MODULE: ./node_modules/react/index.js
@@ -2317,9 +3046,13 @@ function pickClosable(context) {
   if (!context) {
     return undefined;
   }
+  const {
+    closable,
+    closeIcon
+  } = context;
   return {
-    closable: context.closable,
-    closeIcon: context.closeIcon
+    closable,
+    closeIcon
   };
 }
 /** Convert `closable` and `closeIcon` to config object */
@@ -2348,7 +3081,7 @@ function useClosableConfig(closableCollection) {
 }
 /** Use same object to support `useMemo` optimization */
 const EmptyFallbackCloseCollection = {};
-function useClosable(propCloseCollection, contextCloseCollection, fallbackCloseCollection = EmptyFallbackCloseCollection) {
+const useClosable = (propCloseCollection, contextCloseCollection, fallbackCloseCollection = EmptyFallbackCloseCollection) => {
   // Align the `props`, `context` `fallback` to config object first
   const propCloseConfig = useClosableConfig(propCloseCollection);
   const contextCloseConfig = useClosableConfig(contextCloseCollection);
@@ -2405,8 +3138,8 @@ function useClosable(propCloseCollection, contextCloseCollection, fallbackCloseC
       }, ariaOrDataProps), mergedCloseIcon));
     }
     return [true, mergedCloseIcon, closeBtnIsDisabled, ariaOrDataProps];
-  }, [mergedClosableConfig, mergedFallbackCloseCollection]);
-}
+  }, [closeBtnIsDisabled, contextLocale.close, mergedClosableConfig, mergedFallbackCloseCollection]);
+};
 
 /***/ }),
 
@@ -2579,6 +3312,11 @@ function getPlacements(config) {
   } = config;
   const halfArrowWidth = arrowWidth / 2;
   const placementMap = {};
+  // Dynamic offset
+  const arrowOffset = (0,_style_placementArrow__WEBPACK_IMPORTED_MODULE_0__/* .getArrowOffsetToken */ .wZ)({
+    contentRadius: borderRadius,
+    limitVerticalRadius: true
+  });
   Object.keys(PlacementAlignMap).forEach(key => {
     const template = arrowPointAtCenter && ArrowCenterPlacementAlignMap[key] || PlacementAlignMap[key];
     const placementInfo = Object.assign(Object.assign({}, template), {
@@ -2613,11 +3351,6 @@ function getPlacements(config) {
         placementInfo.offset[0] = halfArrowWidth + offset;
         break;
     }
-    // Dynamic offset
-    const arrowOffset = (0,_style_placementArrow__WEBPACK_IMPORTED_MODULE_0__/* .getArrowOffsetToken */ .wZ)({
-      contentRadius: borderRadius,
-      limitVerticalRadius: true
-    });
     if (arrowPointAtCenter) {
       switch (key) {
         case 'topLeft':
@@ -2704,7 +3437,7 @@ const genWaveStyle = token => {
     }
   };
 };
-/* harmony default export */ var style = ((0,genStyleUtils/* genComponentStyleHook */.A1)('Wave', token => [genWaveStyle(token)]));
+/* harmony default export */ var style = ((0,genStyleUtils/* genComponentStyleHook */.A1)('Wave', genWaveStyle));
 // EXTERNAL MODULE: ./node_modules/rc-util/es/hooks/useEvent.js
 var useEvent = __webpack_require__(66680);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/raf.js
@@ -2722,24 +3455,16 @@ var UnstableContext = __webpack_require__(69711);
 function isValidWaveColor(color) {
   return color && color !== '#fff' && color !== '#ffffff' && color !== 'rgb(255, 255, 255)' && color !== 'rgba(255, 255, 255, 1)' && !/rgba\((?:\d*, ){3}0\)/.test(color) &&
   // any transparent rgba color
-  color !== 'transparent';
+  color !== 'transparent' && color !== 'canvastext';
 }
 function getTargetWaveColor(node) {
+  var _a;
   const {
     borderTopColor,
     borderColor,
     backgroundColor
   } = getComputedStyle(node);
-  if (isValidWaveColor(borderTopColor)) {
-    return borderTopColor;
-  }
-  if (isValidWaveColor(borderColor)) {
-    return borderColor;
-  }
-  if (isValidWaveColor(backgroundColor)) {
-    return backgroundColor;
-  }
-  return null;
+  return (_a = [borderTopColor, borderColor, backgroundColor].find(isValidWaveColor)) !== null && _a !== void 0 ? _a : null;
 }
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/wave/WaveEffect.js
 "use client";
@@ -2796,8 +3521,8 @@ const WaveEffect = props => {
       borderLeftWidth,
       borderTopWidth
     } = nodeStyle;
-    setLeft(isStatic ? target.offsetLeft : validateNum(-parseFloat(borderLeftWidth)));
-    setTop(isStatic ? target.offsetTop : validateNum(-parseFloat(borderTopWidth)));
+    setLeft(isStatic ? target.offsetLeft : validateNum(-Number.parseFloat(borderLeftWidth)));
+    setTop(isStatic ? target.offsetTop : validateNum(-Number.parseFloat(borderTopWidth)));
     setWidth(target.offsetWidth);
     setHeight(target.offsetHeight);
     // Get border radius
@@ -2807,7 +3532,7 @@ const WaveEffect = props => {
       borderBottomLeftRadius,
       borderBottomRightRadius
     } = nodeStyle;
-    setBorderRadius([borderTopLeftRadius, borderTopRightRadius, borderBottomRightRadius, borderBottomLeftRadius].map(radius => validateNum(parseFloat(radius))));
+    setBorderRadius([borderTopLeftRadius, borderTopRightRadius, borderBottomRightRadius, borderBottomLeftRadius].map(radius => validateNum(Number.parseFloat(radius))));
   }
   react.useEffect(() => {
     if (target) {
@@ -2828,7 +3553,7 @@ const WaveEffect = props => {
         resizeObserver === null || resizeObserver === void 0 ? void 0 : resizeObserver.disconnect();
       };
     }
-  }, []);
+  }, [target]);
   if (!enabled) {
     return null;
   }
@@ -2953,7 +3678,7 @@ const Wave = props => {
   // ============================== Effect ==============================
   react.useEffect(() => {
     const node = containerRef.current;
-    if (!node || node.nodeType !== 1 || disabled) {
+    if (!node || node.nodeType !== window.Node.ELEMENT_NODE || disabled) {
       return;
     }
     // Click handler
@@ -2961,7 +3686,7 @@ const Wave = props => {
       // Fix radio button click twice
       if (!(0,isVisible/* default */.Z)(e.target) ||
       // No need wave
-      !node.getAttribute || node.getAttribute('disabled') || node.disabled || node.className.includes('disabled') || node.className.includes('-leave')) {
+      !node.getAttribute || node.getAttribute('disabled') || node.disabled || node.className.includes('disabled') && !node.className.includes('disabled:') || node.getAttribute('aria-disabled') === 'true' || node.className.includes('-leave')) {
         return;
       }
       showWave(e);
@@ -3320,7 +4045,9 @@ const Alert = /*#__PURE__*/react.forwardRef((props, ref) => {
   }, [props.type, banner]);
   // closeable when closeText or closeIcon is assigned
   const isClosable = react.useMemo(() => {
-    if (typeof closable === 'object' && closable.closeIcon) return true;
+    if (typeof closable === 'object' && closable.closeIcon) {
+      return true;
+    }
     if (closeText) {
       return true;
     }
@@ -3359,7 +4086,7 @@ const Alert = /*#__PURE__*/react.forwardRef((props, ref) => {
       return contextClosable.closeIcon;
     }
     return contextCloseIcon;
-  }, [closeIcon, closable, closeText, contextCloseIcon]);
+  }, [closeIcon, closable, contextClosable, closeText, contextCloseIcon]);
   const mergedAriaProps = react.useMemo(() => {
     const merged = closable !== null && closable !== void 0 ? closable : contextClosable;
     if (typeof merged === 'object') {
@@ -3593,7 +4320,7 @@ const _ButtonColorTypes = ['default', 'primary', 'danger'].concat((0,_babel_runt
 
 /***/ }),
 
-/***/ 77683:
+/***/ 75398:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 
@@ -3609,6 +4336,8 @@ var react = __webpack_require__(67294);
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(93967);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
+// EXTERNAL MODULE: ./node_modules/rc-util/es/hooks/useLayoutEffect.js
+var useLayoutEffect = __webpack_require__(8410);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/omit.js
 var omit = __webpack_require__(98423);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/ref.js
@@ -3860,828 +4589,10 @@ const genGroupStyle = token => {
   };
 };
 /* harmony default export */ var group = (genGroupStyle);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
-var classCallCheck = __webpack_require__(15671);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
-var createClass = __webpack_require__(43144);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
-var inherits = __webpack_require__(60136);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createSuper.js
-var createSuper = __webpack_require__(29388);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/objectSpread2.js
-var objectSpread2 = __webpack_require__(1413);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js + 1 modules
-var objectWithoutProperties = __webpack_require__(91);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
-var esm_typeof = __webpack_require__(71002);
-// EXTERNAL MODULE: ./node_modules/@ant-design/fast-color/es/index.js + 1 modules
-var fast_color_es = __webpack_require__(15063);
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/color.js
-
-
-
-
-
-
-
-var _excluded = ["b"],
-  _excluded2 = ["v"];
-
-var getRoundNumber = function getRoundNumber(value) {
-  return Math.round(Number(value || 0));
-};
-var convertHsb2Hsv = function convertHsb2Hsv(color) {
-  if (color instanceof fast_color_es/* FastColor */.t) {
-    return color;
-  }
-  if (color && (0,esm_typeof/* default */.Z)(color) === 'object' && 'h' in color && 'b' in color) {
-    var _ref = color,
-      b = _ref.b,
-      resets = (0,objectWithoutProperties/* default */.Z)(_ref, _excluded);
-    return (0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({}, resets), {}, {
-      v: b
-    });
-  }
-  if (typeof color === 'string' && /hsb/.test(color)) {
-    return color.replace(/hsb/, 'hsv');
-  }
-  return color;
-};
-var color_Color = /*#__PURE__*/function (_FastColor) {
-  (0,inherits/* default */.Z)(Color, _FastColor);
-  var _super = (0,createSuper/* default */.Z)(Color);
-  function Color(color) {
-    (0,classCallCheck/* default */.Z)(this, Color);
-    return _super.call(this, convertHsb2Hsv(color));
-  }
-  (0,createClass/* default */.Z)(Color, [{
-    key: "toHsbString",
-    value: function toHsbString() {
-      var hsb = this.toHsb();
-      var saturation = getRoundNumber(hsb.s * 100);
-      var lightness = getRoundNumber(hsb.b * 100);
-      var hue = getRoundNumber(hsb.h);
-      var alpha = hsb.a;
-      var hsbString = "hsb(".concat(hue, ", ").concat(saturation, "%, ").concat(lightness, "%)");
-      var hsbaString = "hsba(".concat(hue, ", ").concat(saturation, "%, ").concat(lightness, "%, ").concat(alpha.toFixed(alpha === 0 ? 0 : 2), ")");
-      return alpha === 1 ? hsbString : hsbaString;
-    }
-  }, {
-    key: "toHsb",
-    value: function toHsb() {
-      var _this$toHsv = this.toHsv(),
-        v = _this$toHsv.v,
-        resets = (0,objectWithoutProperties/* default */.Z)(_this$toHsv, _excluded2);
-      return (0,objectSpread2/* default */.Z)((0,objectSpread2/* default */.Z)({}, resets), {}, {
-        b: v,
-        a: this.a
-      });
-    }
-  }]);
-  return Color;
-}(fast_color_es/* FastColor */.t);
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/util.js
-
-
-var util_ColorPickerPrefixCls = 'rc-color-picker';
-var util_generateColor = function generateColor(color) {
-  if (color instanceof color_Color) {
-    return color;
-  }
-  return new color_Color(color);
-};
-var util_defaultColor = util_generateColor('#1677ff');
-var util_calculateColor = function calculateColor(props) {
-  var offset = props.offset,
-    targetRef = props.targetRef,
-    containerRef = props.containerRef,
-    color = props.color,
-    type = props.type;
-  var _containerRef$current = containerRef.current.getBoundingClientRect(),
-    width = _containerRef$current.width,
-    height = _containerRef$current.height;
-  var _targetRef$current$ge = targetRef.current.getBoundingClientRect(),
-    targetWidth = _targetRef$current$ge.width,
-    targetHeight = _targetRef$current$ge.height;
-  var centerOffsetX = targetWidth / 2;
-  var centerOffsetY = targetHeight / 2;
-  var saturation = (offset.x + centerOffsetX) / width;
-  var bright = 1 - (offset.y + centerOffsetY) / height;
-  var hsb = color.toHsb();
-  var alphaOffset = saturation;
-  var hueOffset = (offset.x + centerOffsetX) / width * 360;
-  if (type) {
-    switch (type) {
-      case 'hue':
-        return util_generateColor(_objectSpread(_objectSpread({}, hsb), {}, {
-          h: hueOffset <= 0 ? 0 : hueOffset
-        }));
-      case 'alpha':
-        return util_generateColor(_objectSpread(_objectSpread({}, hsb), {}, {
-          a: alphaOffset <= 0 ? 0 : alphaOffset
-        }));
-    }
-  }
-  return util_generateColor({
-    h: hsb.h,
-    s: saturation <= 0 ? 0 : saturation,
-    b: bright >= 1 ? 1 : bright,
-    a: hsb.a
-  });
-};
-var util_calcOffset = function calcOffset(color, type) {
-  var hsb = color.toHsb();
-  switch (type) {
-    case 'hue':
-      return {
-        x: hsb.h / 360 * 100,
-        y: 50
-      };
-    case 'alpha':
-      return {
-        x: color.a * 100,
-        y: 50
-      };
-
-    // Picker panel
-    default:
-      return {
-        x: hsb.s * 100,
-        y: (1 - hsb.b) * 100
-      };
-  }
-};
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/ColorBlock.js
-
-
-var ColorBlock_ColorBlock = function ColorBlock(_ref) {
-  var color = _ref.color,
-    prefixCls = _ref.prefixCls,
-    className = _ref.className,
-    style = _ref.style,
-    onClick = _ref.onClick;
-  var colorBlockCls = "".concat(prefixCls, "-color-block");
-  return /*#__PURE__*/React.createElement("div", {
-    className: classNames(colorBlockCls, className),
-    style: style,
-    onClick: onClick
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "".concat(colorBlockCls, "-inner"),
-    style: {
-      background: color
-    }
-  }));
-};
-/* harmony default export */ var components_ColorBlock = ((/* unused pure expression or super */ null && (ColorBlock_ColorBlock)));
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/hooks/useColorDrag.js
-
-
-function getPosition(e) {
-  var obj = 'touches' in e ? e.touches[0] : e;
-  var scrollXOffset = document.documentElement.scrollLeft || document.body.scrollLeft || window.pageXOffset;
-  var scrollYOffset = document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset;
-  return {
-    pageX: obj.pageX - scrollXOffset,
-    pageY: obj.pageY - scrollYOffset
-  };
-}
-function useColorDrag_useColorDrag(props) {
-  var targetRef = props.targetRef,
-    containerRef = props.containerRef,
-    direction = props.direction,
-    onDragChange = props.onDragChange,
-    onDragChangeComplete = props.onDragChangeComplete,
-    calculate = props.calculate,
-    color = props.color,
-    disabledDrag = props.disabledDrag;
-  var _useState = useState({
-      x: 0,
-      y: 0
-    }),
-    _useState2 = _slicedToArray(_useState, 2),
-    offsetValue = _useState2[0],
-    setOffsetValue = _useState2[1];
-  var mouseMoveRef = useRef(null);
-  var mouseUpRef = useRef(null);
-
-  // Always get position from `color`
-  useEffect(function () {
-    setOffsetValue(calculate());
-  }, [color]);
-  useEffect(function () {
-    return function () {
-      document.removeEventListener('mousemove', mouseMoveRef.current);
-      document.removeEventListener('mouseup', mouseUpRef.current);
-      document.removeEventListener('touchmove', mouseMoveRef.current);
-      document.removeEventListener('touchend', mouseUpRef.current);
-      mouseMoveRef.current = null;
-      mouseUpRef.current = null;
-    };
-  }, []);
-  var updateOffset = function updateOffset(e) {
-    var _getPosition = getPosition(e),
-      pageX = _getPosition.pageX,
-      pageY = _getPosition.pageY;
-    var _containerRef$current = containerRef.current.getBoundingClientRect(),
-      rectX = _containerRef$current.x,
-      rectY = _containerRef$current.y,
-      width = _containerRef$current.width,
-      height = _containerRef$current.height;
-    var _targetRef$current$ge = targetRef.current.getBoundingClientRect(),
-      targetWidth = _targetRef$current$ge.width,
-      targetHeight = _targetRef$current$ge.height;
-    var centerOffsetX = targetWidth / 2;
-    var centerOffsetY = targetHeight / 2;
-    var offsetX = Math.max(0, Math.min(pageX - rectX, width)) - centerOffsetX;
-    var offsetY = Math.max(0, Math.min(pageY - rectY, height)) - centerOffsetY;
-    var calcOffset = {
-      x: offsetX,
-      y: direction === 'x' ? offsetValue.y : offsetY
-    };
-
-    // Exclusion of boundary cases
-    if (targetWidth === 0 && targetHeight === 0 || targetWidth !== targetHeight) {
-      return false;
-    }
-    onDragChange === null || onDragChange === void 0 || onDragChange(calcOffset);
-  };
-  var onDragMove = function onDragMove(e) {
-    e.preventDefault();
-    updateOffset(e);
-  };
-  var onDragStop = function onDragStop(e) {
-    e.preventDefault();
-    document.removeEventListener('mousemove', mouseMoveRef.current);
-    document.removeEventListener('mouseup', mouseUpRef.current);
-    document.removeEventListener('touchmove', mouseMoveRef.current);
-    document.removeEventListener('touchend', mouseUpRef.current);
-    mouseMoveRef.current = null;
-    mouseUpRef.current = null;
-    onDragChangeComplete === null || onDragChangeComplete === void 0 || onDragChangeComplete();
-  };
-  var onDragStart = function onDragStart(e) {
-    // https://github.com/ant-design/ant-design/issues/43529
-    document.removeEventListener('mousemove', mouseMoveRef.current);
-    document.removeEventListener('mouseup', mouseUpRef.current);
-    if (disabledDrag) {
-      return;
-    }
-    updateOffset(e);
-    document.addEventListener('mousemove', onDragMove);
-    document.addEventListener('mouseup', onDragStop);
-    document.addEventListener('touchmove', onDragMove);
-    document.addEventListener('touchend', onDragStop);
-    mouseMoveRef.current = onDragMove;
-    mouseUpRef.current = onDragStop;
-  };
-  return [offsetValue, onDragStart];
-}
-/* harmony default export */ var hooks_useColorDrag = ((/* unused pure expression or super */ null && (useColorDrag_useColorDrag)));
-// EXTERNAL MODULE: ./node_modules/rc-util/es/index.js
-var rc_util_es = __webpack_require__(56790);
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/Handler.js
-
-
-
-var Handler_Handler = function Handler(_ref) {
-  var _ref$size = _ref.size,
-    size = _ref$size === void 0 ? 'default' : _ref$size,
-    color = _ref.color,
-    prefixCls = _ref.prefixCls;
-  return /*#__PURE__*/React.createElement("div", {
-    className: classNames("".concat(prefixCls, "-handler"), _defineProperty({}, "".concat(prefixCls, "-handler-sm"), size === 'small')),
-    style: {
-      backgroundColor: color
-    }
-  });
-};
-/* harmony default export */ var components_Handler = ((/* unused pure expression or super */ null && (Handler_Handler)));
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/Palette.js
-
-
-var Palette_Palette = function Palette(_ref) {
-  var children = _ref.children,
-    style = _ref.style,
-    prefixCls = _ref.prefixCls;
-  return /*#__PURE__*/React.createElement("div", {
-    className: "".concat(prefixCls, "-palette"),
-    style: _objectSpread({
-      position: 'relative'
-    }, style)
-  }, children);
-};
-/* harmony default export */ var components_Palette = ((/* unused pure expression or super */ null && (Palette_Palette)));
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/Transform.js
-
-var Transform_Transform = /*#__PURE__*/(/* unused pure expression or super */ null && (forwardRef(function (props, ref) {
-  var children = props.children,
-    x = props.x,
-    y = props.y;
-  return /*#__PURE__*/React.createElement("div", {
-    ref: ref,
-    style: {
-      position: 'absolute',
-      left: "".concat(x, "%"),
-      top: "".concat(y, "%"),
-      zIndex: 1,
-      transform: 'translate(-50%, -50%)'
-    }
-  }, children);
-})));
-/* harmony default export */ var components_Transform = ((/* unused pure expression or super */ null && (Transform_Transform)));
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/Picker.js
-
-
-
-
-
-
-
-
-var Picker_Picker = function Picker(_ref) {
-  var color = _ref.color,
-    onChange = _ref.onChange,
-    prefixCls = _ref.prefixCls,
-    onChangeComplete = _ref.onChangeComplete,
-    disabled = _ref.disabled;
-  var pickerRef = useRef();
-  var transformRef = useRef();
-  var colorRef = useRef(color);
-  var onDragChange = useEvent(function (offsetValue) {
-    var calcColor = calculateColor({
-      offset: offsetValue,
-      targetRef: transformRef,
-      containerRef: pickerRef,
-      color: color
-    });
-    colorRef.current = calcColor;
-    onChange(calcColor);
-  });
-  var _useColorDrag = useColorDrag({
-      color: color,
-      containerRef: pickerRef,
-      targetRef: transformRef,
-      calculate: function calculate() {
-        return calcOffset(color);
-      },
-      onDragChange: onDragChange,
-      onDragChangeComplete: function onDragChangeComplete() {
-        return onChangeComplete === null || onChangeComplete === void 0 ? void 0 : onChangeComplete(colorRef.current);
-      },
-      disabledDrag: disabled
-    }),
-    _useColorDrag2 = _slicedToArray(_useColorDrag, 2),
-    offset = _useColorDrag2[0],
-    dragStartHandle = _useColorDrag2[1];
-  return /*#__PURE__*/React.createElement("div", {
-    ref: pickerRef,
-    className: "".concat(prefixCls, "-select"),
-    onMouseDown: dragStartHandle,
-    onTouchStart: dragStartHandle
-  }, /*#__PURE__*/React.createElement(Palette, {
-    prefixCls: prefixCls
-  }, /*#__PURE__*/React.createElement(Transform, {
-    x: offset.x,
-    y: offset.y,
-    ref: transformRef
-  }, /*#__PURE__*/React.createElement(Handler, {
-    color: color.toRgbString(),
-    prefixCls: prefixCls
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "".concat(prefixCls, "-saturation"),
-    style: {
-      backgroundColor: "hsl(".concat(color.toHsb().h, ",100%, 50%)"),
-      backgroundImage: 'linear-gradient(0deg, #000, transparent),linear-gradient(90deg, #fff, hsla(0, 0%, 100%, 0))'
-    }
-  })));
-};
-/* harmony default export */ var components_Picker = ((/* unused pure expression or super */ null && (Picker_Picker)));
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/hooks/useColorState.js
-
-
-
-
-var useColorState_useColorState = function useColorState(defaultValue, value) {
-  var _useMergedState = useMergedState(defaultValue, {
-      value: value
-    }),
-    _useMergedState2 = _slicedToArray(_useMergedState, 2),
-    mergedValue = _useMergedState2[0],
-    setValue = _useMergedState2[1];
-  var color = useMemo(function () {
-    return generateColor(mergedValue);
-  }, [mergedValue]);
-  return [color, setValue];
-};
-/* harmony default export */ var hooks_useColorState = ((/* unused pure expression or super */ null && (useColorState_useColorState)));
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/Gradient.js
-
-
-
-var Gradient_Gradient = function Gradient(_ref) {
-  var colors = _ref.colors,
-    children = _ref.children,
-    _ref$direction = _ref.direction,
-    direction = _ref$direction === void 0 ? 'to right' : _ref$direction,
-    type = _ref.type,
-    prefixCls = _ref.prefixCls;
-  var gradientColors = useMemo(function () {
-    return colors.map(function (color, idx) {
-      var result = generateColor(color);
-      if (type === 'alpha' && idx === colors.length - 1) {
-        result = new Color(result.setA(1));
-      }
-      return result.toRgbString();
-    }).join(',');
-  }, [colors, type]);
-  return /*#__PURE__*/React.createElement("div", {
-    className: "".concat(prefixCls, "-gradient"),
-    style: {
-      position: 'absolute',
-      inset: 0,
-      background: "linear-gradient(".concat(direction, ", ").concat(gradientColors, ")")
-    }
-  }, children);
-};
-/* harmony default export */ var components_Gradient = ((/* unused pure expression or super */ null && (Gradient_Gradient)));
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/components/Slider.js
-
-
-
-
-
-
-
-
-
-
-
-var Slider_Slider = function Slider(props) {
-  var prefixCls = props.prefixCls,
-    colors = props.colors,
-    disabled = props.disabled,
-    onChange = props.onChange,
-    onChangeComplete = props.onChangeComplete,
-    color = props.color,
-    type = props.type;
-  var sliderRef = useRef();
-  var transformRef = useRef();
-  var colorRef = useRef(color);
-  var getValue = function getValue(c) {
-    return type === 'hue' ? c.getHue() : c.a * 100;
-  };
-  var onDragChange = useEvent(function (offsetValue) {
-    var calcColor = calculateColor({
-      offset: offsetValue,
-      targetRef: transformRef,
-      containerRef: sliderRef,
-      color: color,
-      type: type
-    });
-    colorRef.current = calcColor;
-    onChange(getValue(calcColor));
-  });
-  var _useColorDrag = useColorDrag({
-      color: color,
-      targetRef: transformRef,
-      containerRef: sliderRef,
-      calculate: function calculate() {
-        return calcOffset(color, type);
-      },
-      onDragChange: onDragChange,
-      onDragChangeComplete: function onDragChangeComplete() {
-        onChangeComplete(getValue(colorRef.current));
-      },
-      direction: 'x',
-      disabledDrag: disabled
-    }),
-    _useColorDrag2 = _slicedToArray(_useColorDrag, 2),
-    offset = _useColorDrag2[0],
-    dragStartHandle = _useColorDrag2[1];
-  var handleColor = React.useMemo(function () {
-    if (type === 'hue') {
-      var hsb = color.toHsb();
-      hsb.s = 1;
-      hsb.b = 1;
-      hsb.a = 1;
-      var lightColor = new Color(hsb);
-      return lightColor;
-    }
-    return color;
-  }, [color, type]);
-
-  // ========================= Gradient =========================
-  var gradientList = React.useMemo(function () {
-    return colors.map(function (info) {
-      return "".concat(info.color, " ").concat(info.percent, "%");
-    });
-  }, [colors]);
-
-  // ========================== Render ==========================
-  return /*#__PURE__*/React.createElement("div", {
-    ref: sliderRef,
-    className: classNames("".concat(prefixCls, "-slider"), "".concat(prefixCls, "-slider-").concat(type)),
-    onMouseDown: dragStartHandle,
-    onTouchStart: dragStartHandle
-  }, /*#__PURE__*/React.createElement(Palette, {
-    prefixCls: prefixCls
-  }, /*#__PURE__*/React.createElement(Transform, {
-    x: offset.x,
-    y: offset.y,
-    ref: transformRef
-  }, /*#__PURE__*/React.createElement(Handler, {
-    size: "small",
-    color: handleColor.toHexString(),
-    prefixCls: prefixCls
-  })), /*#__PURE__*/React.createElement(Gradient, {
-    colors: gradientList,
-    type: type,
-    prefixCls: prefixCls
-  })));
-};
-/* harmony default export */ var components_Slider = ((/* unused pure expression or super */ null && (Slider_Slider)));
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/hooks/useComponent.js
-
-
-function useComponent_useComponent(components) {
-  return React.useMemo(function () {
-    var _ref = components || {},
-      slider = _ref.slider;
-    return [slider || Slider];
-  }, [components]);
-}
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/ColorPicker.js
-
-
-
-
-
-
-
-
-
-
-
-var HUE_COLORS = [{
-  color: 'rgb(255, 0, 0)',
-  percent: 0
-}, {
-  color: 'rgb(255, 255, 0)',
-  percent: 17
-}, {
-  color: 'rgb(0, 255, 0)',
-  percent: 33
-}, {
-  color: 'rgb(0, 255, 255)',
-  percent: 50
-}, {
-  color: 'rgb(0, 0, 255)',
-  percent: 67
-}, {
-  color: 'rgb(255, 0, 255)',
-  percent: 83
-}, {
-  color: 'rgb(255, 0, 0)',
-  percent: 100
-}];
-var ColorPicker_ColorPicker = /*#__PURE__*/(/* unused pure expression or super */ null && (forwardRef(function (props, ref) {
-  var value = props.value,
-    defaultValue = props.defaultValue,
-    _props$prefixCls = props.prefixCls,
-    prefixCls = _props$prefixCls === void 0 ? ColorPickerPrefixCls : _props$prefixCls,
-    onChange = props.onChange,
-    onChangeComplete = props.onChangeComplete,
-    className = props.className,
-    style = props.style,
-    panelRender = props.panelRender,
-    _props$disabledAlpha = props.disabledAlpha,
-    disabledAlpha = _props$disabledAlpha === void 0 ? false : _props$disabledAlpha,
-    _props$disabled = props.disabled,
-    disabled = _props$disabled === void 0 ? false : _props$disabled,
-    components = props.components;
-
-  // ========================== Components ==========================
-  var _useComponent = useComponent(components),
-    _useComponent2 = _slicedToArray(_useComponent, 1),
-    Slider = _useComponent2[0];
-
-  // ============================ Color =============================
-  var _useColorState = useColorState(defaultValue || defaultColor, value),
-    _useColorState2 = _slicedToArray(_useColorState, 2),
-    colorValue = _useColorState2[0],
-    setColorValue = _useColorState2[1];
-  var alphaColor = useMemo(function () {
-    return colorValue.setA(1).toRgbString();
-  }, [colorValue]);
-
-  // ============================ Events ============================
-  var handleChange = function handleChange(data, type) {
-    if (!value) {
-      setColorValue(data);
-    }
-    onChange === null || onChange === void 0 || onChange(data, type);
-  };
-
-  // Convert
-  var getHueColor = function getHueColor(hue) {
-    return new Color(colorValue.setHue(hue));
-  };
-  var getAlphaColor = function getAlphaColor(alpha) {
-    return new Color(colorValue.setA(alpha / 100));
-  };
-
-  // Slider change
-  var onHueChange = function onHueChange(hue) {
-    handleChange(getHueColor(hue), {
-      type: 'hue',
-      value: hue
-    });
-  };
-  var onAlphaChange = function onAlphaChange(alpha) {
-    handleChange(getAlphaColor(alpha), {
-      type: 'alpha',
-      value: alpha
-    });
-  };
-
-  // Complete
-  var onHueChangeComplete = function onHueChangeComplete(hue) {
-    if (onChangeComplete) {
-      onChangeComplete(getHueColor(hue));
-    }
-  };
-  var onAlphaChangeComplete = function onAlphaChangeComplete(alpha) {
-    if (onChangeComplete) {
-      onChangeComplete(getAlphaColor(alpha));
-    }
-  };
-
-  // ============================ Render ============================
-  var mergeCls = classNames("".concat(prefixCls, "-panel"), className, _defineProperty({}, "".concat(prefixCls, "-panel-disabled"), disabled));
-  var sharedSliderProps = {
-    prefixCls: prefixCls,
-    disabled: disabled,
-    color: colorValue
-  };
-  var defaultPanel = /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Picker, _extends({
-    onChange: handleChange
-  }, sharedSliderProps, {
-    onChangeComplete: onChangeComplete
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "".concat(prefixCls, "-slider-container")
-  }, /*#__PURE__*/React.createElement("div", {
-    className: classNames("".concat(prefixCls, "-slider-group"), _defineProperty({}, "".concat(prefixCls, "-slider-group-disabled-alpha"), disabledAlpha))
-  }, /*#__PURE__*/React.createElement(Slider, _extends({}, sharedSliderProps, {
-    type: "hue",
-    colors: HUE_COLORS,
-    min: 0,
-    max: 359,
-    value: colorValue.getHue(),
-    onChange: onHueChange,
-    onChangeComplete: onHueChangeComplete
-  })), !disabledAlpha && /*#__PURE__*/React.createElement(Slider, _extends({}, sharedSliderProps, {
-    type: "alpha",
-    colors: [{
-      percent: 0,
-      color: 'rgba(255, 0, 4, 0)'
-    }, {
-      percent: 100,
-      color: alphaColor
-    }],
-    min: 0,
-    max: 100,
-    value: colorValue.a * 100,
-    onChange: onAlphaChange,
-    onChangeComplete: onAlphaChangeComplete
-  }))), /*#__PURE__*/React.createElement(ColorBlock, {
-    color: colorValue.toRgbString(),
-    prefixCls: prefixCls
-  })));
-  return /*#__PURE__*/React.createElement("div", {
-    className: mergeCls,
-    style: style,
-    ref: ref
-  }, typeof panelRender === 'function' ? panelRender(defaultPanel) : defaultPanel);
-})));
-if (false) {}
-/* harmony default export */ var es_ColorPicker = ((/* unused pure expression or super */ null && (ColorPicker_ColorPicker)));
-;// CONCATENATED MODULE: ./node_modules/@rc-component/color-picker/es/index.js
-
-
-
-
-/* harmony default export */ var color_picker_es = ((/* unused pure expression or super */ null && (ColorPicker)));
-;// CONCATENATED MODULE: ./node_modules/antd/es/color-picker/color.js
-
-
-
-const toHexFormat = (value, alpha) => (value === null || value === void 0 ? void 0 : value.replace(/[^\w/]/g, '').slice(0, alpha ? 8 : 6)) || '';
-const getHex = (value, alpha) => value ? toHexFormat(value, alpha) : '';
-let AggregationColor = /*#__PURE__*/function () {
-  function AggregationColor(color) {
-    (0,classCallCheck/* default */.Z)(this, AggregationColor);
-    var _a;
-    this.cleared = false;
-    // Clone from another AggregationColor
-    if (color instanceof AggregationColor) {
-      this.metaColor = color.metaColor.clone();
-      this.colors = (_a = color.colors) === null || _a === void 0 ? void 0 : _a.map(info => ({
-        color: new AggregationColor(info.color),
-        percent: info.percent
-      }));
-      this.cleared = color.cleared;
-      return;
-    }
-    const isArray = Array.isArray(color);
-    if (isArray && color.length) {
-      this.colors = color.map(({
-        color: c,
-        percent
-      }) => ({
-        color: new AggregationColor(c),
-        percent
-      }));
-      this.metaColor = new color_Color(this.colors[0].color.metaColor);
-    } else {
-      this.metaColor = new color_Color(isArray ? '' : color);
-    }
-    if (!color || isArray && !this.colors) {
-      this.metaColor = this.metaColor.setA(0);
-      this.cleared = true;
-    }
-  }
-  return (0,createClass/* default */.Z)(AggregationColor, [{
-    key: "toHsb",
-    value: function toHsb() {
-      return this.metaColor.toHsb();
-    }
-  }, {
-    key: "toHsbString",
-    value: function toHsbString() {
-      return this.metaColor.toHsbString();
-    }
-  }, {
-    key: "toHex",
-    value: function toHex() {
-      return getHex(this.toHexString(), this.metaColor.a < 1);
-    }
-  }, {
-    key: "toHexString",
-    value: function toHexString() {
-      return this.metaColor.toHexString();
-    }
-  }, {
-    key: "toRgb",
-    value: function toRgb() {
-      return this.metaColor.toRgb();
-    }
-  }, {
-    key: "toRgbString",
-    value: function toRgbString() {
-      return this.metaColor.toRgbString();
-    }
-  }, {
-    key: "isGradient",
-    value: function isGradient() {
-      return !!this.colors && !this.cleared;
-    }
-  }, {
-    key: "getColors",
-    value: function getColors() {
-      return this.colors || [{
-        color: this,
-        percent: 0
-      }];
-    }
-  }, {
-    key: "toCssString",
-    value: function toCssString() {
-      const {
-        colors
-      } = this;
-      // CSS line-gradient
-      if (colors) {
-        const colorsStr = colors.map(c => `${c.color.toRgbString()} ${c.percent}%`).join(', ');
-        return `linear-gradient(90deg, ${colorsStr})`;
-      }
-      return this.metaColor.toRgbString();
-    }
-  }, {
-    key: "equals",
-    value: function equals(color) {
-      if (!color || this.isGradient() !== color.isGradient()) {
-        return false;
-      }
-      if (!this.isGradient()) {
-        return this.toHexString() === color.toHexString();
-      }
-      return this.colors.length === color.colors.length && this.colors.every((c, i) => {
-        const target = color.colors[i];
-        return c.percent === target.percent && c.color.equals(target.color);
-      });
-    }
-  }]);
-}();
+// EXTERNAL MODULE: ./node_modules/antd/es/color-picker/color.js
+var color = __webpack_require__(11616);
+// EXTERNAL MODULE: ./node_modules/@rc-component/color-picker/es/index.js + 13 modules
+var color_picker_es = __webpack_require__(39899);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/hooks/useMergedState.js
 var hooks_useMergedState = __webpack_require__(21770);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/color-picker/components/ColorPresets.js
@@ -4706,7 +4617,7 @@ const isBright = (value, bgColorToken) => {
     b,
     a
   } = value.toRgb();
-  const hsv = new color_Color(value.toRgbString()).onBackground(bgColorToken).toHsv();
+  const hsv = new color_picker_es/* Color */.Il(value.toRgbString()).onBackground(bgColorToken).toHsv();
   if (a <= 0.5) {
     // Adapted to dark mode
     return hsv.v > 0.5;
@@ -4809,12 +4720,13 @@ const prepareComponentToken = token => {
   const contentLineHeight = (_d = token.contentLineHeight) !== null && _d !== void 0 ? _d : (0,genFontSizes/* getLineHeight */.D)(contentFontSize);
   const contentLineHeightSM = (_e = token.contentLineHeightSM) !== null && _e !== void 0 ? _e : (0,genFontSizes/* getLineHeight */.D)(contentFontSizeSM);
   const contentLineHeightLG = (_f = token.contentLineHeightLG) !== null && _f !== void 0 ? _f : (0,genFontSizes/* getLineHeight */.D)(contentFontSizeLG);
-  const solidTextColor = isBright(new AggregationColor(token.colorBgSolid), '#fff') ? '#000' : '#fff';
+  const solidTextColor = isBright(new color/* AggregationColor */.y9(token.colorBgSolid), '#fff') ? '#000' : '#fff';
   const shadowColorTokens = presetColors/* PresetColors */.i.reduce((prev, colorKey) => Object.assign(Object.assign({}, prev), {
     [`${colorKey}ShadowColor`]: `0 ${(0,cssinjs_es/* unit */.bf)(token.controlOutlineWidth)} 0 ${(0,getAlphaColor/* default */.Z)(token[`${colorKey}1`], token.colorBgContainer)}`
   }), {});
   return Object.assign(Object.assign({}, shadowColorTokens), {
     fontWeight: 400,
+    iconGap: token.marginXS,
     defaultShadow: `0 ${token.controlOutlineWidth}px 0 ${token.controlTmpOutline}`,
     primaryShadow: `0 ${token.controlOutlineWidth}px 0 ${token.controlOutline}`,
     dangerShadow: `0 ${token.controlOutlineWidth}px 0 ${token.colorErrorOutline}`,
@@ -4874,7 +4786,7 @@ const genSharedButtonStyle = token => {
     opacityLoading,
     motionDurationSlow,
     motionEaseInOut,
-    marginXS,
+    iconGap,
     calc
   } = token;
   return {
@@ -4882,7 +4794,7 @@ const genSharedButtonStyle = token => {
       outline: 'none',
       position: 'relative',
       display: 'inline-flex',
-      gap: token.marginXS,
+      gap: iconGap,
       alignItems: 'center',
       justifyContent: 'center',
       fontWeight,
@@ -4917,9 +4829,6 @@ const genSharedButtonStyle = token => {
         // make `btn-icon-only` not too narrow
         [`&${componentCls}-compact-item`]: {
           flex: 'none'
-        },
-        [`&${componentCls}-round`]: {
-          width: 'auto'
         }
       },
       // Loading
@@ -4934,7 +4843,7 @@ const genSharedButtonStyle = token => {
       [`&:not(${componentCls}-icon-end)`]: {
         [`${componentCls}-loading-icon-motion`]: {
           '&-appear-start, &-enter-start': {
-            marginInlineEnd: calc(marginXS).mul(-1).equal()
+            marginInlineEnd: calc(iconGap).mul(-1).equal()
           },
           '&-appear-active, &-enter-active': {
             marginInlineEnd: 0
@@ -4943,7 +4852,7 @@ const genSharedButtonStyle = token => {
             marginInlineEnd: 0
           },
           '&-leave-active': {
-            marginInlineEnd: calc(marginXS).mul(-1).equal()
+            marginInlineEnd: calc(iconGap).mul(-1).equal()
           }
         }
       },
@@ -4951,7 +4860,7 @@ const genSharedButtonStyle = token => {
         flexDirection: 'row-reverse',
         [`${componentCls}-loading-icon-motion`]: {
           '&-appear-start, &-enter-start': {
-            marginInlineStart: calc(marginXS).mul(-1).equal()
+            marginInlineStart: calc(iconGap).mul(-1).equal()
           },
           '&-appear-active, &-enter-active': {
             marginInlineStart: 0
@@ -4960,7 +4869,7 @@ const genSharedButtonStyle = token => {
             marginInlineStart: 0
           },
           '&-leave-active': {
-            marginInlineStart: calc(marginXS).mul(-1).equal()
+            marginInlineStart: calc(iconGap).mul(-1).equal()
           }
         }
       }
@@ -4976,14 +4885,8 @@ const genHoverActiveButtonStyle = (btnCls, hoverStyle, activeStyle) => ({
 // ============================== Shape ===============================
 const genCircleButtonStyle = token => ({
   minWidth: token.controlHeight,
-  paddingInlineStart: 0,
-  paddingInlineEnd: 0,
+  paddingInline: 0,
   borderRadius: '50%'
-});
-const genRoundButtonStyle = token => ({
-  borderRadius: token.controlHeight,
-  paddingInlineStart: token.calc(token.controlHeight).div(2).equal(),
-  paddingInlineEnd: token.calc(token.controlHeight).div(2).equal()
 });
 const genDisabledStyle = token => ({
   cursor: 'not-allowed',
@@ -5083,8 +4986,10 @@ const genPresetColorStyle = token => {
         borderColor: activeColor,
         background: token.colorBgContainer
       })), genDashedButtonStyle(token)), genFilledButtonStyle(token, lightColor, {
+        color: darkColor,
         background: lightHoverColor
       }, {
+        color: darkColor,
         background: lightBorderColor
       })), genTextLinkButtonStyle(token, darkColor, 'link', {
         color: hoverColor
@@ -5110,8 +5015,10 @@ const genDefaultButtonStyle = token => Object.assign(Object.assign(Object.assign
   color: token.solidTextColor,
   background: token.colorBgSolidActive
 })), genDashedButtonStyle(token)), genFilledButtonStyle(token, token.colorFillTertiary, {
+  color: token.defaultColor,
   background: token.colorFillSecondary
 }, {
+  color: token.defaultColor,
   background: token.colorFill
 })), genGhostButtonStyle(token.componentCls, token.ghostBg, token.defaultGhostColor, token.defaultGhostBorderColor, token.colorTextDisabled, token.colorBorder)), genTextLinkButtonStyle(token, token.textTextColor, 'link', {
   color: token.colorLinkHover,
@@ -5131,8 +5038,10 @@ const genPrimaryButtonStyle = token => Object.assign(Object.assign(Object.assign
   borderColor: token.colorPrimaryActive,
   background: token.colorBgContainer
 })), genDashedButtonStyle(token)), genFilledButtonStyle(token, token.colorPrimaryBg, {
+  color: token.colorPrimary,
   background: token.colorPrimaryBgHover
 }, {
+  color: token.colorPrimary,
   background: token.colorPrimaryBorder
 })), genTextLinkButtonStyle(token, token.colorPrimaryText, 'text', {
   color: token.colorPrimaryTextHover,
@@ -5166,8 +5075,10 @@ const genDangerousStyle = token => Object.assign(Object.assign(Object.assign(Obj
   color: token.colorErrorActive,
   borderColor: token.colorErrorActive
 })), genDashedButtonStyle(token)), genFilledButtonStyle(token, token.colorErrorBg, {
+  color: token.colorError,
   background: token.colorErrorBgFilledHover
 }, {
+  color: token.colorError,
   background: token.colorErrorBgActive
 })), genTextLinkButtonStyle(token, token.colorError, 'text', {
   color: token.colorErrorHover,
@@ -5265,7 +5176,12 @@ const genButtonStyle = (token, prefixCls = '') => {
   {
     [`${componentCls}${componentCls}-circle${prefixCls}`]: genCircleButtonStyle(token)
   }, {
-    [`${componentCls}${componentCls}-round${prefixCls}`]: genRoundButtonStyle(token)
+    [`${componentCls}${componentCls}-round${prefixCls}`]: {
+      borderRadius: token.controlHeight,
+      [`&:not(${componentCls}-icon-only)`]: {
+        paddingInline: token.buttonPaddingHorizontal
+      }
+    }
   }];
 };
 const genSizeBaseButtonStyle = token => {
@@ -5336,15 +5252,18 @@ const genBlockButtonStyle = token => {
 // EXTERNAL MODULE: ./node_modules/antd/es/style/compact-item.js
 var compact_item = __webpack_require__(80110);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/style/compact-item-vertical.js
-function compactItemVerticalBorder(token, parentCls) {
+function compactItemVerticalBorder(token, parentCls, prefixCls) {
   return {
     // border collapse
     [`&-item:not(${parentCls}-last-item)`]: {
       marginBottom: token.calc(token.lineWidth).mul(-1).equal()
     },
+    [`&-item:not(${prefixCls}-status-success)`]: {
+      zIndex: 2
+    },
     '&-item': {
       '&:hover,&:focus,&:active': {
-        zIndex: 2
+        zIndex: 3
       },
       '&[disabled]': {
         zIndex: 0
@@ -5374,7 +5293,7 @@ function compactItemBorderVerticalRadius(prefixCls, parentCls) {
 function genCompactItemVerticalStyle(token) {
   const compactCls = `${token.componentCls}-compact-vertical`;
   return {
-    [compactCls]: Object.assign(Object.assign({}, compactItemVerticalBorder(token, compactCls)), compactItemBorderVerticalRadius(token.componentCls, compactCls))
+    [compactCls]: Object.assign(Object.assign({}, compactItemVerticalBorder(token, compactCls, token.componentCls)), compactItemBorderVerticalRadius(token.componentCls, compactCls))
   };
 }
 ;// CONCATENATED MODULE: ./node_modules/antd/es/button/style/compact.js
@@ -5441,6 +5360,7 @@ var button_rest = undefined && undefined.__rest || function (s, e) {
 
 
 
+
 function getLoadingConfig(loading) {
   if (typeof loading === 'object' && loading) {
     let delay = loading === null || loading === void 0 ? void 0 : loading.delay;
@@ -5472,7 +5392,7 @@ const InternalCompoundedButton = /*#__PURE__*/react.forwardRef((props, ref) => {
       variant,
       type,
       danger = false,
-      shape = 'default',
+      shape: customizeShape,
       size: customizeSize,
       styles,
       disabled: customDisabled,
@@ -5497,6 +5417,7 @@ const InternalCompoundedButton = /*#__PURE__*/react.forwardRef((props, ref) => {
   const {
     button
   } = react.useContext(context/* ConfigContext */.E_);
+  const shape = customizeShape || (button === null || button === void 0 ? void 0 : button.shape) || 'default';
   const [mergedColor, mergedVariant] = (0,react.useMemo)(() => {
     // >>>>> Local
     // Color & Variant
@@ -5516,7 +5437,7 @@ const InternalCompoundedButton = /*#__PURE__*/react.forwardRef((props, ref) => {
       return [button.color, button.variant];
     }
     return ['default', 'outlined'];
-  }, [type, color, variant, danger, button === null || button === void 0 ? void 0 : button.variant, button === null || button === void 0 ? void 0 : button.color]);
+  }, [color, variant, type, danger, button === null || button === void 0 ? void 0 : button.color, button === null || button === void 0 ? void 0 : button.variant, mergedType]);
   const isDanger = mergedColor === 'danger';
   const mergedColorText = isDanger ? 'dangerous' : mergedColor;
   const {
@@ -5553,7 +5474,7 @@ const InternalCompoundedButton = /*#__PURE__*/react.forwardRef((props, ref) => {
   // ========================= Effect =========================
   // Loading. Should use `useLayoutEffect` to avoid low perf multiple click issue.
   // https://github.com/ant-design/ant-design/issues/51325
-  (0,react.useLayoutEffect)(() => {
+  (0,useLayoutEffect/* default */.Z)(() => {
     let delayTimer = null;
     if (loadingOrDelay.delay > 0) {
       delayTimer = setTimeout(() => {
@@ -5665,7 +5586,8 @@ const InternalCompoundedButton = /*#__PURE__*/react.forwardRef((props, ref) => {
       style: fullStyle,
       onClick: handleClick,
       ref: mergedRef,
-      tabIndex: mergedDisabled ? -1 : 0
+      tabIndex: mergedDisabled ? -1 : 0,
+      "aria-disabled": mergedDisabled
     }), iconNode, kids));
   }
   let buttonNode = /*#__PURE__*/react.createElement("button", Object.assign({}, rest, {
@@ -5697,6 +5619,129 @@ if (false) {}
 
 
 /* harmony default export */ var es_button = (button_button);
+
+/***/ }),
+
+/***/ 11616:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   y9: function() { return /* binding */ AggregationColor; }
+/* harmony export */ });
+/* unused harmony exports toHexFormat, getHex */
+/* harmony import */ var _babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15671);
+/* harmony import */ var _babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(43144);
+/* harmony import */ var _rc_component_color_picker__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(39899);
+
+
+
+const toHexFormat = (value, alpha) => (value === null || value === void 0 ? void 0 : value.replace(/[^\w/]/g, '').slice(0, alpha ? 8 : 6)) || '';
+const getHex = (value, alpha) => value ? toHexFormat(value, alpha) : '';
+let AggregationColor = /*#__PURE__*/function () {
+  function AggregationColor(color) {
+    (0,_babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, AggregationColor);
+    var _a;
+    this.cleared = false;
+    // Clone from another AggregationColor
+    if (color instanceof AggregationColor) {
+      this.metaColor = color.metaColor.clone();
+      this.colors = (_a = color.colors) === null || _a === void 0 ? void 0 : _a.map(info => ({
+        color: new AggregationColor(info.color),
+        percent: info.percent
+      }));
+      this.cleared = color.cleared;
+      return;
+    }
+    const isArray = Array.isArray(color);
+    if (isArray && color.length) {
+      this.colors = color.map(({
+        color: c,
+        percent
+      }) => ({
+        color: new AggregationColor(c),
+        percent
+      }));
+      this.metaColor = new _rc_component_color_picker__WEBPACK_IMPORTED_MODULE_0__/* .Color */ .Il(this.colors[0].color.metaColor);
+    } else {
+      this.metaColor = new _rc_component_color_picker__WEBPACK_IMPORTED_MODULE_0__/* .Color */ .Il(isArray ? '' : color);
+    }
+    if (!color || isArray && !this.colors) {
+      this.metaColor = this.metaColor.setA(0);
+      this.cleared = true;
+    }
+  }
+  return (0,_babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(AggregationColor, [{
+    key: "toHsb",
+    value: function toHsb() {
+      return this.metaColor.toHsb();
+    }
+  }, {
+    key: "toHsbString",
+    value: function toHsbString() {
+      return this.metaColor.toHsbString();
+    }
+  }, {
+    key: "toHex",
+    value: function toHex() {
+      return getHex(this.toHexString(), this.metaColor.a < 1);
+    }
+  }, {
+    key: "toHexString",
+    value: function toHexString() {
+      return this.metaColor.toHexString();
+    }
+  }, {
+    key: "toRgb",
+    value: function toRgb() {
+      return this.metaColor.toRgb();
+    }
+  }, {
+    key: "toRgbString",
+    value: function toRgbString() {
+      return this.metaColor.toRgbString();
+    }
+  }, {
+    key: "isGradient",
+    value: function isGradient() {
+      return !!this.colors && !this.cleared;
+    }
+  }, {
+    key: "getColors",
+    value: function getColors() {
+      return this.colors || [{
+        color: this,
+        percent: 0
+      }];
+    }
+  }, {
+    key: "toCssString",
+    value: function toCssString() {
+      const {
+        colors
+      } = this;
+      // CSS line-gradient
+      if (colors) {
+        const colorsStr = colors.map(c => `${c.color.toRgbString()} ${c.percent}%`).join(', ');
+        return `linear-gradient(90deg, ${colorsStr})`;
+      }
+      return this.metaColor.toRgbString();
+    }
+  }, {
+    key: "equals",
+    value: function equals(color) {
+      if (!color || this.isGradient() !== color.isGradient()) {
+        return false;
+      }
+      if (!this.isGradient()) {
+        return this.toHexString() === color.toHexString();
+      }
+      return this.colors.length === color.colors.length && this.colors.every((c, i) => {
+        const target = color.colors[i];
+        return c.percent === target.percent && c.color.equals(target.color);
+      });
+    }
+  }]);
+}();
 
 /***/ }),
 
@@ -5852,7 +5897,7 @@ const dimensionMaxMap = {
   xl: '1199.98px',
   xxl: '1599.98px'
 };
-const isNumeric = value => !Number.isNaN(Number.parseFloat(value)) && isFinite(value);
+const isNumeric = val => !Number.isNaN(Number.parseFloat(val)) && Number.isFinite(Number(val));
 const SiderContext = /*#__PURE__*/react.createContext({});
 const generateId = (() => {
   let i = 0;
@@ -5940,7 +5985,7 @@ const Sider = /*#__PURE__*/(/* unused pure expression or super */ null && (React
   // use "px" as fallback unit for width
   const siderWidth = isNumeric(rawWidth) ? `${rawWidth}px` : String(rawWidth);
   // special trigger when collapsedWidth == 0
-  const zeroWidthTrigger = parseFloat(String(collapsedWidth || 0)) === 0 ? (/*#__PURE__*/React.createElement("span", {
+  const zeroWidthTrigger = Number.parseFloat(String(collapsedWidth || 0)) === 0 ? (/*#__PURE__*/React.createElement("span", {
     onClick: toggle,
     className: classNames(`${prefixCls}-zero-width-trigger`, `${prefixCls}-zero-width-trigger-${reverseArrow ? 'right' : 'left'}`),
     style: zeroWidthTriggerStyle
@@ -5969,7 +6014,7 @@ const Sider = /*#__PURE__*/(/* unused pure expression or super */ null && (React
     [`${prefixCls}-collapsed`]: !!collapsed,
     [`${prefixCls}-has-trigger`]: collapsible && trigger !== null && !zeroWidthTrigger,
     [`${prefixCls}-below`]: !!below,
-    [`${prefixCls}-zero-width`]: parseFloat(siderWidth) === 0
+    [`${prefixCls}-zero-width`]: Number.parseFloat(siderWidth) === 0
   }, className, hashId, cssVarCls);
   const contextValue = React.useMemo(() => ({
     siderCollapsed: collapsed
@@ -6037,8 +6082,8 @@ const MenuDivider = props => {
 /* harmony default export */ var menu_MenuDivider = (MenuDivider);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/Children/toArray.js
 var toArray = __webpack_require__(50344);
-// EXTERNAL MODULE: ./node_modules/antd/es/tooltip/index.js + 7 modules
-var tooltip = __webpack_require__(46041);
+// EXTERNAL MODULE: ./node_modules/antd/es/tooltip/index.js + 8 modules
+var tooltip = __webpack_require__(42697);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/menu/MenuItem.js
 "use client";
 
@@ -6278,7 +6323,7 @@ const getRTLStyle = ({
 ;// CONCATENATED MODULE: ./node_modules/antd/es/menu/style/theme.js
 
 
-const accessibilityFocus = token => Object.assign({}, (0,style/* genFocusOutline */.oN)(token));
+const accessibilityFocus = token => (0,style/* genFocusOutline */.oN)(token);
 const getThemeStyle = (token, themeSuffix) => {
   const {
     componentCls,
@@ -8059,7 +8104,7 @@ const Dropdown = props => {
     arrowWidth: arrow ? token.sizePopupArrow : 0,
     borderRadius: token.borderRadius
   });
-  const onMenuClick = react.useCallback(() => {
+  const onMenuClick = (0,useEvent/* default */.Z)(() => {
     if ((menu === null || menu === void 0 ? void 0 : menu.selectable) && (menu === null || menu === void 0 ? void 0 : menu.multiple)) {
       return;
     }
@@ -8067,7 +8112,7 @@ const Dropdown = props => {
       source: 'menu'
     });
     setOpen(false);
-  }, [menu === null || menu === void 0 ? void 0 : menu.selectable, menu === null || menu === void 0 ? void 0 : menu.multiple]);
+  });
   const renderOverlay = () => {
     // rc-dropdown already can process the function of overlay, but we have check logic here.
     // So we need render the element to check and pass back to rc-dropdown.
@@ -8142,8 +8187,8 @@ const WrapPurePanel = props => (/*#__PURE__*/react.createElement(dropdown_PurePa
 Dropdown._InternalPanelDoNotUseOrYouWillBeFired = WrapPurePanel;
 if (false) {}
 /* harmony default export */ var dropdown = (Dropdown);
-// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 25 modules
-var es_button = __webpack_require__(77683);
+// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 10 modules
+var es_button = __webpack_require__(75398);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/index.js + 2 modules
 var space = __webpack_require__(42075);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/Compact.js
@@ -9739,7 +9784,7 @@ function _validateRule() {
             });
           }
         case 18:
-          if (!(!result.length && subRuleField)) {
+          if (!(!result.length && subRuleField && Array.isArray(value) && value.length > 0)) {
             _context2.next = 23;
             break;
           }
@@ -12168,7 +12213,7 @@ RefForm.useWatch = es_useWatch;
 
 const context_FormContext = /*#__PURE__*/react.createContext({
   labelAlign: 'right',
-  vertical: false,
+  layout: 'horizontal',
   itemRef: () => {}
 });
 const NoStyleItemContext = /*#__PURE__*/(/* unused pure expression or super */ null && (React.createContext(null)));
@@ -12298,8 +12343,8 @@ var useLocale = __webpack_require__(10110);
 var useToken = __webpack_require__(25976);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/hooks/useState.js
 var useState = __webpack_require__(30470);
-// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 25 modules
-var es_button = __webpack_require__(77683);
+// EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 10 modules
+var es_button = __webpack_require__(75398);
 // EXTERNAL MODULE: ./node_modules/antd/es/button/buttonHelpers.js
 var buttonHelpers = __webpack_require__(33671);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/ActionButton.js
@@ -12309,9 +12354,9 @@ var buttonHelpers = __webpack_require__(33671);
 
 
 
-function isThenable(thing) {
-  return !!(thing === null || thing === void 0 ? void 0 : thing.then);
-}
+const isThenable = thing => {
+  return typeof (thing === null || thing === void 0 ? void 0 : thing.then) === 'function';
+};
 const ActionButton = props => {
   const {
     type,
@@ -12346,7 +12391,7 @@ const ActionButton = props => {
         clearTimeout(timeoutId);
       }
     };
-  }, []);
+  }, [autoFocus]);
   const handlePromiseOnOk = returnValueOfOnOk => {
     if (!isThenable(returnValueOfOnOk)) {
       return;
@@ -13080,8 +13125,10 @@ function usePanelRef(panelSelector) {
   const panelRef = (0,useEvent/* default */.Z)(ele => {
     if (ele) {
       const innerContentEle = panelSelector ? ele.querySelector(panelSelector) : ele;
-      watermark.add(innerContentEle);
-      panelEleRef.current = innerContentEle;
+      if (innerContentEle) {
+        watermark.add(innerContentEle);
+        panelEleRef.current = innerContentEle;
+      }
     } else {
       watermark.remove(panelEleRef.current);
     }
@@ -13142,7 +13189,6 @@ var modal_locale = __webpack_require__(83008);
 
 
 
-
 function renderCloseIcon(prefixCls, closeIcon) {
   return /*#__PURE__*/react.createElement("span", {
     className: `${prefixCls}-close-x`
@@ -13166,18 +13212,18 @@ const Footer = props => {
   // ================== Locale Text ==================
   const okTextLocale = okText || (locale === null || locale === void 0 ? void 0 : locale.okText);
   const cancelTextLocale = cancelText || (locale === null || locale === void 0 ? void 0 : locale.cancelText);
-  // ================= Context Value =================
-  const btnCtxValue = {
-    confirmLoading,
-    okButtonProps,
-    cancelButtonProps,
-    okTextLocale,
-    cancelTextLocale,
-    okType,
-    onOk,
-    onCancel
-  };
-  const btnCtxValueMemo = react.useMemo(() => btnCtxValue, (0,toConsumableArray/* default */.Z)(Object.values(btnCtxValue)));
+  const memoizedValue = react.useMemo(() => {
+    return {
+      confirmLoading,
+      okButtonProps,
+      cancelButtonProps,
+      okTextLocale,
+      cancelTextLocale,
+      okType,
+      onOk,
+      onCancel
+    };
+  }, [confirmLoading, okButtonProps, cancelButtonProps, okTextLocale, cancelTextLocale, okType, onOk, onCancel]);
   let footerNode;
   if (typeof footer === 'function' || typeof footer === 'undefined') {
     footerNode = /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement(components_NormalCancelBtn, null), /*#__PURE__*/react.createElement(components_NormalOkBtn, null));
@@ -13188,7 +13234,7 @@ const Footer = props => {
       });
     }
     footerNode = /*#__PURE__*/react.createElement(ModalContextProvider, {
-      value: btnCtxValueMemo
+      value: memoizedValue
     }, footerNode);
   } else {
     footerNode = footer;
@@ -13627,9 +13673,11 @@ const Modal = props => {
       onOk,
       onCancel,
       destroyOnHidden,
-      destroyOnClose
+      destroyOnClose,
+      panelRef = null,
+      modalRender
     } = props,
-    restProps = __rest(props, ["prefixCls", "className", "rootClassName", "open", "wrapClassName", "centered", "getContainer", "focusTriggerAfterClose", "style", "visible", "width", "footer", "classNames", "styles", "children", "loading", "confirmLoading", "zIndex", "mousePosition", "onOk", "onCancel", "destroyOnHidden", "destroyOnClose"]);
+    restProps = __rest(props, ["prefixCls", "className", "rootClassName", "open", "wrapClassName", "centered", "getContainer", "focusTriggerAfterClose", "style", "visible", "width", "footer", "classNames", "styles", "children", "loading", "confirmLoading", "zIndex", "mousePosition", "onOk", "onCancel", "destroyOnHidden", "destroyOnClose", "panelRef", "modalRender"]);
   const {
     getPopupContainer: getContextPopupContainer,
     getPrefixCls,
@@ -13659,16 +13707,22 @@ const Modal = props => {
     onOk: handleOk,
     onCancel: handleCancel
   }))) : null;
-  const [mergedClosable, mergedCloseIcon, closeBtnIsDisabled, ariaProps] = (0,useClosable/* default */.Z)((0,useClosable/* pickClosable */.w)(props), (0,useClosable/* pickClosable */.w)(modalContext), {
+  const [mergedClosable, mergedCloseIcon, closeBtnIsDisabled, ariaProps] = (0,useClosable/* useClosable */.b)((0,useClosable/* pickClosable */.w)(props), (0,useClosable/* pickClosable */.w)(modalContext), {
     closable: true,
     closeIcon: /*#__PURE__*/react.createElement(CloseOutlined/* default */.Z, {
       className: `${prefixCls}-close-icon`
     }),
     closeIconRender: icon => renderCloseIcon(prefixCls, icon)
   });
+  // ============================ modalRender ============================
+  const mergedModalRender = modalRender ? node => /*#__PURE__*/react.createElement("div", {
+    className: `${prefixCls}-render`
+  }, modalRender(node)) : undefined;
   // ============================ Refs ============================
   // Select `ant-modal-content` by `panelRef`
-  const panelRef = usePanelRef(`.${prefixCls}-content`);
+  const panelClassName = `.${prefixCls}-${modalRender ? 'render' : 'content'}`;
+  const innerPanelRef = usePanelRef(panelClassName);
+  const mergedPanelRef = (0,es_ref/* composeRef */.sQ)(panelRef, innerPanelRef);
   // ============================ zIndex ============================
   const [zIndex, contextZIndex] = (0,useZIndex/* useZIndex */.Cn)('Modal', customizeZIndex);
   // =========================== Width ============================
@@ -13689,7 +13743,7 @@ const Modal = props => {
       });
     }
     return vars;
-  }, [responsiveWidth]);
+  }, [prefixCls, responsiveWidth]);
   // =========================== Render ===========================
   return wrapCSSVar(/*#__PURE__*/react.createElement(ContextIsolator/* default */.Z, {
     form: true,
@@ -13721,9 +13775,10 @@ const Modal = props => {
       wrapper: classnames_default()(wrapClassNameExtended, modalClassNames === null || modalClassNames === void 0 ? void 0 : modalClassNames.wrapper)
     }),
     styles: Object.assign(Object.assign({}, modalContext === null || modalContext === void 0 ? void 0 : modalContext.styles), modalStyles),
-    panelRef: panelRef,
+    panelRef: mergedPanelRef,
     // TODO: In the future, destroyOnClose in rc-dialog needs to be upgrade to destroyOnHidden
-    destroyOnClose: destroyOnHidden !== null && destroyOnHidden !== void 0 ? destroyOnHidden : destroyOnClose
+    destroyOnClose: destroyOnHidden !== null && destroyOnHidden !== void 0 ? destroyOnHidden : destroyOnClose,
+    modalRender: mergedModalRender
   }), loading ? (/*#__PURE__*/react.createElement(skeleton/* default */.Z, {
     active: true,
     title: false,
@@ -13832,14 +13887,13 @@ const genModalConfirmStyle = token => {
 // ============================== Export ==============================
 /* harmony default export */ var style_confirm = ((0,genStyleUtils/* genSubStyleComponent */.bk)(['Modal', 'confirm'], token => {
   const modalToken = prepareToken(token);
-  return [genModalConfirmStyle(modalToken)];
+  return genModalConfirmStyle(modalToken);
 }, prepareComponentToken, {
   // confirm is weak than modal since no conflict here
   order: -1000
 }));
 ;// CONCATENATED MODULE: ./node_modules/antd/es/modal/ConfirmDialog.js
 "use client";
-
 
 var ConfirmDialog_rest = undefined && undefined.__rest || function (s, e) {
   var t = {};
@@ -13866,7 +13920,7 @@ var ConfirmDialog_rest = undefined && undefined.__rest || function (s, e) {
 
 
 
-function ConfirmContent(props) {
+const ConfirmContent = props => {
   const {
       prefixCls,
       icon,
@@ -13907,14 +13961,14 @@ function ConfirmContent(props) {
   // ================== Locale Text ==================
   const okTextLocale = okText || (mergedOkCancel ? mergedLocale === null || mergedLocale === void 0 ? void 0 : mergedLocale.okText : mergedLocale === null || mergedLocale === void 0 ? void 0 : mergedLocale.justOkText);
   const cancelTextLocale = cancelText || (mergedLocale === null || mergedLocale === void 0 ? void 0 : mergedLocale.cancelText);
-  // ================= Context Value =================
-  const btnCtxValue = Object.assign({
-    autoFocusButton,
-    cancelTextLocale,
-    okTextLocale,
-    mergedOkCancel
-  }, resetProps);
-  const btnCtxValueMemo = react.useMemo(() => btnCtxValue, (0,toConsumableArray/* default */.Z)(Object.values(btnCtxValue)));
+  const memoizedValue = react.useMemo(() => {
+    return Object.assign({
+      autoFocusButton,
+      cancelTextLocale,
+      okTextLocale,
+      mergedOkCancel
+    }, resetProps);
+  }, [autoFocusButton, cancelTextLocale, okTextLocale, mergedOkCancel, resetProps]);
   // ====================== Footer Origin Node ======================
   const footerOriginNode = /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement(components_ConfirmCancelBtn, null), /*#__PURE__*/react.createElement(components_ConfirmOkBtn, null));
   const hasTitle = props.title !== undefined && props.title !== null;
@@ -13932,7 +13986,7 @@ function ConfirmContent(props) {
   }, props.title), /*#__PURE__*/react.createElement("div", {
     className: `${confirmPrefixCls}-content`
   }, props.content))), footer === undefined || typeof footer === 'function' ? (/*#__PURE__*/react.createElement(ModalContextProvider, {
-    value: btnCtxValueMemo
+    value: memoizedValue
   }, /*#__PURE__*/react.createElement("div", {
     className: `${confirmPrefixCls}-btns`
   }, typeof footer === 'function' ? footer(footerOriginNode, {
@@ -13941,7 +13995,7 @@ function ConfirmContent(props) {
   }) : footerOriginNode))) : footer, /*#__PURE__*/react.createElement(style_confirm, {
     prefixCls: prefixCls
   }));
-}
+};
 const ConfirmDialog = props => {
   const {
     close,
@@ -13954,7 +14008,8 @@ const ConfirmDialog = props => {
     bodyStyle,
     closable = false,
     onConfirm,
-    styles
+    styles,
+    title
   } = props;
   if (false) {}
   const confirmPrefixCls = `${prefixCls}-confirm`;
@@ -13987,7 +14042,7 @@ const ConfirmDialog = props => {
       });
       onConfirm === null || onConfirm === void 0 ? void 0 : onConfirm(false);
     },
-    title: "",
+    title: title,
     footer: null,
     transitionName: (0,motion/* getTransitionName */.m)(rootPrefixCls || '', 'zoom', props.transitionName),
     maskTransitionName: (0,motion/* getTransitionName */.m)(rootPrefixCls || '', 'fade', props.maskTransitionName),
@@ -14092,7 +14147,7 @@ function confirm_confirm(config) {
     }
     reactUnmount();
   }
-  function render(props) {
+  const scheduleRender = props => {
     clearTimeout(timeoutId);
     /**
      * https://github.com/ant-design/ant-design/issues/23623
@@ -14109,9 +14164,9 @@ function confirm_confirm(config) {
         prefixCls: rootPrefixCls,
         iconPrefixCls: iconPrefixCls,
         theme: theme
-      }, global.holderRender ? global.holderRender(dom) : dom), container);
+      }, typeof global.holderRender === 'function' ? global.holderRender(dom) : dom), container);
     });
-  }
+  };
   function close(...args) {
     currentConfig = Object.assign(Object.assign({}, currentConfig), {
       open: false,
@@ -14127,7 +14182,7 @@ function confirm_confirm(config) {
     if (currentConfig.visible) {
       delete currentConfig.visible;
     }
-    render(currentConfig);
+    scheduleRender(currentConfig);
   }
   function update(configUpdate) {
     if (typeof configUpdate === 'function') {
@@ -14135,9 +14190,9 @@ function confirm_confirm(config) {
     } else {
       currentConfig = Object.assign(Object.assign({}, currentConfig), configUpdate);
     }
-    render(currentConfig);
+    scheduleRender(currentConfig);
   }
-  render(currentConfig);
+  scheduleRender(currentConfig);
   modal_destroyFns.push(close);
   return {
     destroy: close,
@@ -14251,7 +14306,7 @@ const PurePanel_PurePanel = props => {
 ;// CONCATENATED MODULE: ./node_modules/antd/es/_util/hooks/usePatchElement.js
 
 
-function usePatchElement() {
+const usePatchElement = () => {
   const [elements, setElements] = react.useState([]);
   const patchElement = react.useCallback(element => {
     // append a new element to elements (and create a new ref)
@@ -14263,7 +14318,7 @@ function usePatchElement() {
     };
   }, []);
   return [elements, patchElement];
-}
+};
 // EXTERNAL MODULE: ./node_modules/antd/es/locale/en_US.js + 6 modules
 var en_US = __webpack_require__(3115);
 ;// CONCATENATED MODULE: ./node_modules/antd/es/modal/useModal/HookModal.js
@@ -14350,7 +14405,7 @@ const ElementsHolder = /*#__PURE__*/react.memo(/*#__PURE__*/react.forwardRef((_p
   const [elements, patchElement] = usePatchElement();
   react.useImperativeHandle(ref, () => ({
     patchElement
-  }), []);
+  }), [patchElement]);
   return /*#__PURE__*/react.createElement(react.Fragment, null, elements);
 }));
 function useModal() {
@@ -14430,7 +14485,7 @@ function useModal() {
     error: getConfirmFunc(withError),
     warning: getConfirmFunc(withWarn),
     confirm: getConfirmFunc(withConfirm)
-  }), []);
+  }), [getConfirmFunc]);
   return [fns, /*#__PURE__*/react.createElement(ElementsHolder, {
     key: "modal-holder",
     ref: holderRef
@@ -14843,7 +14898,7 @@ const prepareComponentToken = token => {
     skeletonLoadingBackground: `linear-gradient(90deg, ${token.gradientFromColor} 25%, ${token.gradientToColor} 37%, ${token.gradientFromColor} 63%)`,
     skeletonLoadingMotionDuration: '1.4s'
   });
-  return [genBaseStyle(skeletonToken)];
+  return genBaseStyle(skeletonToken);
 }, prepareComponentToken, {
   deprecatedTokens: [['color', 'gradientFromColor'], ['colorGradientEnd', 'gradientToColor']]
 }));
@@ -15345,7 +15400,7 @@ const Compact = props => {
       isFirstItem: i === 0 && (!compactItemContext || (compactItemContext === null || compactItemContext === void 0 ? void 0 : compactItemContext.isFirstItem)),
       isLastItem: i === childNodes.length - 1 && (!compactItemContext || (compactItemContext === null || compactItemContext === void 0 ? void 0 : compactItemContext.isLastItem))
     }, child);
-  }), [size, childNodes, compactItemContext]);
+  }), [childNodes, compactItemContext, direction, mergedSize, prefixCls]);
   // =========================== Render ===========================
   if (childNodes.length === 0) {
     return null;
@@ -15481,25 +15536,24 @@ const InternalSpace = /*#__PURE__*/react.forwardRef((props, ref) => {
     [`${prefixCls}-gap-col-${horizontalSize}`]: isPresetHorizontalSize
   }, className, rootClassName, cssVarCls);
   const itemClassName = classnames_default()(`${prefixCls}-item`, (_a = customClassNames === null || customClassNames === void 0 ? void 0 : customClassNames.item) !== null && _a !== void 0 ? _a : contextClassNames.item);
+  const mergedItemStyle = Object.assign(Object.assign({}, contextStyles.item), styles === null || styles === void 0 ? void 0 : styles.item);
   // Calculate latest one
-  let latestIndex = 0;
-  const nodes = childNodes.map((child, i) => {
-    var _a;
-    if (child !== null && child !== undefined) {
-      latestIndex = i;
-    }
+  const renderedItems = childNodes.map((child, i) => {
     const key = (child === null || child === void 0 ? void 0 : child.key) || `${itemClassName}-${i}`;
     return /*#__PURE__*/react.createElement(space_Item, {
       className: itemClassName,
       key: key,
       index: i,
       split: split,
-      style: (_a = styles === null || styles === void 0 ? void 0 : styles.item) !== null && _a !== void 0 ? _a : contextStyles.item
+      style: mergedItemStyle
     }, child);
   });
-  const spaceContext = react.useMemo(() => ({
-    latestIndex
-  }), [latestIndex]);
+  const memoizedSpaceContext = react.useMemo(() => {
+    const calcLatestIndex = childNodes.reduce((latest, child, i) => child !== null && child !== undefined ? i : latest, 0);
+    return {
+      latestIndex: calcLatestIndex
+    };
+  }, [childNodes]);
   // =========================== Render ===========================
   if (childNodes.length === 0) {
     return null;
@@ -15519,8 +15573,8 @@ const InternalSpace = /*#__PURE__*/react.forwardRef((props, ref) => {
     className: cls,
     style: Object.assign(Object.assign(Object.assign({}, gapStyle), contextStyle), style)
   }, otherProps), /*#__PURE__*/react.createElement(SpaceContextProvider, {
-    value: spaceContext
-  }, nodes)));
+    value: memoizedSpaceContext
+  }, renderedItems)));
 });
 const Space = InternalSpace;
 Space.Compact = Compact/* default */.ZP;
@@ -15656,7 +15710,7 @@ const prepareComponentToken = () => ({});
 /* harmony export */   c: function() { return /* binding */ genCompactItemStyle; }
 /* harmony export */ });
 // handle border collapse
-function compactItemBorder(token, parentCls, options) {
+function compactItemBorder(token, parentCls, options, prefixCls) {
   const {
     focusElCls,
     focus,
@@ -15668,13 +15722,16 @@ function compactItemBorder(token, parentCls, options) {
     [`&-item:not(${parentCls}-last-item)`]: {
       marginInlineEnd: token.calc(token.lineWidth).mul(-1).equal()
     },
+    [`&-item:not(${prefixCls}-status-success)`]: {
+      zIndex: 2
+    },
     '&-item': Object.assign(Object.assign({
       [hoverEffects]: {
-        zIndex: 2
+        zIndex: 3
       }
     }, focusElCls ? {
       [`&${focusElCls}`]: {
-        zIndex: 2
+        zIndex: 3
       }
     } : {}), {
       [`&[disabled] ${childCombinator}`]: {
@@ -15715,7 +15772,7 @@ function genCompactItemStyle(token, options = {
   } = token;
   const compactCls = `${componentCls}-compact`;
   return {
-    [compactCls]: Object.assign(Object.assign({}, compactItemBorder(token, compactCls, options)), compactItemBorderRadius(componentCls, compactCls, options))
+    [compactCls]: Object.assign(Object.assign({}, compactItemBorder(token, compactCls, options, componentCls)), compactItemBorderRadius(componentCls, compactCls, options))
   };
 }
 
@@ -16624,7 +16681,7 @@ function genPresetColor(token, genCss) {
 
 /***/ }),
 
-/***/ 46041:
+/***/ 42697:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 
@@ -16862,7 +16919,7 @@ var ContextIsolator = __webpack_require__(89942);
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/hooks/useZIndex.js
 var useZIndex = __webpack_require__(87263);
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/motion.js
-var _util_motion = __webpack_require__(33603);
+var motion = __webpack_require__(33603);
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/placements.js
 var _util_placements = __webpack_require__(80636);
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/reactNode.js
@@ -16939,7 +16996,7 @@ const genTooltipStyle = token => {
         minWidth: centerAlignMinWidth,
         minHeight: controlHeight,
         padding: `${(0,cssinjs_es/* unit */.bf)(token.calc(paddingSM).div(2).equal())} ${(0,cssinjs_es/* unit */.bf)(paddingXS)}`,
-        color: tooltipColor,
+        color: `var(--ant-tooltip-color, ${tooltipColor})`,
         textAlign: 'start',
         textDecoration: 'none',
         wordWrap: 'break-word',
@@ -17023,7 +17080,68 @@ const prepareComponentToken = token => Object.assign(Object.assign({
 });
 // EXTERNAL MODULE: ./node_modules/antd/es/_util/colors.js
 var colors = __webpack_require__(98787);
+// EXTERNAL MODULE: ./node_modules/@rc-component/color-picker/es/index.js + 13 modules
+var color_picker_es = __webpack_require__(39899);
+// EXTERNAL MODULE: ./node_modules/antd/es/color-picker/color.js
+var color_picker_color = __webpack_require__(11616);
+;// CONCATENATED MODULE: ./node_modules/antd/es/color-picker/util.js
+
+
+
+const generateColor = color => {
+  if (color instanceof color_picker_color/* AggregationColor */.y9) {
+    return color;
+  }
+  return new color_picker_color/* AggregationColor */.y9(color);
+};
+const getRoundNumber = value => Math.round(Number(value || 0));
+const getColorAlpha = color => getRoundNumber(color.toHsb().a * 100);
+/** Return the color whose `alpha` is 1 */
+const genAlphaColor = (color, alpha) => {
+  const rgba = color.toRgb();
+  // Color from hsb input may get `rgb` is (0/0/0) when `hsb.b` is 0
+  // So if rgb is empty, we should get from hsb
+  if (!rgba.r && !rgba.g && !rgba.b) {
+    const hsba = color.toHsb();
+    hsba.a = alpha || 1;
+    return generateColor(hsba);
+  }
+  rgba.a = alpha || 1;
+  return generateColor(rgba);
+};
+/**
+ * Get percent position color. e.g. [10%-#fff, 20%-#000], 15% => #888
+ */
+const getGradientPercentColor = (colors, percent) => {
+  const filledColors = [{
+    percent: 0,
+    color: colors[0].color
+  }].concat(_toConsumableArray(colors), [{
+    percent: 100,
+    color: colors[colors.length - 1].color
+  }]);
+  for (let i = 0; i < filledColors.length - 1; i += 1) {
+    const startPtg = filledColors[i].percent;
+    const endPtg = filledColors[i + 1].percent;
+    const startColor = filledColors[i].color;
+    const endColor = filledColors[i + 1].color;
+    if (startPtg <= percent && percent <= endPtg) {
+      const dist = endPtg - startPtg;
+      if (dist === 0) {
+        return startColor;
+      }
+      const ratio = (percent - startPtg) / dist * 100;
+      const startRcColor = new RcColor(startColor);
+      const endRcColor = new RcColor(endColor);
+      return startRcColor.mix(endRcColor, ratio).toRgbString();
+    }
+  }
+  // This will never reach
+  /* istanbul ignore next */
+  return '';
+};
 ;// CONCATENATED MODULE: ./node_modules/antd/es/tooltip/util.js
+
 
 
 function parseColor(prefixCls, color) {
@@ -17033,8 +17151,12 @@ function parseColor(prefixCls, color) {
   });
   const overlayStyle = {};
   const arrowStyle = {};
+  const rgb = generateColor(color).toRgb();
+  const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+  const textColor = luminance < 0.5 ? '#FFF' : '#000';
   if (color && !isInternalColor) {
     overlayStyle.background = color;
+    overlayStyle['--ant-tooltip-color'] = textColor;
     // @ts-ignore
     arrowStyle['--antd-arrow-background-color'] = color;
   }
@@ -17131,7 +17253,7 @@ const InternalTooltip = /*#__PURE__*/react.forwardRef((props, ref) => {
       builtinPlacements,
       arrowPointAtCenter = false,
       autoAdjustOverflow = true,
-      motion,
+      motion: _motion,
       getPopupContainer,
       placement = 'top',
       mouseEnterDelay = 0.1,
@@ -17262,7 +17384,7 @@ const InternalTooltip = /*#__PURE__*/react.forwardRef((props, ref) => {
       className: `${prefixCls}-arrow-content`
     }),
     motion: {
-      motionName: (0,_util_motion/* getTransitionName */.m)(rootPrefixCls, 'zoom-big-fast', props.transitionName),
+      motionName: (0,motion/* getTransitionName */.m)(rootPrefixCls, 'zoom-big-fast', props.transitionName),
       motionDeadline: 1000
     },
     // TODO: In the future, destroyTooltipOnHide in rc-tooltip needs to be upgrade to destroyOnHidden
@@ -17810,7 +17932,7 @@ RawItem.displayName = 'RawItem';
 
 
 
-var Overflow_excluded = ["prefixCls", "data", "renderItem", "renderRawItem", "itemKey", "itemWidth", "ssr", "style", "className", "maxCount", "renderRest", "renderRawRest", "suffix", "component", "itemComponent", "onVisibleChange"];
+var Overflow_excluded = ["prefixCls", "data", "renderItem", "renderRawItem", "itemKey", "itemWidth", "ssr", "style", "className", "maxCount", "renderRest", "renderRawRest", "prefix", "suffix", "component", "itemComponent", "onVisibleChange"];
 
 
 
@@ -17842,6 +17964,7 @@ function Overflow(props, ref) {
     maxCount = props.maxCount,
     renderRest = props.renderRest,
     renderRawRest = props.renderRawRest,
+    prefix = props.prefix,
     suffix = props.suffix,
     _props$component = props.component,
     Component = _props$component === void 0 ? 'div' : _props$component,
@@ -17869,8 +17992,12 @@ function Overflow(props, ref) {
     setRestWidth = _useEffectState8[1];
   var _useEffectState9 = useEffectState(notifyEffectUpdate, 0),
     _useEffectState10 = (0,slicedToArray/* default */.Z)(_useEffectState9, 2),
-    suffixWidth = _useEffectState10[0],
-    setSuffixWidth = _useEffectState10[1];
+    prefixWidth = _useEffectState10[0],
+    setPrefixWidth = _useEffectState10[1];
+  var _useEffectState11 = useEffectState(notifyEffectUpdate, 0),
+    _useEffectState12 = (0,slicedToArray/* default */.Z)(_useEffectState11, 2),
+    suffixWidth = _useEffectState12[0],
+    setSuffixWidth = _useEffectState12[1];
   var _useState = (0,react.useState)(null),
     _useState2 = (0,slicedToArray/* default */.Z)(_useState, 2),
     suffixFixedStart = _useState2[0],
@@ -17970,6 +18097,9 @@ function Overflow(props, ref) {
     setRestWidth(width);
     setPrevRestWidth(restWidth);
   }
+  function registerPrefixSize(_, width) {
+    setPrefixWidth(width);
+  }
   function registerSuffixSize(_, width) {
     setSuffixWidth(width);
   }
@@ -17980,7 +18110,7 @@ function Overflow(props, ref) {
   }
   (0,useLayoutEffect/* default */.Z)(function () {
     if (mergedContainerWidth && typeof mergedRestWidth === 'number' && mergedData) {
-      var totalWidth = suffixWidth;
+      var totalWidth = prefixWidth + suffixWidth;
       var len = mergedData.length;
       var lastIndex = len - 1;
 
@@ -18023,7 +18153,7 @@ function Overflow(props, ref) {
         setSuffixFixedStart(null);
       }
     }
-  }, [mergedContainerWidth, itemWidths, restWidth, suffixWidth, getKey, mergedData]);
+  }, [mergedContainerWidth, itemWidths, restWidth, prefixWidth, suffixWidth, getKey, mergedData]);
 
   // ================================ Render ================================
   var displayRest = restReady && !!omittedItems.length;
@@ -18083,7 +18213,14 @@ function Overflow(props, ref) {
     className: classnames_default()(!invalidate && prefixCls, className),
     style: style,
     ref: ref
-  }, restProps), mergedData.map(internalRenderItemNode), showRest ? restNode : null, suffix && /*#__PURE__*/react.createElement(es_Item, (0,esm_extends/* default */.Z)({}, itemSharedProps, {
+  }, restProps), prefix && /*#__PURE__*/react.createElement(es_Item, (0,esm_extends/* default */.Z)({}, itemSharedProps, {
+    responsive: isResponsive,
+    responsiveDisabled: !shouldResponsive,
+    order: -1,
+    className: "".concat(itemPrefixCls, "-prefix"),
+    registerSize: registerPrefixSize,
+    display: true
+  }), prefix), mergedData.map(internalRenderItemNode), showRest ? restNode : null, suffix && /*#__PURE__*/react.createElement(es_Item, (0,esm_extends/* default */.Z)({}, itemSharedProps, {
     responsive: isResponsive,
     responsiveDisabled: !shouldResponsive,
     order: mergedDisplayCount,
