@@ -25,15 +25,15 @@ export const SegOptions: SegmentedOptions<any> = [
     ),
     value: "mrc20",
   },
-  {
-    label: (
-      <div style={{ padding: 4 }} className="SegmentedItem">
-        <TokenIcon symbol="BRC20" src={BRC20} size={28} />
-        <span>BRC20</span>
-      </div>
-    ),
-    value: "brc20",
-  },
+  // {
+  //   label: (
+  //     <div style={{ padding: 4 }} className="SegmentedItem">
+  //       <TokenIcon symbol="BRC20" src={BRC20} size={28} />
+  //       <span>BRC20</span>
+  //     </div>
+  //   ),
+  //   value: "brc20",
+  // },
   // {
   //   label: (
   //     <div style={{ padding: 4 }} className="SegmentedItem">
