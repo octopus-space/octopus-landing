@@ -326,7 +326,23 @@ export default () => {
     setSubmitting(false);
   };
 
+  const isMintPaused = useMemo(() => {
+    if (bridgeType !== "mint") return false;
+    return Boolean(AssetsInfo?.mintPaused || (asset && asset.isEnableMint === false));
+  }, [AssetsInfo, asset, bridgeType]);
+
+  const mintPausedMessage = useMemo(() => {
+    return (
+      AssetsInfo?.mintPausedMessage ||
+      "该功能暂时关闭，重开时间请留意官方公告"
+    );
+  }, [AssetsInfo]);
+
   const mint = async () => {
+    if (isMintPaused) {
+      message.warning(mintPausedMessage);
+      return;
+    }
     if (!btcAddress || !asset || !network || !AssetsInfo) return;
 
     try {
@@ -377,9 +393,17 @@ export default () => {
       }
       setSuccessVisible(true);
       await getBal();
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
-      message.error(err.message || "unknown error");
+      const errMsg =
+        err?.response?.data?.message ||
+        err?.response?.data?.msg ||
+        err?.data?.message ||
+        err?.data?.msg ||
+        err?.message ||
+        err?.msg ||
+        "unknown error";
+      message.error(errMsg);
     }
 
     setSubmitting(false);
@@ -387,6 +411,14 @@ export default () => {
 
   const conditions = useMemo(() => {
     return [
+      {
+        condition: isMintPaused,
+        text: mintPausedMessage,
+        type: "primary",
+        onClick: () => {
+          message.warning(mintPausedMessage);
+        },
+      },
       {
         condition: !amount,
         text: "Enter Amount",
@@ -406,12 +438,16 @@ export default () => {
         onClick: () => { },
       },
     ];
-  }, [ErrorMsg, amount]);
+  }, [ErrorMsg, amount, isMintPaused, mintPausedMessage, reciveAmount]);
   const handleSubmit = () => {
     if (bridgeType === "mint") return mint();
     if (bridgeType === "redeem") return redeem();
   };
   const handleConfirm = () => {
+    if (isMintPaused) {
+      message.warning(mintPausedMessage);
+      return;
+    }
     setConfirmProps({
       show: true,
       amount,
@@ -668,6 +704,9 @@ export default () => {
 
 
             </div>
+          }
+          {
+            isMintPaused && <Alert message={mintPausedMessage} type="warning" style={{ marginTop: 20 }} showIcon />
           }
           {
             balCheck && <Alert message={balCheck} type='warning' style={{ marginTop: 20 }} showIcon />

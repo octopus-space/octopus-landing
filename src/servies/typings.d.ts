@@ -38,6 +38,8 @@ declare namespace API {
     feeMvc: number;
     net: string;
     transactionSize: TransactionSize;
+    mintPaused?: boolean;
+    mintPausedMessage?: string;
   };
   interface Ret<T> {
     success: boolean;

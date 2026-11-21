@@ -44,6 +44,18 @@ export const supportRedeemAddressType: SupportRedeemAddressType[] = [
 export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
+
+function extractApiErrorMessage(error: any): string {
+  return (
+    error?.response?.data?.message ||
+    error?.response?.data?.msg ||
+    error?.data?.message ||
+    error?.data?.msg ||
+    error?.message ||
+    error?.msg ||
+    "unknown error"
+  );
+}
 // send mvc side token
 async function sendToken(
   amount: string,
@@ -449,7 +461,7 @@ export async function mintBtc(
     return submitRes;
     //success
   } catch (error) {
-    throw new Error((error as any).message || (error as any).msg);
+    throw new Error(extractApiErrorMessage(error));
   }
 }
 
@@ -745,7 +757,7 @@ export async function mintBrc(
     return submitRes;
     //success
   } catch (error) {
-    throw new Error((error as any).message || (error as any).msg);
+    throw new Error(extractApiErrorMessage(error));
   }
 }
 
@@ -797,7 +809,7 @@ export async function mintRunes(
     if (!submitRes.success) throw new Error(submitRes.msg);
     return submitRes;
   } catch (error) {
-    throw new Error((error as any).message || (error as any).msg);
+    throw new Error(extractApiErrorMessage(error));
   }
 }
 
@@ -808,65 +820,70 @@ export async function mintMrc20(
   network: Network,
   assetInfo: API.AssetsData
 ) {
-  const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
-    await signMintPublicKey();
-  const createPrepayOrderDto = {
-    amount: String(mintAmount),
-    originTokenId: asset.originTokenId,
-    addressType: addressType,
-    publicKey: publicKey,
-    publicKeySign: publicKeySign,
-    publicKeyReceive,
-    publicKeyReceiveSign: publicKeyReceiveSign,
-  };
-  const { data: createResp } = await createPrepayOrderMintMrc20(
-    network,
-    createPrepayOrderDto
-  );
-  console.log("createResp", createResp);
-  // transfer mrc-20  to bridge address and serviceFee to service address
-  const {
-    orderId,
-    bridgeAddress,
-    bridgeRuleServiceAddress,
-    bridgeRuleServiceMintFee,
-  } = createResp;
-  const params: any = {
-    body: JSON.stringify([
-      {
-        amount: String(mintAmount),
-        vout: 1,
-        id: asset.originTokenId,
-      },
-    ]),
-    amount: String(mintAmount),
-    mrc20TickId: asset.originTokenId,
-    flag: "metaid",
-    revealAddr: bridgeAddress,
-    commitFeeRate: assetInfo.feeBtc,
-    revealFeeRate: assetInfo.feeBtc,
-  };
-  if (bridgeRuleServiceAddress && bridgeRuleServiceMintFee) {
-    params.service = {
-      address: bridgeRuleServiceAddress,
-      satoshis: bridgeRuleServiceMintFee,
+  try {
+    const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
+      await signMintPublicKey();
+    const createPrepayOrderDto = {
+      amount: String(mintAmount),
+      originTokenId: asset.originTokenId,
+      addressType: addressType,
+      publicKey: publicKey,
+      publicKeySign: publicKeySign,
+      publicKeyReceive,
+      publicKeyReceiveSign: publicKeyReceiveSign,
     };
+    const { data: createResp } = await createPrepayOrderMintMrc20(
+      network,
+      createPrepayOrderDto
+    );
+    console.log("createResp", createResp);
+    // transfer mrc-20  to bridge address and serviceFee to service address
+    const {
+      orderId,
+      bridgeAddress,
+      bridgeRuleServiceAddress,
+      bridgeRuleServiceMintFee,
+    } = createResp;
+    const params: any = {
+      body: JSON.stringify([
+        {
+          amount: String(mintAmount),
+          vout: 1,
+          id: asset.originTokenId,
+        },
+      ]),
+      amount: String(mintAmount),
+      mrc20TickId: asset.originTokenId,
+      flag: "metaid",
+      revealAddr: bridgeAddress,
+      commitFeeRate: assetInfo.feeBtc,
+      revealFeeRate: assetInfo.feeBtc,
+    };
+    if (bridgeRuleServiceAddress && bridgeRuleServiceMintFee) {
+      params.service = {
+        address: bridgeRuleServiceAddress,
+        satoshis: bridgeRuleServiceMintFee,
+      };
+    }
+    const MRC20Transfer = await window.metaidwallet.btc
+      .transferMRC20(params)
+      .catch((e) => {
+        throw new Error(e as any);
+      });
+    if (MRC20Transfer.status) throw new Error(MRC20Transfer.status);
+    const { commitTx, revealTx } = MRC20Transfer;
+    console.log("commitTx", commitTx);
+    const submitPrepayOrderMintDto = {
+      orderId,
+      txHexList: [commitTx.rawTx, revealTx.rawTx],
+    };
+    const submitRes = await submitPrepayOrderMintMrc20(
+      network,
+      submitPrepayOrderMintDto
+    );
+    if (!submitRes.success) throw new Error(submitRes.msg);
+    return submitRes;
+  } catch (error) {
+    throw new Error(extractApiErrorMessage(error));
   }
-  const MRC20Transfer = await window.metaidwallet.btc
-    .transferMRC20(params)
-    .catch((e) => {
-      throw new Error(e as any);
-    });
-  if (MRC20Transfer.status) throw new Error(MRC20Transfer.status);
-  const { commitTx, revealTx } = MRC20Transfer;
-  console.log("commitTx", commitTx);
-  const submitPrepayOrderMintDto = {
-    orderId,
-    txHexList: [commitTx.rawTx, revealTx.rawTx],
-  };
-  const submitRes = await submitPrepayOrderMintMrc20(
-    network,
-    submitPrepayOrderMintDto
-  );
-  if (!submitRes.success) throw new Error(submitRes.msg);
 }
