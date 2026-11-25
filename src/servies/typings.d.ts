@@ -7,11 +7,12 @@ declare namespace API {
     feeRateNumeratorRedeem: number;
     isEnableMint: boolean;
     isEnableRedeem: boolean;
-    network: string;
+    isBeta?: boolean;
+    network: "BTC" | "MRC20" | string;
     originName: string;
     originSymbol: string;
     originTokenId: string;
-    price: number;
+    price?: number;
     targetName: string;
     targetSymbol: string;
     targetTokenCodeHash: string;
@@ -19,14 +20,18 @@ declare namespace API {
     targetTokenId: string;
     trimDecimals: number;
   };
+
   type TransactionSize = {
-    BRC20_MINT: number;
-    BRC20_REDEEM: number;
     BTC_MINT: number;
     BTC_REDEEM: number;
-    RUNES_REDEEM: number;
-    RUNES_MINT: number;
+    MRC20_MINT?: number;
+    MRC20_REDEEM?: number;
+    BRC20_MINT?: number;
+    BRC20_REDEEM?: number;
+    RUNES_REDEEM?: number;
+    RUNES_MINT?: number;
   };
+
   type AssetsData = {
     amountLimitMaximum: string;
     amountLimitMinimum: string;
@@ -41,15 +46,31 @@ declare namespace API {
     mintPaused?: boolean;
     mintPausedMessage?: string;
   };
+
+  type FeeQuoteData = {
+    scenario: "btc_mint" | "mrc20_mint" | "btc_redeem" | "mrc20_redeem";
+    network: "BTC" | "MRC20";
+    direction: "mint" | "redeem";
+    btcFeeRate: number;
+    mvcFeeRate: number;
+    safetyMultiplier: number;
+    btcFeeSats: number;
+    btcFeeAddress: string;
+    mvcFeeSats: number;
+    mvcFeeAddress: string;
+    assetFeeAmount: "0";
+  };
+
   interface Ret<T> {
     success: boolean;
-    code: number;
-    message: string;
-    msg: string;
+    code?: number;
+    message?: string;
+    msg?: string;
     data: T;
   }
+
   interface ListRet<T> {
-    success: boolean;
+    success?: boolean;
     code: number;
     message: string;
     data: {
@@ -57,23 +78,14 @@ declare namespace API {
       list: T[];
     };
   }
-  type TransferbleBRC20 = {
-    amount: string;
-    inscriptionId: string;
-    inscriptionNumber: string;
-    outValue: number;
-  };
-  type BRC20Info = {
-    balance: string;
-    transferBalanceList: TransferbleBRC20[];
-    message: string;
-  };
+
   enum PrepayOrderStatus {
     doing = "doing",
     success = "success",
     cancel = "cancel",
     failed = "failed",
   }
+
   type HsitoryDetail = {
     amount: string;
     timestamp: string;
@@ -89,14 +101,6 @@ declare namespace API {
     originTokenId: string;
     targetTokenId: string;
     progess?: number;
-  };
-  type RUNESItem = {
-    amount: string;
-    runeId: string;
-    rune: string;
-    spacedRune: string;
-    symbol: string;
-    divisibility: string;
   };
 
   type MRC20Item = {
@@ -127,6 +131,7 @@ declare namespace API {
     balance: string;
     decimals: string;
   };
+
   type UTXO = {
     txId: string;
     vout: number;
@@ -141,19 +146,10 @@ declare namespace API {
           num: number;
         }[]
       | null;
-    runes?: RUNESItem[];
   };
+
   type Network = "mainnet" | "testnet";
-  type RuneSendParams = {
-    runeId: string;
-    feeRate: number;
-    recipient: string;
-    runeAmount: string;
-    divisibility: number;
-    net: Network;
-    addressType: string;
-    outputValue?: number;
-  };
+
   type Tx = {
     address: string;
     value: number;

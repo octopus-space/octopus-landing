@@ -54,7 +54,7 @@ export default () => {
   const children = [];
   for (let i = 0; i < Math.floor(page3.length / 2); i++) {
     children.push(
-      <QueueAnim component={Row} type="bottom" key={i}  componentProps={{ gutter: [42,36], className: "cardwrap" }}>
+      <QueueAnim component={Row as any} type="bottom" key={i}  componentProps={{ gutter: [42,36], className: "cardwrap" }}>
         {page3
           .map((item, index) => GetLi(i, item, index))
           .filter((item) => item)}

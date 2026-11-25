@@ -78,7 +78,7 @@ export default () => {
         </p>
         <QueueAnim
           key="content"
-          component={Row}
+          component={Row as any}
           type="bottom"
           componentProps={{  className: "cardwrap" }}
         >

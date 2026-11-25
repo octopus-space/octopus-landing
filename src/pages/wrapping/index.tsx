@@ -1,8 +1,6 @@
 import {
-  Button,
   Card,
   Dropdown,
-  Flex,
   InputNumber,
   Segmented,
   Space,
@@ -10,12 +8,13 @@ import {
   message,
   theme,
   Grid,
-  Alert
+  Alert,
 } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "./index.less";
 import { useModel } from "umi";
+import Decimal from "decimal.js";
 import historyIcon from "@/assets/history.svg";
 import {
   FeeInfo,
@@ -24,42 +23,41 @@ import {
   calcRedeemInfo,
   calculateQuantityLimitRange,
   determineAddressInfo,
+  formatSat,
 } from "@/utils/utils";
 import History from "./components/History";
 import FormButton from "@/components/FormButton";
 import { SegOptions } from "./components/Options";
 import {
   SupportRedeemAddressType,
-  mintBrc,
   mintBtc,
   mintMrc20,
-  mintRunes,
-  redeemBrc20,
   redeemBtc,
   redeemMrc20,
-  redeemRunes,
   supportRedeemAddressType,
 } from "@/servies/wrapping";
-import { getUserBRC20, getUserMrc20Balance, getUserMrc20Balances, getUserRunesBalance } from "@/servies/api";
+import { getUserMrc20Balances } from "@/servies/api";
 import SelectAsset from "@/components/SelectAsset";
 import Summary, { ConfirmProps } from "./components/Summary";
 import SuccessModel from "@/components/SuccessModel";
 import SwitchChain from "./components/SwitchChain";
-import MintBrc20Input from "./components/MintBrc20Input";
 import InputToken from "./components/InputToken";
 import NumberFormat from "@/components/NumberFormat";
 import { checkWalletAddress } from "@/utils/psbtBuild";
-const defalut: ConfirmProps = {
+
+const defaultConfirmProps: ConfirmProps = {
   show: false,
   amount: "",
   reciveAmount: "",
   bridgeFee: "",
   totalFee: "",
   minerFee: "",
-  handleSubmit: async () => { },
-  onClose: () => { },
+  handleSubmit: async () => {},
+  onClose: () => {},
 };
+
 const { useBreakpoint } = Grid;
+
 export default () => {
   const {
     token: { colorBgBase, borderRadius, borderRadiusSM },
@@ -70,10 +68,10 @@ export default () => {
   const { userBal, connected, btcAddress, network, getBal } =
     useModel("wallet");
   const {
-    fromChain,
     asset,
     protocolType,
     AssetsInfo,
+    feeQuote,
     setProtocolType,
     setAsset,
     resetInput,
@@ -86,30 +84,18 @@ export default () => {
     ErrorMsg,
     setErrorMsg,
     bridgeType,
-    brc20Info,
-    setBrc20Info,
-    runesInfo,
-    setRunesInfo,
-    inscription,
-    setInscription,
-    mrc20Info, setMrc20Info
+    mrc20Info,
+    setMrc20Info,
   } = useModel("wrapping");
+
   const [selectAssetVisible, setSelectAssetVisible] = useState<
     "send" | "recive"
   >();
   const [successVisible, setSuccessVisible] = useState(false);
-
-
-
-  const [refreshInput, setRefreshInput] = useState<boolean>(false);
-  const [confrimProps, setConfirmProps] = useState<ConfirmProps>(defalut);
+  const [confrimProps, setConfirmProps] =
+    useState<ConfirmProps>(defaultConfirmProps);
   const [loadingInput, setLoadingInput] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
-
-
-
-
 
   const handleHistory = () => {
     if (connected) {
@@ -118,217 +104,331 @@ export default () => {
       message.warning("please connect wallet");
     }
   };
+
   const sendBal = useMemo(() => {
-    if (!asset) return 0;
-    if (bridgeType === 'redeem') {
+    if (!asset) return "0";
+    if (bridgeType === "redeem") {
       return userBal[asset.targetTokenGenesis] || "0";
     }
-    switch (protocolType) {
-      case "btc": return userBal["btc"] || "0";
-      case "brc20": return (brc20Info && brc20Info.balance) || "--";
-      case "runes": return runesInfo ? Number(
-        (
-          Number(runesInfo.amount) /
-          10 ** Number(runesInfo.divisibility)
-        ).toFixed(2)
-      ) : '--';
-      // case "mrc20": return mrc20Info ? mrc20Info.reduce((a, b) => {
-      //   return a + b.mrc20s.reduce((c, d) => {
-      //     return c + Number(d.amount)
-      //   }, 0)
-      // }, 0) : "--";
-      case "mrc20": {
-        const find = mrc20Info?.find((item) => item.mrc20Id === asset?.originTokenId)
-        if (find) {
-          return find.balance
-        } else {
-          return '0'
-        }
-      }
+    if (protocolType === "btc") {
+      return userBal["btc"] || "0";
     }
-
-  }, [protocolType, bridgeType, asset, userBal, brc20Info, runesInfo, mrc20Info]);
+    if (protocolType === "mrc20") {
+      const find = mrc20Info?.find(
+        (item) => item.mrc20Id === asset.originTokenId
+      );
+      return find ? find.balance : "0";
+    }
+    return "0";
+  }, [protocolType, bridgeType, asset, userBal, mrc20Info]);
 
   const actionType = useMemo(() => {
-    return bridgeType + protocolType
-  }, [bridgeType, protocolType])
+    return bridgeType + protocolType;
+  }, [bridgeType, protocolType]);
+
+  const assetMaxDecimals = useMemo(() => {
+    if (!asset) return 8;
+    return asset.network === "BTC"
+      ? asset.decimals
+      : Math.max(0, asset.decimals - asset.trimDecimals);
+  }, [asset]);
+
+  const recomputeFeeAndReceive = useCallback(
+    (val: string | number | null) => {
+      if (val === null || val === undefined || val === "") {
+        setReciveAmount("");
+        setErrorMsg("");
+        return;
+      }
+      if (AssetsInfo && asset) {
+        try {
+          const info: FeeInfo =
+            bridgeType === "mint"
+              ? calcMintInfo(val, AssetsInfo, asset, feeQuote)
+              : calcRedeemInfo(val, AssetsInfo, asset, feeQuote);
+          if (Number(info.receiveAmount) <= 0) {
+            throw new Error("Low send amount");
+          }
+          setErrorMsg("");
+          setReciveAmount(info.receiveAmount);
+          setFeeInfo(info);
+        } catch (err: any) {
+          setReciveAmount("");
+          setErrorMsg(err.message || "Invalid amount");
+        }
+      }
+    },
+    [AssetsInfo, asset, bridgeType, feeQuote, setErrorMsg, setFeeInfo, setReciveAmount]
+  );
 
   const onInputChange = (value: string | number | null) => {
-    if (!value) return
+    if (value === null || value === undefined || value === "") {
+      setAmount("");
+      setReciveAmount("");
+      setErrorMsg("");
+      return;
+    }
     setAmount(value);
-    if (AssetsInfo && asset) {
-      let info: FeeInfo;
-      try {
-        if (bridgeType === 'mint') {
-          info = calcMintInfo(Number(value), AssetsInfo, asset)
-        } else {
-          info = calcRedeemInfo(Number(value), AssetsInfo, asset)
-        }
-        if (Number(info.receiveAmount) < 0) {
-          throw new Error("low send amount");
-        }
-        setErrorMsg("");
-        setReciveAmount(info.receiveAmount);
-        setFeeInfo(info);
-      } catch (err: any) {
-        console.log(err);
-        setReciveAmount("");
-        setErrorMsg(err.message || "unknown error");
-      }
-    }
+    recomputeFeeAndReceive(value);
   };
-  const brc20OriginSymbol = useMemo(() => {
-    if (asset && asset.network == 'BRC20' && asset.originSymbol) {
-      return asset.originSymbol
-    }
-  }, [asset])
 
-  const runesOriginTokenId = useMemo(() => {
-    if (asset && asset.network == 'RUNES' && asset.originTokenId) {
-      return asset.originTokenId
+  useEffect(() => {
+    if (amount !== "" && amount !== undefined && amount !== null) {
+      recomputeFeeAndReceive(amount);
     }
-  }, [asset])
+  }, [feeQuote, recomputeFeeAndReceive]);
 
   const mrc20OriginTokenId = useMemo(() => {
-    if (asset && asset.network == 'MRC20' && asset.originTokenId) {
-      return asset.originTokenId
+    if (asset && asset.network === "MRC20" && asset.originTokenId) {
+      return asset.originTokenId;
     }
-  }, [asset])
+    return undefined;
+  }, [asset]);
 
   useEffect(() => {
     let didCancel = false;
-    const fetch = async () => {
-      if (!network || !btcAddress) return
-      if (actionType === 'mintbrc20' && brc20OriginSymbol) {
+    const fetchMrcBalances = async () => {
+      if (!network || !btcAddress) return;
+      if (actionType === "mintmrc20" && mrc20OriginTokenId) {
         setLoadingInput(true);
-        const ret = await getUserBRC20(network, {
-          address: btcAddress,
-          tick: brc20OriginSymbol,
-        });
-        if (didCancel) return;
-        setBrc20Info(
-          ret.data || {
-            message: ret.message,
-            balance: "0",
-            transferBalanceList: [],
+        try {
+          let list: API.Mrc20BalItem[] = [];
+          for (let i = 0; i < 10; i++) {
+            const ret = await getUserMrc20Balances(btcAddress, network, i, 50);
+            if (ret.code === 0 && ret.data?.list) {
+              list = [...list, ...ret.data.list];
+              if (ret.data.list.length < 50) break;
+            } else {
+              break;
+            }
           }
-        );
-        setLoadingInput(false);
-      }
-
-      if (
-        actionType === 'mintrunes' && runesOriginTokenId
-      ) {
-        setLoadingInput(true);
-        const ret = await getUserRunesBalance(
-          btcAddress,
-          network,
-          runesOriginTokenId
-        );
-        if (didCancel) return;
-        setRunesInfo(ret.data);
-        setLoadingInput(false);
-      }
-
-      if (actionType === 'mintmrc20' && mrc20OriginTokenId) {
-        setLoadingInput(true);
-        let list: API.Mrc20BalItem[] = [];
-        for (let i = 0; i < 10; i++) {
-          const ret = await getUserMrc20Balances(btcAddress, network, i, 50);
-          if (ret.code === 0) {
-            list = [...list, ...ret.data.list];
-            if (ret.data.list.length < 50) break;
+          if (!didCancel) {
+            setMrc20Info(list);
           }
+        } catch (err) {
+          console.log(err);
+        } finally {
+          if (!didCancel) setLoadingInput(false);
         }
-
-        if (didCancel) return;
-        setMrc20Info(list);
-        setLoadingInput(false);
       }
     };
-    fetch();
+    fetchMrcBalances();
     return () => {
       didCancel = true;
     };
-  }, [actionType, brc20OriginSymbol, runesOriginTokenId, network, btcAddress, refreshInput, mrc20OriginTokenId]);
+  }, [actionType, network, btcAddress, mrc20OriginTokenId, setMrc20Info]);
 
   const inputRange = useMemo(() => {
     let minAmount = 0;
     let maxAmount = 0;
     if (AssetsInfo && asset) {
-      try{
-        [minAmount, maxAmount] = calculateQuantityLimitRange(AssetsInfo, asset)
-      }catch(err){
+      try {
+        [minAmount, maxAmount] = calculateQuantityLimitRange(AssetsInfo, asset);
+      } catch {}
+    }
+    return { maxAmount, minAmount };
+  }, [asset, AssetsInfo]);
 
+  const liveServiceFeeSummary = useMemo(() => {
+    if (!asset) return "";
+    const btcFee = Number(
+      feeQuote?.btcFeeSats ??
+        (bridgeType === "mint"
+          ? protocolType === "btc"
+            ? 800
+            : 1000
+          : protocolType === "btc"
+            ? 880
+            : 2066)
+    );
+    if (bridgeType === "mint") {
+      return `${formatSat(btcFee, 8)} BTC (${btcFee} sats)`;
+    }
+    const mvcFee = Number(feeQuote?.mvcFeeSats ?? 50000);
+    return `${formatSat(mvcFee, 8)} SPACE + ${formatSat(btcFee, 8)} BTC`;
+  }, [asset, bridgeType, protocolType, feeQuote]);
+
+  /**
+   * Dual-chain native gas & bridge fee pre-flight check:
+   * - Mint: checks BTC (and MRC20 token balance); allows 0 SPACE new users.
+   * - Redeem: checks MVC FT balance AND MVC SPACE balance AND BTC balance before allowing Submit!
+   */
+  const balCheck = useMemo(() => {
+    if (!connected || !asset || !amount || Number(amount) <= 0) return "";
+    let decAmount: Decimal;
+    try {
+      decAmount = new Decimal(String(amount));
+      if (decAmount.lte(0)) return "";
+    } catch {
+      return "";
+    }
+
+    const btcSats = Number(userBal.btcSats ?? 0);
+    const spaceSats = Number(userBal.spaceSats ?? 0);
+    const btcRate = Math.max(
+      1,
+      Number(feeQuote?.btcFeeRate || AssetsInfo?.feeBtc || 2)
+    );
+
+    if (bridgeType === "mint") {
+      if (protocolType === "btc") {
+        const principalSats = Number(amountRaw(decAmount.toFixed(), 8));
+        const bridgeFeeSats = Number(feeQuote?.btcFeeSats ?? 800);
+        const estMinerSats = Math.ceil(180 * btcRate);
+        const requiredBtcSats = principalSats + bridgeFeeSats + estMinerSats;
+        if (btcSats < requiredBtcSats) {
+          return `Insufficient BTC balance: need ~${formatSat(
+            requiredBtcSats,
+            8
+          )} BTC (amount + ${formatSat(
+            bridgeFeeSats,
+            8
+          )} BTC bridge fee + miner fee), available ${userBal.btc || "0"} BTC.`;
+        }
+        return "";
       }
-      
-    }
-    return {
-      maxAmount,
-      minAmount
-    }
-  }, [asset, actionType, AssetsInfo]);
 
+      if (protocolType === "mrc20") {
+        if (decAmount.gt(new Decimal(String(sendBal || "0")))) {
+          return `Insufficient ${asset.originSymbol} balance.`;
+        }
+        const bridgeFeeSats = Number(feeQuote?.btcFeeSats ?? 1000);
+        const estCommitRevealSats = 546 + Math.ceil(320 * btcRate);
+        const requiredBtcSats = bridgeFeeSats + estCommitRevealSats;
+        if (btcSats < requiredBtcSats) {
+          return `Insufficient BTC for bridge & network fee: need at least ~${formatSat(
+            requiredBtcSats,
+            8
+          )} BTC (${bridgeFeeSats} sats bridge fee + commit/reveal gas), available ${
+            userBal.btc || "0"
+          } BTC.`;
+        }
+        return "";
+      }
+    }
 
+    if (bridgeType === "redeem") {
+      if (decAmount.gt(new Decimal(String(sendBal || "0")))) {
+        return `Insufficient ${asset.targetSymbol} balance.`;
+      }
+      const mvcFeeSats = Number(feeQuote?.mvcFeeSats ?? 50000);
+      const estMvcMinerSats = 6000;
+      const requiredSpaceSats = mvcFeeSats + estMvcMinerSats;
+      if (spaceSats < requiredSpaceSats) {
+        return `Insufficient MVC SPACE for Redeem fee: need at least ${formatSat(
+          requiredSpaceSats,
+          8
+        )} SPACE (${formatSat(
+          mvcFeeSats,
+          8
+        )} SPACE bridge fee + MVC network gas), available ${
+          userBal.space || "0"
+        } SPACE.`;
+      }
+
+      const defaultBtcFee = protocolType === "btc" ? 880 : 2066;
+      const btcFeeSats = Number(feeQuote?.btcFeeSats ?? defaultBtcFee);
+      const estBtcMinerSats = Math.ceil(150 * btcRate);
+      const requiredBtcSats = btcFeeSats + estBtcMinerSats;
+      if (btcSats < requiredBtcSats) {
+        return `Insufficient BTC for Redeem payout fee: need at least ${formatSat(
+          requiredBtcSats,
+          8
+        )} BTC (${formatSat(
+          btcFeeSats,
+          8
+        )} BTC bridge fee + BTC miner fee), available ${
+          userBal.btc || "0"
+        } BTC.`;
+      }
+    }
+
+    return "";
+  }, [
+    connected,
+    asset,
+    amount,
+    userBal,
+    feeQuote,
+    AssetsInfo,
+    bridgeType,
+    protocolType,
+    sendBal,
+  ]);
+
+  const handleQuickPercent = (ratio: number) => {
+    if (!asset) return;
+    const total = new Decimal(String(sendBal || "0"));
+    if (total.lte(0)) {
+      onInputChange("0");
+      return;
+    }
+    if (bridgeType === "mint" && protocolType === "btc" && ratio === 1) {
+      const btcRate = Math.max(
+        1,
+        Number(feeQuote?.btcFeeRate || AssetsInfo?.feeBtc || 2)
+      );
+      const reserveBtc = new Decimal(
+        Number(feeQuote?.btcFeeSats ?? 800) + Math.ceil(180 * btcRate)
+      ).div(1e8);
+      const maxSend = Decimal.max(0, total.minus(reserveBtc));
+      onInputChange(
+        maxSend.toDP(assetMaxDecimals, Decimal.ROUND_DOWN).toString()
+      );
+      return;
+    }
+    const target = total
+      .mul(ratio)
+      .toDP(assetMaxDecimals, Decimal.ROUND_DOWN)
+      .toString();
+    onInputChange(target);
+  };
 
   const redeem = async () => {
     if (!btcAddress || !asset || !network) return;
 
     try {
       setSubmitting(true);
-      const { status, message } = await checkWalletAddress(btcAddress);
-      if (!status) throw new Error(message)
+      const { status, message: addrErr } = await checkWalletAddress(btcAddress);
+      if (!status) throw new Error(addrErr);
       const addressInfo = determineAddressInfo(btcAddress);
       const addressType: SupportRedeemAddressType =
         addressInfo.toUpperCase() as SupportRedeemAddressType;
       if (!supportRedeemAddressType.includes(addressType)) {
         throw new Error("unsupport address type");
       }
-      if (bridgeType === "redeem" && protocolType === "btc") {
+      if (protocolType === "btc") {
         await redeemBtc(
           amountRaw(String(amount), asset.decimals),
           asset,
           addressType,
-          network
+          network,
+          AssetsInfo
         );
-      }
-      if (asset && bridgeType === "redeem" && protocolType === "brc20") {
-        await redeemBrc20(
-          amountRaw(String(amount), asset.decimals - asset.trimDecimals),
-          asset,
-          addressType,
-          network
-        );
-      }
-      if (asset && bridgeType === "redeem" && protocolType === "runes") {
-        await redeemRunes(
-          amountRaw(String(amount), asset.decimals - asset.trimDecimals),
-          asset,
-          addressType,
-          network
-        );
-      }
-      if (asset && bridgeType === "redeem" && protocolType === "mrc20") {
+      } else if (protocolType === "mrc20") {
         await redeemMrc20(
           amountRaw(String(amount), asset.decimals - asset.trimDecimals),
           asset,
           addressType,
-          network
+          network,
+          AssetsInfo
         );
       }
       setSuccessVisible(true);
-      await getBal();
-    } catch (err) {
+      await getBal(true);
+    } catch (err: any) {
       console.log(err);
       message.error(err.message || "unknown error");
+    } finally {
+      setSubmitting(false);
     }
-
-    setSubmitting(false);
   };
 
   const isMintPaused = useMemo(() => {
     if (bridgeType !== "mint") return false;
-    return Boolean(AssetsInfo?.mintPaused || (asset && asset.isEnableMint === false));
+    return Boolean(
+      AssetsInfo?.mintPaused || (asset && asset.isEnableMint === false)
+    );
   }, [AssetsInfo, asset, bridgeType]);
 
   const mintPausedMessage = useMemo(() => {
@@ -347,44 +447,22 @@ export default () => {
 
     try {
       setSubmitting(true);
-      const { status, message } = await checkWalletAddress(btcAddress);
-      if (!status) throw new Error(message)
+      const { status, message: addrErr } = await checkWalletAddress(btcAddress);
+      if (!status) throw new Error(addrErr);
       const addressInfo = determineAddressInfo(btcAddress);
       const addressType: SupportRedeemAddressType =
         addressInfo.toUpperCase() as SupportRedeemAddressType;
-      if (bridgeType === "mint" && protocolType === "btc") {
-        const ret = await mintBtc(
+      if (protocolType === "btc") {
+        await mintBtc(
           amountRaw(String(amount), 8),
           asset,
           addressType,
           network,
           AssetsInfo
         );
-      }
-      if (inscription && bridgeType === "mint" && protocolType === "brc20") {
-        const ret = await mintBrc(
-          Number(inscription.amount),
-          asset,
-          addressType,
-          network,
-          AssetsInfo,
-          inscription
-        );
-      }
-
-      if (bridgeType === "mint" && protocolType === "runes") {
-        const ret = await mintRunes(
-          amount,
-          asset,
-          addressType,
-          network,
-          AssetsInfo
-        );
-      }
-
-      if (actionType === 'mintmrc20') {
-        const ret = await mintMrc20(
-          Number(amount),
+      } else if (protocolType === "mrc20") {
+        await mintMrc20(
+          String(amount),
           asset,
           addressType,
           network,
@@ -392,7 +470,7 @@ export default () => {
         );
       }
       setSuccessVisible(true);
-      await getBal();
+      await getBal(true);
     } catch (err: any) {
       console.log(err);
       const errMsg =
@@ -404,9 +482,9 @@ export default () => {
         err?.msg ||
         "unknown error";
       message.error(errMsg);
+    } finally {
+      setSubmitting(false);
     }
-
-    setSubmitting(false);
   };
 
   const conditions = useMemo(() => {
@@ -414,38 +492,47 @@ export default () => {
       {
         condition: isMintPaused,
         text: mintPausedMessage,
-        type: "primary",
+        type: "primary" as const,
         onClick: () => {
           message.warning(mintPausedMessage);
         },
       },
       {
-        condition: !amount,
+        condition: !amount || Number(amount) <= 0,
         text: "Enter Amount",
-        type: "primary",
-        onClick: () => { },
+        type: "primary" as const,
+        onClick: () => {},
       },
       {
-        condition: Number(reciveAmount) < 0,
-        text: "Low Send Amount",
-        type: "primary",
-        onClick: () => { },
-      },
-      {
-        condition: ErrorMsg,
+        condition: Boolean(ErrorMsg),
         text: ErrorMsg,
-        type: "primary",
-        onClick: () => { },
+        type: "primary" as const,
+        onClick: () => {},
+      },
+      {
+        condition: Boolean(balCheck),
+        text: "Insufficient Balance",
+        type: "primary" as const,
+        danger: true,
+        onClick: () => {
+          message.warning(balCheck);
+        },
       },
     ];
-  }, [ErrorMsg, amount, isMintPaused, mintPausedMessage, reciveAmount]);
+  }, [ErrorMsg, amount, balCheck, isMintPaused, mintPausedMessage]);
+
   const handleSubmit = () => {
     if (bridgeType === "mint") return mint();
     if (bridgeType === "redeem") return redeem();
   };
+
   const handleConfirm = () => {
     if (isMintPaused) {
       message.warning(mintPausedMessage);
+      return;
+    }
+    if (balCheck) {
+      message.warning(balCheck);
       return;
     }
     setConfirmProps({
@@ -457,32 +544,27 @@ export default () => {
       totalFee: String(feeInfo.totalFee),
       handleSubmit,
       onClose: () => {
-        setConfirmProps(defalut)
-
+        setConfirmProps(defaultConfirmProps);
       },
     });
   };
 
-  const balCheck = useMemo(() => {
-    if (Number(amount) > Number(sendBal)) {
-      return 'Insufficient balance.'
-    }
-    return ''
-  }, [amount, sendBal])
-
-
-
   return (
     <div className="wrapPage">
       <Segmented
-        style={{ width: 520, maxWidth: "92vw", marginBottom: 32, overflow: 'scroll' }}
+        style={{
+          width: 520,
+          maxWidth: "92vw",
+          marginBottom: 32,
+          overflow: "auto",
+        }}
+        value={protocolType}
         onChange={(value) => {
-          setProtocolType(value);
-          setAmount("");
-          setReciveAmount("");
+          setProtocolType(value as any);
+          resetInput();
         }}
         options={SegOptions}
-        size={screens.xs ? 'middle' : "large"}
+        size={screens.xs ? "middle" : "large"}
         block
       />
       <Card
@@ -514,44 +596,38 @@ export default () => {
               <div className="send inputCardWrap">
                 <div className="label">
                   <span>You send</span>
-                  {actionType !== 'mintbrc20' && (
-                    <Space>
-                      <span
-                        className="tag"
-                        style={{
-                          background: colorBgBase,
-                          borderRadius: borderRadiusSM,
-                        }}
-                        onClick={() =>
-                          onInputChange((sendBal * 0.25).toFixed(8))
-                        }
-                      >
-                        25%
-                      </span>
-                      <span
-                        className="tag"
-                        style={{
-                          background: colorBgBase,
-                          borderRadius: borderRadiusSM,
-                        }}
-                        onClick={() =>
-                          onInputChange((sendBal * 0.5).toFixed(8))
-                        }
-                      >
-                        50%
-                      </span>
-                      <span
-                        className="tag"
-                        style={{
-                          background: colorBgBase,
-                          borderRadius: borderRadiusSM,
-                        }}
-                        onClick={() => onInputChange(sendBal)}
-                      >
-                        Max
-                      </span>
-                    </Space>
-                  )}
+                  <Space>
+                    <span
+                      className="tag"
+                      style={{
+                        background: colorBgBase,
+                        borderRadius: borderRadiusSM,
+                      }}
+                      onClick={() => handleQuickPercent(0.25)}
+                    >
+                      25%
+                    </span>
+                    <span
+                      className="tag"
+                      style={{
+                        background: colorBgBase,
+                        borderRadius: borderRadiusSM,
+                      }}
+                      onClick={() => handleQuickPercent(0.5)}
+                    >
+                      50%
+                    </span>
+                    <span
+                      className="tag"
+                      style={{
+                        background: colorBgBase,
+                        borderRadius: borderRadiusSM,
+                      }}
+                      onClick={() => handleQuickPercent(1)}
+                    >
+                      Max
+                    </span>
+                  </Space>
                 </div>
 
                 <div
@@ -574,7 +650,7 @@ export default () => {
                         />
                       </div>
                     )}
-                    open={selectAssetVisible == "send"}
+                    open={selectAssetVisible === "send"}
                     placement="bottomLeft"
                     autoAdjustOverflow={false}
                   >
@@ -585,34 +661,31 @@ export default () => {
                       style={{ cursor: "pointer" }}
                       className="tokenInputWrap"
                     >
-                      <InputToken asset={asset} position="send" bridgeType={bridgeType} />
-
-
+                      <InputToken
+                        asset={asset}
+                        position="send"
+                        bridgeType={bridgeType}
+                      />
                       <div
                         className={
-                          selectAssetVisible == "send"
+                          selectAssetVisible === "send"
                             ? "spanRotate"
                             : "spanReset"
                         }
                       >
                         <DownOutlined />
                       </div>
-
                     </div>
                   </Dropdown>
                   <div className="inputWrap">
-                    {actionType === 'mintbrc20' ? (
-                      <MintBrc20Input onInputChange={onInputChange} loading={loadingInput} refresh={() => { setRefreshInput(prev => !prev) }} />
-                    ) : (
-                      <InputNumber
-                        className="input"
-                        onChange={onInputChange}
-                        value={amount}
-                        // max={sendBal}
-                        variant={"borderless"}
-                        controls={false}
-                      />
-                    )}
+                    <InputNumber
+                      className="input"
+                      onChange={onInputChange}
+                      value={amount as any}
+                      stringMode
+                      variant={"borderless"}
+                      controls={false}
+                    />
                   </div>
                 </div>
                 <div className="bal">
@@ -621,12 +694,25 @@ export default () => {
                   {bridgeType === "mint"
                     ? asset.originSymbol
                     : asset.targetSymbol}
+                  {connected && bridgeType === "redeem" && (
+                    <span style={{ marginLeft: 12, opacity: 0.8 }}>
+                      | Gas: {userBal.space || "0"} SPACE ·{" "}
+                      {userBal.btc || "0"} BTC
+                    </span>
+                  )}
+                  {connected &&
+                    bridgeType === "mint" &&
+                    protocolType === "mrc20" && (
+                      <span style={{ marginLeft: 12, opacity: 0.8 }}>
+                        | BTC Gas: {userBal.btc || "0"} BTC
+                      </span>
+                    )}
                 </div>
               </div>
 
               <div className="recive inputCardWrap">
                 <div className="label">
-                  <span>You receive</span>
+                  <span>You receive (1:1 Full Amount)</span>
                 </div>
                 <div
                   className="inputCard"
@@ -648,7 +734,7 @@ export default () => {
                         />
                       </div>
                     )}
-                    open={selectAssetVisible == "recive"}
+                    open={selectAssetVisible === "recive"}
                     placement="bottomLeft"
                     autoAdjustOverflow={false}
                   >
@@ -659,10 +745,14 @@ export default () => {
                       style={{ cursor: "pointer" }}
                       className="tokenInputWrap"
                     >
-                      <InputToken asset={asset} position="recive" bridgeType={bridgeType} />
+                      <InputToken
+                        asset={asset}
+                        position="recive"
+                        bridgeType={bridgeType}
+                      />
                       <div
                         className={
-                          selectAssetVisible == "recive"
+                          selectAssetVisible === "recive"
                             ? "spanRotate"
                             : "spanReset"
                         }
@@ -675,8 +765,8 @@ export default () => {
                   <div className="inputWrap">
                     <InputNumber
                       className="input"
-                      onChange={onInputChange}
-                      value={reciveAmount}
+                      value={reciveAmount as any}
+                      stringMode
                       variant={"borderless"}
                       controls={false}
                       disabled
@@ -686,41 +776,76 @@ export default () => {
               </div>
             </div>
           )}
-          {
-            asset && <div className="range">
+
+          {asset && (
+            <div className="range">
+              {inputRange.maxAmount > 0 && (
+                <>
+                  <div className="item">
+                    <span className="label">Minimum Bridging Quantity</span>
+                    <span className="value">
+                      <NumberFormat
+                        value={inputRange.minAmount}
+                        precision={assetMaxDecimals}
+                      />{" "}
+                      {bridgeType === "mint"
+                        ? asset.originSymbol
+                        : asset.targetSymbol}
+                    </span>
+                  </div>
+                  <div className="item">
+                    <span className="label">Maximum Bridging Quantity</span>
+                    <span className="value">
+                      <NumberFormat
+                        value={inputRange.maxAmount}
+                        precision={assetMaxDecimals}
+                      />{" "}
+                      {bridgeType === "mint"
+                        ? asset.originSymbol
+                        : asset.targetSymbol}
+                    </span>
+                  </div>
+                </>
+              )}
               <div className="item">
-                <span className="label">Minimum Bridging Quantity</span>
-                <span className="value"><NumberFormat value={inputRange.minAmount} precision={bridgeType === 'mint' ? asset.decimals : asset.decimals - asset.trimDecimals} />   {bridgeType === "mint"
-                  ? asset.originSymbol
-                  : asset.targetSymbol}</span>
+                <span className="label">Bridge Service Fee</span>
+                <span className="value">{liveServiceFeeSummary}</span>
               </div>
-              <div className="item">
-                <span className="label">Maximum Bridging Quantity</span>
-                <span className="value"><NumberFormat value={inputRange.maxAmount} precision={bridgeType === 'mint' ? asset.decimals : asset.decimals - asset.trimDecimals} />   {bridgeType === "mint"
-                  ? asset.originSymbol
-                  : asset.targetSymbol}</span>
-              </div>
-
-
-
             </div>
-          }
-          {
-            isMintPaused && <Alert message={mintPausedMessage} type="warning" style={{ marginTop: 20 }} showIcon />
-          }
-          {
-            balCheck && <Alert message={balCheck} type='warning' style={{ marginTop: 20 }} showIcon />
-          }
-          {
-            ErrorMsg && <Alert message={ErrorMsg} type="warning" style={{ marginTop: 20 }} showIcon />
-          }
-          {asset && <div className="submitWrap">
-            <FormButton conditions={conditions} onClick={handleConfirm}>
-              Bridge
-            </FormButton>
-          </div>}
+          )}
 
+          {isMintPaused && (
+            <Alert
+              message={mintPausedMessage}
+              type="warning"
+              style={{ marginTop: 20 }}
+              showIcon
+            />
+          )}
+          {balCheck && (
+            <Alert
+              message={balCheck}
+              type="warning"
+              style={{ marginTop: 20 }}
+              showIcon
+            />
+          )}
+          {ErrorMsg && (
+            <Alert
+              message={ErrorMsg}
+              type="warning"
+              style={{ marginTop: 20 }}
+              showIcon
+            />
+          )}
 
+          {asset && (
+            <div className="submitWrap">
+              <FormButton conditions={conditions} onClick={handleConfirm}>
+                Bridge
+              </FormButton>
+            </div>
+          )}
 
           <History
             show={historyVisible}
@@ -736,11 +861,9 @@ export default () => {
         show={successVisible}
         onClose={() => {
           setSuccessVisible(false);
-          setAmount("");
-          setReciveAmount("");
-          setInscription(undefined);
-          setConfirmProps(defalut);
-          setHistoryVisible(true)
+          resetInput();
+          setConfirmProps(defaultConfirmProps);
+          setHistoryVisible(true);
         }}
       />
     </div>

@@ -1,11 +1,19 @@
 import { SupportRedeemAddressType } from "@/servies/wrapping";
 import Decimal from "decimal.js";
-import { buildTx, createPsbtInput, getNetworks, getUtxos } from "./psbtBuildV2";
+import {
+  buildTx,
+  createPsbtInput,
+  getNetworks,
+  getUtxos,
+  getUtxoSats,
+} from "./psbtBuildV2";
 import { initEccLib, Psbt, address as addressLib } from "bitcoinjs-lib";
 import * as ecc from "@bitcoin-js/tiny-secp256k1-asmjs";
+
 export const SIGHASH_ALL = 0x01;
 export const DUST_SIZE = 546;
-type TransferBTCParams = {
+
+export type TransferBTCParams = {
   transfers: {
     toAddress: string;
     satoshis: number;
@@ -52,13 +60,13 @@ const _buildTransferBTCsPsbt = async (
   for (const transfer of transfers) {
     psbt.addOutput({
       address: transfer.toAddress,
-      value: transfer.satoshis,
+      value: Math.round(transfer.satoshis),
     });
   }
   if (needChange || change.gt(DUST_SIZE)) {
     psbt.addOutput({
       address: address,
-      value: change.toNumber(),
+      value: Math.floor(change.toNumber()),
     });
   }
   if (!signPsbt) return psbt;
@@ -70,25 +78,28 @@ const _buildTransferBTCsPsbt = async (
   });
   if (typeof _signed === "object") {
     if (_signed.status === "canceled") throw new Error("canceled");
-    throw new Error("");
+    throw new Error(_signed.status || "signPsbt rejected");
   }
   const signed = Psbt.fromHex(_signed);
   return signed;
 };
 
-export const transferBTCs = async (params: TransferBTCParams) => {
+export const transferBTCsWithMeta = async (params: TransferBTCParams) => {
   initEccLib(ecc);
   const { address, transfers, feeRate, addressType, network } = params;
-  const totalAmount = transfers.reduce((acc, cur) => acc + cur.satoshis, 0);
+  const totalAmount = transfers.reduce(
+    (acc, cur) => acc + Math.round(cur.satoshis),
+    0
+  );
   const utxos = (await getUtxos(address, network)).sort(
-    (a, b) => b.satoshi - a.satoshi
+    (a, b) => getUtxoSats(b) - getUtxoSats(a)
   );
   const publicKey = await window.metaidwallet.btc.getPublicKey();
   const script = addressLib.toOutputScript(address, getNetworks(network));
   const commitTx = await buildTx<BuildTransferBTCsPsbtParams>(
     utxos,
     new Decimal(totalAmount),
-    feeRate,
+    Math.max(1, Math.ceil(feeRate || 2)),
     {
       addressType,
       address,
@@ -102,5 +113,21 @@ export const transferBTCs = async (params: TransferBTCParams) => {
     true,
     true
   );
-  return commitTx.rawTx;
+  const lastIndex = commitTx.txOutputs.length - 1;
+  const changeUtxo =
+    lastIndex >= transfers.length &&
+    commitTx.txOutputs[lastIndex]?.address === address
+      ? { txId: commitTx.txId, vout: lastIndex }
+      : undefined;
+
+  return {
+    rawTx: commitTx.rawTx,
+    txId: commitTx.txId,
+    changeUtxo,
+  };
+};
+
+export const transferBTCs = async (params: TransferBTCParams) => {
+  const res = await transferBTCsWithMeta(params);
+  return res.rawTx;
 };

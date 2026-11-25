@@ -1,38 +1,16 @@
-import {
-  payments,
-  initEccLib,
-  networks,
-  Psbt,
-  Transaction,
-  Payment,
-} from "bitcoinjs-lib";
-import Decimal from "decimal.js";
 import { Network } from "@/models/wallet";
-import * as ecc from "@bitcoin-js/tiny-secp256k1-asmjs";
-
 import {
-  createPrepayOrderMintBRC20,
   createPrepayOrderMintBtc,
   createPrepayOrderMintMrc20,
-  createPrepayOrderMintRunes,
-  createPrepayOrderRedeemBrc20,
   createPrepayOrderRedeemBtc,
   createPrepayOrderRedeemMrc20,
-  createPrepayOrderRedeemRunes,
-  getRawTx,
-  submitPrepayOrderMintBrc20,
   submitPrepayOrderMintBtc,
   submitPrepayOrderMintMrc20,
-  submitPrepayOrderMintRunes,
-  submitPrepayOrderRedeemBrc20,
   submitPrepayOrderRedeemBtc,
   submitPrepayOrderRedeemMrc20,
-  submitPrepayOrderRedeemRunes,
 } from "./api";
-import { determineAddressInfo } from "@/utils/utils";
-import { sendRunes } from "@/utils/runes";
-import { getUtxos } from "@/utils/psbtBuild";
-import { transferBTCs } from "@/utils/btc";
+import { transferBTCsWithMeta } from "@/utils/btc";
+import { addUtxoSafe } from "@/utils/psbtBuildV2";
 
 export type SupportRedeemAddressType = "P2TR" | "P2WPKH" | "P2PKH";
 export const supportRedeemAddressType: SupportRedeemAddressType[] = [
@@ -40,10 +18,6 @@ export const supportRedeemAddressType: SupportRedeemAddressType[] = [
   "P2WPKH",
   "P2PKH",
 ];
-
-export const sleep = (ms: number) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
 
 function extractApiErrorMessage(error: any): string {
   return (
@@ -56,48 +30,98 @@ function extractApiErrorMessage(error: any): string {
     "unknown error"
   );
 }
-// send mvc side token
-async function sendToken(
-  amount: string,
-  address: string,
-  targetTokenCodeHash: string,
-  targetTokenGenesis: string,
-  decimal: number = 0
-): Promise<{
+
+/**
+ * Local noBroadcast signing on MVC:
+ * Chains [mvcFeeTx (SPACE), ftTransferTx (MCP02 FT)] in a single transfer({ broadcast: false })
+ * call so the SPACE change UTXO feeds directly into the FT transfer without double-spending!
+ */
+async function signMvcRedeemBundle(params: {
+  redeemAmount: string;
+  bridgeAddress: string;
+  targetTokenCodeHash: string;
+  targetTokenGenesis: string;
+  tokenDecimal: number;
+  mvcFeeSats: number;
+  mvcFeeAddress: string;
+}): Promise<{
+  mvcFeeTxHex?: string;
   txHexList: string[];
   txid: string;
 }> {
+  const {
+    redeemAmount,
+    bridgeAddress,
+    targetTokenCodeHash,
+    targetTokenGenesis,
+    tokenDecimal,
+    mvcFeeSats,
+    mvcFeeAddress,
+  } = params;
+
+  const tasks: TransferOutput[] = [];
+  const needSpaceFee = mvcFeeSats > 0 && Boolean(mvcFeeAddress);
+  if (needSpaceFee) {
+    tasks.push({
+      type: "space",
+      receivers: [
+        {
+          address: mvcFeeAddress,
+          amount: String(mvcFeeSats),
+          decimal: 8,
+        },
+      ],
+    });
+  }
+
+  tasks.push({
+    type: "token",
+    codehash: targetTokenCodeHash,
+    genesis: targetTokenGenesis,
+    receivers: [
+      {
+        address: bridgeAddress,
+        amount: String(redeemAmount),
+        decimal: tokenDecimal,
+      },
+    ],
+  });
+
   const res = await window.metaidwallet
     .transfer({
       broadcast: false,
-      tasks: [
-        {
-          type: "token",
-          codehash: targetTokenCodeHash,
-          genesis: targetTokenGenesis,
-          receivers: [{ address, amount, decimal }],
-        },
-      ],
+      tasks,
     })
     .catch((e) => {
-      throw new Error(e as any);
+      throw new Error(extractApiErrorMessage(e));
     });
-  if (res.status) throw new Error(res.status);
-  if (!res.res[0] || !res.res[0].routeCheckTxHex)
-    throw new Error("send token failed");
+
+  if (res.status) {
+    throw new Error(res.status);
+  }
+  if (!Array.isArray(res.res) || res.res.length < tasks.length) {
+    throw new Error("MVC transaction signing cancelled or incomplete");
+  }
+
+  const mvcFeeTxHex = needSpaceFee ? res.res[0]?.txHex : undefined;
+  const ftResult = needSpaceFee ? res.res[1] : res.res[0];
+
+  if (!ftResult || !ftResult.txHex || !ftResult.txid) {
+    throw new Error("Failed to sign MVC token redeem transaction");
+  }
+
+  const txHexList = ftResult.routeCheckTxHex
+    ? [ftResult.routeCheckTxHex, ftResult.txHex]
+    : [ftResult.txHex];
+
   return {
-    txHexList: [res.res[0].routeCheckTxHex, res.res[0].txHex],
-    txid: res.res[0].txid,
+    mvcFeeTxHex,
+    txHexList,
+    txid: ftResult.txid,
   };
-  // debugger;
-  // if (res.res[0].txid) {
-  //   return res.res[0].txid;
-  // } else {
-  //   return "";
-  // }
 }
-// sign redeem  publicKey
-async function signPublicKey(): Promise<{
+
+async function signRedeemPublicKeys(): Promise<{
   publicKey: string;
   publicKeySign: string;
   publicKeyReceiveSign: string;
@@ -107,31 +131,33 @@ async function signPublicKey(): Promise<{
   const publicKeyReceive = await window.metaidwallet.btc.getPublicKey();
   const publicKeyReceiveSign: any =
     await window.metaidwallet.btc.signMessage(publicKeyReceive);
-  if (publicKeyReceiveSign.status === "canceled") throw new Error("canceled");
+  if (
+    typeof publicKeyReceiveSign === "object" &&
+    publicKeyReceiveSign?.status === "canceled"
+  ) {
+    throw new Error("canceled");
+  }
 
   const ret: any = await window.metaidwallet.signMessage({
     message: publicKey,
     encoding: "base64",
   });
+  if (ret?.status === "canceled") throw new Error("canceled");
 
-  if (ret.status === "canceled") throw new Error("canceled");
-  let {
-    signature: { signature: publicKeySign },
-  } = ret;
-
-  if (typeof ret.signature === "string") {
-    publicKeySign = ret.signature;
-  }
+  let publicKeySign =
+    typeof ret?.signature === "string"
+      ? ret.signature
+      : ret?.signature?.signature;
 
   return {
     publicKey,
     publicKeySign,
-    publicKeyReceiveSign,
+    publicKeyReceiveSign: String(publicKeyReceiveSign),
     publicKeyReceive,
   };
 }
-// sign mint publicKey
-async function signMintPublicKey(): Promise<{
+
+async function signMintPublicKeys(): Promise<{
   publicKey: string;
   publicKeySign: string;
   publicKeyReceiveSign: string;
@@ -142,43 +168,45 @@ async function signMintPublicKey(): Promise<{
 
   const publicKeySign: any =
     await window.metaidwallet.btc.signMessage(publicKey);
-  if (publicKeySign.status === "canceled") throw new Error("canceled");
+  if (
+    typeof publicKeySign === "object" &&
+    publicKeySign?.status === "canceled"
+  ) {
+    throw new Error("canceled");
+  }
+
   const ret: any = await window.metaidwallet.signMessage({
     message: publicKeyReceive,
     encoding: "base64",
   });
-  if (ret.status === "canceled") throw new Error("canceled");
-  console.log(ret, "signMessage");
-  let {
-    signature: { signature: publicKeyReceiveSign },
-  } = ret;
-  //2.7 {signature:{signature:'xxx'}}
-  //3.0 {signature:''}；
-  if (typeof ret.signature === "string") {
-    publicKeyReceiveSign = ret.signature;
-  }
+  if (ret?.status === "canceled") throw new Error("canceled");
+
+  const publicKeyReceiveSign =
+    typeof ret?.signature === "string"
+      ? ret.signature
+      : ret?.signature?.signature;
 
   return {
     publicKey,
-    publicKeySign,
+    publicKeySign: String(publicKeySign),
     publicKeyReceiveSign,
     publicKeyReceive,
   };
 }
 
-// 4 redeem methods for 4 different assets types easy to understand
-
 export async function redeemBtc(
-  redeemAmount: number,
+  redeemAmount: string | number,
   btcAsset: API.AssetItem,
   addressType: SupportRedeemAddressType,
-  network: Network
+  network: Network,
+  assetInfo?: API.AssetsData
 ): Promise<{ orderId: string; txid: string }> {
   try {
     const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
-      await signPublicKey();
+      await signRedeemPublicKeys();
+
     const createPrepayOrderDto = {
-      amount: redeemAmount,
+      amount: String(redeemAmount),
       originTokenId: btcAsset.originTokenId,
       addressType,
       publicKey,
@@ -186,159 +214,85 @@ export async function redeemBtc(
       publicKeyReceive,
       publicKeyReceiveSign,
     };
+
     const { data: createResp } = await createPrepayOrderRedeemBtc(
       network,
       createPrepayOrderDto
     );
-    const { orderId, bridgeAddress } = createResp;
-    const { targetTokenCodeHash, targetTokenGenesis } = btcAsset;
-    const { txHexList, txid } = await sendToken(
-      String(redeemAmount),
+    const {
+      orderId,
       bridgeAddress,
-      targetTokenCodeHash,
-      targetTokenGenesis,
-      btcAsset.decimals - btcAsset.trimDecimals
-    );
+      mvcFeeSats = 0,
+      mvcFeeAddress = "",
+      btcFeeSats = 0,
+      btcFeeAddress = "",
+    } = createResp;
 
-    const submitPrepayOrderRedeemDto = {
-      orderId,
-      txHexList,
-      txid,
-    };
-    await sleep(3000);
-    const ret = await submitPrepayOrderRedeemBtc(
-      network,
-      submitPrepayOrderRedeemDto
-    );
-    if (!ret.success) {
-      throw new Error(ret.msg);
-    }
-    return {
-      orderId,
-      txid: "",
-    };
-  } catch (error) {
-    throw new Error(error as any);
-  }
-}
-
-export async function redeemBrc20(
-  redeemAmount: number,
-  asset: API.AssetItem,
-  addressType: SupportRedeemAddressType,
-  network: Network
-): Promise<{ orderId: string; txid: string }> {
-  try {
-    const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
-      await signPublicKey();
-    const createPrepayOrderDto = {
-      amount: redeemAmount,
-      originTokenId: asset.originTokenId,
-      addressType,
-      publicKey,
-      publicKeySign,
-      publicKeyReceive,
-      publicKeyReceiveSign,
-    };
-    const { data: createResp } = await createPrepayOrderRedeemBrc20(
-      network,
-      createPrepayOrderDto
-    );
-    const { orderId, bridgeAddress } = createResp;
-    const { targetTokenCodeHash, targetTokenGenesis } = asset;
-    const { txHexList, txid } = await sendToken(
-      String(redeemAmount),
+    // 1. Local MVC signing (broadcast: false): [mvcFeeTx, routeCheckTx, ftTx]
+    const { mvcFeeTxHex, txHexList, txid } = await signMvcRedeemBundle({
+      redeemAmount: String(redeemAmount),
       bridgeAddress,
-      targetTokenCodeHash,
-      targetTokenGenesis,
-      asset.decimals - asset.trimDecimals
-    );
-    const submitPrepayOrderRedeemDto = {
-      orderId,
-      txid: txid,
-      txHexList,
-    };
-    await sleep(3000);
-    const ret = await submitPrepayOrderRedeemBrc20(
-      network,
-      submitPrepayOrderRedeemDto
-    );
-    if (!ret.success) {
-      throw new Error(ret.msg);
+      targetTokenCodeHash: btcAsset.targetTokenCodeHash,
+      targetTokenGenesis: btcAsset.targetTokenGenesis,
+      tokenDecimal: btcAsset.decimals - btcAsset.trimDecimals,
+      mvcFeeSats: Number(mvcFeeSats || 0),
+      mvcFeeAddress,
+    });
+
+    // 2. Local BTC fee signing (signPsbt without broadcast)
+    const btcAddress = await window.metaidwallet.btc.getAddress();
+    let btcFeeTxHex: string | undefined;
+    let btcChangeUtxo: { txId: string; vout: number } | undefined;
+    if (Number(btcFeeSats) > 0 && btcFeeAddress) {
+      const btcFeeTx = await transferBTCsWithMeta({
+        transfers: [
+          {
+            toAddress: btcFeeAddress,
+            satoshis: Number(btcFeeSats),
+          },
+        ],
+        address: btcAddress,
+        feeRate: assetInfo?.feeBtc || 2,
+        addressType,
+        network,
+      });
+      btcFeeTxHex = btcFeeTx.rawTx;
+      btcChangeUtxo = btcFeeTx.changeUtxo;
     }
-    return {
+
+    // 3. Atomic backend verification & topological broadcast
+    const ret = await submitPrepayOrderRedeemBtc(network, {
       orderId,
       txid,
-    };
-  } catch (error) {
-    throw new Error(error as any);
-  }
-}
-
-export async function redeemRunes(
-  redeemAmount: number,
-  asset: API.AssetItem,
-  addressType: SupportRedeemAddressType,
-  network: Network
-): Promise<{ orderId: string; txid: string }> {
-  try {
-    const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
-      await signPublicKey();
-    const createPrepayOrderDto = {
-      amount: redeemAmount,
-      originTokenId: asset.originTokenId,
-      addressType,
-      publicKey,
-      publicKeySign,
-      publicKeyReceive,
-      publicKeyReceiveSign,
-    };
-    const { data: createResp } = await createPrepayOrderRedeemRunes(
-      network,
-      createPrepayOrderDto
-    );
-    const { orderId, bridgeAddress } = createResp;
-    const { targetTokenCodeHash, targetTokenGenesis } = asset;
-    const { txHexList, txid } = await sendToken(
-      String(redeemAmount),
-      bridgeAddress,
-      targetTokenCodeHash,
-      targetTokenGenesis,
-      asset.decimals - asset.trimDecimals
-    );
-    const submitPrepayOrderRedeemDto = {
-      orderId,
-      txid: txid,
       txHexList,
-    };
-    await sleep(3000);
-    const ret = await submitPrepayOrderRedeemRunes(
-      network,
-      submitPrepayOrderRedeemDto
-    );
+      mvcFeeTxHex,
+      btcFeeTxHex,
+    });
     if (!ret.success) {
-      throw new Error(ret.msg);
+      throw new Error(ret.msg || ret.message || "Redeem BTC submit failed");
     }
-    return {
-      orderId,
-      txid,
-    };
+    if (btcChangeUtxo) {
+      await addUtxoSafe(btcAddress, [btcChangeUtxo]);
+    }
+    return { orderId, txid };
   } catch (error) {
-    throw new Error(error as any);
+    throw new Error(extractApiErrorMessage(error));
   }
 }
 
 export async function redeemMrc20(
-  redeemAmount: number,
+  redeemAmount: string | number,
   asset: API.AssetItem,
   addressType: SupportRedeemAddressType,
-  network: Network
+  network: Network,
+  assetInfo?: API.AssetsData
 ): Promise<{ orderId: string; txid: string }> {
   try {
     const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
-      await signPublicKey();
+      await signRedeemPublicKeys();
+
     const createPrepayOrderDto = {
-      amount: redeemAmount,
+      amount: String(redeemAmount),
       originTokenId: asset.originTokenId,
       addressType,
       publicKey,
@@ -346,76 +300,93 @@ export async function redeemMrc20(
       publicKeyReceive,
       publicKeyReceiveSign,
     };
+
     const { data: createResp } = await createPrepayOrderRedeemMrc20(
       network,
       createPrepayOrderDto
     );
-    const { orderId, bridgeAddress } = createResp;
-    const { targetTokenCodeHash, targetTokenGenesis } = asset;
-    const { txHexList, txid } = await sendToken(
-      String(redeemAmount),
-      bridgeAddress,
-      targetTokenCodeHash,
-      targetTokenGenesis,
-      asset.decimals - asset.trimDecimals
-    );
-    const submitPrepayOrderRedeemDto = {
+    const {
       orderId,
-      txid: txid,
-      txHexList,
-    };
-    await sleep(3000);
-    const ret = await submitPrepayOrderRedeemMrc20(
-      network,
-      submitPrepayOrderRedeemDto
-    );
-    if (!ret.success) {
-      throw new Error(ret.msg);
+      bridgeAddress,
+      mvcFeeSats = 0,
+      mvcFeeAddress = "",
+      btcFeeSats = 0,
+      btcFeeAddress = "",
+    } = createResp;
+
+    // 1. Local MVC signing (broadcast: false): [mvcFeeTx, routeCheckTx, ftTx]
+    const { mvcFeeTxHex, txHexList, txid } = await signMvcRedeemBundle({
+      redeemAmount: String(redeemAmount),
+      bridgeAddress,
+      targetTokenCodeHash: asset.targetTokenCodeHash,
+      targetTokenGenesis: asset.targetTokenGenesis,
+      tokenDecimal: asset.decimals - asset.trimDecimals,
+      mvcFeeSats: Number(mvcFeeSats || 0),
+      mvcFeeAddress,
+    });
+
+    // 2. Local BTC fee signing (signPsbt without broadcast)
+    const btcAddress = await window.metaidwallet.btc.getAddress();
+    let btcFeeTxHex: string | undefined;
+    let btcChangeUtxo: { txId: string; vout: number } | undefined;
+    if (Number(btcFeeSats) > 0 && btcFeeAddress) {
+      const btcFeeTx = await transferBTCsWithMeta({
+        transfers: [
+          {
+            toAddress: btcFeeAddress,
+            satoshis: Number(btcFeeSats),
+          },
+        ],
+        address: btcAddress,
+        feeRate: assetInfo?.feeBtc || 2,
+        addressType,
+        network,
+      });
+      btcFeeTxHex = btcFeeTx.rawTx;
+      btcChangeUtxo = btcFeeTx.changeUtxo;
     }
-    return {
+
+    // 3. Atomic backend verification & topological broadcast
+    const ret = await submitPrepayOrderRedeemMrc20(network, {
       orderId,
       txid,
-    };
+      txHexList,
+      mvcFeeTxHex,
+      btcFeeTxHex,
+    });
+    if (!ret.success) {
+      throw new Error(ret.msg || ret.message || "Redeem MRC20 submit failed");
+    }
+    if (btcChangeUtxo) {
+      await addUtxoSafe(btcAddress, [btcChangeUtxo]);
+    }
+    return { orderId, txid };
   } catch (error) {
-    throw new Error(error as any);
+    throw new Error(extractApiErrorMessage(error));
   }
 }
 
-// send btc
-async function transferBTC(parmas: {
-  toAddress: string;
-  satoshis: number;
-  options: {
-    noBroadcast: boolean;
-    feeRate: number;
-  };
-}) {
-  const ret = await window.metaidwallet.btc.transfer(parmas).catch((e: any) => {
-    throw new Error(e);
-  });
-  if (ret.status) throw new Error(ret.status);
-  return ret.txHex;
-}
 export async function mintBtc(
-  mintAmount: number,
+  mintAmount: string | number,
   btcAsset: API.AssetItem,
   addressType: SupportRedeemAddressType,
   network: Network,
   assetInfo: API.AssetsData
 ) {
-  const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
-    await signMintPublicKey();
-
-  const createPrepayOrderDto = {
-    amount: mintAmount,
-    originTokenId: btcAsset.originTokenId,
-    addressType: addressType,
-    publicKey: publicKey,
-    publicKeySign: publicKeySign,
-    publicKeyReceive,
-    publicKeyReceiveSign: publicKeyReceiveSign,
-  };
   try {
+    const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
+      await signMintPublicKeys();
+
+    const createPrepayOrderDto = {
+      amount: String(mintAmount),
+      originTokenId: btcAsset.originTokenId,
+      addressType,
+      publicKey,
+      publicKeySign,
+      publicKeyReceive,
+      publicKeyReceiveSign,
+    };
+
     const { data: createResp } = await createPrepayOrderMintBtc(
       network,
       createPrepayOrderDto
@@ -424,389 +395,47 @@ export async function mintBtc(
     const {
       orderId,
       bridgeAddress,
+      btcFeeAddress,
+      btcFeeSats,
       bridgeRuleServiceAddress,
       bridgeRuleServiceMintFee,
     } = createResp;
+
+    const serviceAddress = btcFeeAddress || bridgeRuleServiceAddress;
+    const serviceFeeSats = Number(btcFeeSats ?? bridgeRuleServiceMintFee ?? 0);
+
     const transfers = [
       {
         toAddress: bridgeAddress,
         satoshis: Number(mintAmount),
       },
     ];
-    if (bridgeRuleServiceAddress && bridgeRuleServiceMintFee) {
+    if (serviceAddress && serviceFeeSats > 0) {
       transfers.push({
-        toAddress: bridgeRuleServiceAddress,
-        satoshis: bridgeRuleServiceMintFee,
+        toAddress: serviceAddress,
+        satoshis: serviceFeeSats,
       });
     }
-    // transfer btc to bridge address and service address
-    const txHex = await transferBTCs({
+
+    const btcAddress = await window.metaidwallet.btc.getAddress();
+    const { rawTx, changeUtxo } = await transferBTCsWithMeta({
       transfers,
-      address: await window.metaidwallet.btc.getAddress(),
-      feeRate: assetInfo.feeBtc,
+      address: btcAddress,
+      feeRate: assetInfo.feeBtc || 2,
       addressType,
       network,
     });
 
-    const submitPrepayOrderMintDto = {
+    const submitRes = await submitPrepayOrderMintBtc(network, {
       orderId,
-      txHex: txHex,
-    };
-    const submitRes = await submitPrepayOrderMintBtc(
-      network,
-      submitPrepayOrderMintDto
-    );
-    if (!submitRes.success) throw new Error(submitRes.msg);
-
-    return submitRes;
-    //success
-  } catch (error) {
-    throw new Error(extractApiErrorMessage(error));
-  }
-}
-
-// TODO send BRC20
-export interface UTXO {
-  txId: string;
-  vout: number;
-  satoshi: number;
-  confirmed: boolean;
-  inscriptions:
-    | {
-        id: string;
-        num: number;
-      }[]
-    | null;
-}
-function getTotalSatoshi(utxos: API.UTXO[]): Decimal {
-  return utxos.reduce((total, utxo) => total.add(utxo.satoshi), new Decimal(0));
-}
-
-async function _createPayment(network: Network, address: string) {
-  initEccLib(ecc);
-  const btcNetwork =
-    network === "mainnet" ? networks.bitcoin : networks.testnet;
-  const publicKeyString = await window.metaidwallet.btc.getPublicKey();
-  const publicKey = Buffer.from(publicKeyString, "hex");
-  const addressType = determineAddressInfo(address);
-  switch (addressType.toUpperCase()) {
-    case "P2PKH":
-      return payments.p2pkh({ pubkey: publicKey, network: btcNetwork });
-    case "P2WPKH":
-      return payments.p2wpkh({
-        pubkey: publicKey,
-        network: btcNetwork,
-      });
-    default:
-      return payments.p2pkh({ pubkey: publicKey, network: btcNetwork });
-  }
-}
-
-function getWitnessUtxo(out: any): any {
-  delete out.address;
-  out.script = Buffer.from(out.script, "hex");
-  return out;
-}
-async function _createPayInput({
-  utxo,
-  addressType,
-  network,
-}: {
-  utxo: API.UTXO;
-  network: Network;
-  addressType: string;
-}) {
-  const payInput: any = {
-    hash: utxo.txId,
-    index: utxo.vout,
-  };
-  const {
-    data: { rawTx },
-  } = await getRawTx(network, { txid: utxo.txId });
-  const tx = Transaction.fromHex(rawTx);
-
-  if (["P2WPKH"].includes(addressType)) {
-    payInput["witnessUtxo"] = getWitnessUtxo(tx.outs[utxo.vout]);
-  }
-  if (["P2PKH"].includes(addressType)) {
-    payInput["nonWitnessUtxo"] = tx.toBuffer();
-  }
-  return payInput;
-}
-
-function _calculateFee(psbt: Psbt, feeRate: number): number {
-  const tx = psbt.extractTransaction();
-
-  const size = tx.virtualSize();
-
-  return size * feeRate;
-}
-
-const selectUTXOs = (utxos: UTXO[], targetAmount: Decimal): UTXO[] => {
-  let totalAmount = new Decimal(0);
-  const selectedUtxos: typeof utxos = [];
-  for (const utxo of utxos) {
-    selectedUtxos.push(utxo);
-    totalAmount = totalAmount.add(utxo.satoshi);
-
-    if (totalAmount.gte(targetAmount)) {
-      break;
-    }
-  }
-  if (totalAmount.lt(targetAmount)) {
-    throw new Error("Insufficient funds to reach the target amount");
-  }
-
-  return selectedUtxos;
-};
-async function sendBRC(
-  recipient: string,
-  utxo: API.UTXO,
-  feeRate: number,
-  net: Network
-) {
-  const amount = getTotalSatoshi([utxo]);
-  const btcNetwork = net === "mainnet" ? networks.bitcoin : networks.testnet;
-  const address = await window.metaidwallet.btc.getAddress();
-  const addressType = determineAddressInfo(address);
-  const payment = await _createPayment(net, address);
-  const utxos = await getUtxos(address);
-
-  if (!utxos.length) {
-    throw new Error("your account currently has no available UTXO.");
-  }
-
-  utxos.sort((a, b) => b.satoshi - a.satoshi);
-  const buildPsbt = async (selectedUtxos: API.UTXO[], change: Decimal) => {
-    const psbt = new Psbt({ network: btcNetwork });
-
-    const payInput = await _createPayInput({
-      utxo,
-      network: net,
-      addressType: addressType.toUpperCase(),
+      txHex: rawTx,
     });
-    psbt.addInput(payInput);
-    psbt.addOutput({
-      value: utxo.satoshi,
-      address: recipient,
-    });
-
-    if (change.gt(546)) {
-      psbt.addOutput({
-        value: change.toNumber(),
-        address,
-      });
+    if (!submitRes.success) {
+      throw new Error(submitRes.msg || submitRes.message || "Mint BTC failed");
     }
-
-    for (const utxo of selectedUtxos) {
-      const payInput = await _createPayInput({
-        utxo,
-        network: net,
-        addressType: addressType.toUpperCase(),
-      });
-      psbt.addInput(payInput);
+    if (changeUtxo) {
+      await addUtxoSafe(btcAddress, [changeUtxo]);
     }
-    const _signPsbt = await window.metaidwallet.btc.signPsbt({
-      psbtHex: psbt.toHex(),
-    });
-    if (_signPsbt.status === "canceled") throw new Error("canceled");
-    const signPsbt = Psbt.fromHex(_signPsbt);
-    return signPsbt;
-  };
-
-  let selecedtUTXOs = [utxos[0]];
-  let total = getTotalSatoshi(selecedtUTXOs);
-  let psbt = await buildPsbt(selecedtUTXOs, total.minus(amount));
-  let fee = _calculateFee(psbt, feeRate);
-
-  while (getTotalSatoshi(selecedtUTXOs).lt(amount.add(fee))) {
-    if (selecedtUTXOs.length === utxos.length) {
-      throw new Error("Insufficient funds");
-    }
-    selecedtUTXOs = selectUTXOs(utxos, amount.add(fee));
-    total = getTotalSatoshi(selecedtUTXOs);
-    const psbt = await buildPsbt(selecedtUTXOs, total.minus(amount).minus(fee));
-    fee = _calculateFee(psbt, feeRate);
-  }
-
-  psbt = await buildPsbt(selecedtUTXOs, total.minus(amount).minus(fee));
-  return psbt;
-}
-
-export const getOutput = (
-  pubkey: string,
-  _network: Network = "mainnet",
-  _addressType: SupportRedeemAddressType = "P2PKH"
-) => {
-  const publicKeyBuffer = Buffer.from(pubkey, "hex");
-  let _output;
-  const network = _network === "mainnet" ? networks.bitcoin : networks.testnet;
-  if (_addressType === "P2PKH") {
-    _output = payments.p2pkh({
-      pubkey: publicKeyBuffer,
-      network,
-    }).output;
-  } else {
-    _output = payments.p2wpkh({
-      pubkey: publicKeyBuffer,
-      network,
-    }).output;
-  }
-
-  return _output;
-};
-
-function getVariableSize(n: number) {
-  if (n < 0xfd) {
-    return 1;
-  } else if (n < 0x10000) {
-    return 2 + 1;
-  } else if (n < 0x100000000) {
-    return 3 + 1;
-  } else if (n < 0x10000000000000000) {
-    return 4 + 1;
-  }
-  throw new Error("");
-}
-
-export function getBtcTxSizeByOutputType(
-  segWitInputNumber: number,
-  tapRootInputNumber: number,
-  insNumber: number,
-  outputTypeList: SupportRedeemAddressType[]
-) {
-  let sizeSum = 0;
-  sizeSum += 4;
-  sizeSum += 1;
-  for (let i = 0; i < segWitInputNumber; i++) {
-    sizeSum += 91;
-  }
-  for (let i = 0; i < tapRootInputNumber; i++) {
-    sizeSum += (4 * (32 + 4 + 1 + 4) + 1 + 1 + 64) / 4;
-  }
-  sizeSum += insNumber * 33;
-  sizeSum += 1;
-  for (const outputTypeListElement of outputTypeList) {
-    sizeSum += 8;
-    if (outputTypeListElement === "P2PKH") {
-      sizeSum += getVariableSize(25);
-      sizeSum += 25;
-    } else if (outputTypeListElement === "P2WPKH") {
-      sizeSum += getVariableSize(22);
-      sizeSum += 22;
-    } else if (outputTypeListElement === "P2TR") {
-      sizeSum += getVariableSize(34);
-      sizeSum += 34;
-    }
-  }
-  sizeSum += 4; //nLockTime
-  return Math.ceil(sizeSum);
-}
-
-export async function mintBrc(
-  mintAmount: number,
-  btcAsset: API.AssetItem,
-  addressType: SupportRedeemAddressType,
-  network: Network,
-  assetInfo: API.AssetsData,
-  inscription: API.TransferbleBRC20
-) {
-  const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
-    await signMintPublicKey();
-
-  const createPrepayOrderDto = {
-    amount: String(mintAmount),
-    originTokenId: btcAsset.originTokenId,
-    addressType: addressType,
-    publicKey: publicKey,
-    publicKeySign: publicKeySign,
-    publicKeyReceive,
-    publicKeyReceiveSign: publicKeyReceiveSign,
-  };
-
-  try {
-    const { data: createResp } = await createPrepayOrderMintBRC20(
-      network,
-      createPrepayOrderDto
-    );
-
-    const { orderId, bridgeAddress } = createResp;
-
-    const inscriptionUtxo = {
-      txId: inscription!.inscriptionId?.slice(0, -2),
-      vout: +inscription!.inscriptionId?.split("i")[1],
-      satoshi: +inscription!.outValue,
-      confirmed: true,
-      inscriptions: null,
-    };
-    const psbt = await sendBRC(
-      bridgeAddress,
-      inscriptionUtxo,
-      assetInfo.feeBtc,
-      network
-    );
-    const submitPrepayOrderMintDto = {
-      orderId,
-      txHex: psbt.extractTransaction().toHex(),
-    };
-    const submitRes = await submitPrepayOrderMintBrc20(
-      network,
-      submitPrepayOrderMintDto
-    );
-    if (!submitRes.success) throw new Error(submitRes.msg);
-    return submitRes;
-    //success
-  } catch (error) {
-    throw new Error(extractApiErrorMessage(error));
-  }
-}
-
-export async function mintRunes(
-  mintAmount: number,
-  btcAsset: API.AssetItem,
-  addressType: SupportRedeemAddressType,
-  network: Network,
-  assetInfo: API.AssetsData
-) {
-  const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
-    await signMintPublicKey();
-
-  const createPrepayOrderDto = {
-    amount: String(mintAmount),
-    originTokenId: btcAsset.originTokenId,
-    addressType: addressType,
-    publicKey: publicKey,
-    publicKeySign: publicKeySign,
-    publicKeyReceive,
-    publicKeyReceiveSign: publicKeyReceiveSign,
-  };
-
-  try {
-    const { data: createResp } = await createPrepayOrderMintRunes(
-      network,
-      createPrepayOrderDto
-    );
-
-    const { orderId, bridgeAddress } = createResp;
-
-    const { psbt } = await sendRunes({
-      runeId: btcAsset.originTokenId,
-      feeRate: assetInfo.feeBtc,
-      net: network,
-      recipient: bridgeAddress,
-      runeAmount: String(mintAmount),
-      divisibility: btcAsset.decimals,
-      addressType,
-    });
-    const submitPrepayOrderMintDto = {
-      orderId,
-      txHex: psbt.extractTransaction().toHex(),
-    };
-    const submitRes = await submitPrepayOrderMintRunes(
-      network,
-      submitPrepayOrderMintDto
-    );
-    if (!submitRes.success) throw new Error(submitRes.msg);
     return submitRes;
   } catch (error) {
     throw new Error(extractApiErrorMessage(error));
@@ -814,7 +443,7 @@ export async function mintRunes(
 }
 
 export async function mintMrc20(
-  mintAmount: number,
+  mintAmount: string | number,
   asset: API.AssetItem,
   addressType: SupportRedeemAddressType,
   network: Network,
@@ -822,66 +451,76 @@ export async function mintMrc20(
 ) {
   try {
     const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
-      await signMintPublicKey();
+      await signMintPublicKeys();
+
+    const amountStr = String(mintAmount).trim();
     const createPrepayOrderDto = {
-      amount: String(mintAmount),
+      amount: amountStr,
       originTokenId: asset.originTokenId,
-      addressType: addressType,
-      publicKey: publicKey,
-      publicKeySign: publicKeySign,
+      addressType,
+      publicKey,
+      publicKeySign,
       publicKeyReceive,
-      publicKeyReceiveSign: publicKeyReceiveSign,
+      publicKeyReceiveSign,
     };
+
     const { data: createResp } = await createPrepayOrderMintMrc20(
       network,
       createPrepayOrderDto
     );
-    console.log("createResp", createResp);
-    // transfer mrc-20  to bridge address and serviceFee to service address
+
     const {
       orderId,
       bridgeAddress,
+      btcFeeAddress,
+      btcFeeSats,
       bridgeRuleServiceAddress,
       bridgeRuleServiceMintFee,
     } = createResp;
+
+    const serviceAddress = btcFeeAddress || bridgeRuleServiceAddress;
+    const serviceFeeSats = Number(btcFeeSats ?? bridgeRuleServiceMintFee ?? 0);
+
     const params: any = {
       body: JSON.stringify([
         {
-          amount: String(mintAmount),
+          amount: amountStr,
           vout: 1,
           id: asset.originTokenId,
         },
       ]),
-      amount: String(mintAmount),
+      amount: amountStr,
       mrc20TickId: asset.originTokenId,
       flag: "metaid",
       revealAddr: bridgeAddress,
-      commitFeeRate: assetInfo.feeBtc,
-      revealFeeRate: assetInfo.feeBtc,
+      commitFeeRate: assetInfo.feeBtc || 2,
+      revealFeeRate: assetInfo.feeBtc || 2,
     };
-    if (bridgeRuleServiceAddress && bridgeRuleServiceMintFee) {
+
+    if (serviceAddress && serviceFeeSats > 0) {
       params.service = {
-        address: bridgeRuleServiceAddress,
-        satoshis: bridgeRuleServiceMintFee,
+        address: serviceAddress,
+        satoshis: String(serviceFeeSats),
       };
     }
-    const MRC20Transfer = await window.metaidwallet.btc
+
+    const mrc20Transfer = await window.metaidwallet.btc
       .transferMRC20(params)
       .catch((e) => {
-        throw new Error(e as any);
+        throw new Error(extractApiErrorMessage(e));
       });
-    if (MRC20Transfer.status) throw new Error(MRC20Transfer.status);
-    const { commitTx, revealTx } = MRC20Transfer;
-    console.log("commitTx", commitTx);
-    const submitPrepayOrderMintDto = {
+    if (mrc20Transfer.status) {
+      throw new Error(mrc20Transfer.status);
+    }
+
+    const { commitTx, revealTx } = mrc20Transfer;
+    const submitRes = await submitPrepayOrderMintMrc20(network, {
       orderId,
       txHexList: [commitTx.rawTx, revealTx.rawTx],
-    };
-    const submitRes = await submitPrepayOrderMintMrc20(
-      network,
-      submitPrepayOrderMintDto
-    );
-    if (!submitRes.success) throw new Error(submitRes.msg);
+    });
+    if (!submitRes.success) {
+      throw new Error(submitRes.msg || submitRes.message || "Mint MRC20 failed");
+    }
     return submitRes;
   } catch (error) {
     throw new Error(extractApiErrorMessage(error));

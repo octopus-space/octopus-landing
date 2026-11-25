@@ -1,11 +1,11 @@
 import Popup from "@/components/ResponPopup";
-import { Spin, Tabs, TabsProps } from "antd";
-import HistoryPanel from "./HistoryPanel";
+import { Spin } from "antd";
 import TokenIcon from "@/components/TokenIcon";
 import { useModel } from "umi";
 import "./index.less";
 import arrow from "@/assets/arrowRight.svg";
 import FormButton from "@/components/FormButton";
+
 export type ConfirmProps = {
   show: boolean;
   onClose: () => void;
@@ -17,6 +17,7 @@ export type ConfirmProps = {
   handleSubmit: () => void;
   submitting?: boolean;
 };
+
 export default ({
   show,
   onClose,
@@ -29,7 +30,7 @@ export default ({
   submitting = false,
 }: ConfirmProps) => {
   const { asset, fromChain, toChain } = useModel("wrapping");
-  if (!asset) return;
+  if (!asset) return null;
   return (
     <Popup
       title="Summary"
@@ -40,9 +41,14 @@ export default ({
     >
       <Spin spinning={submitting}>
         <div className="summaryWrap">
-          <TokenIcon symbol={asset?.originName||asset?.originSymbol} src="" size={80}></TokenIcon>
+          <TokenIcon
+            symbol={asset?.originName || asset?.originSymbol}
+            src=""
+            size={80}
+          />
           <span className="symbol">
-            {asset.originName||asset.originSymbol}-{asset.targetName||asset.targetSymbol}
+            {asset.originName || asset.originSymbol}-
+            {asset.targetName || asset.targetSymbol}
           </span>
           <div className="netWrap">
             <div className="item">
@@ -71,26 +77,24 @@ export default ({
           </div>
           <div className="feeList">
             <div className="item">
+              <span className="label">Token Deduction</span>
+              <span className="value">0 (1:1 Full Arrival)</span>
+            </div>
+            <div className="item">
               <span className="label">Service Fee</span>
-              <span className="value">{bridgeFee}{fromChain.key === "btc"
-                      ? asset.originSymbol
-                      : asset.targetSymbol}</span>
+              <span className="value">{bridgeFee}</span>
             </div>
             <div className="item">
-              <span className="label">Network Fee</span>
-              <span className="value">{minerFee}{fromChain.key === "btc"
-                      ? asset.originSymbol
-                      : asset.targetSymbol}</span>
+              <span className="label">Est. Network Fee</span>
+              <span className="value">{minerFee}</span>
             </div>
             <div className="item">
-              <span className="label">Total Fee</span>
-              <span className="value">{totalFee}{fromChain.key === "btc"
-                      ? asset.originSymbol
-                      : asset.targetSymbol}</span>
+              <span className="label">Est. Total Outlay</span>
+              <span className="value">{totalFee}</span>
             </div>
             <div className="item">
               <span className="label">Estimated Receipt Time</span>
-              <span className="value">20 minutes </span>
+              <span className="value">20 minutes</span>
             </div>
           </div>
           <div className="submitWrap">

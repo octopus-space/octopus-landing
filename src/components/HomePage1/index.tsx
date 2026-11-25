@@ -5,7 +5,9 @@ import bg from "@/assets/bgCricle.svg";
 import "./index.less";
 import { message } from "antd";
 import { history } from "umi";
-const tags = ["BRC20", "Runes", "Atomicals", "MRC20"];
+
+const tags = ["BTC", "MRC20", "MetaContract", "MVC"];
+
 export default () => {
   return (
     <div className="homePage1">
@@ -36,10 +38,20 @@ export default () => {
               ))}
             </div>
             <div className="buttonWrap" key="btns">
-              <div className="button primary" onClick={()=>history.push('/wrapping')}>Wrapping</div>
-              <div className="button line" onClick={() => {
-                message.info({ content: "coming soon" ,icon: "🚀",});
-              }}>Mapping</div>
+              <div
+                className="button primary"
+                onClick={() => history.push("/wrapping")}
+              >
+                Wrapping
+              </div>
+              <div
+                className="button line"
+                onClick={() => {
+                  message.info({ content: "coming soon" });
+                }}
+              >
+                Mapping
+              </div>
             </div>
           </QueueAnim>
         </div>

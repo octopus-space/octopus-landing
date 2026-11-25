@@ -1,16 +1,19 @@
 import { useModel } from "umi";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getAssets } from "@/servies/api";
+import { getAssets, getFeeQuote } from "@/servies/api";
 import useIntervalAsync from "@/hooks/useIntervalAsync";
 import btc from "@/assets/btc.png";
 import mvc from "@/assets/mvc.png";
 import { FeeInfo } from "@/utils/utils";
+
 export type Chain = {
   key: string;
   label: string;
   icon: string;
 };
-export type Protocol = "btc" | "brc20" | "arc20" | "runes" | "mrc20";
+
+export type Protocol = "btc" | "mrc20";
+
 const defaultChains: Chain[] = [
   {
     key: "btc",
@@ -26,7 +29,7 @@ const defaultChains: Chain[] = [
 
 export default () => {
   const { network } = useModel("wallet");
-  const [chains, setChains] = useState<Chain[]>(defaultChains);
+  const [chains] = useState<Chain[]>(defaultChains);
   const [chainType, setChainType] = useState<"from" | "to">();
   const [fromChain, setFromChain] = useState<Chain>(defaultChains[0]);
   const [toChain, setToChain] = useState<Chain>(defaultChains[1]);
@@ -34,13 +37,11 @@ export default () => {
   const [assets, setAssets] = useState<API.AssetItem[]>([]);
   const [protocolType, setProtocolType] = useState<Protocol>("btc");
   const [AssetsInfo, setAssetsInfo] = useState<API.AssetsData>();
+  const [feeQuote, setFeeQuote] = useState<API.FeeQuoteData>();
   const [amount, setAmount] = useState<number | string>("");
   const [reciveAmount, setReciveAmount] = useState<number | string>("");
   const [ErrorMsg, setErrorMsg] = useState("");
-  const [brc20Info, setBrc20Info] = useState<API.BRC20Info>();
   const [mrc20Info, setMrc20Info] = useState<API.Mrc20BalItem[]>();
-  const [runesInfo, setRunesInfo] = useState<API.RUNESItem>();
-  const [inscription, setInscription] = useState<API.TransferbleBRC20>();
   const [feeInfo, setFeeInfo] = useState<FeeInfo>({
     minerFee: "",
     bridgeFee: "",
@@ -50,13 +51,18 @@ export default () => {
   });
   const [refetchAssets, setRefetchAssets] = useState(false);
 
+  const bridgeType: "mint" | "redeem" = useMemo(() => {
+    if (fromChain.key === "btc") return "mint";
+    return "redeem";
+  }, [fromChain]);
+
   useEffect(() => {
     let didCancel = false;
     const fetchAssets = async () => {
       if (network) {
         try {
           const ret = await getAssets(network);
-          if (!didCancel) {
+          if (!didCancel && ret?.data) {
             setAssetsInfo(ret.data);
           }
         } catch (err) {
@@ -72,34 +78,60 @@ export default () => {
 
   useEffect(() => {
     if (AssetsInfo) {
-      let assets: API.AssetItem[] = [];
-      assets = AssetsInfo.assetList
+      // Price-decoupled filtering: never drop MRC20 tokens whose price is 0 or undefined!
+      const filtered = (AssetsInfo.assetList || [])
         .filter((item) => item.network === protocolType.toUpperCase())
-        .filter((item) => protocolType === "btc" || item.price)
         .map((item) => {
-          item.originName = item.originName || item.originSymbol;
-          item.targetName = item.targetName || item.targetSymbol;
-          if(item.network === 'BTC'){
-            item.targetName = 'WBTC'
+          const copy = { ...item };
+          copy.originName = copy.originName || copy.originSymbol;
+          copy.targetName = copy.targetName || copy.targetSymbol;
+          if (copy.network === "BTC") {
+            copy.targetName = "WBTC";
           }
-          return item;
+          return copy;
         });
-      if (assets.length > 0) {
-        setAssets(assets);
+
+      setAssets(filtered);
+      if (filtered.length > 0) {
         setAsset((prev) => {
           if (prev) {
-            const find = assets.find(
+            const find = filtered.find(
               (item) => item.targetTokenId === prev.targetTokenId
             );
             if (find) return find;
           }
-          return assets[0];
+          return filtered[0];
         });
       } else {
         setAsset(undefined);
       }
     }
   }, [AssetsInfo, protocolType]);
+
+  useEffect(() => {
+    let didCancel = false;
+    const fetchQuote = async () => {
+      if (!network) return;
+      const assetNetwork: "BTC" | "MRC20" =
+        protocolType === "btc" ? "BTC" : "MRC20";
+      try {
+        const ret = await getFeeQuote(network, {
+          network: assetNetwork,
+          direction: bridgeType,
+          originTokenId: asset?.originTokenId,
+        });
+        if (!didCancel && ret?.data) {
+          setFeeQuote(ret.data);
+        }
+      } catch (err) {
+        console.log("getFeeQuote error:", err);
+      }
+    };
+    fetchQuote();
+    return () => {
+      didCancel = true;
+    };
+  }, [network, protocolType, bridgeType, asset?.originTokenId, refetchAssets]);
 
   const handleRefetchAssets = useCallback(async () => {
     setRefetchAssets((prev) => !prev);
@@ -118,12 +150,7 @@ export default () => {
       confirmNumber: "",
     });
     setErrorMsg("");
-    setInscription(undefined);
   };
-  const bridgeType: "mint" | "redeem" = useMemo(() => {
-    if (fromChain.key === "btc") return "mint";
-    return "redeem";
-  }, [fromChain]);
 
   return {
     updateAssets,
@@ -136,6 +163,7 @@ export default () => {
     protocolType,
     setProtocolType,
     AssetsInfo,
+    feeQuote,
     assets,
     setAsset,
     chainType,
@@ -148,14 +176,8 @@ export default () => {
     setFeeInfo,
     ErrorMsg,
     setErrorMsg,
-    inscription,
-    setInscription,
     resetInput,
     bridgeType,
-    brc20Info,
-    setBrc20Info,
-    runesInfo,
-    setRunesInfo,
     mrc20Info,
     setMrc20Info,
   };
