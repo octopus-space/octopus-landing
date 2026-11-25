@@ -1,3 +1,10 @@
+import useIntervalAsync from "@/hooks/useIntervalAsync";
+import {
+  FeeRatePlan,
+  FeeRateTier,
+  MAX_CUSTOM_BTC_FEE_RATE,
+  fetchBtcFeeRateSummary,
+} from "@/utils/mempool";
 import { getUtxoBalance } from "@/utils/psbtBuild";
 import {
   checkAddressType,
@@ -5,10 +12,33 @@ import {
   normalizeWalletNetwork,
   withTimeout,
 } from "@/utils/utils";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export type Network = "mainnet" | "testnet";
 type WalletName = "metalet";
+
+const STORAGE_FEE_PLAN_KEY = "octopus_btc_fee_plan";
+const STORAGE_CUSTOM_RATE_KEY = "octopus_btc_custom_fee_rate";
+
+function readInitialPlan(): FeeRatePlan {
+  try {
+    const raw = localStorage.getItem(STORAGE_FEE_PLAN_KEY);
+    if (raw === "Slow" || raw === "Avg" || raw === "Fast" || raw === "Custom") {
+      return raw;
+    }
+  } catch {}
+  return "Avg";
+}
+
+function readInitialCustomRate(): number {
+  try {
+    const raw = Number(localStorage.getItem(STORAGE_CUSTOM_RATE_KEY));
+    if (Number.isFinite(raw) && raw >= 1) {
+      return Math.min(MAX_CUSTOM_BTC_FEE_RATE, Math.round(raw));
+    }
+  } catch {}
+  return 2;
+}
 
 const checkExtension = () => {
   if (!window.metaidwallet) {
@@ -49,7 +79,8 @@ async function fetchMvcSpaceSats(): Promise<number> {
       );
       if (Array.isArray(utxos)) {
         return utxos.reduce(
-          (acc, u) => acc + Number(u?.satoshis ?? u?.satoshi ?? u?.value ?? 0),
+          (acc, u: any) =>
+            acc + Number(u?.satoshis ?? u?.satoshi ?? u?.value ?? 0),
           0
         );
       }
@@ -69,10 +100,97 @@ export default () => {
   const [connected, setConnected] = useState<boolean>(false);
   const [userBal, setUserBal] = useState<Record<string, any>>({});
 
+  // BTC fee rate selector state (applies to BTC txs in both BTC->MVC and MVC->BTC; MVC stays 1 sat/B)
+  const [feeRates, setFeeRates] = useState<FeeRateTier[]>([
+    { label: "Fast", value: 3, time: "~10 mins" },
+    { label: "Avg", value: 2, time: "~30 mins" },
+    { label: "Slow", value: 1, time: "~60 mins" },
+  ]);
+  const [minFeeRate, setMinFeeRate] = useState<number>(1);
+  const [feeRateType, setFeeRateType] = useState<FeeRatePlan>(readInitialPlan);
+  const [customFeeRate, setCustomFeeRate] = useState<number | null>(
+    readInitialCustomRate
+  );
+  const [feeRateModalVisible, setFeeRateModalVisible] =
+    useState<boolean>(false);
+
   const btcAddrRef = useRef<string | undefined>(undefined);
   const networkRef = useRef<Network>("mainnet");
   btcAddrRef.current = btcAddress;
   networkRef.current = network;
+
+  const refreshFeeRates = useCallback(async () => {
+    const targetNet = networkRef.current || "mainnet";
+    const summary = await fetchBtcFeeRateSummary(targetNet);
+    setFeeRates(summary.tiers);
+    setMinFeeRate(summary.minimumFee);
+    setCustomFeeRate((prev) =>
+      prev === null ? prev : Math.max(summary.minimumFee, prev)
+    );
+  }, []);
+
+  useIntervalAsync(refreshFeeRates, 60_000);
+
+  const selectFeeRatePlan = useCallback((plan: FeeRatePlan) => {
+    setFeeRateType(plan);
+    try {
+      localStorage.setItem(STORAGE_FEE_PLAN_KEY, plan);
+    } catch {}
+  }, []);
+
+  const updateCustomFeeRate = useCallback(
+    (val: number | string | null) => {
+      if (val === null || val === "") {
+        setCustomFeeRate(null);
+        return;
+      }
+      const parsed = Math.round(Number(val));
+      if (!Number.isFinite(parsed)) {
+        setCustomFeeRate(null);
+        return;
+      }
+      const clamped = Math.min(
+        MAX_CUSTOM_BTC_FEE_RATE,
+        Math.max(1, parsed)
+      );
+      setCustomFeeRate(clamped);
+      if (clamped >= minFeeRate) {
+        try {
+          localStorage.setItem(STORAGE_CUSTOM_RATE_KEY, String(clamped));
+        } catch {}
+      }
+    },
+    [minFeeRate]
+  );
+
+  const commitCustomFeeRate = useCallback(() => {
+    setCustomFeeRate((prev) => {
+      const parsed = Math.round(Number(prev));
+      const clamped =
+        prev !== null && Number.isFinite(parsed)
+          ? Math.min(MAX_CUSTOM_BTC_FEE_RATE, Math.max(minFeeRate, parsed))
+          : minFeeRate;
+      try {
+        localStorage.setItem(STORAGE_CUSTOM_RATE_KEY, String(clamped));
+      } catch {}
+      return clamped;
+    });
+  }, [minFeeRate]);
+
+  const feeRate = useMemo(() => {
+    if (feeRateType === "Custom") {
+      return Math.min(
+        MAX_CUSTOM_BTC_FEE_RATE,
+        Math.max(minFeeRate, Math.round(Number(customFeeRate)) || minFeeRate)
+      );
+    }
+    const matched = feeRates.find((t) => t.label === feeRateType);
+    const fallbackAvg = feeRates.find((t) => t.label === "Avg");
+    return Math.max(
+      minFeeRate,
+      Number(matched?.value ?? fallbackAvg?.value ?? 2)
+    );
+  }, [feeRateType, customFeeRate, feeRates, minFeeRate]);
 
   const getBal = useCallback(
     async (
@@ -231,6 +349,10 @@ export default () => {
   }, [init]);
 
   useEffect(() => {
+    void refreshFeeRates();
+  }, [network, refreshFeeRates]);
+
+  useEffect(() => {
     if (connected && btcAddress) {
       void getBal(true, btcAddress, network);
     }
@@ -270,5 +392,16 @@ export default () => {
     loginModalShow,
     disConnect,
     getBal,
+    feeRates,
+    feeRate,
+    feeRateType,
+    customFeeRate,
+    minFeeRate,
+    feeRateModalVisible,
+    setFeeRateModalVisible,
+    selectFeeRatePlan,
+    updateCustomFeeRate,
+    commitCustomFeeRate,
+    refreshFeeRates,
   };
 };

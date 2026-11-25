@@ -26,12 +26,26 @@ export async function getAssets(
   });
 }
 
+export async function getRecommendedFees(
+  network: Network,
+  options?: { [key: string]: any }
+) {
+  return request<API.Ret<API.RecommendedFees>>(
+    `${getHost(network)}/common/fee/recommended`,
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
+}
+
 export async function getFeeQuote(
   network: Network,
   params: {
     network: "BTC" | "MRC20";
     direction: "mint" | "redeem";
     originTokenId?: string;
+    btcFeeRate?: number;
   },
   options?: { [key: string]: any }
 ) {

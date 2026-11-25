@@ -199,9 +199,14 @@ export async function redeemBtc(
   btcAsset: API.AssetItem,
   addressType: SupportRedeemAddressType,
   network: Network,
-  assetInfo?: API.AssetsData
+  assetInfo?: API.AssetsData,
+  userBtcFeeRate?: number
 ): Promise<{ orderId: string; txid: string }> {
   try {
+    const chosenBtcRate = Math.max(
+      1,
+      Math.ceil(Number(userBtcFeeRate || assetInfo?.feeBtc || 2))
+    );
     const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
       await signRedeemPublicKeys();
 
@@ -213,6 +218,7 @@ export async function redeemBtc(
       publicKeySign,
       publicKeyReceive,
       publicKeyReceiveSign,
+      btcFeeRate: chosenBtcRate,
     };
 
     const { data: createResp } = await createPrepayOrderRedeemBtc(
@@ -252,7 +258,7 @@ export async function redeemBtc(
           },
         ],
         address: btcAddress,
-        feeRate: assetInfo?.feeBtc || 2,
+        feeRate: chosenBtcRate,
         addressType,
         network,
       });
@@ -285,9 +291,14 @@ export async function redeemMrc20(
   asset: API.AssetItem,
   addressType: SupportRedeemAddressType,
   network: Network,
-  assetInfo?: API.AssetsData
+  assetInfo?: API.AssetsData,
+  userBtcFeeRate?: number
 ): Promise<{ orderId: string; txid: string }> {
   try {
+    const chosenBtcRate = Math.max(
+      1,
+      Math.ceil(Number(userBtcFeeRate || assetInfo?.feeBtc || 2))
+    );
     const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
       await signRedeemPublicKeys();
 
@@ -299,6 +310,7 @@ export async function redeemMrc20(
       publicKeySign,
       publicKeyReceive,
       publicKeyReceiveSign,
+      btcFeeRate: chosenBtcRate,
     };
 
     const { data: createResp } = await createPrepayOrderRedeemMrc20(
@@ -338,7 +350,7 @@ export async function redeemMrc20(
           },
         ],
         address: btcAddress,
-        feeRate: assetInfo?.feeBtc || 2,
+        feeRate: chosenBtcRate,
         addressType,
         network,
       });
@@ -371,9 +383,14 @@ export async function mintBtc(
   btcAsset: API.AssetItem,
   addressType: SupportRedeemAddressType,
   network: Network,
-  assetInfo: API.AssetsData
+  assetInfo: API.AssetsData,
+  userBtcFeeRate?: number
 ) {
   try {
+    const chosenBtcRate = Math.max(
+      1,
+      Math.ceil(Number(userBtcFeeRate || assetInfo.feeBtc || 2))
+    );
     const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
       await signMintPublicKeys();
 
@@ -385,6 +402,7 @@ export async function mintBtc(
       publicKeySign,
       publicKeyReceive,
       publicKeyReceiveSign,
+      btcFeeRate: chosenBtcRate,
     };
 
     const { data: createResp } = await createPrepayOrderMintBtc(
@@ -421,7 +439,7 @@ export async function mintBtc(
     const { rawTx, changeUtxo } = await transferBTCsWithMeta({
       transfers,
       address: btcAddress,
-      feeRate: assetInfo.feeBtc || 2,
+      feeRate: chosenBtcRate,
       addressType,
       network,
     });
@@ -447,9 +465,14 @@ export async function mintMrc20(
   asset: API.AssetItem,
   addressType: SupportRedeemAddressType,
   network: Network,
-  assetInfo: API.AssetsData
+  assetInfo: API.AssetsData,
+  userBtcFeeRate?: number
 ) {
   try {
+    const chosenBtcRate = Math.max(
+      1,
+      Math.ceil(Number(userBtcFeeRate || assetInfo.feeBtc || 2))
+    );
     const { publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive } =
       await signMintPublicKeys();
 
@@ -462,6 +485,7 @@ export async function mintMrc20(
       publicKeySign,
       publicKeyReceive,
       publicKeyReceiveSign,
+      btcFeeRate: chosenBtcRate,
     };
 
     const { data: createResp } = await createPrepayOrderMintMrc20(
@@ -493,8 +517,8 @@ export async function mintMrc20(
       mrc20TickId: asset.originTokenId,
       flag: "metaid",
       revealAddr: bridgeAddress,
-      commitFeeRate: assetInfo.feeBtc || 2,
-      revealFeeRate: assetInfo.feeBtc || 2,
+      commitFeeRate: chosenBtcRate,
+      revealFeeRate: chosenBtcRate,
     };
 
     if (serviceAddress && serviceFeeSats > 0) {

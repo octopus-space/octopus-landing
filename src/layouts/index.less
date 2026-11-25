@@ -91,6 +91,38 @@
       .navWrap {
         display: flex;
         align-items: center;
+        .headerGasPill {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          height: 32px;
+          padding: 0 12px;
+          border-radius: 999px;
+          background: rgba(26, 24, 95, 0.88);
+          border: 1px solid rgba(110, 102, 250, 0.45);
+          font-size: 12px;
+          cursor: pointer;
+          user-select: none;
+          transition: all 0.2s ease;
+          &:hover {
+            border-color: #6e66fa;
+            background: rgba(110, 102, 250, 0.24);
+          }
+          .gasDot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #8cff95;
+            box-shadow: 0 0 6px rgba(140, 255, 149, 0.8);
+          }
+          .gasLabel {
+            color: rgba(255, 255, 255, 0.65);
+          }
+          .gasVal {
+            color: #8cff95;
+            font-weight: 600;
+          }
+        }
         .entryBtn {
           margin-left: 23px;
           width: 133px;
@@ -178,6 +210,13 @@
           height: 25px;
         }
         .navWrap {
+          .headerGasPill {
+            padding: 0 8px;
+            font-size: 11px;
+            .gasLabel {
+              display: none;
+            }
+          }
           .nav {
             display: none;
           }

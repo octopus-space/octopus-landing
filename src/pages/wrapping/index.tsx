@@ -10,7 +10,7 @@ import {
   Grid,
   Alert,
 } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined, EditOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "./index.less";
 import { useModel } from "umi";
@@ -22,6 +22,7 @@ import {
   calcMintInfo,
   calcRedeemInfo,
   calculateQuantityLimitRange,
+  computeRedeemBtcServiceFeeSats,
   determineAddressInfo,
   formatSat,
 } from "@/utils/utils";
@@ -65,8 +66,18 @@ export default () => {
   const screens = useBreakpoint();
   const [historyVisible, setHistoryVisible] = useState<boolean>(false);
 
-  const { userBal, connected, btcAddress, network, getBal } =
-    useModel("wallet");
+  const {
+    userBal,
+    connected,
+    btcAddress,
+    network,
+    getBal,
+    feeRates,
+    feeRate,
+    feeRateType,
+    selectFeeRatePlan,
+    setFeeRateModalVisible,
+  } = useModel("wallet");
   const {
     asset,
     protocolType,
@@ -144,8 +155,8 @@ export default () => {
         try {
           const info: FeeInfo =
             bridgeType === "mint"
-              ? calcMintInfo(val, AssetsInfo, asset, feeQuote)
-              : calcRedeemInfo(val, AssetsInfo, asset, feeQuote);
+              ? calcMintInfo(val, AssetsInfo, asset, feeQuote, feeRate)
+              : calcRedeemInfo(val, AssetsInfo, asset, feeQuote, feeRate);
           if (Number(info.receiveAmount) <= 0) {
             throw new Error("Low send amount");
           }
@@ -158,7 +169,16 @@ export default () => {
         }
       }
     },
-    [AssetsInfo, asset, bridgeType, feeQuote, setErrorMsg, setFeeInfo, setReciveAmount]
+    [
+      AssetsInfo,
+      asset,
+      bridgeType,
+      feeQuote,
+      feeRate,
+      setErrorMsg,
+      setFeeInfo,
+      setReciveAmount,
+    ]
   );
 
   const onInputChange = (value: string | number | null) => {
@@ -176,7 +196,7 @@ export default () => {
     if (amount !== "" && amount !== undefined && amount !== null) {
       recomputeFeeAndReceive(amount);
     }
-  }, [feeQuote, recomputeFeeAndReceive]);
+  }, [feeQuote, feeRate, recomputeFeeAndReceive]);
 
   const mrc20OriginTokenId = useMemo(() => {
     if (asset && asset.network === "MRC20" && asset.originTokenId) {
@@ -237,24 +257,42 @@ export default () => {
     return { maxAmount, minAmount };
   }, [asset, AssetsInfo]);
 
+  const orderedQuickTiers = useMemo(() => {
+    const slow = feeRates.find((t) => t.label === "Slow");
+    const avg = feeRates.find((t) => t.label === "Avg");
+    const fast = feeRates.find((t) => t.label === "Fast");
+    return [slow, avg, fast].filter(Boolean) as typeof feeRates;
+  }, [feeRates]);
+
   const liveServiceFeeSummary = useMemo(() => {
     if (!asset) return "";
-    const btcFee = Number(
-      feeQuote?.btcFeeSats ??
-        (bridgeType === "mint"
-          ? protocolType === "btc"
-            ? 800
-            : 1000
-          : protocolType === "btc"
-            ? 880
-            : 2066)
-    );
     if (bridgeType === "mint") {
+      const btcFee = Number(
+        feeQuote?.btcFeeSats ?? (protocolType === "btc" ? 800 : 1000)
+      );
       return `${formatSat(btcFee, 8)} BTC (${btcFee} sats)`;
     }
+    const btcFee = computeRedeemBtcServiceFeeSats(
+      protocolType === "btc" ? "BTC" : "MRC20",
+      feeRate,
+      feeQuote
+    );
     const mvcFee = Number(feeQuote?.mvcFeeSats ?? 50000);
     return `${formatSat(mvcFee, 8)} SPACE + ${formatSat(btcFee, 8)} BTC`;
-  }, [asset, bridgeType, protocolType, feeQuote]);
+  }, [asset, bridgeType, protocolType, feeQuote, feeRate]);
+
+  const liveEstMinerFeeSummary = useMemo(() => {
+    const btcRate = Math.max(1, Math.ceil(Number(feeRate || 2)));
+    if (bridgeType === "mint") {
+      const estSats =
+        protocolType === "btc"
+          ? Math.ceil(160 * btcRate)
+          : 546 + Math.ceil(300 * btcRate);
+      return `~${formatSat(estSats, 8)} BTC`;
+    }
+    const estBtcSats = Math.ceil(150 * btcRate);
+    return `~${formatSat(4500, 8)} SPACE + ~${formatSat(estBtcSats, 8)} BTC`;
+  }, [bridgeType, protocolType, feeRate]);
 
   /**
    * Dual-chain native gas & bridge fee pre-flight check:
@@ -275,7 +313,7 @@ export default () => {
     const spaceSats = Number(userBal.spaceSats ?? 0);
     const btcRate = Math.max(
       1,
-      Number(feeQuote?.btcFeeRate || AssetsInfo?.feeBtc || 2)
+      Math.ceil(Number(feeRate || feeQuote?.btcFeeRate || AssetsInfo?.feeBtc || 2))
     );
 
     if (bridgeType === "mint") {
@@ -291,7 +329,9 @@ export default () => {
           )} BTC (amount + ${formatSat(
             bridgeFeeSats,
             8
-          )} BTC bridge fee + miner fee), available ${userBal.btc || "0"} BTC.`;
+          )} BTC bridge fee + miner fee @ ${btcRate} sat/vB), available ${
+            userBal.btc || "0"
+          } BTC.`;
         }
         return "";
       }
@@ -307,7 +347,7 @@ export default () => {
           return `Insufficient BTC for bridge & network fee: need at least ~${formatSat(
             requiredBtcSats,
             8
-          )} BTC (${bridgeFeeSats} sats bridge fee + commit/reveal gas), available ${
+          )} BTC (${bridgeFeeSats} sats bridge fee + commit/reveal gas @ ${btcRate} sat/vB), available ${
             userBal.btc || "0"
           } BTC.`;
         }
@@ -334,8 +374,11 @@ export default () => {
         } SPACE.`;
       }
 
-      const defaultBtcFee = protocolType === "btc" ? 880 : 2066;
-      const btcFeeSats = Number(feeQuote?.btcFeeSats ?? defaultBtcFee);
+      const btcFeeSats = computeRedeemBtcServiceFeeSats(
+        protocolType === "btc" ? "BTC" : "MRC20",
+        btcRate,
+        feeQuote
+      );
       const estBtcMinerSats = Math.ceil(150 * btcRate);
       const requiredBtcSats = btcFeeSats + estBtcMinerSats;
       if (btcSats < requiredBtcSats) {
@@ -345,7 +388,7 @@ export default () => {
         )} BTC (${formatSat(
           btcFeeSats,
           8
-        )} BTC bridge fee + BTC miner fee), available ${
+        )} BTC bridge fee + BTC miner fee @ ${btcRate} sat/vB), available ${
           userBal.btc || "0"
         } BTC.`;
       }
@@ -357,6 +400,7 @@ export default () => {
     asset,
     amount,
     userBal,
+    feeRate,
     feeQuote,
     AssetsInfo,
     bridgeType,
@@ -374,7 +418,7 @@ export default () => {
     if (bridgeType === "mint" && protocolType === "btc" && ratio === 1) {
       const btcRate = Math.max(
         1,
-        Number(feeQuote?.btcFeeRate || AssetsInfo?.feeBtc || 2)
+        Math.ceil(Number(feeRate || feeQuote?.btcFeeRate || AssetsInfo?.feeBtc || 2))
       );
       const reserveBtc = new Decimal(
         Number(feeQuote?.btcFeeSats ?? 800) + Math.ceil(180 * btcRate)
@@ -411,7 +455,8 @@ export default () => {
           asset,
           addressType,
           network,
-          AssetsInfo
+          AssetsInfo,
+          feeRate
         );
       } else if (protocolType === "mrc20") {
         await redeemMrc20(
@@ -419,7 +464,8 @@ export default () => {
           asset,
           addressType,
           network,
-          AssetsInfo
+          AssetsInfo,
+          feeRate
         );
       }
       setSuccessVisible(true);
@@ -466,7 +512,8 @@ export default () => {
           asset,
           addressType,
           network,
-          AssetsInfo
+          AssetsInfo,
+          feeRate
         );
       } else if (protocolType === "mrc20") {
         await mintMrc20(
@@ -474,7 +521,8 @@ export default () => {
           asset,
           addressType,
           network,
-          AssetsInfo
+          AssetsInfo,
+          feeRate
         );
       }
       setSuccessVisible(true);
@@ -815,9 +863,53 @@ export default () => {
                   </div>
                 </>
               )}
+
+              <div className="item feeSelectorRow">
+                <span className="label">
+                  BTC Fee Rate
+                  <span className="mvcSubBadge">MVC: 1 sat/B</span>
+                </span>
+                <div className="feeChipGroup">
+                  {orderedQuickTiers.map((tier) => {
+                    const active = feeRateType === tier.label;
+                    return (
+                      <button
+                        key={tier.label}
+                        type="button"
+                        className={`feeChip ${active ? "active" : ""}`}
+                        onClick={() => selectFeeRatePlan(tier.label)}
+                      >
+                        <span className="chipLabel">{tier.label}</span>
+                        <span className="chipVal">{tier.value}</span>
+                      </button>
+                    );
+                  })}
+                  <button
+                    type="button"
+                    className={`feeChip customChip ${
+                      feeRateType === "Custom" ? "active" : ""
+                    }`}
+                    onClick={() => setFeeRateModalVisible(true)}
+                  >
+                    <span className="chipLabel">
+                      {feeRateType === "Custom"
+                        ? `Custom · ${feeRate}`
+                        : "Custom"}
+                    </span>
+                    <EditOutlined style={{ fontSize: 10 }} />
+                  </button>
+                </div>
+              </div>
+
               <div className="item">
                 <span className="label">Bridge Service Fee</span>
                 <span className="value">{liveServiceFeeSummary}</span>
+              </div>
+              <div className="item">
+                <span className="label">
+                  Est. Network Miner Fee ({feeRate} sat/vB)
+                </span>
+                <span className="value">{liveEstMinerFeeSummary}</span>
               </div>
             </div>
           )}
@@ -864,7 +956,11 @@ export default () => {
         </Spin>
       </Card>
 
-      <Summary {...confrimProps} submitting={submitting} />
+      <Summary
+        {...confrimProps}
+        handleSubmit={handleSubmit}
+        submitting={submitting}
+      />
       <SuccessModel
         show={successVisible}
         onClose={() => {

@@ -30,6 +30,7 @@ export default ({
   submitting = false,
 }: ConfirmProps) => {
   const { asset, fromChain, toChain } = useModel("wrapping");
+  const { feeRate, feeRateType } = useModel("wallet");
   if (!asset) return null;
   return (
     <Popup
@@ -81,6 +82,12 @@ export default ({
               <span className="value">0 (1:1 Full Arrival)</span>
             </div>
             <div className="item">
+              <span className="label">Network Fee Rate</span>
+              <span className="value">
+                BTC {feeRate} sat/vB ({feeRateType}) · MVC 1 sat/B
+              </span>
+            </div>
+            <div className="item">
               <span className="label">Service Fee</span>
               <span className="value">{bridgeFee}</span>
             </div>
@@ -94,7 +101,7 @@ export default ({
             </div>
             <div className="item">
               <span className="label">Estimated Receipt Time</span>
-              <span className="value">20 minutes</span>
+              <span className="value">~20 minutes</span>
             </div>
           </div>
           <div className="submitWrap">

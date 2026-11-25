@@ -47,6 +47,14 @@ declare namespace API {
     mintPausedMessage?: string;
   };
 
+  type RecommendedFees = {
+    fastestFee: number;
+    halfHourFee: number;
+    hourFee: number;
+    economyFee: number;
+    minimumFee: number;
+  };
+
   type FeeQuoteData = {
     scenario: "btc_mint" | "mrc20_mint" | "btc_redeem" | "mrc20_redeem";
     network: "BTC" | "MRC20";

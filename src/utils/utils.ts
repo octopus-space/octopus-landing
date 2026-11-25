@@ -154,14 +154,38 @@ function validateAmountAndPrecision(
 }
 
 /**
+ * Computes the Redeem BTC payout fee (sats) synchronously for a chosen BTC fee rate,
+ * matching backend calculateBridgeFeeQuote 1:1 so UI updates with zero latency.
+ */
+export const computeRedeemBtcServiceFeeSats = (
+  assetNetwork: "BTC" | "MRC20" | string,
+  userBtcFeeRate?: number,
+  quote?: API.FeeQuoteData
+): number => {
+  const rate = Math.min(
+    100,
+    Math.max(1, Math.ceil(Number(userBtcFeeRate || quote?.btcFeeRate || 2)))
+  );
+  if (quote && Number(quote.btcFeeRate) === rate && Number(quote.btcFeeSats) > 0) {
+    return Number(quote.btcFeeSats);
+  }
+  const mult = Number(quote?.safetyMultiplier || 2.0);
+  if (assetNetwork === "BTC") {
+    return Math.max(800, Math.ceil(rate * 220 * mult));
+  }
+  return Math.max(1800, Math.ceil(rate * 380 * mult) + 546);
+};
+
+/**
  * 1:1 full arrival calculation for Mint (BTC -> WBTC, MRC20 -> MetaContract).
- * Bridge service fee is paid externally in native BTC.
+ * Bridge service fee is paid externally in native BTC; user's BTC deposit miner fee uses userBtcFeeRate.
  */
 export const calcMintInfo = (
   amount: number | string,
   assetInfo: API.AssetsData,
   asset: API.AssetItem,
-  quote?: API.FeeQuoteData
+  quote?: API.FeeQuoteData,
+  userBtcFeeRate?: number
 ): FeeInfo => {
   const maxDecimals =
     asset.network === "BTC"
@@ -177,7 +201,10 @@ export const calcMintInfo = (
 
   const defaultFeeSats = asset.network === "BTC" ? 800 : 1000;
   const btcFeeSats = Number(quote?.btcFeeSats ?? defaultFeeSats);
-  const btcRate = Number(quote?.btcFeeRate || assetInfo.feeBtc || 2);
+  const btcRate = Math.max(
+    1,
+    Math.ceil(Number(userBtcFeeRate || quote?.btcFeeRate || assetInfo.feeBtc || 2))
+  );
   const estMinerSats =
     asset.network === "BTC"
       ? Math.ceil(160 * btcRate)
@@ -204,13 +231,14 @@ export const calcMintInfo = (
 
 /**
  * 1:1 full arrival calculation for Redeem (WBTC -> BTC, MetaContract -> MRC20).
- * Bridge service fees are paid externally in MVC SPACE + BTC.
+ * MVC defaults to 1 sat/B; BTC payout fee & BTC prepay miner fee scale with userBtcFeeRate.
  */
 export const calcRedeemInfo = (
   amount: number | string,
   assetInfo: API.AssetsData,
   asset: API.AssetItem,
-  quote?: API.FeeQuoteData
+  quote?: API.FeeQuoteData,
+  userBtcFeeRate?: number
 ): FeeInfo => {
   const maxDecimals =
     asset.network === "BTC"
@@ -225,11 +253,17 @@ export const calcRedeemInfo = (
   );
 
   const mvcFeeSats = Number(quote?.mvcFeeSats ?? 50000);
-  const defaultBtcFee = asset.network === "BTC" ? 880 : 2066;
-  const btcFeeSats = Number(quote?.btcFeeSats ?? defaultBtcFee);
-  const btcRate = Number(quote?.btcFeeRate || assetInfo.feeBtc || 2);
+  const btcRate = Math.max(
+    1,
+    Math.ceil(Number(userBtcFeeRate || quote?.btcFeeRate || assetInfo.feeBtc || 2))
+  );
+  const btcFeeSats = computeRedeemBtcServiceFeeSats(
+    asset.network,
+    btcRate,
+    quote
+  );
   const estBtcMinerSats = Math.ceil(150 * btcRate);
-  const estMvcMinerSats = 4500;
+  const estMvcMinerSats = 4500; // MVC fixed at 1 sat/B
 
   const confirmAmountSats =
     asset.network === "BTC" ? dec.mul(1e8).toNumber() : 0;

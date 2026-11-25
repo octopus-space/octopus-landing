@@ -1,5 +1,6 @@
 import logo from "@/assets/logo.svg";
 import LoginModal from "@/components/LoginModal";
+import SetFeeRate from "@/components/SetFeeRate";
 import { Button, Dropdown } from "antd";
 import { useMemo } from "react";
 import { useModel, history } from "umi";
@@ -7,6 +8,7 @@ import wrapping from "@/assets/wrapping.svg";
 import mapping from "@/assets/mapping.svg";
 import logoIcon from "@/assets/logoIcon.svg";
 import exit from "@/assets/exit.svg";
+
 export default () => {
   const {
     disConnect,
@@ -14,24 +16,34 @@ export default () => {
     loginModalShow,
     setLoginModalShow,
     connected,
-    network
+    network,
+    feeRate,
+    feeRateType,
+    setFeeRateModalVisible,
   } = useModel("wallet");
+
   const showAddress = useMemo(() => {
     if (btcAddress) return btcAddress.replace(/(\w{5})\w+(\w{3})/, "$1...$2");
   }, [btcAddress]);
+
   return (
     <div className="header inside">
       <div className="headerwrap">
         <div className="left">
-          <img src={logo} alt="" className="logo" onClick={() => history.push('/')} />
-          <div
-            className="routes
-        "
-          >
+          <img
+            src={logo}
+            alt=""
+            className="logo"
+            onClick={() => history.push("/")}
+          />
+          <div className="routes">
             <div className="item">
               <img src={wrapping} alt="" />
               <div className="desc">
-                <div className="title">Wrapping {network === 'testnet' && <div className="beta">BETA</div>}</div>
+                <div className="title">
+                  Wrapping{" "}
+                  {network === "testnet" && <div className="beta">BETA</div>}
+                </div>
                 <div className="subTitle">Smartcontract Bridging</div>
               </div>
             </div>
@@ -45,29 +57,34 @@ export default () => {
           </div>
         </div>
 
-        <div className="navWrap">
+        <div className="navWrap" style={{ gap: 12 }}>
+          <div
+            className="headerGasPill"
+            onClick={() => setFeeRateModalVisible(true)}
+            title="Click to customize BTC transaction fee rate"
+          >
+            <span className="gasDot" />
+            <span className="gasLabel">BTC Gas</span>
+            <span className="gasVal">
+              {feeRateType} · {feeRate} sat/vB
+            </span>
+          </div>
+
           {connected ? (
             <Dropdown
               dropdownRender={() => (
                 <div className="walletInfo">
-                  <div
-                    className={`item`}
-
-                  >
+                  <div className="item">
                     <img src={logoIcon} alt="" />
                     <span className="name">{showAddress}</span>
                   </div>
-                  <div
-                    className={`item active`}
-
-                    onClick={disConnect}
-                  >
+                  <div className="item active" onClick={disConnect}>
                     <img src={exit} alt="" />
                     <span className="name">Disconnect</span>
                   </div>
                 </div>
               )}
-              placement='bottomRight'
+              placement="bottomRight"
             >
               <Button type="primary">{showAddress}</Button>
             </Dropdown>
@@ -82,6 +99,7 @@ export default () => {
         show={loginModalShow}
         onClose={() => setLoginModalShow(false)}
       />
+      <SetFeeRate />
     </div>
   );
 };

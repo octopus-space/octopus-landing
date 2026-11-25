@@ -200,15 +200,68 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      // flex-wrap: wrap;
-      gap: 20px;
+      gap: 12px;
       .value {
         white-space: nowrap;
         flex-grow: 1;
         text-align: right;
       }
       & + .item {
-        margin-top: 20px;
+        margin-top: 16px;
+      }
+    }
+    .feeSelectorRow {
+      flex-wrap: wrap;
+      row-gap: 8px;
+      .label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        .mvcSubBadge {
+          font-size: 10px;
+          padding: 1px 6px;
+          border-radius: 999px;
+          color: rgba(255, 255, 255, 0.65);
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+      }
+      .feeChipGroup {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-left: auto;
+      }
+      .feeChip {
+        appearance: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: #080731;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 11px;
+        line-height: 16px;
+        cursor: pointer;
+        transition: all 0.18s ease;
+        &:hover {
+          border-color: rgba(110, 102, 250, 0.8);
+          color: #ffffff;
+        }
+        .chipVal {
+          color: #8cff95;
+          font-weight: 600;
+        }
+        &.active {
+          border-color: #6e66fa;
+          background: rgba(110, 102, 250, 0.28);
+          color: #ffffff;
+          box-shadow: 0 0 0 1px rgba(110, 102, 250, 0.25);
+        }
       }
     }
   }

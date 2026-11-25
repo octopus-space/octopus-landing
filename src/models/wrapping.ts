@@ -28,7 +28,7 @@ const defaultChains: Chain[] = [
 ];
 
 export default () => {
-  const { network } = useModel("wallet");
+  const { network, feeRate } = useModel("wallet");
   const [chains] = useState<Chain[]>(defaultChains);
   const [chainType, setChainType] = useState<"from" | "to">();
   const [fromChain, setFromChain] = useState<Chain>(defaultChains[0]);
@@ -110,7 +110,7 @@ export default () => {
 
   useEffect(() => {
     let didCancel = false;
-    const fetchQuote = async () => {
+    const timer = window.setTimeout(async () => {
       if (!network) return;
       const assetNetwork: "BTC" | "MRC20" =
         protocolType === "btc" ? "BTC" : "MRC20";
@@ -119,6 +119,7 @@ export default () => {
           network: assetNetwork,
           direction: bridgeType,
           originTokenId: asset?.originTokenId,
+          btcFeeRate: feeRate,
         });
         if (!didCancel && ret?.data) {
           setFeeQuote(ret.data);
@@ -126,12 +127,12 @@ export default () => {
       } catch (err) {
         console.log("getFeeQuote error:", err);
       }
-    };
-    fetchQuote();
+    }, 150);
     return () => {
       didCancel = true;
+      window.clearTimeout(timer);
     };
-  }, [network, protocolType, bridgeType, asset?.originTokenId, refetchAssets]);
+  }, [network, protocolType, bridgeType, asset?.originTokenId, feeRate, refetchAssets]);
 
   const handleRefetchAssets = useCallback(async () => {
     setRefetchAssets((prev) => !prev);
