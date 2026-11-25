@@ -17,14 +17,11 @@ export default ({ onChange, type }: Props) => {
   const [list, setList] = useState<API.AssetItem[]>([]);
   useEffect(() => {
     if (searchWord) {
-      const _list = assets.filter(
-        (item) =>
-          item.targetName
-            .toUpperCase()
-            .includes(searchWord.trim().toUpperCase()) ||
-          item.targetName
-            .toUpperCase()
-            .includes(searchWord.trim().toUpperCase())
+      const kw = searchWord.trim().toUpperCase();
+      const _list = assets.filter((item) =>
+        [item.originName, item.originSymbol, item.targetName, item.targetSymbol]
+          .filter(Boolean)
+          .some((s) => s.toUpperCase().includes(kw))
       );
       setList(_list);
     } else {

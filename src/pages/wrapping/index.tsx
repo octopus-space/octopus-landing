@@ -186,37 +186,45 @@ export default () => {
   }, [asset]);
 
   useEffect(() => {
+    if (!connected || !btcAddress) {
+      setMrc20Info([]);
+      setLoadingInput(false);
+      return;
+    }
+    if (!network || actionType !== "mintmrc20" || !mrc20OriginTokenId) {
+      return;
+    }
     let didCancel = false;
     const fetchMrcBalances = async () => {
-      if (!network || !btcAddress) return;
-      if (actionType === "mintmrc20" && mrc20OriginTokenId) {
-        setLoadingInput(true);
-        try {
-          let list: API.Mrc20BalItem[] = [];
-          for (let i = 0; i < 10; i++) {
-            const ret = await getUserMrc20Balances(btcAddress, network, i, 50);
-            if (ret.code === 0 && ret.data?.list) {
-              list = [...list, ...ret.data.list];
-              if (ret.data.list.length < 50) break;
-            } else {
-              break;
-            }
+      setLoadingInput(true);
+      try {
+        let list: API.Mrc20BalItem[] = [];
+        for (let i = 0; i < 10; i++) {
+          const ret = await getUserMrc20Balances(btcAddress, network, i, 50);
+          if (ret.code === 0 && Array.isArray(ret.data?.list)) {
+            list = [...list, ...ret.data.list];
+            if (ret.data.list.length < 50) break;
+          } else {
+            break;
           }
-          if (!didCancel) {
-            setMrc20Info(list);
-          }
-        } catch (err) {
-          console.log(err);
-        } finally {
-          if (!didCancel) setLoadingInput(false);
         }
+        if (!didCancel) {
+          setMrc20Info(list);
+        }
+      } catch (err) {
+        console.log(err);
+        if (!didCancel) {
+          setMrc20Info([]);
+        }
+      } finally {
+        if (!didCancel) setLoadingInput(false);
       }
     };
     fetchMrcBalances();
     return () => {
       didCancel = true;
     };
-  }, [actionType, network, btcAddress, mrc20OriginTokenId, setMrc20Info]);
+  }, [connected, actionType, network, btcAddress, mrc20OriginTokenId, setMrc20Info]);
 
   const inputRange = useMemo(() => {
     let minAmount = 0;

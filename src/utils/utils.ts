@@ -262,3 +262,29 @@ export const checkAddressType = (address: string) => {
     message: `Only ${supportRedeemAddressType.join(",")} address is supported`,
   };
 };
+
+export function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number = 5000,
+  label: string = "Wallet request"
+): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error(`${label} timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
+    Promise.resolve(promise).then(
+      (val) => {
+        clearTimeout(timer);
+        resolve(val);
+      },
+      (err) => {
+        clearTimeout(timer);
+        reject(err);
+      }
+    );
+  });
+}
+
+export function normalizeWalletNetwork(rawNet?: string): "mainnet" | "testnet" {
+  return rawNet === "testnet" ? "testnet" : "mainnet";
+}

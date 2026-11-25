@@ -231,6 +231,26 @@ export async function getBridgeHistory(
   );
 }
 
+export async function getSafeBtcUtxos(
+  address: string,
+  network: Network,
+  useUnconfirmed: boolean = true
+) {
+  return request<
+    API.Ret<{
+      list: API.UTXO[];
+      total: number;
+      totalSats: number;
+    }>
+  >(`${getHost(network)}/common/btc/address/utxo`, {
+    method: "GET",
+    params: {
+      address,
+      unconfirmed: useUnconfirmed ? "1" : "0",
+    },
+  });
+}
+
 export async function getUserMrc20Balance(
   address: string,
   network: Network,
@@ -248,6 +268,7 @@ export async function getUserMrc20Balance(
         cursor: cursor * size,
         size,
         net: network === "mainnet" ? "livenet" : "testnet",
+        source: "mrc20-v2",
       },
     }
   );
@@ -268,6 +289,7 @@ export async function getUserMrc20Balances(
         cursor: cursor * size,
         size,
         net: network === "mainnet" ? "livenet" : "testnet",
+        source: "mrc20-v2",
       },
     }
   );

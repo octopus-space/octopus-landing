@@ -1,6 +1,11 @@
 import { getUtxoBalance } from "@/utils/psbtBuild";
-import { checkAddressType, formatSat } from "@/utils/utils";
-import { useCallback, useEffect, useState } from "react";
+import {
+  checkAddressType,
+  formatSat,
+  normalizeWalletNetwork,
+  withTimeout,
+} from "@/utils/utils";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type Network = "mainnet" | "testnet";
 type WalletName = "metalet";
@@ -19,20 +24,32 @@ async function fetchMvcSpaceSats(): Promise<number> {
   if (!window.metaidwallet) return 0;
   try {
     if (typeof window.metaidwallet.getMvcBalance === "function") {
-      const bal = await window.metaidwallet.getMvcBalance();
+      const bal = await withTimeout(
+        window.metaidwallet.getMvcBalance(),
+        5000,
+        "getMvcBalance"
+      );
       const sum = Number(bal?.confirmed ?? 0) + Number(bal?.unconfirmed ?? 0);
       return sum > 0 ? sum : Number(bal?.total ?? 0);
     }
     if (typeof window.metaidwallet.getBalance === "function") {
-      const bal = await window.metaidwallet.getBalance();
+      const bal = await withTimeout(
+        window.metaidwallet.getBalance(),
+        5000,
+        "getBalance"
+      );
       const sum = Number(bal?.confirmed ?? 0) + Number(bal?.unconfirmed ?? 0);
       return sum > 0 ? sum : Number(bal?.total ?? 0);
     }
     if (typeof window.metaidwallet.getUtxos === "function") {
-      const utxos = await window.metaidwallet.getUtxos();
+      const utxos = await withTimeout(
+        window.metaidwallet.getUtxos(),
+        5000,
+        "getUtxos"
+      );
       if (Array.isArray(utxos)) {
         return utxos.reduce(
-          (acc, u) => acc + Number(u?.satoshis ?? u?.satoshi ?? 0),
+          (acc, u) => acc + Number(u?.satoshis ?? u?.satoshi ?? u?.value ?? 0),
           0
         );
       }
@@ -52,16 +69,40 @@ export default () => {
   const [connected, setConnected] = useState<boolean>(false);
   const [userBal, setUserBal] = useState<Record<string, any>>({});
 
+  const btcAddrRef = useRef<string | undefined>(undefined);
+  const networkRef = useRef<Network>("mainnet");
+  btcAddrRef.current = btcAddress;
+  networkRef.current = network;
+
   const getBal = useCallback(
-    async (forceConnected?: boolean) => {
+    async (
+      forceConnected?: boolean,
+      addrOverride?: string,
+      netOverride?: Network
+    ) => {
       if (!window.metaidwallet) return;
       if (!(forceConnected || connected)) return;
+
+      const targetAddr = addrOverride || btcAddrRef.current;
+      const targetNet = netOverride || networkRef.current || "mainnet";
+
       try {
         const [btcSats, spaceSats, tokens] = await Promise.all([
-          getUtxoBalance().catch(() => 0),
-          fetchMvcSpaceSats(),
-          window.metaidwallet.token.getBalance().catch(() => []),
+          getUtxoBalance(targetAddr, targetNet).catch(() => 0),
+          fetchMvcSpaceSats().catch(() => 0),
+          window.metaidwallet.token?.getBalance
+            ? withTimeout(
+                window.metaidwallet.token.getBalance(),
+                5000,
+                "token.getBalance"
+              ).catch(() => [])
+            : Promise.resolve([]),
         ]);
+
+        if (targetAddr && btcAddrRef.current && targetAddr !== btcAddrRef.current) {
+          return;
+        }
+
         const _bals: Record<string, any> = {
           btc: formatSat(btcSats, 8),
           btcSats: Number(btcSats || 0),
@@ -88,52 +129,94 @@ export default () => {
     [connected]
   );
 
-  const init = useCallback(async () => {
-    if (walletName === "metalet" && window.metaidwallet) {
-      const isConnected = await window.metaidwallet.isConnected();
-      if (isConnected === true) {
-        const _mvc = await window.metaidwallet.getAddress();
-        const { network: walletNet } = await window.metaidwallet.getNetwork();
-        const _btcAddress = await window.metaidwallet.btc.getAddress();
-        const { pass, message } = checkAddressType(_btcAddress);
-        if (!pass) {
-          return { pass, message };
+  const init = useCallback(
+    async (skipIsConnectedCheck = false) => {
+      if (walletName === "metalet" && window.metaidwallet) {
+        let isConn: any = skipIsConnectedCheck ? true : false;
+        if (!skipIsConnectedCheck) {
+          isConn = await withTimeout(
+            window.metaidwallet.isConnected(),
+            4000,
+            "isConnected"
+          ).catch(() => false);
         }
-        setConnected(true);
-        setMVCAddress(_mvc);
-        setNetwork(walletNet);
-        setBTCAddress(_btcAddress);
-        await getBal(true);
-        return { pass, message };
+        if (isConn === true) {
+          const [_mvc, netInfo, _btcAddress]: any[] = await Promise.all([
+            withTimeout(window.metaidwallet.getAddress(), 5000, "getAddress"),
+            withTimeout(window.metaidwallet.getNetwork(), 5000, "getNetwork"),
+            withTimeout(
+              window.metaidwallet.btc.getAddress(),
+              5000,
+              "btc.getAddress"
+            ),
+          ]);
+
+          if (typeof _btcAddress !== "string" || !_btcAddress) {
+            return {
+              pass: false,
+              message:
+                _btcAddress?.status || "Failed to read BTC address from wallet",
+            };
+          }
+
+          const { pass, message } = checkAddressType(_btcAddress);
+          if (!pass) {
+            return { pass, message };
+          }
+
+          const normNet = normalizeWalletNetwork(netInfo?.network);
+          btcAddrRef.current = _btcAddress;
+          networkRef.current = normNet;
+
+          setMVCAddress(typeof _mvc === "string" ? _mvc : "");
+          setNetwork(normNet);
+          setBTCAddress(_btcAddress);
+          setConnected(true);
+          setLoginModalShow(false);
+
+          // Fetch balances asynchronously so login & modal dismissal never block!
+          void getBal(true, _btcAddress, normNet);
+          return { pass: true, message: "" };
+        }
       }
-    }
-    return { pass: true, message: "" };
-  }, [walletName, getBal]);
+      return { pass: true, message: "" };
+    },
+    [walletName, getBal]
+  );
 
   const connect = async () => {
     if (!checkExtension()) return;
-    const isConnected: any = await window.metaidwallet.isConnected();
-    if (isConnected && isConnected.status === "locked") {
-      throw new Error("unlock first");
+    const isConnected: any = await withTimeout(
+      window.metaidwallet.isConnected(),
+      4000,
+      "isConnected"
+    ).catch(() => false);
+
+    if (isConnected && typeof isConnected === "object" && isConnected.status === "locked") {
+      throw new Error("Please unlock Metalet Wallet first");
     }
-    if (!isConnected) {
-      const ret = await window.metaidwallet.connect();
-      if (ret.status) {
+
+    if (isConnected !== true) {
+      const ret: any = await window.metaidwallet.connect();
+      if (ret && ret.status) {
         throw new Error(ret.status);
       }
     }
-    const { pass, message } = await init();
+
+    const { pass, message } = await init(true);
     if (!pass) {
-      throw new Error(message);
+      throw new Error(message || "Failed to connect wallet");
     }
+    setLoginModalShow(false);
   };
 
   const disConnect = async () => {
     if (!checkExtension()) return;
     if (window.metaidwallet.disconnect) {
-      const ret = await window.metaidwallet.disconnect();
+      const ret = await window.metaidwallet.disconnect().catch(() => null);
       if (ret?.status === "canceled") return;
     }
+    btcAddrRef.current = undefined;
     setConnected(false);
     setMVCAddress("");
     setBTCAddress("");
@@ -148,25 +231,25 @@ export default () => {
   }, [init]);
 
   useEffect(() => {
-    if (connected) {
-      getBal(true);
+    if (connected && btcAddress) {
+      void getBal(true, btcAddress, network);
     }
-  }, [network, connected, getBal]);
+  }, [network, connected, btcAddress, getBal]);
 
   useEffect(() => {
     const handleAccountChange = () => {
-      init();
+      void init();
     };
     const handleNetChange = () => {
-      init();
+      void init();
     };
-    if (walletName === "metalet" && window.metaidwallet && connected) {
+    if (walletName === "metalet" && window.metaidwallet) {
       window.metaidwallet.on("accountsChanged", handleAccountChange);
       window.metaidwallet.on("networkChanged", handleNetChange);
     }
 
     return () => {
-      if (walletName === "metalet" && window.metaidwallet && connected) {
+      if (walletName === "metalet" && window.metaidwallet) {
         window.metaidwallet.removeListener(
           "accountsChanged",
           handleAccountChange
@@ -174,7 +257,7 @@ export default () => {
         window.metaidwallet.removeListener("networkChanged", handleNetChange);
       }
     };
-  }, [walletName, connected, init]);
+  }, [walletName, init]);
 
   return {
     mvcAddress,

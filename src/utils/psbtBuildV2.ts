@@ -8,7 +8,8 @@ import {
 import mempoolJS from "@mempool/mempool.js";
 import { isTaprootInput } from "bitcoinjs-lib/src/psbt/bip371";
 import { Buffer } from "buffer";
-import { determineAddressInfo } from "./utils";
+import { getSafeBtcUtxos } from "@/servies/api";
+import { determineAddressInfo, withTimeout } from "./utils";
 
 const TX_EMPTY_SIZE = 4 + 1 + 1 + 4;
 const TX_INPUT_BASE = 32 + 4 + 1 + 4; // 41
@@ -244,13 +245,49 @@ export async function createPsbtInput({
   return payInput;
 }
 
-export const getUtxos = async (address: string, _network?: API.Network) => {
+function normalizeUtxoItem(u: any): API.UTXO {
+  const txId = String(u?.txId ?? u?.txid ?? "");
+  const vout = Number(u?.vout ?? u?.outputIndex ?? 0);
+  const satoshis = Number(u?.satoshis ?? u?.satoshi ?? u?.value ?? 0);
+  return {
+    ...u,
+    txId,
+    txid: txId,
+    vout,
+    outputIndex: vout,
+    satoshis,
+    satoshi: satoshis,
+    confirmed: Boolean(u?.confirmed ?? u?.status?.confirmed ?? false),
+  };
+}
+
+export const getUtxos = async (
+  address: string,
+  network: API.Network = "mainnet",
+  walletTimeoutMs: number = 3000
+): Promise<API.UTXO[]> => {
   const addressType = determineAddressInfo(address).toUpperCase();
-  const utxos = await window.metaidwallet.btc.getUtxos({
-    needRawTx: ["P2PKH"].includes(addressType),
-    useUnconfirmed: true,
-  });
-  return Array.isArray(utxos) ? utxos : [];
+  if (window.metaidwallet?.btc?.getUtxos) {
+    try {
+      const utxos = await withTimeout(
+        window.metaidwallet.btc.getUtxos({
+          needRawTx: ["P2PKH"].includes(addressType),
+          useUnconfirmed: true,
+        }),
+        walletTimeoutMs,
+        "btc.getUtxos"
+      );
+      if (Array.isArray(utxos)) {
+        return utxos.map(normalizeUtxoItem);
+      }
+    } catch (err) {
+      console.warn("Metalet btc.getUtxos slow/failed, falling back to bridge safe UTXO API:", err);
+    }
+  }
+
+  const resp = await getSafeBtcUtxos(address, network, true);
+  const list = resp?.data?.list;
+  return Array.isArray(list) ? list.map(normalizeUtxoItem) : [];
 };
 
 export const addUtxoSafe = async (
@@ -261,10 +298,14 @@ export const addUtxoSafe = async (
   for (let i = 0; i < utxos.length; i++) {
     try {
       const { txId, vout } = utxos[i];
-      await window.metaidwallet.btc.addSafeUtxo({
-        address,
-        unspentOutput: `${txId}:${vout}`,
-      });
+      await withTimeout(
+        window.metaidwallet.btc.addSafeUtxo({
+          address,
+          unspentOutput: `${txId}:${vout}`,
+        }),
+        3000,
+        "btc.addSafeUtxo"
+      );
     } catch (err) {
       console.log(err);
     }
@@ -275,16 +316,61 @@ export function toXOnly(pubKey: Buffer) {
   return pubKey.length === 32 ? pubKey : pubKey.slice(1, 33);
 }
 
-export const getUtxoBalance = async (address?: string) => {
-  if (!address) {
-    address = await window.metaidwallet.btc.getAddress();
+export const getUtxoBalance = async (
+  address?: string,
+  network: API.Network = "mainnet"
+): Promise<number> => {
+  if (!address && window.metaidwallet?.btc?.getAddress) {
+    address = await withTimeout(
+      window.metaidwallet.btc.getAddress(),
+      4000,
+      "btc.getAddress"
+    );
   }
-  const utxos = await getUtxos(address);
-  return utxos.reduce((acc, cur) => acc + getUtxoSats(cur), 0);
+  if (!address || typeof address !== "string") return 0;
+
+  if (network === "mainnet") {
+    try {
+      const resp = await getSafeBtcUtxos(address, network, true);
+      if (resp?.data && Array.isArray(resp.data.list)) {
+        return Number(
+          resp.data.totalSats ??
+            resp.data.list.reduce((acc, cur) => acc + getUtxoSats(cur), 0)
+        );
+      }
+    } catch (err) {
+      console.warn("Bridge safe BTC UTXO balance fallback:", err);
+    }
+  }
+
+  try {
+    const utxos = await getUtxos(address, network, 3500);
+    return utxos.reduce((acc, cur) => acc + getUtxoSats(cur), 0);
+  } catch {}
+
+  if (typeof (window.metaidwallet?.btc as any)?.getBalance === "function") {
+    try {
+      const bal: any = await withTimeout(
+        (window.metaidwallet.btc as any).getBalance(),
+        4000,
+        "btc.getBalance"
+      );
+      const sats = Number(bal?.safeBalance ?? bal?.confirmed ?? bal?.total ?? 0);
+      if (Number.isFinite(sats) && sats >= 0) {
+        return sats;
+      }
+    } catch {}
+  }
+
+  return 0;
 };
 
 export const checkWalletAddress = async (address: string) => {
-  const _address = await window.metaidwallet.btc.getAddress();
+  const _address = await withTimeout(
+    window.metaidwallet.btc.getAddress(),
+    4000,
+    "btc.getAddress"
+  );
   if (address !== _address) {
     return { status: false, message: "Wallet address is not matched" };
   }
