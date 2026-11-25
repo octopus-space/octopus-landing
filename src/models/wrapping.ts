@@ -1,5 +1,5 @@
 import { useModel } from "umi";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getAssets, getFeeQuote } from "@/servies/api";
 import useIntervalAsync from "@/hooks/useIntervalAsync";
 import btc from "@/assets/btc.png";
@@ -37,7 +37,7 @@ export default () => {
   const [assets, setAssets] = useState<API.AssetItem[]>([]);
   const [protocolType, setProtocolType] = useState<Protocol>("btc");
   const [AssetsInfo, setAssetsInfo] = useState<API.AssetsData>();
-  const [feeQuote, setFeeQuote] = useState<API.FeeQuoteData>();
+  const [rawFeeQuote, setRawFeeQuote] = useState<API.FeeQuoteData>();
   const [amount, setAmount] = useState<number | string>("");
   const [reciveAmount, setReciveAmount] = useState<number | string>("");
   const [ErrorMsg, setErrorMsg] = useState("");
@@ -50,6 +50,7 @@ export default () => {
     confirmNumber: "",
   });
   const [refetchAssets, setRefetchAssets] = useState(false);
+  const prevQuoteCtxRef = useRef<string>("");
 
   const bridgeType: "mint" | "redeem" = useMemo(() => {
     if (fromChain.key === "btc") return "mint";
@@ -110,10 +111,14 @@ export default () => {
 
   useEffect(() => {
     let didCancel = false;
-    const timer = window.setTimeout(async () => {
+    const assetNetwork: "BTC" | "MRC20" =
+      protocolType === "btc" ? "BTC" : "MRC20";
+    const ctxKey = `${network}:${assetNetwork}:${bridgeType}:${asset?.originTokenId || ""}`;
+    const isSameCtx = prevQuoteCtxRef.current === ctxKey;
+    prevQuoteCtxRef.current = ctxKey;
+
+    const runQuoteFetch = async () => {
       if (!network) return;
-      const assetNetwork: "BTC" | "MRC20" =
-        protocolType === "btc" ? "BTC" : "MRC20";
       try {
         const ret = await getFeeQuote(network, {
           network: assetNetwork,
@@ -122,17 +127,39 @@ export default () => {
           btcFeeRate: feeRate,
         });
         if (!didCancel && ret?.data) {
-          setFeeQuote(ret.data);
+          setRawFeeQuote(ret.data);
         }
       } catch (err) {
         console.log("getFeeQuote error:", err);
       }
-    }, 150);
+    };
+
+    if (!isSameCtx) {
+      void runQuoteFetch();
+      return () => {
+        didCancel = true;
+      };
+    }
+
+    const timer = window.setTimeout(runQuoteFetch, 120);
     return () => {
       didCancel = true;
       window.clearTimeout(timer);
     };
   }, [network, protocolType, bridgeType, asset?.originTokenId, feeRate, refetchAssets]);
+
+  // Ensure stale Redeem/MRC20 quote never bleeds into Mint/BTC during switches
+  const feeQuote = useMemo(() => {
+    if (!rawFeeQuote) return undefined;
+    const expectedNetwork = protocolType === "btc" ? "BTC" : "MRC20";
+    if (
+      rawFeeQuote.network !== expectedNetwork ||
+      rawFeeQuote.direction !== bridgeType
+    ) {
+      return undefined;
+    }
+    return rawFeeQuote;
+  }, [rawFeeQuote, protocolType, bridgeType]);
 
   const handleRefetchAssets = useCallback(async () => {
     setRefetchAssets((prev) => !prev);

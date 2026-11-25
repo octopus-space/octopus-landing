@@ -163,19 +163,27 @@ export default () => {
     [minFeeRate]
   );
 
-  const commitCustomFeeRate = useCallback(() => {
-    setCustomFeeRate((prev) => {
-      const parsed = Math.round(Number(prev));
-      const clamped =
-        prev !== null && Number.isFinite(parsed)
-          ? Math.min(MAX_CUSTOM_BTC_FEE_RATE, Math.max(minFeeRate, parsed))
-          : minFeeRate;
-      try {
-        localStorage.setItem(STORAGE_CUSTOM_RATE_KEY, String(clamped));
-      } catch {}
-      return clamped;
-    });
-  }, [minFeeRate]);
+  const commitCustomFeeRate = useCallback(
+    (e?: { target?: { value?: string } }) => {
+      const domRaw = e?.target?.value;
+      setCustomFeeRate((prev) => {
+        const candidate =
+          domRaw !== undefined && domRaw !== "" ? Number(domRaw) : Number(prev);
+        const hasValue =
+          (domRaw !== undefined && domRaw !== "") || prev !== null;
+        const parsed = Math.round(candidate);
+        const clamped =
+          hasValue && Number.isFinite(parsed)
+            ? Math.min(MAX_CUSTOM_BTC_FEE_RATE, Math.max(minFeeRate, parsed))
+            : minFeeRate;
+        try {
+          localStorage.setItem(STORAGE_CUSTOM_RATE_KEY, String(clamped));
+        } catch {}
+        return clamped;
+      });
+    },
+    [minFeeRate]
+  );
 
   const feeRate = useMemo(() => {
     if (feeRateType === "Custom") {
