@@ -131,7 +131,7 @@ var jsx_runtime = __webpack_require__(74848);
 
 
 
-var tags = ["BRC20", "Runes", "Atomicals", "MRC20"];
+var tags = ["BTC", "MRC20", "MetaContract", "MVC"];
 /* harmony default export */ var HomePage1 = (function () {
   return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
     className: "homePage1",
@@ -183,15 +183,14 @@ var tags = ["BRC20", "Runes", "Atomicals", "MRC20"];
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
               className: "button primary",
               onClick: function onClick() {
-                return _umi_production_exports.history.push('/wrapping');
+                return _umi_production_exports.history.push("/wrapping");
               },
               children: "Wrapping"
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
               className: "button line",
               onClick: function onClick() {
                 message/* default */.Ay.info({
-                  content: "coming soon",
-                  icon: "🚀"
+                  content: "coming soon"
                 });
               },
               children: "Mapping"

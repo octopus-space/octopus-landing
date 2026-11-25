@@ -92,7 +92,7 @@ var Popup = function Popup(_ref) {
 
 /***/ }),
 
-/***/ 59613:
+/***/ 22953:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 // ESM COMPAT FLAG
@@ -130,8 +130,8 @@ var segmented = __webpack_require__(41654);
 var card = __webpack_require__(56952);
 // EXTERNAL MODULE: ./node_modules/antd/es/spin/index.js + 6 modules
 var spin = __webpack_require__(52188);
-// EXTERNAL MODULE: ./node_modules/antd/es/space/index.js + 5 modules
-var space = __webpack_require__(40091);
+// EXTERNAL MODULE: ./node_modules/antd/es/space/index.js + 6 modules
+var space = __webpack_require__(52771);
 // EXTERNAL MODULE: ./node_modules/antd/es/dropdown/index.js + 24 modules
 var dropdown = __webpack_require__(3253);
 // EXTERNAL MODULE: ./node_modules/antd/es/input-number/index.js + 18 modules
@@ -147,6 +147,8 @@ var react = __webpack_require__(74159);
 
 // EXTERNAL MODULE: ./src/.umi-production/exports.ts + 33 modules
 var _umi_production_exports = __webpack_require__(46297);
+// EXTERNAL MODULE: ./node_modules/decimal.js/decimal.mjs
+var decimal_js_decimal = __webpack_require__(76582);
 ;// ./src/assets/history.svg
 /* unused harmony import specifier */ var React;
 var __defProp = Object.defineProperty;
@@ -259,7 +261,6 @@ var size = 10;
 /* harmony default export */ var HistoryPanel = (function (_ref) {
   var type = _ref.type;
   var _useModel = (0,_umi_production_exports.useModel)("wallet"),
-    connect = _useModel.connect,
     mvcAddress = _useModel.mvcAddress,
     network = _useModel.network;
   var _useModel2 = (0,_umi_production_exports.useModel)("wrapping"),
@@ -308,19 +309,17 @@ var size = 10;
             setIsEnd(true);
           }
           _list = txList.map(function (item) {
-            if (type === "btcToMvc" || type === "brc20ToMvc" || type === "runesToMvc" || type === "mrc20ToMvc") {
+            if (type === "btcToMvc" || type === "mrc20ToMvc") {
               item.originNetwork = "BTC";
               item.targetNetwork = "MVC";
             }
-            if (type === "mvcToBtc" || type === "mvcToBrc20" || type === "mvcToRunes" || type === "mvcToMrc20") {
+            if (type === "mvcToBtc" || type === "mvcToMrc20") {
               item.originNetwork = "MVC";
               item.targetNetwork = "BTC";
             }
-            // item.status = 'doing';
-            // item.progess =10
             var timeD = (new Date().getTime() - Number(item.timestamp) * 1000) / 1000 / 60 / 20 * 100;
-            item.progess = item.status === 'success' ? 100 : timeD > 98 ? 98 : Math.ceil(timeD);
-            item.progess = item.status === 'failed' ? 0 : item.progess;
+            item.progess = item.status === "success" ? 100 : timeD > 98 ? 98 : Math.max(5, Math.ceil(timeD));
+            item.progess = item.status === "failed" ? 0 : item.progess;
             item.timestamp = (0,utils/* prettyTimestamp */.V7)(Number(item.timestamp), true);
             var currentToken = AssetsInfo.assetList.find(function (token) {
               return token.originTokenId === item.originTokenId && token.targetTokenId === item.targetTokenId;
@@ -352,11 +351,8 @@ var size = 10;
           return _context.stop();
       }
     }, _callee, null, [[2, 14]]);
-  })), [page]);
-  // useEffect(() => {
-  //   fetchHistory();
-  // }, [fetchHistory]);
-  var updateHistory = (0,useIntervalAsync/* default */.A)(fetchHistory, 30 * 1000);
+  })), [page, AssetsInfo, mvcAddress, network, type]);
+  (0,useIntervalAsync/* default */.A)(fetchHistory, 30 * 1000);
   return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
     style: {
       minHeight: 500,
@@ -371,8 +367,7 @@ var size = 10;
         width: 60,
         height: 60,
         margin: "0 auto"
-      },
-      children: " "
+      }
     }), list.map(function (item) {
       return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
         className: "historyCard",
@@ -386,17 +381,18 @@ var size = 10;
             children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
               className: "net",
               children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                src: item.originNetwork == "BTC" ? btc : mvc,
+                src: item.originNetwork === "BTC" ? btc : mvc,
                 size: 24,
                 symbol: item.originNetwork
               }), item.originNetwork]
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("img", {
               src: arrowRight_namespaceObject,
-              className: "arrow"
+              className: "arrow",
+              alt: ""
             }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
               className: "net",
               children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_TokenIcon, {
-                src: item.targetNetwork == "BTC" ? btc : mvc,
+                src: item.targetNetwork === "BTC" ? btc : mvc,
                 size: 24,
                 symbol: item.targetNetwork
               }), item.targetNetwork]
@@ -411,7 +407,7 @@ var size = 10;
             children: [item.status === "doing" ? "pending" : item.status, /*#__PURE__*/(0,jsx_runtime.jsx)(progress/* default */.A, {
               percent: item.progess,
               size: "small",
-              status: item.status === "failed" ? "exception" : item.status === 'success' ? "success" : "active"
+              status: item.status === "failed" ? "exception" : item.status === "success" ? "success" : "active"
             })]
           })]
         }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
@@ -458,7 +454,7 @@ __webpack_require__.dn(HistoryPanel);
 
 
 
-var items = [{
+var MVC2BTCItems = [{
   key: "mvcToBtc",
   label: "BTC",
   children: /*#__PURE__*/(0,jsx_runtime.jsx)(HistoryPanel, {
@@ -472,20 +468,7 @@ var items = [{
     type: "mvcToMrc20"
   }),
   destroyInactiveTabPane: true
-}
-// {
-//   key: "mvcToBrc20",
-//   label: "BRC20",
-//   children: <HistoryPanel type="mvcToBrc20" />,
-//   destroyInactiveTabPane: true
-// },
-// {
-//   key: "mvcToRunes",
-//   label: "RUNES",
-//   children: <HistoryPanel type="mvcToRunes" />,
-//   destroyInactiveTabPane: true
-// },
-];
+}];
 var BTC2MVCItems = [{
   key: "btcToMvc",
   label: "BTC",
@@ -500,20 +483,7 @@ var BTC2MVCItems = [{
     type: "mrc20ToMvc"
   }),
   destroyInactiveTabPane: true
-}
-// {
-//   key: "brc20ToMvc",
-//   label: "BRC20",
-//   children: <HistoryPanel type="brc20ToMvc" />,
-//   destroyInactiveTabPane: true
-// },
-// {
-//   key: "runesToMvc",
-//   label: "RUNES",
-//   children: <HistoryPanel type="runesToMvc" />,
-//   destroyInactiveTabPane: true
-// },
-];
+}];
 /* harmony default export */ var History = (function (_ref) {
   var show = _ref.show,
     onClose = _ref.onClose,
@@ -531,36 +501,13 @@ var BTC2MVCItems = [{
     _useState6 = slicedToArray_default()(_useState5, 2),
     mvc2btcKey = _useState6[0],
     setMvc2BtcKey = _useState6[1];
-  var onChange = function onChange(key) {
-    setActiveKey(key);
-  };
-  var onChange2 = function onChange2(key) {
-    setMvc2BtcKey(key);
-  };
   (0,react.useEffect)(function () {
-    var key = "";
     if (bridgeType === "redeem") {
-      key += "mvcTo";
-      if (protocolType === "btc") {
-        key += "Btc";
-      }
-      if (protocolType === "brc20") {
-        key += "Brc20";
-      }
-      if (protocolType === "runes") {
-        key += "Runes";
-      }
-      if (protocolType === "mrc20") {
-        key += "Mrc20";
-      }
       setSegmentedValue("MVC TO BTC");
-      setMvc2BtcKey(key);
-    }
-    if (bridgeType === "mint") {
-      key += protocolType;
-      key += "ToMvc";
+      setMvc2BtcKey(protocolType === "mrc20" ? "mvcToMrc20" : "mvcToBtc");
+    } else {
       setSegmentedValue("BTC TO MVC");
-      setActiveKey(key);
+      setActiveKey(protocolType === "mrc20" ? "mrc20ToMvc" : "btcToMvc");
     }
   }, [protocolType, bridgeType]);
   return /*#__PURE__*/(0,jsx_runtime.jsxs)(ResponPopup/* default */.A, {
@@ -571,20 +518,20 @@ var BTC2MVCItems = [{
     closable: true,
     className: "historyWrap",
     children: [/*#__PURE__*/(0,jsx_runtime.jsx)(segmented/* default */.A, {
-      options: ['BTC TO MVC', 'MVC TO BTC'],
+      options: ["BTC TO MVC", "MVC TO BTC"],
       block: true,
       value: segmentedValue,
       onChange: function onChange(value) {
-        setSegmentedValue(value);
+        setSegmentedValue(String(value));
       }
-    }), segmentedValue === 'BTC TO MVC' ? /*#__PURE__*/(0,jsx_runtime.jsx)(tabs/* default */.A, {
+    }), segmentedValue === "BTC TO MVC" ? /*#__PURE__*/(0,jsx_runtime.jsx)(tabs/* default */.A, {
       activeKey: activeKey,
       items: BTC2MVCItems,
-      onChange: onChange
+      onChange: setActiveKey
     }) : /*#__PURE__*/(0,jsx_runtime.jsx)(tabs/* default */.A, {
       activeKey: mvc2btcKey,
-      items: items,
-      onChange: onChange2
+      items: MVC2BTCItems,
+      onChange: setMvc2BtcKey
     })]
   });
 });
@@ -732,60 +679,9 @@ var SegOptions = [{
     })]
   }),
   value: "mrc20"
-}
-// {
-//   label: (
-//     <div style={{ padding: 4 }} className="SegmentedItem">
-//       <TokenIcon symbol="BRC20" src={BRC20} size={28} />
-//       <span>BRC20</span>
-//     </div>
-//   ),
-//   value: "brc20",
-// },
-// {
-//   label: (
-//     <div style={{ padding: 4 }} className="SegmentedItem">
-//       <TokenIcon symbol="Runes" src={runes} size={28} />
-//       <span>Runes</span>
-//     </div>
-//   ),
-//   value: "runes",
-//   disabled: false,
-// },
-
-// {
-//   label: (
-//     <div style={{ padding: 4 }} className="SegmentedItem">
-//       <TokenIcon symbol="BRC20" src={arc20} size={28} />
-//       <span>ARC20</span>
-//     </div>
-//   ),
-//   value: "arc20",
-//   disabled: true,
-// },
-// {
-//   label: (
-//     <div style={{ padding: 4 }} className="SegmentedItem">
-//       <TokenIcon symbol="BRC20" src={arc20} size={28} />
-//       <span>ARC20</span>
-//     </div>
-//   ),
-//   value: "arc2012",
-//   disabled: true,
-// },
-// {
-//   label: (
-//     <div style={{ padding: 4 }} className="SegmentedItem">
-//       <TokenIcon symbol="BRC20" src={arc20} size={28} />
-//       <span>ARC20</span>
-//     </div>
-//   ),
-//   value: "arc201ee2",
-//   disabled: true,
-// },
-];
-// EXTERNAL MODULE: ./src/servies/wrapping.ts + 10 modules
-var wrapping = __webpack_require__(33595);
+}];
+// EXTERNAL MODULE: ./src/servies/wrapping.ts + 8 modules
+var wrapping = __webpack_require__(99737);
 ;// ./src/components/SelectAsset/index.less
 // extracted by mini-css-extract-plugin
 
@@ -927,7 +823,7 @@ const SvgArrowRight = (props) => /* @__PURE__ */ arrowRight_React.createElement(
     asset = _useModel.asset,
     fromChain = _useModel.fromChain,
     toChain = _useModel.toChain;
-  if (!asset) return;
+  if (!asset) return null;
   return /*#__PURE__*/(0,jsx_runtime.jsx)(ResponPopup/* default */.A, {
     title: "Summary",
     modalWidth: 520,
@@ -988,28 +884,37 @@ const SvgArrowRight = (props) => /* @__PURE__ */ arrowRight_React.createElement(
             className: "item",
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "label",
+              children: "Token Deduction"
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+              className: "value",
+              children: "0 (1:1 Full Arrival)"
+            })]
+          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            className: "item",
+            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+              className: "label",
               children: "Service Fee"
-            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "value",
-              children: [bridgeFee, fromChain.key === "btc" ? asset.originSymbol : asset.targetSymbol]
+              children: bridgeFee
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "label",
-              children: "Network Fee"
-            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+              children: "Est. Network Fee"
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "value",
-              children: [minerFee, fromChain.key === "btc" ? asset.originSymbol : asset.targetSymbol]
+              children: minerFee
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "label",
-              children: "Total Fee"
-            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+              children: "Est. Total Outlay"
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "value",
-              children: [totalFee, fromChain.key === "btc" ? asset.originSymbol : asset.targetSymbol]
+              children: totalFee
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
@@ -1018,7 +923,7 @@ const SvgArrowRight = (props) => /* @__PURE__ */ arrowRight_React.createElement(
               children: "Estimated Receipt Time"
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "value",
-              children: "20 minutes "
+              children: "20 minutes"
             })]
           })]
         }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
@@ -1374,108 +1279,6 @@ const SvgSwitch = (props) => /* @__PURE__ */ switch_React.createElement("svg", s
   });
 });
 __webpack_require__.dn(SwitchChain);
-// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/SyncOutlined.js + 1 modules
-var SyncOutlined = __webpack_require__(90658);
-// EXTERNAL MODULE: ./node_modules/antd/es/flex/index.js + 2 modules
-var flex = __webpack_require__(97087);
-;// ./src/pages/wrapping/components/MintBrc20Input.tsx
-
-
-
-
-
-
-
-/* harmony default export */ var MintBrc20Input = (function (_ref) {
-  var onInputChange = _ref.onInputChange,
-    loading = _ref.loading,
-    refresh = _ref.refresh;
-  var _useModel = (0,_umi_production_exports.useModel)("wallet"),
-    connected = _useModel.connected;
-  var _useModel2 = (0,_umi_production_exports.useModel)("wrapping"),
-    inscription = _useModel2.inscription,
-    setInscription = _useModel2.setInscription,
-    asset = _useModel2.asset,
-    bridgeType = _useModel2.bridgeType,
-    brc20Info = _useModel2.brc20Info;
-  var Inscribe = /*#__PURE__*/function () {
-    var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee() {
-      return regeneratorRuntime_default()().wrap(function _callee$(_context) {
-        while (1) switch (_context.prev = _context.next) {
-          case 0:
-            if (!(connected && asset)) {
-              _context.next = 3;
-              break;
-            }
-            _context.next = 3;
-            return window.metaidwallet.btc.inscribeTransfer(asset === null || asset === void 0 ? void 0 : asset.originSymbol);
-          case 3:
-          case "end":
-            return _context.stop();
-        }
-      }, _callee);
-    }));
-    return function Inscribe() {
-      return _ref2.apply(this, arguments);
-    };
-  }();
-  if (!asset) return null;
-  return /*#__PURE__*/(0,jsx_runtime.jsx)(spin/* default */.A, {
-    spinning: loading,
-    children: /*#__PURE__*/(0,jsx_runtime.jsxs)(flex/* default */.A, {
-      wrap: "wrap",
-      gap: "small",
-      justify: "flex-end",
-      children: [brc20Info && brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)(es_button/* default */.A, {
-        type: "text",
-        onClick: refresh,
-        children: ['Server Error', " ", /*#__PURE__*/(0,jsx_runtime.jsx)(SyncOutlined/* default */.A, {})]
-      }), brc20Info && brc20Info.transferBalanceList.map(function (item) {
-        return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-          className: "brcItem ".concat(inscription && inscription.inscriptionId === item.inscriptionId ? "active" : ""),
-          onClick: function onClick() {
-            setInscription(item);
-            onInputChange(item.amount);
-          },
-          children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-            className: "tick",
-            children: bridgeType === "mint" ? /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-              children: [asset.originSymbol, " "]
-            }) : /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-              children: [asset.targetSymbol, " "]
-            })
-          }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-            className: "amount",
-            children: item.amount
-          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
-            className: "number",
-            children: ["#", item.inscriptionNumber]
-          })]
-        }, item.inscriptionId);
-      }), brc20Info && brc20Info.transferBalanceList.length === 0 && !brc20Info.message && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-        style: {
-          display: 'flex',
-          alignItems: 'center',
-          flexWrap: 'nowrap',
-          whiteSpace: 'nowrap'
-        },
-        className: "Brc20Error",
-        children: ["No transferable", /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.A, {
-          type: "text",
-          className: "inscribeBtn",
-          onClick: Inscribe,
-          style: {
-            color: "#6E66FA"
-          },
-          disabled: Number(brc20Info.balance) === 0,
-          size: "small",
-          children: "Inscribe"
-        })]
-      })]
-    })
-  });
-});
-__webpack_require__.dn(MintBrc20Input);
 ;// ./src/pages/wrapping/components/InputToken.tsx
 
 
@@ -1506,8 +1309,6 @@ var InputToken = function InputToken(_ref) {
   });
 };
 /* harmony default export */ var components_InputToken = (InputToken);
-// EXTERNAL MODULE: ./node_modules/decimal.js/decimal.mjs
-var decimal_js_decimal = __webpack_require__(76582);
 ;// ./src/components/NumberFormat/index.tsx
 
 
@@ -1611,7 +1412,8 @@ var psbtBuild = __webpack_require__(66268);
 
 
 
-var defalut = {
+
+var defaultConfirmProps = {
   show: false,
   amount: "",
   reciveAmount: "",
@@ -1654,10 +1456,10 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
     network = _useModel.network,
     getBal = _useModel.getBal;
   var _useModel2 = (0,_umi_production_exports.useModel)("wrapping"),
-    fromChain = _useModel2.fromChain,
     asset = _useModel2.asset,
     protocolType = _useModel2.protocolType,
     AssetsInfo = _useModel2.AssetsInfo,
+    feeQuote = _useModel2.feeQuote,
     setProtocolType = _useModel2.setProtocolType,
     setAsset = _useModel2.setAsset,
     resetInput = _useModel2.resetInput,
@@ -1670,12 +1472,6 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
     ErrorMsg = _useModel2.ErrorMsg,
     setErrorMsg = _useModel2.setErrorMsg,
     bridgeType = _useModel2.bridgeType,
-    brc20Info = _useModel2.brc20Info,
-    setBrc20Info = _useModel2.setBrc20Info,
-    runesInfo = _useModel2.runesInfo,
-    setRunesInfo = _useModel2.setRunesInfo,
-    inscription = _useModel2.inscription,
-    setInscription = _useModel2.setInscription,
     mrc20Info = _useModel2.mrc20Info,
     setMrc20Info = _useModel2.setMrc20Info;
   var _useState3 = (0,react.useState)(),
@@ -1686,22 +1482,18 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
     _useState6 = slicedToArray_default()(_useState5, 2),
     successVisible = _useState6[0],
     setSuccessVisible = _useState6[1];
-  var _useState7 = (0,react.useState)(false),
+  var _useState7 = (0,react.useState)(defaultConfirmProps),
     _useState8 = slicedToArray_default()(_useState7, 2),
-    refreshInput = _useState8[0],
-    setRefreshInput = _useState8[1];
-  var _useState9 = (0,react.useState)(defalut),
+    confrimProps = _useState8[0],
+    setConfirmProps = _useState8[1];
+  var _useState9 = (0,react.useState)(false),
     _useState10 = slicedToArray_default()(_useState9, 2),
-    confrimProps = _useState10[0],
-    setConfirmProps = _useState10[1];
+    loadingInput = _useState10[0],
+    setLoadingInput = _useState10[1];
   var _useState11 = (0,react.useState)(false),
     _useState12 = slicedToArray_default()(_useState11, 2),
-    loadingInput = _useState12[0],
-    setLoadingInput = _useState12[1];
-  var _useState13 = (0,react.useState)(false),
-    _useState14 = slicedToArray_default()(_useState13, 2),
-    submitting = _useState14[0],
-    setSubmitting = _useState14[1];
+    submitting = _useState12[0],
+    setSubmitting = _useState12[1];
   var handleHistory = function handleHistory() {
     if (connected) {
       setHistoryVisible(true);
@@ -1710,82 +1502,75 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
     }
   };
   var sendBal = (0,react.useMemo)(function () {
-    if (!asset) return 0;
-    if (bridgeType === 'redeem') {
+    if (!asset) return "0";
+    if (bridgeType === "redeem") {
       return userBal[asset.targetTokenGenesis] || "0";
     }
-    switch (protocolType) {
-      case "btc":
-        return userBal["btc"] || "0";
-      case "brc20":
-        return brc20Info && brc20Info.balance || "--";
-      case "runes":
-        return runesInfo ? Number((Number(runesInfo.amount) / Math.pow(10, Number(runesInfo.divisibility))).toFixed(2)) : '--';
-      // case "mrc20": return mrc20Info ? mrc20Info.reduce((a, b) => {
-      //   return a + b.mrc20s.reduce((c, d) => {
-      //     return c + Number(d.amount)
-      //   }, 0)
-      // }, 0) : "--";
-      case "mrc20":
-        {
-          var find = mrc20Info === null || mrc20Info === void 0 ? void 0 : mrc20Info.find(function (item) {
-            return item.mrc20Id === (asset === null || asset === void 0 ? void 0 : asset.originTokenId);
-          });
-          if (find) {
-            return find.balance;
-          } else {
-            return '0';
-          }
-        }
+    if (protocolType === "btc") {
+      return userBal["btc"] || "0";
     }
-  }, [protocolType, bridgeType, asset, userBal, brc20Info, runesInfo, mrc20Info]);
+    if (protocolType === "mrc20") {
+      var find = mrc20Info === null || mrc20Info === void 0 ? void 0 : mrc20Info.find(function (item) {
+        return item.mrc20Id === asset.originTokenId;
+      });
+      return find ? find.balance : "0";
+    }
+    return "0";
+  }, [protocolType, bridgeType, asset, userBal, mrc20Info]);
   var actionType = (0,react.useMemo)(function () {
     return bridgeType + protocolType;
   }, [bridgeType, protocolType]);
-  var onInputChange = function onInputChange(value) {
-    if (!value) return;
-    setAmount(value);
+  var assetMaxDecimals = (0,react.useMemo)(function () {
+    if (!asset) return 8;
+    return asset.network === "BTC" ? asset.decimals : Math.max(0, asset.decimals - asset.trimDecimals);
+  }, [asset]);
+  var recomputeFeeAndReceive = (0,react.useCallback)(function (val) {
+    if (val === null || val === undefined || val === "") {
+      setReciveAmount("");
+      setErrorMsg("");
+      return;
+    }
     if (AssetsInfo && asset) {
-      var info;
       try {
-        if (bridgeType === 'mint') {
-          info = (0,utils/* calcMintInfo */.uo)(Number(value), AssetsInfo, asset);
-        } else {
-          info = (0,utils/* calcRedeemInfo */.gz)(Number(value), AssetsInfo, asset);
-        }
-        if (Number(info.receiveAmount) < 0) {
-          throw new Error("low send amount");
+        var info = bridgeType === "mint" ? (0,utils/* calcMintInfo */.uo)(val, AssetsInfo, asset, feeQuote) : (0,utils/* calcRedeemInfo */.gz)(val, AssetsInfo, asset, feeQuote);
+        if (Number(info.receiveAmount) <= 0) {
+          throw new Error("Low send amount");
         }
         setErrorMsg("");
         setReciveAmount(info.receiveAmount);
         setFeeInfo(info);
       } catch (err) {
-        console.log(err);
         setReciveAmount("");
-        setErrorMsg(err.message || "unknown error");
+        setErrorMsg(err.message || "Invalid amount");
       }
     }
+  }, [AssetsInfo, asset, bridgeType, feeQuote, setErrorMsg, setFeeInfo, setReciveAmount]);
+  var onInputChange = function onInputChange(value) {
+    if (value === null || value === undefined || value === "") {
+      setAmount("");
+      setReciveAmount("");
+      setErrorMsg("");
+      return;
+    }
+    setAmount(value);
+    recomputeFeeAndReceive(value);
   };
-  var brc20OriginSymbol = (0,react.useMemo)(function () {
-    if (asset && asset.network == 'BRC20' && asset.originSymbol) {
-      return asset.originSymbol;
+  (0,react.useEffect)(function () {
+    if (amount !== "" && amount !== undefined && amount !== null) {
+      recomputeFeeAndReceive(amount);
     }
-  }, [asset]);
-  var runesOriginTokenId = (0,react.useMemo)(function () {
-    if (asset && asset.network == 'RUNES' && asset.originTokenId) {
-      return asset.originTokenId;
-    }
-  }, [asset]);
+  }, [feeQuote, recomputeFeeAndReceive]);
   var mrc20OriginTokenId = (0,react.useMemo)(function () {
-    if (asset && asset.network == 'MRC20' && asset.originTokenId) {
+    if (asset && asset.network === "MRC20" && asset.originTokenId) {
       return asset.originTokenId;
     }
+    return undefined;
   }, [asset]);
   (0,react.useEffect)(function () {
     var didCancel = false;
-    var fetch = /*#__PURE__*/function () {
+    var fetchMrcBalances = /*#__PURE__*/function () {
       var _ref = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
-        var ret, _ret, list, i, _ret2;
+        var list, i, _ret$data, ret;
         return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
@@ -1795,103 +1580,71 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
               }
               return _context2.abrupt("return");
             case 2:
-              if (!(actionType === 'mintbrc20' && brc20OriginSymbol)) {
-                _context2.next = 11;
+              if (!(actionType === "mintmrc20" && mrc20OriginTokenId)) {
+                _context2.next = 30;
                 break;
               }
               setLoadingInput(true);
-              _context2.next = 6;
-              return (0,api/* getUserBRC20 */.j4)(network, {
-                address: btcAddress,
-                tick: brc20OriginSymbol
-              });
-            case 6:
-              ret = _context2.sent;
-              if (!didCancel) {
-                _context2.next = 9;
-                break;
-              }
-              return _context2.abrupt("return");
-            case 9:
-              setBrc20Info(ret.data || {
-                message: ret.message,
-                balance: "0",
-                transferBalanceList: []
-              });
-              setLoadingInput(false);
-            case 11:
-              if (!(actionType === 'mintrunes' && runesOriginTokenId)) {
-                _context2.next = 20;
-                break;
-              }
-              setLoadingInput(true);
-              _context2.next = 15;
-              return (0,api/* getUserRunesBalance */.hd)(btcAddress, network, runesOriginTokenId);
-            case 15:
-              _ret = _context2.sent;
-              if (!didCancel) {
-                _context2.next = 18;
-                break;
-              }
-              return _context2.abrupt("return");
-            case 18:
-              setRunesInfo(_ret.data);
-              setLoadingInput(false);
-            case 20:
-              if (!(actionType === 'mintmrc20' && mrc20OriginTokenId)) {
-                _context2.next = 39;
-                break;
-              }
-              setLoadingInput(true);
+              _context2.prev = 4;
               list = [];
               i = 0;
-            case 24:
+            case 7:
               if (!(i < 10)) {
-                _context2.next = 35;
+                _context2.next = 21;
                 break;
+              }
+              _context2.next = 10;
+              return (0,api/* getUserMrc20Balances */.hL)(btcAddress, network, i, 50);
+            case 10:
+              ret = _context2.sent;
+              if (!(ret.code === 0 && (_ret$data = ret.data) !== null && _ret$data !== void 0 && _ret$data.list)) {
+                _context2.next = 17;
+                break;
+              }
+              list = [].concat(toConsumableArray_default()(list), toConsumableArray_default()(ret.data.list));
+              if (!(ret.data.list.length < 50)) {
+                _context2.next = 15;
+                break;
+              }
+              return _context2.abrupt("break", 21);
+            case 15:
+              _context2.next = 18;
+              break;
+            case 17:
+              return _context2.abrupt("break", 21);
+            case 18:
+              i++;
+              _context2.next = 7;
+              break;
+            case 21:
+              if (!didCancel) {
+                setMrc20Info(list);
               }
               _context2.next = 27;
-              return (0,api/* getUserMrc20Balances */.hL)(btcAddress, network, i, 50);
-            case 27:
-              _ret2 = _context2.sent;
-              if (!(_ret2.code === 0)) {
-                _context2.next = 32;
-                break;
-              }
-              list = [].concat(toConsumableArray_default()(list), toConsumableArray_default()(_ret2.data.list));
-              if (!(_ret2.data.list.length < 50)) {
-                _context2.next = 32;
-                break;
-              }
-              return _context2.abrupt("break", 35);
-            case 32:
-              i++;
-              _context2.next = 24;
               break;
-            case 35:
-              if (!didCancel) {
-                _context2.next = 37;
-                break;
-              }
-              return _context2.abrupt("return");
-            case 37:
-              setMrc20Info(list);
-              setLoadingInput(false);
-            case 39:
+            case 24:
+              _context2.prev = 24;
+              _context2.t0 = _context2["catch"](4);
+              console.log(_context2.t0);
+            case 27:
+              _context2.prev = 27;
+              if (!didCancel) setLoadingInput(false);
+              return _context2.finish(27);
+            case 30:
             case "end":
               return _context2.stop();
           }
-        }, _callee2);
+        }, _callee2, null, [[4, 24, 27, 30]]);
       }));
-      return function fetch() {
+      return function fetchMrcBalances() {
         return _ref.apply(this, arguments);
       };
     }();
-    fetch();
+    fetchMrcBalances();
     return function () {
       didCancel = true;
     };
-  }, [actionType, brc20OriginSymbol, runesOriginTokenId, network, btcAddress, refreshInput, mrc20OriginTokenId]);
+  }, [actionType, network, btcAddress, mrc20OriginTokenId, setMrc20Info]);
   var inputRange = (0,react.useMemo)(function () {
     var minAmount = 0;
     var maxAmount = 0;
@@ -1901,16 +1654,110 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
         var _calculateQuantityLim2 = slicedToArray_default()(_calculateQuantityLim, 2);
         minAmount = _calculateQuantityLim2[0];
         maxAmount = _calculateQuantityLim2[1];
-      } catch (err) {}
+      } catch (_unused) {}
     }
     return {
       maxAmount: maxAmount,
       minAmount: minAmount
     };
-  }, [asset, actionType, AssetsInfo]);
+  }, [asset, AssetsInfo]);
+  var liveServiceFeeSummary = (0,react.useMemo)(function () {
+    var _feeQuote$btcFeeSats, _feeQuote$mvcFeeSats;
+    if (!asset) return "";
+    var btcFee = Number((_feeQuote$btcFeeSats = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeSats) !== null && _feeQuote$btcFeeSats !== void 0 ? _feeQuote$btcFeeSats : bridgeType === "mint" ? protocolType === "btc" ? 800 : 1000 : protocolType === "btc" ? 880 : 2066);
+    if (bridgeType === "mint") {
+      return "".concat((0,utils/* formatSat */.Q0)(btcFee, 8), " BTC (").concat(btcFee, " sats)");
+    }
+    var mvcFee = Number((_feeQuote$mvcFeeSats = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.mvcFeeSats) !== null && _feeQuote$mvcFeeSats !== void 0 ? _feeQuote$mvcFeeSats : 50000);
+    return "".concat((0,utils/* formatSat */.Q0)(mvcFee, 8), " SPACE + ").concat((0,utils/* formatSat */.Q0)(btcFee, 8), " BTC");
+  }, [asset, bridgeType, protocolType, feeQuote]);
+
+  /**
+   * Dual-chain native gas & bridge fee pre-flight check:
+   * - Mint: checks BTC (and MRC20 token balance); allows 0 SPACE new users.
+   * - Redeem: checks MVC FT balance AND MVC SPACE balance AND BTC balance before allowing Submit!
+   */
+  var balCheck = (0,react.useMemo)(function () {
+    var _userBal$btcSats, _userBal$spaceSats;
+    if (!connected || !asset || !amount || Number(amount) <= 0) return "";
+    var decAmount;
+    try {
+      decAmount = new decimal_js_decimal/* default */.A(String(amount));
+      if (decAmount.lte(0)) return "";
+    } catch (_unused2) {
+      return "";
+    }
+    var btcSats = Number((_userBal$btcSats = userBal.btcSats) !== null && _userBal$btcSats !== void 0 ? _userBal$btcSats : 0);
+    var spaceSats = Number((_userBal$spaceSats = userBal.spaceSats) !== null && _userBal$spaceSats !== void 0 ? _userBal$spaceSats : 0);
+    var btcRate = Math.max(1, Number((feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeRate) || (AssetsInfo === null || AssetsInfo === void 0 ? void 0 : AssetsInfo.feeBtc) || 2));
+    if (bridgeType === "mint") {
+      if (protocolType === "btc") {
+        var _feeQuote$btcFeeSats2;
+        var principalSats = Number((0,utils/* amountRaw */.Zc)(decAmount.toFixed(), 8));
+        var bridgeFeeSats = Number((_feeQuote$btcFeeSats2 = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeSats) !== null && _feeQuote$btcFeeSats2 !== void 0 ? _feeQuote$btcFeeSats2 : 800);
+        var estMinerSats = Math.ceil(180 * btcRate);
+        var requiredBtcSats = principalSats + bridgeFeeSats + estMinerSats;
+        if (btcSats < requiredBtcSats) {
+          return "Insufficient BTC balance: need ~".concat((0,utils/* formatSat */.Q0)(requiredBtcSats, 8), " BTC (amount + ").concat((0,utils/* formatSat */.Q0)(bridgeFeeSats, 8), " BTC bridge fee + miner fee), available ").concat(userBal.btc || "0", " BTC.");
+        }
+        return "";
+      }
+      if (protocolType === "mrc20") {
+        var _feeQuote$btcFeeSats3;
+        if (decAmount.gt(new decimal_js_decimal/* default */.A(String(sendBal || "0")))) {
+          return "Insufficient ".concat(asset.originSymbol, " balance.");
+        }
+        var _bridgeFeeSats = Number((_feeQuote$btcFeeSats3 = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeSats) !== null && _feeQuote$btcFeeSats3 !== void 0 ? _feeQuote$btcFeeSats3 : 1000);
+        var estCommitRevealSats = 546 + Math.ceil(320 * btcRate);
+        var _requiredBtcSats = _bridgeFeeSats + estCommitRevealSats;
+        if (btcSats < _requiredBtcSats) {
+          return "Insufficient BTC for bridge & network fee: need at least ~".concat((0,utils/* formatSat */.Q0)(_requiredBtcSats, 8), " BTC (").concat(_bridgeFeeSats, " sats bridge fee + commit/reveal gas), available ").concat(userBal.btc || "0", " BTC.");
+        }
+        return "";
+      }
+    }
+    if (bridgeType === "redeem") {
+      var _feeQuote$mvcFeeSats2, _feeQuote$btcFeeSats4;
+      if (decAmount.gt(new decimal_js_decimal/* default */.A(String(sendBal || "0")))) {
+        return "Insufficient ".concat(asset.targetSymbol, " balance.");
+      }
+      var mvcFeeSats = Number((_feeQuote$mvcFeeSats2 = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.mvcFeeSats) !== null && _feeQuote$mvcFeeSats2 !== void 0 ? _feeQuote$mvcFeeSats2 : 50000);
+      var estMvcMinerSats = 6000;
+      var requiredSpaceSats = mvcFeeSats + estMvcMinerSats;
+      if (spaceSats < requiredSpaceSats) {
+        return "Insufficient MVC SPACE for Redeem fee: need at least ".concat((0,utils/* formatSat */.Q0)(requiredSpaceSats, 8), " SPACE (").concat((0,utils/* formatSat */.Q0)(mvcFeeSats, 8), " SPACE bridge fee + MVC network gas), available ").concat(userBal.space || "0", " SPACE.");
+      }
+      var defaultBtcFee = protocolType === "btc" ? 880 : 2066;
+      var btcFeeSats = Number((_feeQuote$btcFeeSats4 = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeSats) !== null && _feeQuote$btcFeeSats4 !== void 0 ? _feeQuote$btcFeeSats4 : defaultBtcFee);
+      var estBtcMinerSats = Math.ceil(150 * btcRate);
+      var _requiredBtcSats2 = btcFeeSats + estBtcMinerSats;
+      if (btcSats < _requiredBtcSats2) {
+        return "Insufficient BTC for Redeem payout fee: need at least ".concat((0,utils/* formatSat */.Q0)(_requiredBtcSats2, 8), " BTC (").concat((0,utils/* formatSat */.Q0)(btcFeeSats, 8), " BTC bridge fee + BTC miner fee), available ").concat(userBal.btc || "0", " BTC.");
+      }
+    }
+    return "";
+  }, [connected, asset, amount, userBal, feeQuote, AssetsInfo, bridgeType, protocolType, sendBal]);
+  var handleQuickPercent = function handleQuickPercent(ratio) {
+    if (!asset) return;
+    var total = new decimal_js_decimal/* default */.A(String(sendBal || "0"));
+    if (total.lte(0)) {
+      onInputChange("0");
+      return;
+    }
+    if (bridgeType === "mint" && protocolType === "btc" && ratio === 1) {
+      var _feeQuote$btcFeeSats5;
+      var btcRate = Math.max(1, Number((feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeRate) || (AssetsInfo === null || AssetsInfo === void 0 ? void 0 : AssetsInfo.feeBtc) || 2));
+      var reserveBtc = new decimal_js_decimal/* default */.A(Number((_feeQuote$btcFeeSats5 = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeSats) !== null && _feeQuote$btcFeeSats5 !== void 0 ? _feeQuote$btcFeeSats5 : 800) + Math.ceil(180 * btcRate)).div(1e8);
+      var maxSend = decimal_js_decimal/* default */.A.max(0, total.minus(reserveBtc));
+      onInputChange(maxSend.toDP(assetMaxDecimals, decimal_js_decimal/* default */.A.ROUND_DOWN).toString());
+      return;
+    }
+    var target = total.mul(ratio).toDP(assetMaxDecimals, decimal_js_decimal/* default */.A.ROUND_DOWN).toString();
+    onInputChange(target);
+  };
   var redeem = /*#__PURE__*/function () {
     var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
-      var _yield$checkWalletAdd, status, _message, addressInfo, addressType;
+      var _yield$checkWalletAdd, status, addrErr, addressInfo, addressType;
       return regeneratorRuntime_default()().wrap(function _callee3$(_context3) {
         while (1) switch (_context3.prev = _context3.next) {
           case 0:
@@ -1927,12 +1774,12 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
           case 6:
             _yield$checkWalletAdd = _context3.sent;
             status = _yield$checkWalletAdd.status;
-            _message = _yield$checkWalletAdd.message;
+            addrErr = _yield$checkWalletAdd.message;
             if (status) {
               _context3.next = 11;
               break;
             }
-            throw new Error(_message);
+            throw new Error(addrErr);
           case 11:
             addressInfo = (0,utils/* determineAddressInfo */.AG)(btcAddress);
             addressType = addressInfo.toUpperCase();
@@ -1942,52 +1789,43 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
             }
             throw new Error("unsupport address type");
           case 15:
-            if (!(bridgeType === "redeem" && protocolType === "btc")) {
-              _context3.next = 18;
+            if (!(protocolType === "btc")) {
+              _context3.next = 20;
               break;
             }
             _context3.next = 18;
-            return (0,wrapping/* redeemBtc */.qO)((0,utils/* amountRaw */.Zc)(String(amount), asset.decimals), asset, addressType, network);
+            return (0,wrapping/* redeemBtc */.qO)((0,utils/* amountRaw */.Zc)(String(amount), asset.decimals), asset, addressType, network, AssetsInfo);
           case 18:
-            if (!(asset && bridgeType === "redeem" && protocolType === "brc20")) {
-              _context3.next = 21;
-              break;
-            }
-            _context3.next = 21;
-            return (0,wrapping/* redeemBrc20 */.KA)((0,utils/* amountRaw */.Zc)(String(amount), asset.decimals - asset.trimDecimals), asset, addressType, network);
-          case 21:
-            if (!(asset && bridgeType === "redeem" && protocolType === "runes")) {
-              _context3.next = 24;
-              break;
-            }
-            _context3.next = 24;
-            return (0,wrapping/* redeemRunes */.a9)((0,utils/* amountRaw */.Zc)(String(amount), asset.decimals - asset.trimDecimals), asset, addressType, network);
-          case 24:
-            if (!(asset && bridgeType === "redeem" && protocolType === "mrc20")) {
-              _context3.next = 27;
-              break;
-            }
-            _context3.next = 27;
-            return (0,wrapping/* redeemMrc20 */.rP)((0,utils/* amountRaw */.Zc)(String(amount), asset.decimals - asset.trimDecimals), asset, addressType, network);
-          case 27:
-            setSuccessVisible(true);
-            _context3.next = 30;
-            return getBal();
-          case 30:
-            _context3.next = 36;
+            _context3.next = 23;
             break;
-          case 32:
-            _context3.prev = 32;
+          case 20:
+            if (!(protocolType === "mrc20")) {
+              _context3.next = 23;
+              break;
+            }
+            _context3.next = 23;
+            return (0,wrapping/* redeemMrc20 */.rP)((0,utils/* amountRaw */.Zc)(String(amount), asset.decimals - asset.trimDecimals), asset, addressType, network, AssetsInfo);
+          case 23:
+            setSuccessVisible(true);
+            _context3.next = 26;
+            return getBal(true);
+          case 26:
+            _context3.next = 32;
+            break;
+          case 28:
+            _context3.prev = 28;
             _context3.t0 = _context3["catch"](2);
             console.log(_context3.t0);
             message/* default */.Ay.error(_context3.t0.message || "unknown error");
-          case 36:
+          case 32:
+            _context3.prev = 32;
             setSubmitting(false);
-          case 37:
+            return _context3.finish(32);
+          case 35:
           case "end":
             return _context3.stop();
         }
-      }, _callee3, null, [[2, 32]]);
+      }, _callee3, null, [[2, 28, 32, 35]]);
     }));
     return function redeem() {
       return _ref2.apply(this, arguments);
@@ -2002,7 +1840,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
   }, [AssetsInfo]);
   var mint = /*#__PURE__*/function () {
     var _ref3 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4() {
-      var _yield$checkWalletAdd2, status, _message2, addressInfo, addressType, ret, _ret3, _ret4, _ret5, _err$response, _err$response2, _err$data, _err$data2, errMsg;
+      var _yield$checkWalletAdd2, status, addrErr, addressInfo, addressType, _err$response, _err$response2, _err$data, _err$data2, errMsg;
       return regeneratorRuntime_default()().wrap(function _callee4$(_context4) {
         while (1) switch (_context4.prev = _context4.next) {
           case 0:
@@ -2026,70 +1864,53 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
           case 9:
             _yield$checkWalletAdd2 = _context4.sent;
             status = _yield$checkWalletAdd2.status;
-            _message2 = _yield$checkWalletAdd2.message;
+            addrErr = _yield$checkWalletAdd2.message;
             if (status) {
               _context4.next = 14;
               break;
             }
-            throw new Error(_message2);
+            throw new Error(addrErr);
           case 14:
             addressInfo = (0,utils/* determineAddressInfo */.AG)(btcAddress);
             addressType = addressInfo.toUpperCase();
-            if (!(bridgeType === "mint" && protocolType === "btc")) {
-              _context4.next = 20;
+            if (!(protocolType === "btc")) {
+              _context4.next = 21;
               break;
             }
             _context4.next = 19;
             return (0,wrapping/* mintBtc */.gb)((0,utils/* amountRaw */.Zc)(String(amount), 8), asset, addressType, network, AssetsInfo);
           case 19:
-            ret = _context4.sent;
-          case 20:
-            if (!(inscription && bridgeType === "mint" && protocolType === "brc20")) {
+            _context4.next = 24;
+            break;
+          case 21:
+            if (!(protocolType === "mrc20")) {
               _context4.next = 24;
               break;
             }
-            _context4.next = 23;
-            return (0,wrapping/* mintBrc */.QG)(Number(inscription.amount), asset, addressType, network, AssetsInfo, inscription);
-          case 23:
-            _ret3 = _context4.sent;
+            _context4.next = 24;
+            return (0,wrapping/* mintMrc20 */.l8)(String(amount), asset, addressType, network, AssetsInfo);
           case 24:
-            if (!(bridgeType === "mint" && protocolType === "runes")) {
-              _context4.next = 28;
-              break;
-            }
-            _context4.next = 27;
-            return (0,wrapping/* mintRunes */.s0)(amount, asset, addressType, network, AssetsInfo);
-          case 27:
-            _ret4 = _context4.sent;
-          case 28:
-            if (!(actionType === 'mintmrc20')) {
-              _context4.next = 32;
-              break;
-            }
-            _context4.next = 31;
-            return (0,wrapping/* mintMrc20 */.l8)(Number(amount), asset, addressType, network, AssetsInfo);
-          case 31:
-            _ret5 = _context4.sent;
-          case 32:
             setSuccessVisible(true);
-            _context4.next = 35;
-            return getBal();
-          case 35:
-            _context4.next = 42;
+            _context4.next = 27;
+            return getBal(true);
+          case 27:
+            _context4.next = 34;
             break;
-          case 37:
-            _context4.prev = 37;
+          case 29:
+            _context4.prev = 29;
             _context4.t0 = _context4["catch"](5);
             console.log(_context4.t0);
             errMsg = (_context4.t0 === null || _context4.t0 === void 0 || (_err$response = _context4.t0.response) === null || _err$response === void 0 || (_err$response = _err$response.data) === null || _err$response === void 0 ? void 0 : _err$response.message) || (_context4.t0 === null || _context4.t0 === void 0 || (_err$response2 = _context4.t0.response) === null || _err$response2 === void 0 || (_err$response2 = _err$response2.data) === null || _err$response2 === void 0 ? void 0 : _err$response2.msg) || (_context4.t0 === null || _context4.t0 === void 0 || (_err$data = _context4.t0.data) === null || _err$data === void 0 ? void 0 : _err$data.message) || (_context4.t0 === null || _context4.t0 === void 0 || (_err$data2 = _context4.t0.data) === null || _err$data2 === void 0 ? void 0 : _err$data2.msg) || (_context4.t0 === null || _context4.t0 === void 0 ? void 0 : _context4.t0.message) || (_context4.t0 === null || _context4.t0 === void 0 ? void 0 : _context4.t0.msg) || "unknown error";
             message/* default */.Ay.error(errMsg);
-          case 42:
+          case 34:
+            _context4.prev = 34;
             setSubmitting(false);
-          case 43:
+            return _context4.finish(34);
+          case 37:
           case "end":
             return _context4.stop();
         }
-      }, _callee4, null, [[5, 37]]);
+      }, _callee4, null, [[5, 29, 34, 37]]);
     }));
     return function mint() {
       return _ref3.apply(this, arguments);
@@ -2104,22 +1925,25 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
         message/* default */.Ay.warning(mintPausedMessage);
       }
     }, {
-      condition: !amount,
+      condition: !amount || Number(amount) <= 0,
       text: "Enter Amount",
       type: "primary",
       onClick: function onClick() {}
     }, {
-      condition: Number(reciveAmount) < 0,
-      text: "Low Send Amount",
-      type: "primary",
-      onClick: function onClick() {}
-    }, {
-      condition: ErrorMsg,
+      condition: Boolean(ErrorMsg),
       text: ErrorMsg,
       type: "primary",
       onClick: function onClick() {}
+    }, {
+      condition: Boolean(balCheck),
+      text: "Insufficient Balance",
+      type: "primary",
+      danger: true,
+      onClick: function onClick() {
+        message/* default */.Ay.warning(balCheck);
+      }
     }];
-  }, [ErrorMsg, amount, isMintPaused, mintPausedMessage, reciveAmount]);
+  }, [ErrorMsg, amount, balCheck, isMintPaused, mintPausedMessage]);
   var handleSubmit = function handleSubmit() {
     if (bridgeType === "mint") return mint();
     if (bridgeType === "redeem") return redeem();
@@ -2127,6 +1951,10 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
   var handleConfirm = function handleConfirm() {
     if (isMintPaused) {
       message/* default */.Ay.warning(mintPausedMessage);
+      return;
+    }
+    if (balCheck) {
+      message/* default */.Ay.warning(balCheck);
       return;
     }
     setConfirmProps({
@@ -2138,16 +1966,10 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
       totalFee: String(feeInfo.totalFee),
       handleSubmit: handleSubmit,
       onClose: function onClose() {
-        setConfirmProps(defalut);
+        setConfirmProps(defaultConfirmProps);
       }
     });
   };
-  var balCheck = (0,react.useMemo)(function () {
-    if (Number(amount) > Number(sendBal)) {
-      return 'Insufficient balance.';
-    }
-    return '';
-  }, [amount, sendBal]);
   return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
     className: "wrapPage",
     children: [/*#__PURE__*/(0,jsx_runtime.jsx)(segmented/* default */.A, {
@@ -2155,15 +1977,15 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
         width: 520,
         maxWidth: "92vw",
         marginBottom: 32,
-        overflow: 'scroll'
+        overflow: "auto"
       },
+      value: protocolType,
       onChange: function onChange(value) {
         setProtocolType(value);
-        setAmount("");
-        setReciveAmount("");
+        resetInput();
       },
       options: SegOptions,
-      size: screens.xs ? 'middle' : "large",
+      size: screens.xs ? "middle" : "large",
       block: true
     }), /*#__PURE__*/(0,jsx_runtime.jsx)(card/* default */.A, {
       style: {
@@ -2199,7 +2021,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
               className: "label",
               children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
                 children: "You send"
-              }), actionType !== 'mintbrc20' && /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.A, {
+              }), /*#__PURE__*/(0,jsx_runtime.jsxs)(space/* default */.A, {
                 children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
                   className: "tag",
                   style: {
@@ -2207,7 +2029,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
                     borderRadius: borderRadiusSM
                   },
                   onClick: function onClick() {
-                    return onInputChange((sendBal * 0.25).toFixed(8));
+                    return handleQuickPercent(0.25);
                   },
                   children: "25%"
                 }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
@@ -2217,7 +2039,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
                     borderRadius: borderRadiusSM
                   },
                   onClick: function onClick() {
-                    return onInputChange((sendBal * 0.5).toFixed(8));
+                    return handleQuickPercent(0.5);
                   },
                   children: "50%"
                 }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
@@ -2227,7 +2049,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
                     borderRadius: borderRadiusSM
                   },
                   onClick: function onClick() {
-                    return onInputChange(sendBal);
+                    return handleQuickPercent(1);
                   },
                   children: "Max"
                 })]
@@ -2258,7 +2080,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
                     })
                   });
                 },
-                open: selectAssetVisible == "send",
+                open: selectAssetVisible === "send",
                 placement: "bottomLeft",
                 autoAdjustOverflow: false,
                 children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
@@ -2274,26 +2096,17 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
                     position: "send",
                     bridgeType: bridgeType
                   }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                    className: selectAssetVisible == "send" ? "spanRotate" : "spanReset",
+                    className: selectAssetVisible === "send" ? "spanRotate" : "spanReset",
                     children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.A, {})
                   })]
                 })
               }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
                 className: "inputWrap",
-                children: actionType === 'mintbrc20' ? /*#__PURE__*/(0,jsx_runtime.jsx)(MintBrc20Input, {
-                  onInputChange: onInputChange,
-                  loading: loadingInput,
-                  refresh: function refresh() {
-                    setRefreshInput(function (prev) {
-                      return !prev;
-                    });
-                  }
-                }) : /*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.A, {
+                children: /*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.A, {
                   className: "input",
                   onChange: onInputChange,
-                  value: amount
-                  // max={sendBal}
-                  ,
+                  value: amount,
+                  stringMode: true,
                   variant: "borderless",
                   controls: false
                 })
@@ -2302,14 +2115,26 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
               className: "bal",
               children: ["Balance:", /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
                 children: [" ", loadingInput ? "..." : sendBal, " "]
-              }), bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
+              }), bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol, connected && bridgeType === "redeem" && /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+                style: {
+                  marginLeft: 12,
+                  opacity: 0.8
+                },
+                children: ["| Gas: ", userBal.space || "0", " SPACE \xB7", " ", userBal.btc || "0", " BTC"]
+              }), connected && bridgeType === "mint" && protocolType === "mrc20" && /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+                style: {
+                  marginLeft: 12,
+                  opacity: 0.8
+                },
+                children: ["| BTC Gas: ", userBal.btc || "0", " BTC"]
+              })]
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "recive inputCardWrap",
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
               className: "label",
               children: /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                children: "You receive"
+                children: "You receive (1:1 Full Amount)"
               })
             }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
               className: "inputCard",
@@ -2337,7 +2162,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
                     })
                   });
                 },
-                open: selectAssetVisible == "recive",
+                open: selectAssetVisible === "recive",
                 placement: "bottomLeft",
                 autoAdjustOverflow: false,
                 children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
@@ -2353,7 +2178,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
                     position: "recive",
                     bridgeType: bridgeType
                   }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                    className: selectAssetVisible == "recive" ? "spanRotate" : "spanReset",
+                    className: selectAssetVisible === "recive" ? "spanRotate" : "spanReset",
                     children: /*#__PURE__*/(0,jsx_runtime.jsx)(DownOutlined/* default */.A, {})
                   })]
                 })
@@ -2361,8 +2186,8 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
                 className: "inputWrap",
                 children: /*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.A, {
                   className: "input",
-                  onChange: onInputChange,
                   value: reciveAmount,
+                  stringMode: true,
                   variant: "borderless",
                   controls: false,
                   disabled: true
@@ -2372,29 +2197,40 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
           })]
         }), asset && /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
           className: "range",
-          children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-            className: "item",
-            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-              className: "label",
-              children: "Minimum Bridging Quantity"
-            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
-              className: "value",
-              children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_NumberFormat, {
-                value: inputRange.minAmount,
-                precision: bridgeType === 'mint' ? asset.decimals : asset.decimals - asset.trimDecimals
-              }), "   ", bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
+          children: [inputRange.maxAmount > 0 && /*#__PURE__*/(0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
+            children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+              className: "item",
+              children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                className: "label",
+                children: "Minimum Bridging Quantity"
+              }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+                className: "value",
+                children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_NumberFormat, {
+                  value: inputRange.minAmount,
+                  precision: assetMaxDecimals
+                }), " ", bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
+              })]
+            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+              className: "item",
+              children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                className: "label",
+                children: "Maximum Bridging Quantity"
+              }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+                className: "value",
+                children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_NumberFormat, {
+                  value: inputRange.maxAmount,
+                  precision: assetMaxDecimals
+                }), " ", bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
+              })]
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "label",
-              children: "Maximum Bridging Quantity"
-            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+              children: "Bridge Service Fee"
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "value",
-              children: [/*#__PURE__*/(0,jsx_runtime.jsx)(components_NumberFormat, {
-                value: inputRange.maxAmount,
-                precision: bridgeType === 'mint' ? asset.decimals : asset.decimals - asset.trimDecimals
-              }), "   ", bridgeType === "mint" ? asset.originSymbol : asset.targetSymbol]
+              children: liveServiceFeeSummary
             })]
           })]
         }), isMintPaused && /*#__PURE__*/(0,jsx_runtime.jsx)(es_alert/* default */.A, {
@@ -2440,10 +2276,8 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
       show: successVisible,
       onClose: function onClose() {
         setSuccessVisible(false);
-        setAmount("");
-        setReciveAmount("");
-        setInscription(undefined);
-        setConfirmProps(defalut);
+        resetInput();
+        setConfirmProps(defaultConfirmProps);
         setHistoryVisible(true);
       }
     })]

@@ -3050,26 +3050,6 @@ function isPresetStatusColor(color) {
 
 /***/ }),
 
-/***/ 42704:
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   X: function() { return /* binding */ isPresetSize; },
-/* harmony export */   m: function() { return /* binding */ isValidGapNumber; }
-/* harmony export */ });
-function isPresetSize(size) {
-  return ['small', 'middle', 'large'].includes(size);
-}
-function isValidGapNumber(size) {
-  if (!size) {
-    // The case of size = 0 is deliberately excluded here, because the default value of the gap attribute in CSS is 0, so if the user passes 0 in, we can directly ignore it.
-    return false;
-  }
-  return typeof size === 'number' && !Number.isNaN(size);
-}
-
-/***/ }),
-
 /***/ 24629:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -8398,8 +8378,8 @@ if (false) // removed by dead control flow
 /* harmony default export */ var dropdown = (Dropdown);
 // EXTERNAL MODULE: ./node_modules/antd/es/button/index.js + 10 modules
 var es_button = __webpack_require__(71277);
-// EXTERNAL MODULE: ./node_modules/antd/es/space/index.js + 5 modules
-var space = __webpack_require__(40091);
+// EXTERNAL MODULE: ./node_modules/antd/es/space/index.js + 6 modules
+var space = __webpack_require__(52771);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/Compact.js + 1 modules
 var Compact = __webpack_require__(41247);
 ;// ./node_modules/antd/es/dropdown/dropdown-button.js
@@ -15697,7 +15677,7 @@ const Compact = props => {
 
 /***/ }),
 
-/***/ 40091:
+/***/ 52771:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 
@@ -15713,8 +15693,17 @@ var classnames = __webpack_require__(46942);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
 // EXTERNAL MODULE: ./node_modules/rc-util/es/Children/toArray.js
 var toArray = __webpack_require__(82546);
-// EXTERNAL MODULE: ./node_modules/antd/es/_util/gapSize.js
-var gapSize = __webpack_require__(42704);
+;// ./node_modules/antd/es/_util/gapSize.js
+function isPresetSize(size) {
+  return ['small', 'middle', 'large'].includes(size);
+}
+function isValidGapNumber(size) {
+  if (!size) {
+    // The case of size = 0 is deliberately excluded here, because the default value of the gap attribute in CSS is 0, so if the user passes 0 in, we can directly ignore it.
+    return false;
+  }
+  return typeof size === 'number' && !Number.isNaN(size);
+}
 // EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
 var context = __webpack_require__(62279);
 // EXTERNAL MODULE: ./node_modules/antd/es/space/Compact.js + 1 modules
@@ -15991,10 +15980,10 @@ const InternalSpace = /*#__PURE__*/react.forwardRef((props, ref) => {
     } = props,
     otherProps = space_rest(props, ["size", "align", "className", "rootClassName", "children", "direction", "prefixCls", "split", "style", "wrap", "classNames", "styles"]);
   const [horizontalSize, verticalSize] = Array.isArray(size) ? size : [size, size];
-  const isPresetVerticalSize = (0,gapSize/* isPresetSize */.X)(verticalSize);
-  const isPresetHorizontalSize = (0,gapSize/* isPresetSize */.X)(horizontalSize);
-  const isValidVerticalSize = (0,gapSize/* isValidGapNumber */.m)(verticalSize);
-  const isValidHorizontalSize = (0,gapSize/* isValidGapNumber */.m)(horizontalSize);
+  const isPresetVerticalSize = isPresetSize(verticalSize);
+  const isPresetHorizontalSize = isPresetSize(horizontalSize);
+  const isValidVerticalSize = isValidGapNumber(verticalSize);
+  const isValidHorizontalSize = isValidGapNumber(horizontalSize);
   const childNodes = (0,toArray/* default */.A)(children, {
     keepEmpty: true
   });

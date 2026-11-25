@@ -4775,2542 +4775,6 @@ if (false) // removed by dead control flow
 
 /***/ }),
 
-/***/ 63843:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-__webpack_unused_export__ = __webpack_unused_export__ = exports.wX = __webpack_unused_export__ = __webpack_unused_export__ = __webpack_unused_export__ = __webpack_unused_export__ = void 0;
-const artifact_1 = __webpack_require__(51958);
-const constants_1 = __webpack_require__(54019);
-const etching_1 = __webpack_require__(54836);
-const flaw_1 = __webpack_require__(44086);
-const integer_1 = __webpack_require__(27983);
-const monads_1 = __webpack_require__(33340);
-const runeid_1 = __webpack_require__(28025);
-const runestone_1 = __webpack_require__(49791);
-const spacedrune_1 = __webpack_require__(41874);
-var indexer_1 = __webpack_require__(40950);
-__webpack_unused_export__ = ({ enumerable: true, get: function () { return indexer_1.RuneLocation; } });
-__webpack_unused_export__ = ({ enumerable: true, get: function () { return indexer_1.RuneUpdater; } });
-__webpack_unused_export__ = ({ enumerable: true, get: function () { return indexer_1.RunestoneIndexer; } });
-var network_1 = __webpack_require__(28608);
-__webpack_unused_export__ = ({ enumerable: true, get: function () { return network_1.Network; } });
-function getFlawString(flaw) {
-    switch (flaw) {
-        case flaw_1.Flaw.EDICT_OUTPUT:
-            return 'edict_output';
-        case flaw_1.Flaw.EDICT_RUNE_ID:
-            return 'edict_rune_id';
-        case flaw_1.Flaw.INVALID_SCRIPT:
-            return 'invalid_script';
-        case flaw_1.Flaw.OPCODE:
-            return 'opcode';
-        case flaw_1.Flaw.SUPPLY_OVERFLOW:
-            return 'supply_overflow';
-        case flaw_1.Flaw.TRAILING_INTEGERS:
-            return 'trailing_integers';
-        case flaw_1.Flaw.TRUNCATED_FIELD:
-            return 'truncated_field';
-        case flaw_1.Flaw.UNRECOGNIZED_EVEN_TAG:
-            return 'unrecognized_even_tag';
-        case flaw_1.Flaw.UNRECOGNIZED_FLAG:
-            return 'unrecognized_flag';
-        case flaw_1.Flaw.VARINT:
-            return 'varint';
-    }
-}
-// Helper functions to ensure numbers fit the desired type correctly
-const u8Strict = (n) => {
-    const bigN = BigInt(n);
-    if (bigN < 0n || bigN > integer_1.u8.MAX) {
-        throw Error('u8 overflow');
-    }
-    return (0, integer_1.u8)(bigN);
-};
-const u32Strict = (n) => {
-    const bigN = BigInt(n);
-    if (bigN < 0n || bigN > integer_1.u32.MAX) {
-        throw Error('u32 overflow');
-    }
-    return (0, integer_1.u32)(bigN);
-};
-const u64Strict = (n) => {
-    const bigN = BigInt(n);
-    if (bigN < 0n || bigN > integer_1.u64.MAX) {
-        throw Error('u64 overflow');
-    }
-    return (0, integer_1.u64)(bigN);
-};
-const u128Strict = (n) => {
-    const bigN = BigInt(n);
-    if (bigN < 0n || bigN > integer_1.u128.MAX) {
-        throw Error('u128 overflow');
-    }
-    return (0, integer_1.u128)(bigN);
-};
-// TODO: Add unit tests
-/**
- * Low level function to allow for encoding runestones without any indexer and transaction checks.
- *
- * @param runestone runestone spec to encode as runestone
- * @returns encoded runestone bytes
- * @throws Error if encoding is detected to be considered a cenotaph
- */
-function encodeRunestone(runestone) {
-    const mint = runestone.mint
-        ? (0, monads_1.Some)(new runeid_1.RuneId(u64Strict(runestone.mint.block), u32Strict(runestone.mint.tx)))
-        : monads_1.None;
-    const pointer = runestone.pointer !== undefined ? (0, monads_1.Some)(runestone.pointer).map(u32Strict) : monads_1.None;
-    const edicts = (runestone.edicts ?? []).map((edict) => ({
-        id: new runeid_1.RuneId(u64Strict(edict.id.block), u32Strict(edict.id.tx)),
-        amount: u128Strict(edict.amount),
-        output: u32Strict(edict.output),
-    }));
-    let etching = monads_1.None;
-    let etchingCommitment = undefined;
-    if (runestone.etching) {
-        const etchingSpec = runestone.etching;
-        const spacedRune = etchingSpec.runeName
-            ? spacedrune_1.SpacedRune.fromString(etchingSpec.runeName)
-            : undefined;
-        const rune = spacedRune?.rune !== undefined ? (0, monads_1.Some)(spacedRune.rune) : monads_1.None;
-        if (etchingSpec.symbol &&
-            !(etchingSpec.symbol.length === 1 ||
-                (etchingSpec.symbol.length === 2 && etchingSpec.symbol.codePointAt(0) >= 0x10000))) {
-            throw Error('Symbol must be one code point');
-        }
-        const divisibility = etchingSpec.divisibility !== undefined ? (0, monads_1.Some)(etchingSpec.divisibility).map(u8Strict) : monads_1.None;
-        const premine = etchingSpec.premine !== undefined ? (0, monads_1.Some)(etchingSpec.premine).map(u128Strict) : monads_1.None;
-        const spacers = spacedRune?.spacers !== undefined && spacedRune.spacers !== 0
-            ? (0, monads_1.Some)(u32Strict(spacedRune.spacers))
-            : monads_1.None;
-        const symbol = etchingSpec.symbol ? (0, monads_1.Some)(etchingSpec.symbol) : monads_1.None;
-        if (divisibility.isSome() && divisibility.unwrap() > constants_1.MAX_DIVISIBILITY) {
-            throw Error(`Divisibility is greater than protocol max ${constants_1.MAX_DIVISIBILITY}`);
-        }
-        let terms = monads_1.None;
-        if (etchingSpec.terms) {
-            const termsSpec = etchingSpec.terms;
-            const amount = termsSpec.amount !== undefined ? (0, monads_1.Some)(termsSpec.amount).map(u128Strict) : monads_1.None;
-            const cap = termsSpec.cap !== undefined ? (0, monads_1.Some)(termsSpec.cap).map(u128Strict) : monads_1.None;
-            const height = termsSpec.height
-                ? [
-                    termsSpec.height.start !== undefined
-                        ? (0, monads_1.Some)(termsSpec.height.start).map(u64Strict)
-                        : monads_1.None,
-                    termsSpec.height.end !== undefined ? (0, monads_1.Some)(termsSpec.height.end).map(u64Strict) : monads_1.None,
-                ]
-                : [monads_1.None, monads_1.None];
-            const offset = termsSpec.offset
-                ? [
-                    termsSpec.offset.start !== undefined
-                        ? (0, monads_1.Some)(termsSpec.offset.start).map(u64Strict)
-                        : monads_1.None,
-                    termsSpec.offset.end !== undefined ? (0, monads_1.Some)(termsSpec.offset.end).map(u64Strict) : monads_1.None,
-                ]
-                : [monads_1.None, monads_1.None];
-            if (amount.isSome() && cap.isSome() && amount.unwrap() * cap.unwrap() > integer_1.u128.MAX) {
-                throw Error('Terms overflow with amount times cap');
-            }
-            terms = (0, monads_1.Some)({ amount, cap, height, offset });
-        }
-        const turbo = etchingSpec.turbo ?? false;
-        etching = (0, monads_1.Some)(new etching_1.Etching(divisibility, rune, spacers, symbol, terms, premine, turbo));
-        etchingCommitment = rune.isSome() ? rune.unwrap().commitment : undefined;
-    }
-    return {
-        encodedRunestone: new runestone_1.Runestone(mint, pointer, edicts, etching).encipher(),
-        etchingCommitment,
-    };
-}
-exports.wX = encodeRunestone;
-function isRunestone(artifact) {
-    return !('flaws' in artifact);
-}
-__webpack_unused_export__ = isRunestone;
-function tryDecodeRunestone(tx) {
-    const optionArtifact = runestone_1.Runestone.decipher(tx);
-    if (optionArtifact.isNone()) {
-        return null;
-    }
-    const artifact = optionArtifact.unwrap();
-    if ((0, artifact_1.isRunestone)(artifact)) {
-        const runestone = artifact;
-        const etching = () => runestone.etching.unwrap();
-        const terms = () => etching().terms.unwrap();
-        return {
-            ...(runestone.etching.isSome()
-                ? {
-                    etching: {
-                        ...(etching().divisibility.isSome()
-                            ? { divisibility: etching().divisibility.map(Number).unwrap() }
-                            : {}),
-                        ...(etching().premine.isSome() ? { premine: etching().premine.unwrap() } : {}),
-                        ...(etching().rune.isSome()
-                            ? {
-                                runeName: new spacedrune_1.SpacedRune(etching().rune.unwrap(), etching().spacers.map(Number).unwrapOr(0)).toString(),
-                            }
-                            : {}),
-                        ...(etching().symbol.isSome() ? { symbol: etching().symbol.unwrap() } : {}),
-                        ...(etching().terms.isSome()
-                            ? {
-                                terms: {
-                                    ...(terms().amount.isSome() ? { amount: terms().amount.unwrap() } : {}),
-                                    ...(terms().cap.isSome() ? { cap: terms().cap.unwrap() } : {}),
-                                    ...(terms().height.find((option) => option.isSome())
-                                        ? {
-                                            height: {
-                                                ...(terms().height[0].isSome()
-                                                    ? { start: terms().height[0].unwrap() }
-                                                    : {}),
-                                                ...(terms().height[1].isSome()
-                                                    ? { end: terms().height[1].unwrap() }
-                                                    : {}),
-                                            },
-                                        }
-                                        : {}),
-                                    ...(terms().offset.find((option) => option.isSome())
-                                        ? {
-                                            offset: {
-                                                ...(terms().offset[0].isSome()
-                                                    ? { start: terms().offset[0].unwrap() }
-                                                    : {}),
-                                                ...(terms().offset[1].isSome()
-                                                    ? { end: terms().offset[1].unwrap() }
-                                                    : {}),
-                                            },
-                                        }
-                                        : {}),
-                                },
-                            }
-                            : {}),
-                        turbo: etching().turbo,
-                    },
-                }
-                : {}),
-            ...(runestone.mint.isSome()
-                ? {
-                    mint: {
-                        block: runestone.mint.unwrap().block,
-                        tx: Number(runestone.mint.unwrap().tx),
-                    },
-                }
-                : {}),
-            ...(runestone.pointer.isSome() ? { pointer: Number(runestone.pointer.unwrap()) } : {}),
-            ...(runestone.edicts.length
-                ? {
-                    edicts: runestone.edicts.map((edict) => ({
-                        id: {
-                            block: edict.id.block,
-                            tx: Number(edict.id.tx),
-                        },
-                        amount: edict.amount,
-                        output: Number(edict.output),
-                    })),
-                }
-                : {}),
-        };
-    }
-    else {
-        const cenotaph = artifact;
-        return {
-            flaws: cenotaph.flaws.map(getFlawString),
-            ...(cenotaph.etching.isSome() ? { etching: cenotaph.etching.unwrap().toString() } : {}),
-            ...(cenotaph.mint.isSome()
-                ? { mint: { block: cenotaph.mint.unwrap().block, tx: Number(cenotaph.mint.unwrap().tx) } }
-                : {}),
-        };
-    }
-}
-__webpack_unused_export__ = tryDecodeRunestone;
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 51958:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.isRunestone = void 0;
-function isRunestone(artifact) {
-    return !('flaws' in artifact);
-}
-exports.isRunestone = isRunestone;
-//# sourceMappingURL=artifact.js.map
-
-/***/ }),
-
-/***/ 18696:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.Cenotaph = void 0;
-const monads_1 = __webpack_require__(33340);
-class Cenotaph {
-    constructor(flaws, etching = monads_1.None, mint = monads_1.None) {
-        this.flaws = flaws;
-        this.etching = etching;
-        this.mint = mint;
-    }
-}
-exports.Cenotaph = Cenotaph;
-//# sourceMappingURL=cenotaph.js.map
-
-/***/ }),
-
-/***/ 54019:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.TAPROOT_SCRIPT_PUBKEY_TYPE = exports.COMMIT_CONFIRMATIONS = exports.TAPROOT_ANNEX_PREFIX = exports.MAGIC_NUMBER = exports.OP_RETURN = exports.MAX_SCRIPT_ELEMENT_SIZE = exports.SUBSIDY_HALVING_INTERVAL = exports.RESERVED = exports.MAX_DIVISIBILITY = void 0;
-const integer_1 = __webpack_require__(27983);
-const script_1 = __webpack_require__(19075);
-exports.MAX_DIVISIBILITY = (0, integer_1.u8)(38);
-exports.RESERVED = (0, integer_1.u128)(6402364363415443603228541259936211926n);
-exports.SUBSIDY_HALVING_INTERVAL = 210000;
-exports.MAX_SCRIPT_ELEMENT_SIZE = 520;
-exports.OP_RETURN = script_1.opcodes.OP_RETURN;
-exports.MAGIC_NUMBER = script_1.opcodes.OP_13;
-exports.TAPROOT_ANNEX_PREFIX = 0x50;
-exports.COMMIT_CONFIRMATIONS = 6;
-exports.TAPROOT_SCRIPT_PUBKEY_TYPE = 'witness_v1_taproot';
-//# sourceMappingURL=constants.js.map
-
-/***/ }),
-
-/***/ 76305:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.Edict = void 0;
-const monads_1 = __webpack_require__(33340);
-const integer_1 = __webpack_require__(27983);
-var Edict;
-(function (Edict) {
-    function fromIntegers(numOutputs, id, amount, output) {
-        if (id.block === 0n && id.tx > 0n) {
-            return monads_1.None;
-        }
-        const optionOutputU32 = integer_1.u128.tryIntoU32(output);
-        if (optionOutputU32.isNone()) {
-            return monads_1.None;
-        }
-        const outputU32 = optionOutputU32.unwrap();
-        if (outputU32 > numOutputs) {
-            return monads_1.None;
-        }
-        return (0, monads_1.Some)({ id, amount, output: outputU32 });
-    }
-    Edict.fromIntegers = fromIntegers;
-})(Edict || (exports.Edict = Edict = {}));
-//# sourceMappingURL=edict.js.map
-
-/***/ }),
-
-/***/ 54836:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.Etching = void 0;
-const monads_1 = __webpack_require__(33340);
-const integer_1 = __webpack_require__(27983);
-class Etching {
-    constructor(divisibility, rune, spacers, symbol, terms, premine, turbo) {
-        this.divisibility = divisibility;
-        this.rune = rune;
-        this.spacers = spacers;
-        this.terms = terms;
-        this.premine = premine;
-        this.turbo = turbo;
-        this.symbol = symbol.andThen((value) => {
-            const codePoint = value.codePointAt(0);
-            return codePoint !== undefined ? (0, monads_1.Some)(String.fromCodePoint(codePoint)) : monads_1.None;
-        });
-    }
-    get supply() {
-        const premine = this.premine.unwrapOr((0, integer_1.u128)(0));
-        const cap = this.terms.andThen((terms) => terms.cap).unwrapOr((0, integer_1.u128)(0));
-        const amount = this.terms.andThen((terms) => terms.amount).unwrapOr((0, integer_1.u128)(0));
-        return integer_1.u128
-            .checkedMultiply(cap, amount)
-            .andThen((multiplyResult) => integer_1.u128.checkedAdd(premine, multiplyResult));
-    }
-}
-exports.Etching = Etching;
-//# sourceMappingURL=etching.js.map
-
-/***/ }),
-
-/***/ 90374:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.Flag = void 0;
-const integer_1 = __webpack_require__(27983);
-var Flag;
-(function (Flag) {
-    Flag[Flag["ETCHING"] = 0] = "ETCHING";
-    Flag[Flag["TERMS"] = 1] = "TERMS";
-    Flag[Flag["TURBO"] = 2] = "TURBO";
-    Flag[Flag["CENOTAPH"] = 127] = "CENOTAPH";
-})(Flag || (exports.Flag = Flag = {}));
-(function (Flag) {
-    function mask(flag) {
-        return (0, integer_1.u128)(1n << BigInt(flag));
-    }
-    Flag.mask = mask;
-    function take(flags, flag) {
-        const mask = Flag.mask(flag);
-        const set = (flags & mask) !== 0n;
-        return { set, flags: set ? (0, integer_1.u128)(flags - mask) : flags };
-    }
-    Flag.take = take;
-    function set(flags, flag) {
-        return (0, integer_1.u128)(flags | Flag.mask(flag));
-    }
-    Flag.set = set;
-})(Flag || (exports.Flag = Flag = {}));
-//# sourceMappingURL=flag.js.map
-
-/***/ }),
-
-/***/ 44086:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.Flaw = void 0;
-var Flaw;
-(function (Flaw) {
-    Flaw[Flaw["EDICT_OUTPUT"] = 0] = "EDICT_OUTPUT";
-    Flaw[Flaw["EDICT_RUNE_ID"] = 1] = "EDICT_RUNE_ID";
-    Flaw[Flaw["INVALID_SCRIPT"] = 2] = "INVALID_SCRIPT";
-    Flaw[Flaw["OPCODE"] = 3] = "OPCODE";
-    Flaw[Flaw["SUPPLY_OVERFLOW"] = 4] = "SUPPLY_OVERFLOW";
-    Flaw[Flaw["TRAILING_INTEGERS"] = 5] = "TRAILING_INTEGERS";
-    Flaw[Flaw["TRUNCATED_FIELD"] = 6] = "TRUNCATED_FIELD";
-    Flaw[Flaw["UNRECOGNIZED_EVEN_TAG"] = 7] = "UNRECOGNIZED_EVEN_TAG";
-    Flaw[Flaw["UNRECOGNIZED_FLAG"] = 8] = "UNRECOGNIZED_FLAG";
-    Flaw[Flaw["VARINT"] = 9] = "VARINT";
-})(Flaw || (exports.Flaw = Flaw = {}));
-//# sourceMappingURL=flaw.js.map
-
-/***/ }),
-
-/***/ 40950:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RunestoneIndexer = exports.RuneUpdater = void 0;
-const network_1 = __webpack_require__(28608);
-const updater_1 = __webpack_require__(19571);
-const integer_1 = __webpack_require__(27983);
-__exportStar(__webpack_require__(1579), exports);
-var updater_2 = __webpack_require__(19571);
-Object.defineProperty(exports, "RuneUpdater", ({ enumerable: true, get: function () { return updater_2.RuneUpdater; } }));
-class RunestoneIndexer {
-    constructor(options) {
-        this._started = false;
-        this._updateInProgress = false;
-        this._rpc = options.bitcoinRpcClient;
-        this._storage = options.storage;
-        this._network = options.network;
-    }
-    async start() {
-        if (this._started) {
-            return;
-        }
-        await this._storage.connect();
-        this._started = true;
-        if (this._network === network_1.Network.MAINNET) {
-            this._storage.seedEtchings([
-                {
-                    runeTicker: 'UNCOMMONGOODS',
-                    runeName: 'UNCOMMON•GOODS',
-                    runeId: { block: 1, tx: 0 },
-                    txid: '0000000000000000000000000000000000000000000000000000000000000000',
-                    valid: true,
-                    symbol: '⧉',
-                    terms: { amount: 1n, cap: integer_1.u128.MAX, height: { start: 840000n, end: 1050000n } },
-                },
-            ]);
-        }
-    }
-    async stop() {
-        if (!this._started) {
-            return;
-        }
-        await this._storage.disconnect();
-        this._started = false;
-    }
-    async updateRuneUtxoBalances() {
-        if (!this._started) {
-            throw new Error('Runestone indexer is not started');
-        }
-        if (this._updateInProgress) {
-            return;
-        }
-        this._updateInProgress = true;
-        try {
-            await this.updateRuneUtxoBalancesImpl();
-        }
-        finally {
-            this._updateInProgress = false;
-        }
-    }
-    async updateRuneUtxoBalancesImpl() {
-        const currentStorageBlock = await this._storage.getCurrentBlock();
-        if (currentStorageBlock) {
-            // walk down until matching hash is found
-            const reorgBlockhashesToIndex = [];
-            let blockheight = currentStorageBlock.height;
-            let blockhash = (await this._rpc.getblockhash({ height: blockheight })).result;
-            let storageBlockHash = currentStorageBlock.hash;
-            while (storageBlockHash !== blockhash) {
-                if (blockhash) {
-                    reorgBlockhashesToIndex.push(blockhash);
-                }
-                blockheight--;
-                blockhash = (await this._rpc.getblockhash({ height: blockheight })).result;
-                storageBlockHash = await this._storage.getBlockhash(blockheight);
-            }
-            reorgBlockhashesToIndex.reverse();
-            // process blocks that are reorgs
-            for (const blockhash of reorgBlockhashesToIndex) {
-                const blockResult = await this._rpc.getblock({ blockhash, verbosity: 2 });
-                if (blockResult.error !== null) {
-                    throw blockResult.error;
-                }
-                const block = blockResult.result;
-                const runeUpdater = new updater_1.RuneUpdater(this._network, block, true, this._storage, this._rpc);
-                for (const [txIndex, tx] of block.tx.entries()) {
-                    await runeUpdater.indexRunes(tx, txIndex);
-                }
-                await this._storage.saveBlockIndex(runeUpdater);
-            }
-        }
-        // start from first rune height or next block height, whichever is greater
-        let blockheight = Math.max(network_1.Network.getFirstRuneHeight(this._network), currentStorageBlock ? currentStorageBlock.height + 1 : 0);
-        let blockhash = (await this._rpc.getblockhash({ height: blockheight })).result;
-        while (blockhash !== null) {
-            const blockResult = await this._rpc.getblock({ blockhash, verbosity: 2 });
-            if (blockResult.error !== null) {
-                throw blockResult.error;
-            }
-            const block = blockResult.result;
-            const runeUpdater = new updater_1.RuneUpdater(this._network, block, false, this._storage, this._rpc);
-            for (const [txIndex, tx] of block.tx.entries()) {
-                await runeUpdater.indexRunes(tx, txIndex);
-            }
-            await this._storage.saveBlockIndex(runeUpdater);
-            blockheight++;
-            blockhash = (await this._rpc.getblockhash({ height: blockheight })).result;
-        }
-    }
-}
-exports.RunestoneIndexer = RunestoneIndexer;
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 1579:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RuneLocation = void 0;
-var RuneLocation;
-(function (RuneLocation) {
-    function toString(runeId) {
-        return `${runeId.block}:${runeId.tx}`;
-    }
-    RuneLocation.toString = toString;
-})(RuneLocation || (exports.RuneLocation = RuneLocation = {}));
-//# sourceMappingURL=types.js.map
-
-/***/ }),
-
-/***/ 19571:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-/* provided dependency */ var Buffer = __webpack_require__(48287).Buffer;
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RuneUpdater = void 0;
-const artifact_1 = __webpack_require__(51958);
-const constants_1 = __webpack_require__(54019);
-const integer_1 = __webpack_require__(27983);
-const monads_1 = __webpack_require__(33340);
-const rune_1 = __webpack_require__(80112);
-const runestone_1 = __webpack_require__(49791);
-const script_1 = __webpack_require__(19075);
-const spacedrune_1 = __webpack_require__(41874);
-const types_1 = __webpack_require__(1579);
-function isScriptPubKeyHexOpReturn(scriptPubKeyHex) {
-    return scriptPubKeyHex && Buffer.from(scriptPubKeyHex, 'hex')[0] === constants_1.OP_RETURN;
-}
-class RuneUpdater {
-    constructor(network, block, reorg, _storage, _rpc) {
-        this.reorg = reorg;
-        this._storage = _storage;
-        this._rpc = _rpc;
-        this.etchings = [];
-        this.utxoBalances = [];
-        this.spentBalances = [];
-        this._mintCountsByRuneLocation = new Map();
-        this._burnedBalancesByRuneLocation = new Map();
-        this.block = {
-            height: block.height,
-            hash: block.hash,
-            previousblockhash: block.previousblockhash,
-            time: block.time,
-        };
-        this._minimum = rune_1.Rune.getMinimumAtHeight(network, (0, integer_1.u128)(block.height));
-    }
-    get mintCounts() {
-        return [...this._mintCountsByRuneLocation.values()];
-    }
-    get burnedBalances() {
-        return [...this._burnedBalancesByRuneLocation.values()];
-    }
-    async indexRunes(tx, txIndex) {
-        const optionArtifact = runestone_1.Runestone.decipher(tx);
-        const unallocated = await this.unallocated(tx);
-        const allocated = [...new Array(tx.vout.length)].map(() => new Map());
-        function getUnallocatedRuneBalance(runeId) {
-            const key = types_1.RuneLocation.toString(runeId);
-            const balance = unallocated.get(key) ?? { runeId, amount: 0n };
-            unallocated.set(key, balance);
-            return balance;
-        }
-        function getAllocatedRuneBalance(vout, runeId) {
-            const key = types_1.RuneLocation.toString(runeId);
-            const balance = allocated[vout].get(key) ?? { runeId, amount: 0n };
-            allocated[vout].set(key, balance);
-            return balance;
-        }
-        if (optionArtifact.isSome()) {
-            const artifact = optionArtifact.unwrap();
-            const optionMint = artifact.mint;
-            if (optionMint.isSome()) {
-                const runeId = optionMint.unwrap();
-                const runeLocation = {
-                    block: Number(runeId.block),
-                    tx: Number(runeId.tx),
-                };
-                const optionAmount = await this.mint(runeLocation, tx.txid);
-                if (optionAmount.isSome()) {
-                    const amount = optionAmount.unwrap();
-                    const unallocatedBalance = getUnallocatedRuneBalance(runeLocation);
-                    unallocatedBalance.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(unallocatedBalance.amount), (0, integer_1.u128)(amount));
-                }
-            }
-            const optionEtched = await this.etched(txIndex, tx, artifact);
-            if ((0, artifact_1.isRunestone)(artifact)) {
-                const runestone = artifact;
-                if (optionEtched.isSome()) {
-                    const etched = optionEtched.unwrap();
-                    const unallocatedBalance = getUnallocatedRuneBalance(etched.runeId);
-                    unallocatedBalance.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(unallocatedBalance.amount), runestone.etching.unwrap().premine.unwrapOr((0, integer_1.u128)(0)));
-                }
-                for (const { id, amount, output } of [...runestone.edicts]) {
-                    // edicts with output values greater than the number of outputs
-                    // should never be produced by the edict parser
-                    if (output > tx.vout.length) {
-                        throw new Error('Runestone edict output should never exceed transaction output size');
-                    }
-                    if (id.block === 0n && id.tx === 0n && optionEtched.isNone()) {
-                        continue;
-                    }
-                    const runeLocation = id.block === 0n && id.tx === 0n
-                        ? optionEtched.unwrap().runeId
-                        : { block: Number(id.block), tx: Number(id.tx) };
-                    const runeLocationString = types_1.RuneLocation.toString(runeLocation);
-                    const maybeBalance = unallocated.get(runeLocationString);
-                    if (maybeBalance === undefined) {
-                        continue;
-                    }
-                    let allocate = (amount, output) => {
-                        if (amount > 0n) {
-                            const currentAllocated = getAllocatedRuneBalance(output, runeLocation);
-                            maybeBalance.amount = integer_1.u128.checkedSubThrow((0, integer_1.u128)(maybeBalance.amount), amount);
-                            currentAllocated.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(currentAllocated.amount), amount);
-                        }
-                    };
-                    if (Number(output) === tx.vout.length) {
-                        // find non-OP_RETURN outputs
-                        const destinations = [...tx.vout.entries()]
-                            .filter(([_, vout]) => !isScriptPubKeyHexOpReturn(vout.scriptPubKey.hex))
-                            .map(([index]) => index);
-                        if (destinations.length !== 0) {
-                            if (amount === 0n) {
-                                // if amount is zero, divide balance between eligible outputs
-                                const amount = (0, integer_1.u128)((0, integer_1.u128)(maybeBalance.amount) / (0, integer_1.u128)(destinations.length));
-                                const remainder = (0, integer_1.u128)(maybeBalance.amount) % (0, integer_1.u128)(destinations.length);
-                                for (const [i, output] of destinations.entries()) {
-                                    allocate(i < remainder ? integer_1.u128.checkedAddThrow(amount, (0, integer_1.u128)(1)) : amount, output);
-                                }
-                            }
-                            else {
-                                // if amount is non-zero, distribute amount to eligible outputs
-                                for (const output of destinations) {
-                                    allocate(amount < maybeBalance.amount ? amount : (0, integer_1.u128)(maybeBalance.amount), output);
-                                }
-                            }
-                        }
-                    }
-                    else {
-                        // Get the allocatable amount
-                        allocate(amount !== 0n && amount < (0, integer_1.u128)(maybeBalance.amount)
-                            ? amount
-                            : (0, integer_1.u128)(maybeBalance.amount), Number(output));
-                    }
-                }
-            }
-            if (optionEtched.isSome()) {
-                const { runeId, rune } = optionEtched.unwrap();
-                this.createEtching(tx.txid, artifact, runeId, rune);
-            }
-        }
-        const burned = new Map();
-        function getBurnedRuneBalance(runeId) {
-            const key = types_1.RuneLocation.toString(runeId);
-            const balance = burned.get(key) ?? { runeId, amount: 0n };
-            burned.set(key, balance);
-            return balance;
-        }
-        if (optionArtifact.isSome() && !(0, artifact_1.isRunestone)(optionArtifact.unwrap())) {
-            for (const balance of unallocated.values()) {
-                const currentBalance = getBurnedRuneBalance(balance.runeId);
-                currentBalance.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(currentBalance.amount), (0, integer_1.u128)(balance.amount));
-            }
-        }
-        else {
-            const pointer = optionArtifact
-                .map((artifact) => {
-                if (!(0, artifact_1.isRunestone)(artifact)) {
-                    throw new Error('unreachable');
-                }
-                return artifact.pointer;
-            })
-                .unwrapOr(monads_1.None);
-            const optionVout = pointer
-                .map((pointer) => Number(pointer))
-                .inspect((pointer) => {
-                if (pointer < 0 || pointer >= allocated.length)
-                    throw new Error('Pointer is invalid');
-            })
-                .orElse(() => {
-                const entry = [...tx.vout.entries()].find(([_, txOut]) => !isScriptPubKeyHexOpReturn(txOut.scriptPubKey.hex));
-                return entry !== undefined ? (0, monads_1.Some)(entry[0]) : monads_1.None;
-            });
-            if (optionVout.isSome()) {
-                const vout = optionVout.unwrap();
-                for (const balance of unallocated.values()) {
-                    if (balance.amount > 0) {
-                        const currentBalance = getAllocatedRuneBalance(vout, balance.runeId);
-                        currentBalance.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(currentBalance.amount), (0, integer_1.u128)(balance.amount));
-                    }
-                }
-            }
-            else {
-                for (const [id, balance] of unallocated) {
-                    if (balance.amount > 0) {
-                        const currentBalance = getBurnedRuneBalance(balance.runeId);
-                        burned.set(id, {
-                            runeId: balance.runeId,
-                            amount: integer_1.u128.checkedAddThrow((0, integer_1.u128)(currentBalance.amount), (0, integer_1.u128)(balance.amount)),
-                        });
-                    }
-                }
-            }
-        }
-        // update outpoint balances
-        for (const [vout, balances] of allocated.entries()) {
-            if (balances.size === 0) {
-                continue;
-            }
-            // increment burned balances
-            const output = tx.vout[vout];
-            if (isScriptPubKeyHexOpReturn(output.scriptPubKey.hex)) {
-                for (const [id, balance] of balances) {
-                    const currentBurned = getBurnedRuneBalance(balance.runeId);
-                    currentBurned.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(currentBurned.amount), (0, integer_1.u128)(balance.amount));
-                }
-                continue;
-            }
-            const etchingByRuneId = new Map(this.etchings.map((etching) => [types_1.RuneLocation.toString(etching.runeId), etching]));
-            for (const balance of balances.values()) {
-                const runeIdString = types_1.RuneLocation.toString(balance.runeId);
-                const etching = etchingByRuneId.get(runeIdString) ?? (await this._storage.getEtching(runeIdString));
-                if (etching === null) {
-                    throw new Error('Rune should exist at this point');
-                }
-                this.utxoBalances.push({
-                    runeId: balance.runeId,
-                    runeTicker: etching.runeTicker,
-                    amount: balance.amount,
-                    scriptPubKey: Buffer.from(output.scriptPubKey.hex),
-                    txid: tx.txid,
-                    vout,
-                    address: output.scriptPubKey.address,
-                });
-            }
-        }
-        // update entries with burned runes
-        for (const [id, balance] of burned) {
-            this._burnedBalancesByRuneLocation.set(id, balance);
-        }
-        return;
-    }
-    async etched(txIndex, tx, artifact) {
-        let optionRune;
-        if ((0, artifact_1.isRunestone)(artifact)) {
-            const runestone = artifact;
-            if (runestone.etching.isNone()) {
-                return monads_1.None;
-            }
-            optionRune = runestone.etching.unwrap().rune;
-        }
-        else {
-            const cenotaph = artifact;
-            if (cenotaph.etching.isNone()) {
-                return monads_1.None;
-            }
-            optionRune = cenotaph.etching;
-        }
-        let rune;
-        if (optionRune.isSome()) {
-            rune = optionRune.unwrap();
-            if (rune.value < this._minimum.value) {
-                return monads_1.None;
-            }
-            if (rune.reserved) {
-                return monads_1.None;
-            }
-            if (this.etchings.find((etching) => spacedrune_1.SpacedRune.fromString(etching.runeName).rune.toString() === rune.toString())) {
-                return monads_1.None;
-            }
-            const runeLocation = await this._storage.getRuneLocation(rune.toString());
-            if (runeLocation && runeLocation.block < this.block.height) {
-                return monads_1.None;
-            }
-            const txCommitsToRune = await this.txCommitsToRune(tx, rune);
-            if (!txCommitsToRune) {
-                return monads_1.None;
-            }
-        }
-        else {
-            rune = rune_1.Rune.getReserved((0, integer_1.u64)(this.block.height), (0, integer_1.u32)(txIndex));
-        }
-        return (0, monads_1.Some)({
-            runeId: {
-                block: this.block.height,
-                tx: txIndex,
-            },
-            rune,
-        });
-    }
-    async mint(id, txid) {
-        const runeLocation = types_1.RuneLocation.toString(id);
-        const etchingByRuneId = new Map(this.etchings.map((etching) => [types_1.RuneLocation.toString(etching.runeId), etching]));
-        const etching = etchingByRuneId.get(runeLocation) ?? (await this._storage.getEtching(runeLocation));
-        if (etching === null || !etching.valid || !etching.terms) {
-            return monads_1.None;
-        }
-        const terms = etching.terms;
-        const startRelative = terms.offset?.start !== undefined ? etching.runeId.block + Number(terms.offset.start) : null;
-        const startAbsolute = terms.height?.start !== undefined ? Number(terms.height.start) : null;
-        const start = startRelative !== null || startAbsolute !== null
-            ? Math.max(startRelative ?? -Infinity, startAbsolute ?? -Infinity)
-            : null;
-        if (start !== null && this.block.height < start) {
-            return monads_1.None;
-        }
-        const endRelative = terms.offset?.end !== undefined ? etching.runeId.block + Number(terms.offset.end) : null;
-        const endAbsolute = terms.height?.end !== undefined ? Number(terms.height.end) : null;
-        const end = endRelative !== null || endAbsolute !== null
-            ? Math.max(endRelative ?? -Infinity, endAbsolute ?? -Infinity)
-            : null;
-        if (end !== null && this.block.height >= end) {
-            return monads_1.None;
-        }
-        const cap = terms.cap ?? 0n;
-        const currentBlockMints = this._mintCountsByRuneLocation.get(runeLocation) ?? {
-            mint: id,
-            count: 0,
-        };
-        this._mintCountsByRuneLocation.set(runeLocation, currentBlockMints);
-        const totalMints = currentBlockMints.count +
-            (await this._storage.getValidMintCount(runeLocation, this.block.height - 1));
-        if (totalMints >= cap) {
-            return monads_1.None;
-        }
-        const amount = terms.amount ?? 0n;
-        currentBlockMints.count++;
-        return (0, monads_1.Some)(amount);
-    }
-    async unallocated(tx) {
-        const unallocated = new Map();
-        const utxoBalancesByOutputLocation = new Map();
-        for (const utxoBalance of this.utxoBalances) {
-            const location = `${utxoBalance.txid}:${utxoBalance.vout}`;
-            const balances = utxoBalancesByOutputLocation.get(location) ?? [];
-            balances.push(utxoBalance);
-            utxoBalancesByOutputLocation.set(location, balances);
-        }
-        for (const input of tx.vin) {
-            if ('coinbase' in input) {
-                continue;
-            }
-            const utxoBalance = utxoBalancesByOutputLocation.get(`${input.txid}:${input.vout}`) ??
-                (await this._storage.getUtxoBalance(input.txid, input.vout));
-            for (const additionalBalance of utxoBalance) {
-                const runeId = additionalBalance.runeId;
-                const runeLocation = types_1.RuneLocation.toString(runeId);
-                const balance = unallocated.get(runeLocation) ?? { runeId, amount: 0n };
-                unallocated.set(runeLocation, balance);
-                balance.amount = integer_1.u128.checkedAddThrow((0, integer_1.u128)(balance.amount), (0, integer_1.u128)(additionalBalance.amount));
-                this.spentBalances.push({
-                    txid: input.txid,
-                    vout: input.vout,
-                    address: additionalBalance.address,
-                    scriptPubKey: additionalBalance.scriptPubKey,
-                    runeId: additionalBalance.runeId,
-                    runeTicker: additionalBalance.runeTicker,
-                    amount: additionalBalance.amount,
-                    spentTxid: tx.txid,
-                });
-            }
-        }
-        return unallocated;
-    }
-    async txCommitsToRune(tx, rune) {
-        const commitment = rune.commitment;
-        for (const input of tx.vin) {
-            if ('coinbase' in input) {
-                continue;
-            }
-            const witnessStack = input.txinwitness.map((item) => Buffer.from(item, 'hex'));
-            const lastWitnessElement = witnessStack[witnessStack.length - 1];
-            const offset = witnessStack.length >= 2 && lastWitnessElement[0] === constants_1.TAPROOT_ANNEX_PREFIX ? 3 : 2;
-            if (offset > witnessStack.length) {
-                continue;
-            }
-            const potentiallyTapscript = witnessStack[witnessStack.length - offset];
-            if (potentiallyTapscript === undefined) {
-                continue;
-            }
-            const instructions = script_1.script.decompile(potentiallyTapscript);
-            for (const instruction of instructions) {
-                if (!Buffer.isBuffer(instruction)) {
-                    continue;
-                }
-                if (Buffer.compare(instruction, commitment) !== 0) {
-                    continue;
-                }
-                // rpc client
-                const inputTxResult = await this._rpc.getrawtransaction({
-                    txid: input.txid,
-                    verbose: true,
-                });
-                if (inputTxResult.error !== null) {
-                    throw inputTxResult.error;
-                }
-                const inputTx = inputTxResult.result;
-                const isTaproot = inputTx.vout[input.vout].scriptPubKey.type === constants_1.TAPROOT_SCRIPT_PUBKEY_TYPE;
-                if (!isTaproot) {
-                    continue;
-                }
-                const commitTxHeightResult = await this._rpc.getblock({ blockhash: inputTx.blockhash });
-                if (commitTxHeightResult.error !== null) {
-                    throw commitTxHeightResult.error;
-                }
-                const commitTxHeight = commitTxHeightResult.result.height;
-                const confirmations = integer_1.u128.checkedSubThrow((0, integer_1.u128)(this.block.height), (0, integer_1.u128)(commitTxHeight)) + 1n;
-                if (confirmations >= constants_1.COMMIT_CONFIRMATIONS) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    createEtching(txid, artifact, runeId, rune) {
-        if ((0, artifact_1.isRunestone)(artifact)) {
-            const { divisibility, terms, premine, spacers, symbol } = artifact.etching.unwrap();
-            this.etchings.push({
-                valid: true,
-                runeTicker: rune.toString(),
-                runeName: new spacedrune_1.SpacedRune(rune, Number(spacers.map(Number).unwrapOr(0))).toString(),
-                runeId,
-                txid,
-                ...(divisibility.isSome() ? { divisibility: divisibility.map(Number).unwrap() } : {}),
-                ...(premine.isSome() ? { premine: premine.unwrap() } : {}),
-                ...(symbol.isSome() ? { symbol: symbol.unwrap() } : {}),
-                ...(terms.isSome()
-                    ? {
-                        terms: (() => {
-                            const unwrappedTerms = terms.unwrap();
-                            return {
-                                ...(unwrappedTerms.amount.isSome()
-                                    ? { amount: unwrappedTerms.amount.unwrap() }
-                                    : {}),
-                                ...(unwrappedTerms.cap.isSome() ? { cap: unwrappedTerms.cap.unwrap() } : {}),
-                                ...(unwrappedTerms.height.filter((option) => option.isSome()).length
-                                    ? {
-                                        height: {
-                                            ...(unwrappedTerms.height[0].isSome()
-                                                ? { start: unwrappedTerms.height[0].unwrap() }
-                                                : {}),
-                                            ...(unwrappedTerms.height[1].isSome()
-                                                ? { end: unwrappedTerms.height[1].unwrap() }
-                                                : {}),
-                                        },
-                                    }
-                                    : {}),
-                                ...(unwrappedTerms.offset.filter((option) => option.isSome()).length
-                                    ? {
-                                        offset: {
-                                            ...(unwrappedTerms.offset[0].isSome()
-                                                ? { start: unwrappedTerms.offset[0].unwrap() }
-                                                : {}),
-                                            ...(unwrappedTerms.offset[1].isSome()
-                                                ? { end: unwrappedTerms.offset[1].unwrap() }
-                                                : {}),
-                                        },
-                                    }
-                                    : {}),
-                            };
-                        })(),
-                    }
-                    : {}),
-            });
-        }
-        else {
-            // save failed entry
-            this.etchings.push({
-                valid: false,
-                runeId,
-                txid,
-                runeTicker: rune.toString(),
-                runeName: rune.toString(),
-            });
-        }
-    }
-}
-exports.RuneUpdater = RuneUpdater;
-//# sourceMappingURL=updater.js.map
-
-/***/ }),
-
-/***/ 27983:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.u128 = exports.u64 = exports.u32 = exports.u8 = void 0;
-var u8_1 = __webpack_require__(4066);
-Object.defineProperty(exports, "u8", ({ enumerable: true, get: function () { return u8_1.u8; } }));
-var u32_1 = __webpack_require__(7937);
-Object.defineProperty(exports, "u32", ({ enumerable: true, get: function () { return u32_1.u32; } }));
-var u64_1 = __webpack_require__(87402);
-Object.defineProperty(exports, "u64", ({ enumerable: true, get: function () { return u64_1.u64; } }));
-var u128_1 = __webpack_require__(93851);
-Object.defineProperty(exports, "u128", ({ enumerable: true, get: function () { return u128_1.u128; } }));
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 93851:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-/* provided dependency */ var Buffer = __webpack_require__(48287).Buffer;
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getAllU128 = exports.u128 = exports.U128_MAX_BIGINT = void 0;
-const monads_1 = __webpack_require__(33340);
-const seekbuffer_1 = __webpack_require__(17926);
-const u64_1 = __webpack_require__(87402);
-const u32_1 = __webpack_require__(7937);
-const u8_1 = __webpack_require__(4066);
-exports.U128_MAX_BIGINT = 0xffffffffffffffffffffffffffffffffn;
-/**
- * Convert Number or BigInt to 128-bit unsigned integer.
- * @param num - The Number or BigInt to convert.
- * @returns - The resulting 128-bit unsigned integer (BigInt).
- */
-function u128(num) {
-    const bigNum = typeof num == 'bigint' ? num : BigInt(num);
-    return (bigNum & exports.U128_MAX_BIGINT);
-}
-exports.u128 = u128;
-(function (u128) {
-    u128.MAX = u128(exports.U128_MAX_BIGINT);
-    function checkedAdd(x, y) {
-        const result = x + y;
-        if (result > u128.MAX) {
-            return monads_1.None;
-        }
-        return (0, monads_1.Some)(u128(result));
-    }
-    u128.checkedAdd = checkedAdd;
-    function checkedAddThrow(x, y) {
-        const option = u128.checkedAdd(x, y);
-        if (option.isNone()) {
-            throw new Error('checked add overflow');
-        }
-        return option.unwrap();
-    }
-    u128.checkedAddThrow = checkedAddThrow;
-    function checkedSub(x, y) {
-        const result = x - y;
-        if (result < 0n) {
-            return monads_1.None;
-        }
-        return (0, monads_1.Some)(u128(result));
-    }
-    u128.checkedSub = checkedSub;
-    function checkedSubThrow(x, y) {
-        const option = u128.checkedSub(x, y);
-        if (option.isNone()) {
-            throw new Error('checked sub overflow');
-        }
-        return option.unwrap();
-    }
-    u128.checkedSubThrow = checkedSubThrow;
-    function checkedMultiply(x, y) {
-        const result = x * y;
-        if (result > u128.MAX) {
-            return monads_1.None;
-        }
-        return (0, monads_1.Some)(u128(result));
-    }
-    u128.checkedMultiply = checkedMultiply;
-    function saturatingAdd(x, y) {
-        const result = x + y;
-        return result > u128.MAX ? u128.MAX : u128(result);
-    }
-    u128.saturatingAdd = saturatingAdd;
-    function saturatingMultiply(x, y) {
-        const result = x * y;
-        return result > u128.MAX ? u128.MAX : u128(result);
-    }
-    u128.saturatingMultiply = saturatingMultiply;
-    function saturatingSub(x, y) {
-        return u128(x < y ? 0 : x - y);
-    }
-    u128.saturatingSub = saturatingSub;
-    function decodeVarInt(seekBuffer) {
-        try {
-            return (0, monads_1.Some)(tryDecodeVarInt(seekBuffer));
-        }
-        catch (e) {
-            return monads_1.None;
-        }
-    }
-    u128.decodeVarInt = decodeVarInt;
-    function tryDecodeVarInt(seekBuffer) {
-        let result = u128(0);
-        for (let i = 0; i <= 18; i++) {
-            const byte = seekBuffer.readUInt8();
-            if (byte === undefined) {
-                throw new Error('Unterminated');
-            }
-            const value = u128(byte) & 127n;
-            if (i === 18 && (value & 124n) !== 0n) {
-                throw new Error('Overflow');
-            }
-            result = u128(result | (value << u128(7 * i)));
-            if ((byte & 128) === 0) {
-                return result;
-            }
-        }
-        throw new Error('Overlong');
-    }
-    u128.tryDecodeVarInt = tryDecodeVarInt;
-    function encodeVarInt(value) {
-        const v = [];
-        while (value >> 7n > 0n) {
-            v.push(Number(value & 0xffn) | 128);
-            value = u128(value >> 7n);
-        }
-        v.push(Number(value & 0xffn));
-        return Buffer.from(v);
-    }
-    u128.encodeVarInt = encodeVarInt;
-    function tryIntoU64(n) {
-        return n > u64_1.u64.MAX ? monads_1.None : (0, monads_1.Some)((0, u64_1.u64)(n));
-    }
-    u128.tryIntoU64 = tryIntoU64;
-    function tryIntoU32(n) {
-        return n > u32_1.u32.MAX ? monads_1.None : (0, monads_1.Some)((0, u32_1.u32)(n));
-    }
-    u128.tryIntoU32 = tryIntoU32;
-    function tryIntoU8(n) {
-        return n > u8_1.u8.MAX ? monads_1.None : (0, monads_1.Some)((0, u8_1.u8)(n));
-    }
-    u128.tryIntoU8 = tryIntoU8;
-})(u128 || (exports.u128 = u128 = {}));
-function* getAllU128(buffer) {
-    const seekBuffer = new seekbuffer_1.SeekBuffer(buffer);
-    while (!seekBuffer.isFinished()) {
-        const nextValue = u128.tryDecodeVarInt(seekBuffer);
-        if (nextValue === undefined) {
-            return;
-        }
-        yield nextValue;
-    }
-}
-exports.getAllU128 = getAllU128;
-//# sourceMappingURL=u128.js.map
-
-/***/ }),
-
-/***/ 7937:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.u32 = exports.U32_MAX_BIGINT = void 0;
-const monads_1 = __webpack_require__(33340);
-exports.U32_MAX_BIGINT = 0xffffffffn;
-function u32(num) {
-    const bigNum = typeof num == 'bigint' ? num : BigInt(num);
-    return (bigNum & exports.U32_MAX_BIGINT);
-}
-exports.u32 = u32;
-(function (u32) {
-    u32.MAX = u32(exports.U32_MAX_BIGINT);
-    function checkedAdd(x, y) {
-        const result = x + y;
-        if (result > u32.MAX) {
-            return monads_1.None;
-        }
-        return (0, monads_1.Some)(u32(result));
-    }
-    u32.checkedAdd = checkedAdd;
-    function checkedSub(x, y) {
-        const result = x - y;
-        if (result < 0n) {
-            return monads_1.None;
-        }
-        return (0, monads_1.Some)(u32(result));
-    }
-    u32.checkedSub = checkedSub;
-})(u32 || (exports.u32 = u32 = {}));
-//# sourceMappingURL=u32.js.map
-
-/***/ }),
-
-/***/ 87402:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.u64 = exports.U64_MAX_BIGINT = void 0;
-const monads_1 = __webpack_require__(33340);
-exports.U64_MAX_BIGINT = 0xffffffffffffffffn;
-function u64(num) {
-    const bigNum = typeof num == 'bigint' ? num : BigInt(num);
-    return (bigNum & exports.U64_MAX_BIGINT);
-}
-exports.u64 = u64;
-(function (u64) {
-    u64.MAX = u64(exports.U64_MAX_BIGINT);
-    function checkedAdd(x, y) {
-        const result = x + y;
-        if (result > u64.MAX) {
-            return monads_1.None;
-        }
-        return (0, monads_1.Some)(u64(result));
-    }
-    u64.checkedAdd = checkedAdd;
-    function checkedSub(x, y) {
-        const result = x - y;
-        if (result < 0n) {
-            return monads_1.None;
-        }
-        return (0, monads_1.Some)(u64(result));
-    }
-    u64.checkedSub = checkedSub;
-})(u64 || (exports.u64 = u64 = {}));
-//# sourceMappingURL=u64.js.map
-
-/***/ }),
-
-/***/ 4066:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.u8 = exports.U8_MAX_BIGINT = void 0;
-const monads_1 = __webpack_require__(33340);
-exports.U8_MAX_BIGINT = 0xffn;
-function u8(num) {
-    const bigNum = typeof num == 'bigint' ? num : BigInt(num);
-    return (bigNum & exports.U8_MAX_BIGINT);
-}
-exports.u8 = u8;
-(function (u8) {
-    u8.MAX = u8(exports.U8_MAX_BIGINT);
-    function checkedAdd(x, y) {
-        const result = x + y;
-        if (result > u8.MAX) {
-            return monads_1.None;
-        }
-        return (0, monads_1.Some)(u8(result));
-    }
-    u8.checkedAdd = checkedAdd;
-    function checkedSub(x, y) {
-        const result = x - y;
-        if (result < 0n) {
-            return monads_1.None;
-        }
-        return (0, monads_1.Some)(u8(result));
-    }
-    u8.checkedSub = checkedSub;
-})(u8 || (exports.u8 = u8 = {}));
-//# sourceMappingURL=u8.js.map
-
-/***/ }),
-
-/***/ 6005:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.Message = void 0;
-const edict_1 = __webpack_require__(76305);
-const flaw_1 = __webpack_require__(44086);
-const integer_1 = __webpack_require__(27983);
-const runeid_1 = __webpack_require__(28025);
-const tag_1 = __webpack_require__(70498);
-class Message {
-    constructor(flaws, edicts, fields) {
-        this.flaws = flaws;
-        this.edicts = edicts;
-        this.fields = fields;
-    }
-    static fromIntegers(numOutputs, payload) {
-        const edicts = [];
-        const fields = new Map();
-        const flaws = [];
-        for (const i of [...Array(Math.ceil(payload.length / 2)).keys()].map((n) => n * 2)) {
-            const tag = payload[i];
-            if ((0, integer_1.u128)(tag_1.Tag.BODY) === tag) {
-                let id = new runeid_1.RuneId((0, integer_1.u64)(0), (0, integer_1.u32)(0));
-                const chunkSize = 4;
-                const body = payload.slice(i + 1);
-                for (let j = 0; j < body.length; j += chunkSize) {
-                    const chunk = body.slice(j, j + chunkSize);
-                    if (chunk.length !== chunkSize) {
-                        flaws.push(flaw_1.Flaw.TRAILING_INTEGERS);
-                        break;
-                    }
-                    const optionNext = id.next(chunk[0], chunk[1]);
-                    if (optionNext.isNone()) {
-                        flaws.push(flaw_1.Flaw.EDICT_RUNE_ID);
-                        break;
-                    }
-                    const next = optionNext.unwrap();
-                    const optionEdict = edict_1.Edict.fromIntegers(numOutputs, next, chunk[2], chunk[3]);
-                    if (optionEdict.isNone()) {
-                        flaws.push(flaw_1.Flaw.EDICT_OUTPUT);
-                        break;
-                    }
-                    const edict = optionEdict.unwrap();
-                    id = next;
-                    edicts.push(edict);
-                }
-                break;
-            }
-            const value = payload[i + 1];
-            if (value === undefined) {
-                flaws.push(flaw_1.Flaw.TRUNCATED_FIELD);
-                break;
-            }
-            const values = fields.get(tag) ?? [];
-            values.push(value);
-            fields.set(tag, values);
-        }
-        return new Message(flaws, edicts, fields);
-    }
-}
-exports.Message = Message;
-//# sourceMappingURL=message.js.map
-
-/***/ }),
-
-/***/ 33340:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-var __webpack_unused_export__;
-
-// Copied with MIT License from link below:
-// https://github.com/thames-technology/monads/blob/de957d3d68449d659518d99be4ea74bbb70dfc8e/src/option/option.ts
-__webpack_unused_export__ = ({ value: true });
-__webpack_unused_export__ = __webpack_unused_export__ = exports.None = exports.Some = exports.Cm = void 0;
-/**
- * Enum-like object to represent the type of an Option (Some or None).
- */
-exports.Cm = {
-    Some: Symbol(':some'),
-    None: Symbol(':none'),
-};
-/**
- * Represents a Some value of Option.
- */
-class SomeImpl {
-    constructor(val) {
-        this.val = val;
-    }
-    get type() {
-        return exports.Cm.Some;
-    }
-    isSome() {
-        return true;
-    }
-    isNone() {
-        return false;
-    }
-    match(fn) {
-        return fn.some(this.val);
-    }
-    map(fn) {
-        return Some(fn(this.val));
-    }
-    inspect(fn) {
-        fn(this.val);
-        return this;
-    }
-    andThen(fn) {
-        return fn(this.val);
-    }
-    or(_optb) {
-        return this;
-    }
-    orElse(optb) {
-        return this;
-    }
-    and(optb) {
-        return optb;
-    }
-    unwrapOr(_def) {
-        return this.val;
-    }
-    unwrap() {
-        return this.val;
-    }
-}
-/**
- * Represents a None value of Option.
- */
-class NoneImpl {
-    get type() {
-        return exports.Cm.None;
-    }
-    isSome() {
-        return false;
-    }
-    isNone() {
-        return true;
-    }
-    match({ none }) {
-        if (typeof none === 'function') {
-            return none();
-        }
-        return none;
-    }
-    map(_fn) {
-        return new NoneImpl();
-    }
-    inspect(fn) {
-        return this;
-    }
-    andThen(_fn) {
-        return new NoneImpl();
-    }
-    or(optb) {
-        return optb;
-    }
-    orElse(optb) {
-        return optb();
-    }
-    and(_optb) {
-        return new NoneImpl();
-    }
-    unwrapOr(def) {
-        return def;
-    }
-    unwrap() {
-        throw new ReferenceError('Trying to unwrap None.');
-    }
-}
-/**
- * Creates a Some instance of Option containing the given value.
- * This function is used to represent the presence of a value in an operation that may not always produce a value.
- *
- * @param val The value to be wrapped in a Some Option.
- * @returns An Option instance representing the presence of a value.
- *
- * #### Example
- *
- * ```ts
- * const option = Some(42);
- * console.log(option.unwrap()); // Outputs: 42
- * ```
- */
-function Some(val) {
-    return new SomeImpl(val);
-}
-exports.Some = Some;
-/**
- * The singleton instance representing None, an Option with no value.
- * This constant is used to represent the absence of a value in operations that may not always produce a value.
- *
- * #### Example
- *
- * ```ts
- * const option = None;
- * console.log(option.isNone()); // Outputs: true
- * ```
- */
-exports.None = new NoneImpl(); // eslint-disable-line @typescript-eslint/no-explicit-any
-/**
- * Type guard to check if an Option is a Some value.
- * This function is used to narrow down the type of an Option to SomeOption in TypeScript's type system.
- *
- * @param val The Option to be checked.
- * @returns true if the provided Option is a SomeOption, false otherwise.
- *
- * #### Example
- *
- * ```ts
- * const option = Some('Success');
- * if (isSome(option)) {
- *   console.log('Option has a value:', option.unwrap());
- * }
- * ```
- */
-function isSome(val) {
-    return val.isSome();
-}
-__webpack_unused_export__ = isSome;
-/**
- * Type guard to check if an Option is a None value.
- * This function is used to narrow down the type of an Option to NoneOption in TypeScript's type system.
- *
- * @param val The Option to be checked.
- * @returns true if the provided Option is a NoneOption, false otherwise.
- *
- * #### Example
- *
- * ```ts
- * const option = None;
- * if (isNone(option)) {
- *   console.log('Option does not have a value.');
- * }
- * ```
- */
-function isNone(val) {
-    return val.isNone();
-}
-__webpack_unused_export__ = isNone;
-//# sourceMappingURL=monads.js.map
-
-/***/ }),
-
-/***/ 28608:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Network = void 0;
-const constants_1 = __webpack_require__(54019);
-var Network;
-(function (Network) {
-    Network[Network["MAINNET"] = 0] = "MAINNET";
-    Network[Network["SIGNET"] = 1] = "SIGNET";
-    Network[Network["TESTNET"] = 2] = "TESTNET";
-    Network[Network["REGTEST"] = 3] = "REGTEST";
-})(Network || (exports.Network = Network = {}));
-(function (Network) {
-    function getFirstRuneHeight(chain) {
-        switch (chain) {
-            case Network.MAINNET:
-                return constants_1.SUBSIDY_HALVING_INTERVAL * 4;
-            case Network.REGTEST:
-                return constants_1.SUBSIDY_HALVING_INTERVAL * 0;
-            case Network.SIGNET:
-                return constants_1.SUBSIDY_HALVING_INTERVAL * 0;
-            case Network.TESTNET:
-                return constants_1.SUBSIDY_HALVING_INTERVAL * 12;
-        }
-    }
-    Network.getFirstRuneHeight = getFirstRuneHeight;
-})(Network || (exports.Network = Network = {}));
-//# sourceMappingURL=network.js.map
-
-/***/ }),
-
-/***/ 80112:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-/* provided dependency */ var Buffer = __webpack_require__(48287).Buffer;
-
-__webpack_unused_export__ = ({ value: true });
-exports.Rune = void 0;
-const network_1 = __webpack_require__(28608);
-const constants_1 = __webpack_require__(54019);
-const integer_1 = __webpack_require__(27983);
-class Rune {
-    constructor(value) {
-        this.value = value;
-    }
-    static getMinimumAtHeight(chain, height) {
-        let offset = integer_1.u128.saturatingAdd(height, (0, integer_1.u128)(1));
-        const INTERVAL = (0, integer_1.u128)(constants_1.SUBSIDY_HALVING_INTERVAL / 12);
-        let startSubsidyInterval = (0, integer_1.u128)(network_1.Network.getFirstRuneHeight(chain));
-        let endSubsidyInterval = integer_1.u128.saturatingAdd(startSubsidyInterval, (0, integer_1.u128)(constants_1.SUBSIDY_HALVING_INTERVAL));
-        if (offset < startSubsidyInterval) {
-            return new Rune(Rune.STEPS[12]);
-        }
-        if (offset >= endSubsidyInterval) {
-            return new Rune((0, integer_1.u128)(0));
-        }
-        let progress = integer_1.u128.saturatingSub(offset, startSubsidyInterval);
-        let length = integer_1.u128.saturatingSub((0, integer_1.u128)(12n), (0, integer_1.u128)(progress / INTERVAL));
-        let lengthNumber = Number(length & (0, integer_1.u128)(integer_1.u32.MAX));
-        let endStepInterval = Rune.STEPS[lengthNumber];
-        let startStepInterval = Rune.STEPS[lengthNumber - 1];
-        let remainder = (0, integer_1.u128)(progress % INTERVAL);
-        return new Rune((0, integer_1.u128)(endStepInterval - ((endStepInterval - startStepInterval) * remainder) / INTERVAL));
-    }
-    get reserved() {
-        return this.value >= constants_1.RESERVED;
-    }
-    get commitment() {
-        const bytes = Buffer.alloc(16);
-        bytes.writeBigUInt64LE(0xffffffffffffffffn & this.value, 0);
-        bytes.writeBigUInt64LE(this.value >> 64n, 8);
-        let end = bytes.length;
-        while (end > 0 && bytes.at(end - 1) === 0) {
-            end--;
-        }
-        return bytes.subarray(0, end);
-    }
-    static getReserved(block, tx) {
-        return new Rune(integer_1.u128.checkedAdd(constants_1.RESERVED, (0, integer_1.u128)((block << 32n) | tx)).unwrap());
-    }
-    toString() {
-        let n = this.value;
-        if (n === integer_1.u128.MAX) {
-            return 'BCGDENLQRQWDSLRUGSNLBTMFIJAV';
-        }
-        n = (0, integer_1.u128)(n + 1n);
-        let symbol = '';
-        while (n > 0) {
-            symbol = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Number((n - 1n) % 26n)] + symbol;
-            n = (0, integer_1.u128)((n - 1n) / 26n);
-        }
-        return symbol;
-    }
-    static fromString(s) {
-        let x = (0, integer_1.u128)(0);
-        for (const i of [...Array(s.length).keys()]) {
-            const c = s[i];
-            if (i > 0) {
-                x = (0, integer_1.u128)(x + 1n);
-            }
-            x = integer_1.u128.checkedMultiply(x, (0, integer_1.u128)(26)).unwrap();
-            if ('A' <= c && c <= 'Z') {
-                x = integer_1.u128.checkedAdd(x, (0, integer_1.u128)(c.charCodeAt(0) - 'A'.charCodeAt(0))).unwrap();
-            }
-            else {
-                throw new Error(`invalid character in rune name: ${c}`);
-            }
-        }
-        return new Rune(x);
-    }
-}
-exports.Rune = Rune;
-Rune.STEPS = [
-    (0, integer_1.u128)(0n),
-    (0, integer_1.u128)(26n),
-    (0, integer_1.u128)(702n),
-    (0, integer_1.u128)(18278n),
-    (0, integer_1.u128)(475254n),
-    (0, integer_1.u128)(12356630n),
-    (0, integer_1.u128)(321272406n),
-    (0, integer_1.u128)(8353082582n),
-    (0, integer_1.u128)(217180147158n),
-    (0, integer_1.u128)(5646683826134n),
-    (0, integer_1.u128)(146813779479510n),
-    (0, integer_1.u128)(3817158266467286n),
-    (0, integer_1.u128)(99246114928149462n),
-    (0, integer_1.u128)(2580398988131886038n),
-    (0, integer_1.u128)(67090373691429037014n),
-    (0, integer_1.u128)(1744349715977154962390n),
-    (0, integer_1.u128)(45353092615406029022166n),
-    (0, integer_1.u128)(1179180408000556754576342n),
-    (0, integer_1.u128)(30658690608014475618984918n),
-    (0, integer_1.u128)(797125955808376366093607894n),
-    (0, integer_1.u128)(20725274851017785518433805270n),
-    (0, integer_1.u128)(538857146126462423479278937046n),
-    (0, integer_1.u128)(14010285799288023010461252363222n),
-    (0, integer_1.u128)(364267430781488598271992561443798n),
-    (0, integer_1.u128)(9470953200318703555071806597538774n),
-    (0, integer_1.u128)(246244783208286292431866971536008150n),
-    (0, integer_1.u128)(6402364363415443603228541259936211926n),
-    (0, integer_1.u128)(166461473448801533683942072758341510102n),
-];
-//# sourceMappingURL=rune.js.map
-
-/***/ }),
-
-/***/ 28025:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.RuneId = void 0;
-const monads_1 = __webpack_require__(33340);
-const integer_1 = __webpack_require__(27983);
-class RuneId {
-    constructor(block, tx) {
-        this.block = block;
-        this.tx = tx;
-    }
-    static new(block, tx) {
-        const id = new RuneId(block, tx);
-        if (id.block === 0n && id.tx > 0) {
-            return monads_1.None;
-        }
-        return (0, monads_1.Some)(id);
-    }
-    static sort(runeIds) {
-        return [...runeIds].sort((x, y) => Number(x.block - y.block || x.tx - y.tx));
-    }
-    delta(next) {
-        const optionBlock = integer_1.u64.checkedSub(next.block, this.block);
-        if (optionBlock.isNone()) {
-            return monads_1.None;
-        }
-        const block = optionBlock.unwrap();
-        let tx;
-        if (block === 0n) {
-            const optionTx = integer_1.u32.checkedSub(next.tx, this.tx);
-            if (optionTx.isNone()) {
-                return monads_1.None;
-            }
-            tx = optionTx.unwrap();
-        }
-        else {
-            tx = next.tx;
-        }
-        return (0, monads_1.Some)([(0, integer_1.u128)(block), (0, integer_1.u128)(tx)]);
-    }
-    next(block, tx) {
-        const optionBlock = integer_1.u128.tryIntoU64(block);
-        const optionTx = integer_1.u128.tryIntoU32(tx);
-        if (optionBlock.isNone() || optionTx.isNone()) {
-            return monads_1.None;
-        }
-        const blockU64 = optionBlock.unwrap();
-        const txU32 = optionTx.unwrap();
-        const nextBlock = integer_1.u64.checkedAdd(this.block, blockU64);
-        if (nextBlock.isNone()) {
-            return monads_1.None;
-        }
-        let nextTx;
-        if (blockU64 === 0n) {
-            const optionAdd = integer_1.u32.checkedAdd(this.tx, txU32);
-            if (optionAdd.isNone()) {
-                return monads_1.None;
-            }
-            nextTx = optionAdd.unwrap();
-        }
-        else {
-            nextTx = txU32;
-        }
-        return RuneId.new(nextBlock.unwrap(), nextTx);
-    }
-    toString() {
-        return `${this.block}:${this.tx}`;
-    }
-    static fromString(s) {
-        const parts = s.split(':');
-        if (parts.length !== 2) {
-            throw new Error(`invalid rune ID: ${s}`);
-        }
-        const [block, tx] = parts;
-        if (!/^\d+$/.test(block) || !/^\d+$/.test(tx)) {
-            throw new Error(`invalid rune ID: ${s}`);
-        }
-        return new RuneId((0, integer_1.u64)(BigInt(block)), (0, integer_1.u32)(BigInt(tx)));
-    }
-}
-exports.RuneId = RuneId;
-//# sourceMappingURL=runeid.js.map
-
-/***/ }),
-
-/***/ 49791:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-/* provided dependency */ var Buffer = __webpack_require__(48287).Buffer;
-
-__webpack_unused_export__ = ({ value: true });
-exports.Runestone = __webpack_unused_export__ = exports.NF = void 0;
-const constants_1 = __webpack_require__(54019);
-const etching_1 = __webpack_require__(54836);
-const seekbuffer_1 = __webpack_require__(17926);
-const tag_1 = __webpack_require__(70498);
-const integer_1 = __webpack_require__(27983);
-const monads_1 = __webpack_require__(33340);
-const rune_1 = __webpack_require__(80112);
-const flag_1 = __webpack_require__(90374);
-const utils_1 = __webpack_require__(21491);
-const runeid_1 = __webpack_require__(28025);
-const script_1 = __webpack_require__(19075);
-const message_1 = __webpack_require__(6005);
-const flaw_1 = __webpack_require__(44086);
-const cenotaph_1 = __webpack_require__(18696);
-exports.NF = 134217727;
-function isValidPayload(payload) {
-    return Buffer.isBuffer(payload);
-}
-__webpack_unused_export__ = isValidPayload;
-class Runestone {
-    constructor(mint, pointer, edicts, etching) {
-        this.mint = mint;
-        this.pointer = pointer;
-        this.edicts = edicts;
-        this.etching = etching;
-    }
-    static decipher(transaction) {
-        const optionPayload = Runestone.payload(transaction);
-        if (optionPayload.isNone()) {
-            return monads_1.None;
-        }
-        const payload = optionPayload.unwrap();
-        if (!isValidPayload(payload)) {
-            return (0, monads_1.Some)(new cenotaph_1.Cenotaph([payload]));
-        }
-        const optionIntegers = Runestone.integers(payload);
-        if (optionIntegers.isNone()) {
-            return (0, monads_1.Some)(new cenotaph_1.Cenotaph([flaw_1.Flaw.VARINT]));
-        }
-        const { flaws, edicts, fields } = message_1.Message.fromIntegers(transaction.vout.length, optionIntegers.unwrap());
-        let flags = tag_1.Tag.take(tag_1.Tag.FLAGS, fields, 1, ([value]) => (0, monads_1.Some)(value)).unwrapOr((0, integer_1.u128)(0));
-        const etchingResult = flag_1.Flag.take(flags, flag_1.Flag.ETCHING);
-        const etchingFlag = etchingResult.set;
-        flags = etchingResult.flags;
-        const etching = etchingFlag
-            ? (() => {
-                const divisibility = tag_1.Tag.take(tag_1.Tag.DIVISIBILITY, fields, 1, ([value]) => integer_1.u128
-                    .tryIntoU8(value)
-                    .andThen((value) => (value <= constants_1.MAX_DIVISIBILITY ? (0, monads_1.Some)(value) : monads_1.None)));
-                const rune = tag_1.Tag.take(tag_1.Tag.RUNE, fields, 1, ([value]) => (0, monads_1.Some)(new rune_1.Rune(value)));
-                const spacers = tag_1.Tag.take(tag_1.Tag.SPACERS, fields, 1, ([value]) => integer_1.u128.tryIntoU32(value).andThen((value) => (value <= exports.NF ? (0, monads_1.Some)(value) : monads_1.None)));
-                const symbol = tag_1.Tag.take(tag_1.Tag.SYMBOL, fields, 1, ([value]) => integer_1.u128.tryIntoU32(value).andThen((value) => {
-                    try {
-                        return (0, monads_1.Some)(String.fromCodePoint(Number(value)));
-                    }
-                    catch (e) {
-                        return monads_1.None;
-                    }
-                }));
-                const termsResult = flag_1.Flag.take(flags, flag_1.Flag.TERMS);
-                const termsFlag = termsResult.set;
-                flags = termsResult.flags;
-                const terms = termsFlag
-                    ? (() => {
-                        const amount = tag_1.Tag.take(tag_1.Tag.AMOUNT, fields, 1, ([value]) => (0, monads_1.Some)(value));
-                        const cap = tag_1.Tag.take(tag_1.Tag.CAP, fields, 1, ([value]) => (0, monads_1.Some)(value));
-                        const offset = [
-                            tag_1.Tag.take(tag_1.Tag.OFFSET_START, fields, 1, ([value]) => integer_1.u128.tryIntoU64(value)),
-                            tag_1.Tag.take(tag_1.Tag.OFFSET_END, fields, 1, ([value]) => integer_1.u128.tryIntoU64(value)),
-                        ];
-                        const height = [
-                            tag_1.Tag.take(tag_1.Tag.HEIGHT_START, fields, 1, ([value]) => integer_1.u128.tryIntoU64(value)),
-                            tag_1.Tag.take(tag_1.Tag.HEIGHT_END, fields, 1, ([value]) => integer_1.u128.tryIntoU64(value)),
-                        ];
-                        return (0, monads_1.Some)({ amount, cap, offset, height });
-                    })()
-                    : monads_1.None;
-                const premine = tag_1.Tag.take(tag_1.Tag.PREMINE, fields, 1, ([value]) => (0, monads_1.Some)(value));
-                const turboResult = flag_1.Flag.take(flags, flag_1.Flag.TURBO);
-                const turbo = etchingResult.set;
-                flags = turboResult.flags;
-                return (0, monads_1.Some)(new etching_1.Etching(divisibility, rune, spacers, symbol, terms, premine, turbo));
-            })()
-            : monads_1.None;
-        const mint = tag_1.Tag.take(tag_1.Tag.MINT, fields, 2, ([block, tx]) => {
-            const optionBlockU64 = integer_1.u128.tryIntoU64(block);
-            const optionTxU32 = integer_1.u128.tryIntoU32(tx);
-            if (optionBlockU64.isNone() || optionTxU32.isNone()) {
-                return monads_1.None;
-            }
-            return runeid_1.RuneId.new(optionBlockU64.unwrap(), optionTxU32.unwrap());
-        });
-        const pointer = tag_1.Tag.take(tag_1.Tag.POINTER, fields, 1, ([value]) => integer_1.u128
-            .tryIntoU32(value)
-            .andThen((value) => (value < transaction.vout.length ? (0, monads_1.Some)(value) : monads_1.None)));
-        if (etching.map((etching) => etching.supply.isNone()).unwrapOr(false)) {
-            flaws.push(flaw_1.Flaw.SUPPLY_OVERFLOW);
-        }
-        if (flags !== 0n) {
-            flaws.push(flaw_1.Flaw.UNRECOGNIZED_FLAG);
-        }
-        if ([...fields.keys()].find((tag) => tag % 2n === 0n) !== undefined) {
-            flaws.push(flaw_1.Flaw.UNRECOGNIZED_EVEN_TAG);
-        }
-        if (flaws.length !== 0) {
-            return (0, monads_1.Some)(new cenotaph_1.Cenotaph(flaws, etching.andThen((etching) => etching.rune), mint));
-        }
-        return (0, monads_1.Some)(new Runestone(mint, pointer, edicts, etching));
-    }
-    encipher() {
-        const payloads = [];
-        if (this.etching.isSome()) {
-            const etching = this.etching.unwrap();
-            let flags = (0, integer_1.u128)(0);
-            flags = flag_1.Flag.set(flags, flag_1.Flag.ETCHING);
-            if (etching.terms.isSome()) {
-                flags = flag_1.Flag.set(flags, flag_1.Flag.TERMS);
-            }
-            if (etching.turbo) {
-                flags = flag_1.Flag.set(flags, flag_1.Flag.TURBO);
-            }
-            payloads.push(tag_1.Tag.encode(tag_1.Tag.FLAGS, [flags]));
-            payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.RUNE, etching.rune.map((rune) => rune.value)));
-            payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.DIVISIBILITY, etching.divisibility.map(integer_1.u128)));
-            payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.SPACERS, etching.spacers.map(integer_1.u128)));
-            payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.SYMBOL, etching.symbol.map((symbol) => (0, integer_1.u128)(symbol.codePointAt(0)))));
-            payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.PREMINE, etching.premine));
-            if (etching.terms.isSome()) {
-                const terms = etching.terms.unwrap();
-                payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.AMOUNT, terms.amount));
-                payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.CAP, terms.cap));
-                payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.HEIGHT_START, terms.height[0]));
-                payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.HEIGHT_END, terms.height[1]));
-                payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.OFFSET_START, terms.offset[0]));
-                payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.OFFSET_END, terms.offset[1]));
-            }
-        }
-        if (this.mint.isSome()) {
-            const claim = this.mint.unwrap();
-            payloads.push(tag_1.Tag.encode(tag_1.Tag.MINT, [claim.block, claim.tx].map(integer_1.u128)));
-        }
-        payloads.push(tag_1.Tag.encodeOptionInt(tag_1.Tag.POINTER, this.pointer.map(integer_1.u128)));
-        if (this.edicts.length) {
-            payloads.push(integer_1.u128.encodeVarInt((0, integer_1.u128)(tag_1.Tag.BODY)));
-            const edicts = [...this.edicts].sort((x, y) => Number(x.id.block - y.id.block || x.id.tx - y.id.tx));
-            let previous = new runeid_1.RuneId((0, integer_1.u64)(0), (0, integer_1.u32)(0));
-            for (const edict of edicts) {
-                const [block, tx] = previous.delta(edict.id).unwrap();
-                payloads.push(integer_1.u128.encodeVarInt(block));
-                payloads.push(integer_1.u128.encodeVarInt(tx));
-                payloads.push(integer_1.u128.encodeVarInt(edict.amount));
-                payloads.push(integer_1.u128.encodeVarInt((0, integer_1.u128)(edict.output)));
-                previous = edict.id;
-            }
-        }
-        const stack = [];
-        stack.push(constants_1.OP_RETURN);
-        stack.push(constants_1.MAGIC_NUMBER);
-        const payload = Buffer.concat(payloads);
-        let i = 0;
-        for (let i = 0; i < payload.length; i += constants_1.MAX_SCRIPT_ELEMENT_SIZE) {
-            stack.push(payload.subarray(i, i + constants_1.MAX_SCRIPT_ELEMENT_SIZE));
-        }
-        return script_1.script.compile(stack);
-    }
-    static payload(transaction) {
-        // search transaction outputs for payload
-        for (const output of transaction.vout) {
-            const instructions = script_1.script.decompile(Buffer.from(output.scriptPubKey.hex, 'hex'));
-            if (instructions === null) {
-                throw new Error('unable to decompile');
-            }
-            // payload starts with OP_RETURN
-            let nextInstructionResult = instructions.next();
-            if (nextInstructionResult.done || nextInstructionResult.value !== constants_1.OP_RETURN) {
-                continue;
-            }
-            // followed by the protocol identifier
-            nextInstructionResult = instructions.next();
-            if (nextInstructionResult.done ||
-                utils_1.Instruction.isBuffer(nextInstructionResult.value) ||
-                nextInstructionResult.value !== constants_1.MAGIC_NUMBER) {
-                continue;
-            }
-            // construct the payload by concatinating remaining data pushes
-            let payloads = [];
-            do {
-                nextInstructionResult = instructions.next();
-                if (nextInstructionResult.done) {
-                    const decodedSuccessfully = nextInstructionResult.value;
-                    if (!decodedSuccessfully) {
-                        return (0, monads_1.Some)(flaw_1.Flaw.INVALID_SCRIPT);
-                    }
-                    break;
-                }
-                const instruction = nextInstructionResult.value;
-                if (utils_1.Instruction.isBuffer(instruction)) {
-                    payloads.push(instruction);
-                }
-                else {
-                    return (0, monads_1.Some)(flaw_1.Flaw.OPCODE);
-                }
-            } while (true);
-            return (0, monads_1.Some)(Buffer.concat(payloads));
-        }
-        return monads_1.None;
-    }
-    static integers(payload) {
-        const integers = [];
-        const seekBuffer = new seekbuffer_1.SeekBuffer(payload);
-        while (!seekBuffer.isFinished()) {
-            const optionInt = integer_1.u128.decodeVarInt(seekBuffer);
-            if (optionInt.isNone()) {
-                return monads_1.None;
-            }
-            integers.push(optionInt.unwrap());
-        }
-        return (0, monads_1.Some)(integers);
-    }
-}
-exports.Runestone = Runestone;
-//# sourceMappingURL=runestone.js.map
-
-/***/ }),
-
-/***/ 19075:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-/* provided dependency */ var Buffer = __webpack_require__(48287).Buffer;
-
-__webpack_unused_export__ = ({ value: true });
-exports.script = exports.opcodes = void 0;
-var pushdata;
-(function (pushdata) {
-    /**
-     * Calculates the encoding length of a number used for push data in Bitcoin transactions.
-     * @param i The number to calculate the encoding length for.
-     * @returns The encoding length of the number.
-     */
-    function encodingLength(i) {
-        return i < OPS.OP_PUSHDATA1 ? 1 : i <= 0xff ? 2 : i <= 0xffff ? 3 : 5;
-    }
-    pushdata.encodingLength = encodingLength;
-    /**
-     * Encodes a number into a buffer using a variable-length encoding scheme.
-     * The encoded buffer is written starting at the specified offset.
-     * Returns the size of the encoded buffer.
-     *
-     * @param buffer - The buffer to write the encoded data into.
-     * @param num - The number to encode.
-     * @param offset - The offset at which to start writing the encoded buffer.
-     * @returns The size of the encoded buffer.
-     */
-    function encode(buffer, num, offset) {
-        const size = encodingLength(num);
-        // ~6 bit
-        if (size === 1) {
-            buffer.writeUInt8(num, offset);
-            // 8 bit
-        }
-        else if (size === 2) {
-            buffer.writeUInt8(OPS.OP_PUSHDATA1, offset);
-            buffer.writeUInt8(num, offset + 1);
-            // 16 bit
-        }
-        else if (size === 3) {
-            buffer.writeUInt8(OPS.OP_PUSHDATA2, offset);
-            buffer.writeUInt16LE(num, offset + 1);
-            // 32 bit
-        }
-        else {
-            buffer.writeUInt8(OPS.OP_PUSHDATA4, offset);
-            buffer.writeUInt32LE(num, offset + 1);
-        }
-        return size;
-    }
-    pushdata.encode = encode;
-    /**
-     * Decodes a buffer and returns information about the opcode, number, and size.
-     * @param buffer - The buffer to decode.
-     * @param offset - The offset within the buffer to start decoding.
-     * @returns An object containing the opcode, number, and size, or null if decoding fails.
-     */
-    function decode(buffer, offset) {
-        const opcode = buffer.readUInt8(offset);
-        let num;
-        let size;
-        // ~6 bit
-        if (opcode < OPS.OP_PUSHDATA1) {
-            num = opcode;
-            size = 1;
-            // 8 bit
-        }
-        else if (opcode === OPS.OP_PUSHDATA1) {
-            if (offset + 2 > buffer.length)
-                return null;
-            num = buffer.readUInt8(offset + 1);
-            size = 2;
-            // 16 bit
-        }
-        else if (opcode === OPS.OP_PUSHDATA2) {
-            if (offset + 3 > buffer.length)
-                return null;
-            num = buffer.readUInt16LE(offset + 1);
-            size = 3;
-            // 32 bit
-        }
-        else {
-            if (offset + 5 > buffer.length)
-                return null;
-            if (opcode !== OPS.OP_PUSHDATA4)
-                throw new Error('Unexpected opcode');
-            num = buffer.readUInt32LE(offset + 1);
-            size = 5;
-        }
-        return {
-            opcode,
-            number: num,
-            size,
-        };
-    }
-    pushdata.decode = decode;
-})(pushdata || (pushdata = {}));
-const OPS = {
-    OP_FALSE: 0,
-    OP_0: 0,
-    OP_PUSHDATA1: 76,
-    OP_PUSHDATA2: 77,
-    OP_PUSHDATA4: 78,
-    OP_1NEGATE: 79,
-    OP_RESERVED: 80,
-    OP_TRUE: 81,
-    OP_1: 81,
-    OP_2: 82,
-    OP_3: 83,
-    OP_4: 84,
-    OP_5: 85,
-    OP_6: 86,
-    OP_7: 87,
-    OP_8: 88,
-    OP_9: 89,
-    OP_10: 90,
-    OP_11: 91,
-    OP_12: 92,
-    OP_13: 93,
-    OP_14: 94,
-    OP_15: 95,
-    OP_16: 96,
-    OP_NOP: 97,
-    OP_VER: 98,
-    OP_IF: 99,
-    OP_NOTIF: 100,
-    OP_VERIF: 101,
-    OP_VERNOTIF: 102,
-    OP_ELSE: 103,
-    OP_ENDIF: 104,
-    OP_VERIFY: 105,
-    OP_RETURN: 106,
-    OP_TOALTSTACK: 107,
-    OP_FROMALTSTACK: 108,
-    OP_2DROP: 109,
-    OP_2DUP: 110,
-    OP_3DUP: 111,
-    OP_2OVER: 112,
-    OP_2ROT: 113,
-    OP_2SWAP: 114,
-    OP_IFDUP: 115,
-    OP_DEPTH: 116,
-    OP_DROP: 117,
-    OP_DUP: 118,
-    OP_NIP: 119,
-    OP_OVER: 120,
-    OP_PICK: 121,
-    OP_ROLL: 122,
-    OP_ROT: 123,
-    OP_SWAP: 124,
-    OP_TUCK: 125,
-    OP_CAT: 126,
-    OP_SUBSTR: 127,
-    OP_LEFT: 128,
-    OP_RIGHT: 129,
-    OP_SIZE: 130,
-    OP_INVERT: 131,
-    OP_AND: 132,
-    OP_OR: 133,
-    OP_XOR: 134,
-    OP_EQUAL: 135,
-    OP_EQUALVERIFY: 136,
-    OP_RESERVED1: 137,
-    OP_RESERVED2: 138,
-    OP_1ADD: 139,
-    OP_1SUB: 140,
-    OP_2MUL: 141,
-    OP_2DIV: 142,
-    OP_NEGATE: 143,
-    OP_ABS: 144,
-    OP_NOT: 145,
-    OP_0NOTEQUAL: 146,
-    OP_ADD: 147,
-    OP_SUB: 148,
-    OP_MUL: 149,
-    OP_DIV: 150,
-    OP_MOD: 151,
-    OP_LSHIFT: 152,
-    OP_RSHIFT: 153,
-    OP_BOOLAND: 154,
-    OP_BOOLOR: 155,
-    OP_NUMEQUAL: 156,
-    OP_NUMEQUALVERIFY: 157,
-    OP_NUMNOTEQUAL: 158,
-    OP_LESSTHAN: 159,
-    OP_GREATERTHAN: 160,
-    OP_LESSTHANOREQUAL: 161,
-    OP_GREATERTHANOREQUAL: 162,
-    OP_MIN: 163,
-    OP_MAX: 164,
-    OP_WITHIN: 165,
-    OP_RIPEMD160: 166,
-    OP_SHA1: 167,
-    OP_SHA256: 168,
-    OP_HASH160: 169,
-    OP_HASH256: 170,
-    OP_CODESEPARATOR: 171,
-    OP_CHECKSIG: 172,
-    OP_CHECKSIGVERIFY: 173,
-    OP_CHECKMULTISIG: 174,
-    OP_CHECKMULTISIGVERIFY: 175,
-    OP_NOP1: 176,
-    OP_NOP2: 177,
-    OP_CHECKLOCKTIMEVERIFY: 177,
-    OP_NOP3: 178,
-    OP_CHECKSEQUENCEVERIFY: 178,
-    OP_NOP4: 179,
-    OP_NOP5: 180,
-    OP_NOP6: 181,
-    OP_NOP7: 182,
-    OP_NOP8: 183,
-    OP_NOP9: 184,
-    OP_NOP10: 185,
-    OP_CHECKSIGADD: 186,
-    OP_PUBKEYHASH: 253,
-    OP_PUBKEY: 254,
-    OP_INVALIDOPCODE: 255,
-};
-exports.opcodes = OPS;
-const OP_INT_BASE = OPS.OP_RESERVED; // OP_1 - 1
-function singleChunkIsBuffer(buf) {
-    return Buffer.isBuffer(buf);
-}
-var script;
-(function (script) {
-    function compile(chunks) {
-        const bufferSize = chunks.reduce((accum, chunk) => {
-            // data chunk
-            if (singleChunkIsBuffer(chunk)) {
-                return accum + pushdata.encodingLength(chunk.length) + chunk.length;
-            }
-            // opcode
-            return accum + 1;
-        }, 0.0);
-        const buffer = Buffer.allocUnsafe(bufferSize);
-        let offset = 0;
-        chunks.forEach((chunk) => {
-            // data chunk
-            if (singleChunkIsBuffer(chunk)) {
-                offset += pushdata.encode(buffer, chunk.length, offset);
-                chunk.copy(buffer, offset);
-                offset += chunk.length;
-                // opcode
-            }
-            else {
-                buffer.writeUInt8(chunk, offset);
-                offset += 1;
-            }
-        });
-        if (offset !== buffer.length)
-            throw new Error('Could not decode chunks');
-        return buffer;
-    }
-    script.compile = compile;
-    function* decompile(buffer) {
-        let i = 0;
-        while (i < buffer.length) {
-            const opcode = buffer[i];
-            // data chunk
-            if (opcode >= OPS.OP_0 && opcode <= OPS.OP_PUSHDATA4) {
-                const d = pushdata.decode(buffer, i);
-                // did reading a pushDataInt fail?
-                if (d === null)
-                    return false;
-                i += d.size;
-                // attempt to read too much data?
-                if (i + d.number > buffer.length)
-                    return false;
-                const data = buffer.slice(i, i + d.number);
-                i += d.number;
-                yield data;
-                // opcode
-            }
-            else {
-                yield opcode;
-                i += 1;
-            }
-        }
-        return true;
-    }
-    script.decompile = decompile;
-})(script || (exports.script = script = {}));
-//# sourceMappingURL=script.js.map
-
-/***/ }),
-
-/***/ 17926:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.SeekBuffer = void 0;
-class SeekBuffer {
-    constructor(buffer) {
-        this.buffer = buffer;
-        this.seekIndex = 0;
-    }
-    readUInt8() {
-        if (this.isFinished()) {
-            return undefined;
-        }
-        return this.buffer.readUInt8(this.seekIndex++);
-    }
-    isFinished() {
-        return this.seekIndex >= this.buffer.length;
-    }
-}
-exports.SeekBuffer = SeekBuffer;
-//# sourceMappingURL=seekbuffer.js.map
-
-/***/ }),
-
-/***/ 41874:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.SpacedRune = void 0;
-const rune_1 = __webpack_require__(80112);
-class SpacedRune {
-    constructor(rune, spacers) {
-        this.rune = rune;
-        this.spacers = spacers;
-    }
-    static fromString(s) {
-        let rune = '';
-        let spacers = 0;
-        for (const c of s) {
-            if ('A' <= c && c <= 'Z') {
-                rune += c;
-            }
-            else if ('.' === c || '•' === c) {
-                if (rune.length === 0) {
-                    throw new Error('leading spacer');
-                }
-                const flag = 1 << (rune.length - 1);
-                if ((spacers & flag) !== 0) {
-                    throw new Error('double spacer');
-                }
-                spacers |= flag;
-            }
-            else {
-                throw new Error('invalid character');
-            }
-        }
-        if (spacers >= 1 << (rune.length - 1)) {
-            throw new Error('trailing spacer');
-        }
-        return new SpacedRune(rune_1.Rune.fromString(rune), spacers);
-    }
-    toString() {
-        const rune = this.rune.toString();
-        let i = 0;
-        let result = '';
-        for (const c of rune) {
-            result += c;
-            if (i < rune.length - 1 && (this.spacers & (1 << i)) !== 0) {
-                result += '•';
-            }
-            i++;
-        }
-        return result;
-    }
-}
-exports.SpacedRune = SpacedRune;
-//# sourceMappingURL=spacedrune.js.map
-
-/***/ }),
-
-/***/ 70498:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-var __webpack_unused_export__;
-/* provided dependency */ var Buffer = __webpack_require__(48287).Buffer;
-
-__webpack_unused_export__ = ({ value: true });
-exports.Tag = void 0;
-const monads_1 = __webpack_require__(33340);
-const integer_1 = __webpack_require__(27983);
-var Tag;
-(function (Tag) {
-    Tag[Tag["BODY"] = 0] = "BODY";
-    Tag[Tag["FLAGS"] = 2] = "FLAGS";
-    Tag[Tag["RUNE"] = 4] = "RUNE";
-    Tag[Tag["PREMINE"] = 6] = "PREMINE";
-    Tag[Tag["CAP"] = 8] = "CAP";
-    Tag[Tag["AMOUNT"] = 10] = "AMOUNT";
-    Tag[Tag["HEIGHT_START"] = 12] = "HEIGHT_START";
-    Tag[Tag["HEIGHT_END"] = 14] = "HEIGHT_END";
-    Tag[Tag["OFFSET_START"] = 16] = "OFFSET_START";
-    Tag[Tag["OFFSET_END"] = 18] = "OFFSET_END";
-    Tag[Tag["MINT"] = 20] = "MINT";
-    Tag[Tag["POINTER"] = 22] = "POINTER";
-    Tag[Tag["CENOTAPH"] = 126] = "CENOTAPH";
-    Tag[Tag["DIVISIBILITY"] = 1] = "DIVISIBILITY";
-    Tag[Tag["SPACERS"] = 3] = "SPACERS";
-    Tag[Tag["SYMBOL"] = 5] = "SYMBOL";
-    Tag[Tag["NOP"] = 127] = "NOP";
-})(Tag || (exports.Tag = Tag = {}));
-(function (Tag) {
-    function take(tag, fields, n, withFn) {
-        const field = fields.get((0, integer_1.u128)(tag));
-        if (field === undefined) {
-            return monads_1.None;
-        }
-        const values = [];
-        for (const i of [...Array(n).keys()]) {
-            if (field[i] === undefined) {
-                return monads_1.None;
-            }
-            values[i] = field[i];
-        }
-        const optionValue = withFn(values);
-        if (optionValue.isNone()) {
-            return monads_1.None;
-        }
-        field.splice(0, n);
-        if (field.length === 0) {
-            fields.delete((0, integer_1.u128)(tag));
-        }
-        return (0, monads_1.Some)(optionValue.unwrap());
-    }
-    Tag.take = take;
-    function encode(tag, values) {
-        return Buffer.concat(values.map((value) => [integer_1.u128.encodeVarInt((0, integer_1.u128)(tag)), integer_1.u128.encodeVarInt(value)]).flat());
-    }
-    Tag.encode = encode;
-    function encodeOptionInt(tag, value) {
-        return value.map((value) => Tag.encode(tag, [(0, integer_1.u128)(value)])).unwrapOr(Buffer.alloc(0));
-    }
-    Tag.encodeOptionInt = encodeOptionInt;
-})(Tag || (exports.Tag = Tag = {}));
-//# sourceMappingURL=tag.js.map
-
-/***/ }),
-
-/***/ 21491:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-exports.Instruction = void 0;
-var Instruction;
-(function (Instruction) {
-    function isNumber(instruction) {
-        return typeof instruction === 'number';
-    }
-    Instruction.isNumber = isNumber;
-    function isBuffer(instruction) {
-        return typeof instruction !== 'number';
-    }
-    Instruction.isBuffer = isBuffer;
-})(Instruction || (exports.Instruction = Instruction = {}));
-//# sourceMappingURL=utils.js.map
-
-/***/ }),
-
 /***/ 253:
 /***/ (function(__unused_webpack_module, exports) {
 
@@ -11001,9 +8465,12 @@ function createHistory(opts) {
   if (opts.type === 'hash') {
     h = (0,_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_renderer_react__WEBPACK_IMPORTED_MODULE_2__/* .createHashHistory */ .TM)();
   } else if (opts.type === 'memory') {
-    h = (0,_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_renderer_react__WEBPACK_IMPORTED_MODULE_2__/* .createMemoryHistory */ .sC)(opts);
+    var _opts$initialEntries;
+    h = (0,_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_renderer_react__WEBPACK_IMPORTED_MODULE_2__/* .createMemoryHistory */ .sC)(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({}, opts), {}, {
+      initialEntries: (_opts$initialEntries = opts.initialEntries) !== null && _opts$initialEntries !== void 0 ? _opts$initialEntries : [opts.basename || '/']
+    }));
   } else {
-    h = (0,_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_renderer_react__WEBPACK_IMPORTED_MODULE_2__/* .createBrowserHistory */ .zR)();
+    h = createLocalBrowserHistory();
   }
   if (opts.basename) {
     basename = opts.basename;
@@ -11036,6 +8503,7 @@ function setHistory(h) {
 // https://github.com/remix-run/history/blob/dev/docs/api-reference.md#to
 function patchTo(to, h) {
   if (typeof to === 'string') {
+    if (isPathless(to)) return to;
     return "".concat(stripLastSlash(basename)).concat(to);
   } else if (_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_typeof_js__WEBPACK_IMPORTED_MODULE_0___default()(to) === 'object') {
     var currentPathname = h.location.pathname;
@@ -11045,6 +8513,32 @@ function patchTo(to, h) {
   } else {
     throw new Error("Unexpected to: ".concat(to));
   }
+}
+function createLocalBrowserHistory() {
+  var h = (0,_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_renderer_react__WEBPACK_IMPORTED_MODULE_2__/* .createBrowserHistory */ .zR)();
+  var push = h.push,
+    replace = h.replace;
+  h.push = function (to, state) {
+    return push(keepBrowserPathLocal(to, h.location.pathname), state);
+  };
+  h.replace = function (to, state) {
+    return replace(keepBrowserPathLocal(to, h.location.pathname), state);
+  };
+  return h;
+}
+function keepBrowserPathLocal(to, pathname) {
+  if (!pathname.startsWith('//')) return to;
+
+  // A leading dot segment keeps the URL on this origin while preserving the pathname.
+  if (typeof to === 'string') {
+    return isPathless(to) ? "/.".concat(pathname).concat(to) : to;
+  }
+  return to.pathname === undefined || to.pathname === pathname ? _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({}, to), {}, {
+    pathname: "/.".concat(pathname)
+  }) : to;
+}
+function isPathless(to) {
+  return !to || to.startsWith('?') || to.startsWith('#');
 }
 function stripLastSlash(path) {
   return path.slice(-1) === '/' ? path.slice(0, -1) : path;
@@ -11124,12 +8618,12 @@ var plugin_model = __webpack_require__(1423);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/regeneratorRuntime.js
 var regeneratorRuntime = __webpack_require__(55420);
 var regeneratorRuntime_default = /*#__PURE__*/__webpack_require__.n(regeneratorRuntime);
-// EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/asyncToGenerator.js
-var asyncToGenerator = __webpack_require__(98312);
-var asyncToGenerator_default = /*#__PURE__*/__webpack_require__.n(asyncToGenerator);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/slicedToArray.js
 var slicedToArray = __webpack_require__(11604);
 var slicedToArray_default = /*#__PURE__*/__webpack_require__.n(slicedToArray);
+// EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/asyncToGenerator.js
+var asyncToGenerator = __webpack_require__(98312);
+var asyncToGenerator_default = /*#__PURE__*/__webpack_require__.n(asyncToGenerator);
 // EXTERNAL MODULE: ./src/utils/psbtBuild.ts
 var psbtBuild = __webpack_require__(66268);
 // EXTERNAL MODULE: ./src/utils/utils.ts + 1 modules
@@ -11141,8 +8635,6 @@ var utils = __webpack_require__(79502);
 
 
 
-var _window = window,
-  metaidwallet = _window.metaidwallet;
 var checkExtension = function checkExtension() {
   if (!window.metaidwallet) {
     window.open("https://chromewebstore.google.com/detail/metalet/lbjapbcmmceacocpimbpbidpgmlmoaao");
@@ -11150,11 +8642,81 @@ var checkExtension = function checkExtension() {
   }
   return true;
 };
+function fetchMvcSpaceSats() {
+  return _fetchMvcSpaceSats.apply(this, arguments);
+}
+function _fetchMvcSpaceSats() {
+  _fetchMvcSpaceSats = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee5() {
+    var _bal$confirmed, _bal$unconfirmed, _bal$total, bal, sum, _bal$confirmed2, _bal$unconfirmed2, _bal$total2, _bal, _sum, utxos;
+    return regeneratorRuntime_default()().wrap(function _callee5$(_context5) {
+      while (1) switch (_context5.prev = _context5.next) {
+        case 0:
+          if (window.metaidwallet) {
+            _context5.next = 2;
+            break;
+          }
+          return _context5.abrupt("return", 0);
+        case 2:
+          _context5.prev = 2;
+          if (!(typeof window.metaidwallet.getMvcBalance === "function")) {
+            _context5.next = 9;
+            break;
+          }
+          _context5.next = 6;
+          return window.metaidwallet.getMvcBalance();
+        case 6:
+          bal = _context5.sent;
+          sum = Number((_bal$confirmed = bal === null || bal === void 0 ? void 0 : bal.confirmed) !== null && _bal$confirmed !== void 0 ? _bal$confirmed : 0) + Number((_bal$unconfirmed = bal === null || bal === void 0 ? void 0 : bal.unconfirmed) !== null && _bal$unconfirmed !== void 0 ? _bal$unconfirmed : 0);
+          return _context5.abrupt("return", sum > 0 ? sum : Number((_bal$total = bal === null || bal === void 0 ? void 0 : bal.total) !== null && _bal$total !== void 0 ? _bal$total : 0));
+        case 9:
+          if (!(typeof window.metaidwallet.getBalance === "function")) {
+            _context5.next = 15;
+            break;
+          }
+          _context5.next = 12;
+          return window.metaidwallet.getBalance();
+        case 12:
+          _bal = _context5.sent;
+          _sum = Number((_bal$confirmed2 = _bal === null || _bal === void 0 ? void 0 : _bal.confirmed) !== null && _bal$confirmed2 !== void 0 ? _bal$confirmed2 : 0) + Number((_bal$unconfirmed2 = _bal === null || _bal === void 0 ? void 0 : _bal.unconfirmed) !== null && _bal$unconfirmed2 !== void 0 ? _bal$unconfirmed2 : 0);
+          return _context5.abrupt("return", _sum > 0 ? _sum : Number((_bal$total2 = _bal === null || _bal === void 0 ? void 0 : _bal.total) !== null && _bal$total2 !== void 0 ? _bal$total2 : 0));
+        case 15:
+          if (!(typeof window.metaidwallet.getUtxos === "function")) {
+            _context5.next = 21;
+            break;
+          }
+          _context5.next = 18;
+          return window.metaidwallet.getUtxos();
+        case 18:
+          utxos = _context5.sent;
+          if (!Array.isArray(utxos)) {
+            _context5.next = 21;
+            break;
+          }
+          return _context5.abrupt("return", utxos.reduce(function (acc, u) {
+            var _ref5, _u$satoshis;
+            return acc + Number((_ref5 = (_u$satoshis = u === null || u === void 0 ? void 0 : u.satoshis) !== null && _u$satoshis !== void 0 ? _u$satoshis : u === null || u === void 0 ? void 0 : u.satoshi) !== null && _ref5 !== void 0 ? _ref5 : 0);
+          }, 0));
+        case 21:
+          _context5.next = 26;
+          break;
+        case 23:
+          _context5.prev = 23;
+          _context5.t0 = _context5["catch"](2);
+          console.log("fetchMvcSpaceSats error:", _context5.t0);
+        case 26:
+          return _context5.abrupt("return", 0);
+        case 27:
+        case "end":
+          return _context5.stop();
+      }
+    }, _callee5, null, [[2, 23]]);
+  }));
+  return _fetchMvcSpaceSats.apply(this, arguments);
+}
 /* harmony default export */ var wallet = (function () {
   var _useState = (0,react.useState)("metalet"),
-    _useState2 = slicedToArray_default()(_useState, 2),
-    walletName = _useState2[0],
-    setWalletName = _useState2[1];
+    _useState2 = slicedToArray_default()(_useState, 1),
+    walletName = _useState2[0];
   var _useState3 = (0,react.useState)(),
     _useState4 = slicedToArray_default()(_useState3, 2),
     mvcAddress = _useState4[0],
@@ -11179,206 +8741,244 @@ var checkExtension = function checkExtension() {
     _useState14 = slicedToArray_default()(_useState13, 2),
     userBal = _useState14[0],
     setUserBal = _useState14[1];
-  var connect = /*#__PURE__*/function () {
-    var _ref = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee() {
-      var isConnected, ret, _yield$init, pass, message;
+  var getBal = (0,react.useCallback)( /*#__PURE__*/function () {
+    var _ref = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(forceConnected) {
+      var _yield$Promise$all, _yield$Promise$all2, btcSats, spaceSats, tokens, _bals;
       return regeneratorRuntime_default()().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
-            if (checkExtension()) {
+            if (window.metaidwallet) {
               _context.next = 2;
               break;
             }
             return _context.abrupt("return");
           case 2:
-            _context.next = 4;
-            return window.metaidwallet.isConnected();
+            if (forceConnected || connected) {
+              _context.next = 4;
+              break;
+            }
+            return _context.abrupt("return");
           case 4:
-            isConnected = _context.sent;
-            console.log(isConnected, "isConnected");
-            if (!(isConnected.status === "locked")) {
-              _context.next = 8;
-              break;
+            _context.prev = 4;
+            _context.next = 7;
+            return Promise.all([(0,psbtBuild/* getUtxoBalance */.p0)()["catch"](function () {
+              return 0;
+            }), fetchMvcSpaceSats(), window.metaidwallet.token.getBalance()["catch"](function () {
+              return [];
+            })]);
+          case 7:
+            _yield$Promise$all = _context.sent;
+            _yield$Promise$all2 = slicedToArray_default()(_yield$Promise$all, 3);
+            btcSats = _yield$Promise$all2[0];
+            spaceSats = _yield$Promise$all2[1];
+            tokens = _yield$Promise$all2[2];
+            _bals = {
+              btc: (0,utils/* formatSat */.Q0)(btcSats, 8),
+              btcSats: Number(btcSats || 0),
+              space: (0,utils/* formatSat */.Q0)(spaceSats, 8),
+              spaceSats: Number(spaceSats || 0)
+            };
+            if (Array.isArray(tokens)) {
+              tokens.forEach(function (item) {
+                var balance = BigInt(item.confirmedString || "0") + BigInt(item.unconfirmedString || "0");
+                _bals[item.genesis] = (0,utils/* formatSat */.Q0)(balance.toString(), item.decimal);
+                _bals["raw_".concat(item.genesis)] = balance.toString();
+              });
             }
-            throw new Error("unlock first");
-          case 8:
-            if (isConnected) {
-              _context.next = 15;
-              break;
-            }
-            _context.next = 11;
-            return window.metaidwallet.connect();
-          case 11:
-            ret = _context.sent;
-            console.log(ret);
-            if (!ret.status) {
-              _context.next = 15;
-              break;
-            }
-            throw new Error(ret.status);
-          case 15:
-            _context.next = 17;
-            return init();
+            setUserBal(_bals);
+            _context.next = 20;
+            break;
           case 17:
-            _yield$init = _context.sent;
-            pass = _yield$init.pass;
-            message = _yield$init.message;
-            if (pass) {
-              _context.next = 22;
-              break;
-            }
-            throw new Error(message);
-          case 22:
+            _context.prev = 17;
+            _context.t0 = _context["catch"](4);
+            console.log("getBal error:", _context.t0);
+          case 20:
           case "end":
             return _context.stop();
         }
-      }, _callee);
+      }, _callee, null, [[4, 17]]);
     }));
-    return function connect() {
+    return function (_x) {
       return _ref.apply(this, arguments);
     };
-  }();
-  var disConnect = /*#__PURE__*/function () {
-    var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
-      var ret;
-      return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
-        while (1) switch (_context2.prev = _context2.next) {
-          case 0:
-            if (checkExtension()) {
-              _context2.next = 2;
-              break;
-            }
-            return _context2.abrupt("return");
-          case 2:
-            _context2.next = 4;
-            return window.metaidwallet.disconnect();
-          case 4:
-            ret = _context2.sent;
-            if (!(ret.status === "canceled")) {
-              _context2.next = 7;
-              break;
-            }
-            return _context2.abrupt("return");
-          case 7:
-            setConnected(false);
-            setMVCAddress("");
-            setBTCAddress("");
-            setUserBal({});
-          case 11:
-          case "end":
-            return _context2.stop();
-        }
-      }, _callee2);
-    }));
-    return function disConnect() {
-      return _ref2.apply(this, arguments);
-    };
-  }();
-  var getBal = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
-    var btcBal, tokens, _bals;
-    return regeneratorRuntime_default()().wrap(function _callee3$(_context3) {
-      while (1) switch (_context3.prev = _context3.next) {
-        case 0:
-          if (!(network && connected)) {
-            _context3.next = 10;
-            break;
-          }
-          _context3.next = 3;
-          return (0,psbtBuild/* getUtxoBalance */.p0)();
-        case 3:
-          btcBal = _context3.sent;
-          _context3.next = 6;
-          return window.metaidwallet.token.getBalance();
-        case 6:
-          tokens = _context3.sent;
-          _bals = {
-            btc: (0,utils/* formatSat */.Q0)(btcBal)
-          };
-          tokens.forEach(function (item) {
-            var balance = BigInt(item.confirmedString) + BigInt(item.unconfirmedString);
-            _bals[item.genesis] = (0,utils/* formatSat */.Q0)(balance.toString(), item.decimal);
-          });
-          setUserBal(_bals);
-        case 10:
-        case "end":
-          return _context3.stop();
-      }
-    }, _callee3);
-  })), [network, connected]);
-  var init = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4() {
-    var isConnected, _mvc, _yield$window$metaidw, _network, _btcAddress, _checkAddressType, pass, message;
-    return regeneratorRuntime_default()().wrap(function _callee4$(_context4) {
-      while (1) switch (_context4.prev = _context4.next) {
+  }(), [connected]);
+  var init = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
+    var isConnected, _mvc, _yield$window$metaidw, walletNet, _btcAddress, _checkAddressType, pass, message;
+    return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
         case 0:
           if (!(walletName === "metalet" && window.metaidwallet)) {
-            _context4.next = 24;
+            _context2.next = 25;
             break;
           }
-          _context4.next = 3;
+          _context2.next = 3;
           return window.metaidwallet.isConnected();
         case 3:
-          isConnected = _context4.sent;
+          isConnected = _context2.sent;
           if (!(isConnected === true)) {
-            _context4.next = 24;
+            _context2.next = 25;
             break;
           }
-          _context4.next = 7;
+          _context2.next = 7;
           return window.metaidwallet.getAddress();
         case 7:
-          _mvc = _context4.sent;
-          _context4.next = 10;
+          _mvc = _context2.sent;
+          _context2.next = 10;
           return window.metaidwallet.getNetwork();
         case 10:
-          _yield$window$metaidw = _context4.sent;
-          _network = _yield$window$metaidw.network;
-          _context4.next = 14;
+          _yield$window$metaidw = _context2.sent;
+          walletNet = _yield$window$metaidw.network;
+          _context2.next = 14;
           return window.metaidwallet.btc.getAddress();
         case 14:
-          _btcAddress = _context4.sent;
+          _btcAddress = _context2.sent;
           _checkAddressType = (0,utils/* checkAddressType */.xW)(_btcAddress), pass = _checkAddressType.pass, message = _checkAddressType.message;
           if (pass) {
-            _context4.next = 18;
+            _context2.next = 18;
             break;
           }
-          return _context4.abrupt("return", {
+          return _context2.abrupt("return", {
             pass: pass,
             message: message
           });
         case 18:
           setConnected(true);
           setMVCAddress(_mvc);
-          setNetwork(_network);
+          setNetwork(walletNet);
           setBTCAddress(_btcAddress);
-          getBal();
-          return _context4.abrupt("return", {
+          _context2.next = 24;
+          return getBal(true);
+        case 24:
+          return _context2.abrupt("return", {
             pass: pass,
             message: message
           });
-        case 24:
-          return _context4.abrupt("return", {
+        case 25:
+          return _context2.abrupt("return", {
             pass: true,
             message: ""
           });
-        case 25:
+        case 26:
         case "end":
-          return _context4.stop();
+          return _context2.stop();
       }
-    }, _callee4);
-  })), [walletName]);
+    }, _callee2);
+  })), [walletName, getBal]);
+  var connect = /*#__PURE__*/function () {
+    var _ref3 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
+      var isConnected, ret, _yield$init, pass, message;
+      return regeneratorRuntime_default()().wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
+          case 0:
+            if (checkExtension()) {
+              _context3.next = 2;
+              break;
+            }
+            return _context3.abrupt("return");
+          case 2:
+            _context3.next = 4;
+            return window.metaidwallet.isConnected();
+          case 4:
+            isConnected = _context3.sent;
+            if (!(isConnected && isConnected.status === "locked")) {
+              _context3.next = 7;
+              break;
+            }
+            throw new Error("unlock first");
+          case 7:
+            if (isConnected) {
+              _context3.next = 13;
+              break;
+            }
+            _context3.next = 10;
+            return window.metaidwallet.connect();
+          case 10:
+            ret = _context3.sent;
+            if (!ret.status) {
+              _context3.next = 13;
+              break;
+            }
+            throw new Error(ret.status);
+          case 13:
+            _context3.next = 15;
+            return init();
+          case 15:
+            _yield$init = _context3.sent;
+            pass = _yield$init.pass;
+            message = _yield$init.message;
+            if (pass) {
+              _context3.next = 20;
+              break;
+            }
+            throw new Error(message);
+          case 20:
+          case "end":
+            return _context3.stop();
+        }
+      }, _callee3);
+    }));
+    return function connect() {
+      return _ref3.apply(this, arguments);
+    };
+  }();
+  var disConnect = /*#__PURE__*/function () {
+    var _ref4 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4() {
+      var ret;
+      return regeneratorRuntime_default()().wrap(function _callee4$(_context4) {
+        while (1) switch (_context4.prev = _context4.next) {
+          case 0:
+            if (checkExtension()) {
+              _context4.next = 2;
+              break;
+            }
+            return _context4.abrupt("return");
+          case 2:
+            if (!window.metaidwallet.disconnect) {
+              _context4.next = 8;
+              break;
+            }
+            _context4.next = 5;
+            return window.metaidwallet.disconnect();
+          case 5:
+            ret = _context4.sent;
+            if (!((ret === null || ret === void 0 ? void 0 : ret.status) === "canceled")) {
+              _context4.next = 8;
+              break;
+            }
+            return _context4.abrupt("return");
+          case 8:
+            setConnected(false);
+            setMVCAddress("");
+            setBTCAddress("");
+            setUserBal({});
+          case 12:
+          case "end":
+            return _context4.stop();
+        }
+      }, _callee4);
+    }));
+    return function disConnect() {
+      return _ref4.apply(this, arguments);
+    };
+  }();
   (0,react.useEffect)(function () {
-    //
-    setTimeout(function () {
+    var timer = setTimeout(function () {
       init();
-    }, 500);
+    }, 300);
+    return function () {
+      return clearTimeout(timer);
+    };
   }, [init]);
   (0,react.useEffect)(function () {
-    getBal();
-  }, [getBal]);
+    if (connected) {
+      getBal(true);
+    }
+  }, [network, connected, getBal]);
   (0,react.useEffect)(function () {
-    var handleAccountChange = function handleAccountChange(newAccount) {
+    var handleAccountChange = function handleAccountChange() {
       init();
     };
-    var handleNetChange = function handleNetChange(network) {
+    var handleNetChange = function handleNetChange() {
       init();
     };
     if (walletName === "metalet" && window.metaidwallet && connected) {
@@ -11391,7 +8991,7 @@ var checkExtension = function checkExtension() {
         window.metaidwallet.removeListener("networkChanged", handleNetChange);
       }
     };
-  }, [walletName, connected]);
+  }, [walletName, connected, init]);
   return {
     mvcAddress: mvcAddress,
     btcAddress: btcAddress,
@@ -11426,6 +9026,7 @@ var mvc = __webpack_require__(49118);
 
 
 
+
 var defaultChains = [{
   key: "btc",
   label: "BTC Network",
@@ -11439,9 +9040,8 @@ var defaultChains = [{
   var _useModel = (0,_umi_production_exports.useModel)("wallet"),
     network = _useModel.network;
   var _useState = (0,react.useState)(defaultChains),
-    _useState2 = slicedToArray_default()(_useState, 2),
-    chains = _useState2[0],
-    setChains = _useState2[1];
+    _useState2 = slicedToArray_default()(_useState, 1),
+    chains = _useState2[0];
   var _useState3 = (0,react.useState)(),
     _useState4 = slicedToArray_default()(_useState3, 2),
     chainType = _useState4[0],
@@ -11470,48 +9070,44 @@ var defaultChains = [{
     _useState16 = slicedToArray_default()(_useState15, 2),
     AssetsInfo = _useState16[0],
     setAssetsInfo = _useState16[1];
-  var _useState17 = (0,react.useState)(""),
+  var _useState17 = (0,react.useState)(),
     _useState18 = slicedToArray_default()(_useState17, 2),
-    amount = _useState18[0],
-    setAmount = _useState18[1];
+    feeQuote = _useState18[0],
+    setFeeQuote = _useState18[1];
   var _useState19 = (0,react.useState)(""),
     _useState20 = slicedToArray_default()(_useState19, 2),
-    reciveAmount = _useState20[0],
-    setReciveAmount = _useState20[1];
+    amount = _useState20[0],
+    setAmount = _useState20[1];
   var _useState21 = (0,react.useState)(""),
     _useState22 = slicedToArray_default()(_useState21, 2),
-    ErrorMsg = _useState22[0],
-    setErrorMsg = _useState22[1];
-  var _useState23 = (0,react.useState)(),
+    reciveAmount = _useState22[0],
+    setReciveAmount = _useState22[1];
+  var _useState23 = (0,react.useState)(""),
     _useState24 = slicedToArray_default()(_useState23, 2),
-    brc20Info = _useState24[0],
-    setBrc20Info = _useState24[1];
+    ErrorMsg = _useState24[0],
+    setErrorMsg = _useState24[1];
   var _useState25 = (0,react.useState)(),
     _useState26 = slicedToArray_default()(_useState25, 2),
     mrc20Info = _useState26[0],
     setMrc20Info = _useState26[1];
-  var _useState27 = (0,react.useState)(),
-    _useState28 = slicedToArray_default()(_useState27, 2),
-    runesInfo = _useState28[0],
-    setRunesInfo = _useState28[1];
-  var _useState29 = (0,react.useState)(),
-    _useState30 = slicedToArray_default()(_useState29, 2),
-    inscription = _useState30[0],
-    setInscription = _useState30[1];
-  var _useState31 = (0,react.useState)({
+  var _useState27 = (0,react.useState)({
       minerFee: "",
       bridgeFee: "",
       receiveAmount: "",
       totalFee: "",
       confirmNumber: ""
     }),
-    _useState32 = slicedToArray_default()(_useState31, 2),
-    feeInfo = _useState32[0],
-    setFeeInfo = _useState32[1];
-  var _useState33 = (0,react.useState)(false),
-    _useState34 = slicedToArray_default()(_useState33, 2),
-    refetchAssets = _useState34[0],
-    setRefetchAssets = _useState34[1];
+    _useState28 = slicedToArray_default()(_useState27, 2),
+    feeInfo = _useState28[0],
+    setFeeInfo = _useState28[1];
+  var _useState29 = (0,react.useState)(false),
+    _useState30 = slicedToArray_default()(_useState29, 2),
+    refetchAssets = _useState30[0],
+    setRefetchAssets = _useState30[1];
+  var bridgeType = (0,react.useMemo)(function () {
+    if (fromChain.key === "btc") return "mint";
+    return "redeem";
+  }, [fromChain]);
   (0,react.useEffect)(function () {
     var didCancel = false;
     var fetchAssets = /*#__PURE__*/function () {
@@ -11529,7 +9125,7 @@ var defaultChains = [{
               return (0,api/* getAssets */.Y)(network);
             case 4:
               ret = _context.sent;
-              if (!didCancel) {
+              if (!didCancel && ret !== null && ret !== void 0 && ret.data) {
                 setAssetsInfo(ret.data);
               }
               _context.next = 11;
@@ -11555,47 +9151,94 @@ var defaultChains = [{
   }, [network, refetchAssets]);
   (0,react.useEffect)(function () {
     if (AssetsInfo) {
-      var _assets = [];
-      _assets = AssetsInfo.assetList.filter(function (item) {
+      // Price-decoupled filtering: never drop MRC20 tokens whose price is 0 or undefined!
+      var filtered = (AssetsInfo.assetList || []).filter(function (item) {
         return item.network === protocolType.toUpperCase();
-      }).filter(function (item) {
-        return protocolType === "btc" || item.price;
       }).map(function (item) {
-        item.originName = item.originName || item.originSymbol;
-        item.targetName = item.targetName || item.targetSymbol;
-        if (item.network === 'BTC') {
-          item.targetName = 'WBTC';
+        var copy = objectSpread2_default()({}, item);
+        copy.originName = copy.originName || copy.originSymbol;
+        copy.targetName = copy.targetName || copy.targetSymbol;
+        if (copy.network === "BTC") {
+          copy.targetName = "WBTC";
         }
-        return item;
+        return copy;
       });
-      if (_assets.length > 0) {
-        setAssets(_assets);
+      setAssets(filtered);
+      if (filtered.length > 0) {
         setAsset(function (prev) {
           if (prev) {
-            var find = _assets.find(function (item) {
+            var find = filtered.find(function (item) {
               return item.targetTokenId === prev.targetTokenId;
             });
             if (find) return find;
           }
-          return _assets[0];
+          return filtered[0];
         });
       } else {
         setAsset(undefined);
       }
     }
   }, [AssetsInfo, protocolType]);
-  var handleRefetchAssets = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
-    return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
+  (0,react.useEffect)(function () {
+    var didCancel = false;
+    var fetchQuote = /*#__PURE__*/function () {
+      var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
+        var assetNetwork, ret;
+        return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              if (network) {
+                _context2.next = 2;
+                break;
+              }
+              return _context2.abrupt("return");
+            case 2:
+              assetNetwork = protocolType === "btc" ? "BTC" : "MRC20";
+              _context2.prev = 3;
+              _context2.next = 6;
+              return (0,api/* getFeeQuote */.T8)(network, {
+                network: assetNetwork,
+                direction: bridgeType,
+                originTokenId: asset === null || asset === void 0 ? void 0 : asset.originTokenId
+              });
+            case 6:
+              ret = _context2.sent;
+              if (!didCancel && ret !== null && ret !== void 0 && ret.data) {
+                setFeeQuote(ret.data);
+              }
+              _context2.next = 13;
+              break;
+            case 10:
+              _context2.prev = 10;
+              _context2.t0 = _context2["catch"](3);
+              console.log("getFeeQuote error:", _context2.t0);
+            case 13:
+            case "end":
+              return _context2.stop();
+          }
+        }, _callee2, null, [[3, 10]]);
+      }));
+      return function fetchQuote() {
+        return _ref2.apply(this, arguments);
+      };
+    }();
+    fetchQuote();
+    return function () {
+      didCancel = true;
+    };
+  }, [network, protocolType, bridgeType, asset === null || asset === void 0 ? void 0 : asset.originTokenId, refetchAssets]);
+  var handleRefetchAssets = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
+    return regeneratorRuntime_default()().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
         case 0:
           setRefetchAssets(function (prev) {
             return !prev;
           });
         case 1:
         case "end":
-          return _context2.stop();
+          return _context3.stop();
       }
-    }, _callee2);
+    }, _callee3);
   })), []);
   var updateAssets = (0,useIntervalAsync/* default */.A)(handleRefetchAssets, 20000);
   var resetInput = function resetInput() {
@@ -11609,12 +9252,7 @@ var defaultChains = [{
       confirmNumber: ""
     });
     setErrorMsg("");
-    setInscription(undefined);
   };
-  var bridgeType = (0,react.useMemo)(function () {
-    if (fromChain.key === "btc") return "mint";
-    return "redeem";
-  }, [fromChain]);
   return {
     updateAssets: updateAssets,
     chains: chains,
@@ -11626,6 +9264,7 @@ var defaultChains = [{
     protocolType: protocolType,
     setProtocolType: setProtocolType,
     AssetsInfo: AssetsInfo,
+    feeQuote: feeQuote,
     assets: assets,
     setAsset: setAsset,
     chainType: chainType,
@@ -11638,14 +9277,8 @@ var defaultChains = [{
     setFeeInfo: setFeeInfo,
     ErrorMsg: ErrorMsg,
     setErrorMsg: setErrorMsg,
-    inscription: inscription,
-    setInscription: setInscription,
     resetInput: resetInput,
     bridgeType: bridgeType,
-    brc20Info: brc20Info,
-    setBrc20Info: setBrc20Info,
-    runesInfo: runesInfo,
-    setRunesInfo: setRunesInfo,
     mrc20Info: mrc20Info,
     setMrc20Info: setMrc20Info
   };
@@ -14524,31 +12157,20 @@ var useIntervalAsync = function useIntervalAsync(fn, ms) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   $W: function() { return /* binding */ submitPrepayOrderMintBrc20; },
-/* harmony export */   DH: function() { return /* binding */ createPrepayOrderMintRunes; },
 /* harmony export */   Hi: function() { return /* binding */ createPrepayOrderRedeemBtc; },
-/* harmony export */   L7: function() { return /* binding */ fetchRunesUtxos; },
-/* harmony export */   PG: function() { return /* binding */ submitPrepayOrderRedeemBrc20; },
-/* harmony export */   PM: function() { return /* binding */ createPrepayOrderMintBRC20; },
+/* harmony export */   T8: function() { return /* binding */ getFeeQuote; },
 /* harmony export */   TG: function() { return /* binding */ submitPrepayOrderMintBtc; },
 /* harmony export */   UC: function() { return /* binding */ createPrepayOrderRedeemMrc20; },
 /* harmony export */   U_: function() { return /* binding */ submitPrepayOrderMintMrc20; },
 /* harmony export */   Y: function() { return /* binding */ getAssets; },
-/* harmony export */   bV: function() { return /* binding */ submitPrepayOrderMintRunes; },
-/* harmony export */   d6: function() { return /* binding */ createPrepayOrderRedeemRunes; },
-/* harmony export */   d_: function() { return /* binding */ submitPrepayOrderRedeemRunes; },
 /* harmony export */   gm: function() { return /* binding */ submitPrepayOrderRedeemMrc20; },
 /* harmony export */   hL: function() { return /* binding */ getUserMrc20Balances; },
 /* harmony export */   hT: function() { return /* binding */ createPrepayOrderMintBtc; },
-/* harmony export */   hd: function() { return /* binding */ getUserRunesBalance; },
-/* harmony export */   j4: function() { return /* binding */ getUserBRC20; },
-/* harmony export */   pR: function() { return /* binding */ createPrepayOrderRedeemBrc20; },
 /* harmony export */   rS: function() { return /* binding */ submitPrepayOrderRedeemBtc; },
-/* harmony export */   xt: function() { return /* binding */ getRawTx; },
 /* harmony export */   yB: function() { return /* binding */ createPrepayOrderMintMrc20; },
 /* harmony export */   yl: function() { return /* binding */ getBridgeHistory; }
 /* harmony export */ });
-/* unused harmony export getUserMrc20Balance */
+/* unused harmony exports getHost, getUserMrc20Balance */
 /* unused harmony import specifier */ var _regeneratorRuntime;
 /* unused harmony import specifier */ var _asyncToGenerator;
 /* unused harmony import specifier */ var request;
@@ -14563,21 +12185,18 @@ var useIntervalAsync = function useIntervalAsync(fn, ms) {
 
 
 
+var trimTrailingSlash = function trimTrailingSlash(url) {
+  return url.replace(/\/+$/, "");
+};
 var getHost = function getHost(network) {
-  if (network === "mainnet") return "https://api.octopus.space/api-bridge-v3";
-  if (network === "testnet") return "https://api.octopus.space/api-bridge-testnet";
+  if (network === "testnet") {
+    return trimTrailingSlash(undefined || "https://api.octopus.space/api-bridge-testnet");
+  }
+  return trimTrailingSlash(undefined || "https://api.octopus.space/api-bridge-v3");
 };
-var getOrdersHost = function getOrdersHost(network) {
-  if (network === "mainnet") return "https://api.octopus.space/api-bridge-repost";
-  if (network === "testnet") return "https://api.octopus.space/api-bridge-repost-testnet";
-};
-
-// assetList
 function getAssets(_x, _x2) {
   return _getAssets.apply(this, arguments);
 }
-
-// orders
 function _getAssets() {
   _getAssets = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee(network, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee$(_context) {
@@ -14594,17 +12213,17 @@ function _getAssets() {
   }));
   return _getAssets.apply(this, arguments);
 }
-function createPrepayOrderRedeemBtc(_x3, _x4, _x5) {
-  return _createPrepayOrderRedeemBtc.apply(this, arguments);
+function getFeeQuote(_x3, _x4, _x5) {
+  return _getFeeQuote.apply(this, arguments);
 }
-function _createPrepayOrderRedeemBtc() {
-  _createPrepayOrderRedeemBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee2(network, data, options) {
+function _getFeeQuote() {
+  _getFeeQuote = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee2(network, params, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
-          return _context2.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderRedeemBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "POST",
-            data: data
+          return _context2.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/feeQuote"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+            method: "GET",
+            params: params
           }, options || {})));
         case 1:
         case "end":
@@ -14612,17 +12231,17 @@ function _createPrepayOrderRedeemBtc() {
       }
     }, _callee2);
   }));
-  return _createPrepayOrderRedeemBtc.apply(this, arguments);
+  return _getFeeQuote.apply(this, arguments);
 }
-function createPrepayOrderRedeemBrc20(_x6, _x7, _x8) {
-  return _createPrepayOrderRedeemBrc.apply(this, arguments);
+function createPrepayOrderMintBtc(_x6, _x7, _x8) {
+  return _createPrepayOrderMintBtc.apply(this, arguments);
 }
-function _createPrepayOrderRedeemBrc() {
-  _createPrepayOrderRedeemBrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee3(network, data, options) {
+function _createPrepayOrderMintBtc() {
+  _createPrepayOrderMintBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee3(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
-          return _context3.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderRedeemBrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context3.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderMintBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -14632,17 +12251,17 @@ function _createPrepayOrderRedeemBrc() {
       }
     }, _callee3);
   }));
-  return _createPrepayOrderRedeemBrc.apply(this, arguments);
+  return _createPrepayOrderMintBtc.apply(this, arguments);
 }
-function submitPrepayOrderRedeemBtc(_x9, _x10, _x11) {
-  return _submitPrepayOrderRedeemBtc.apply(this, arguments);
+function submitPrepayOrderMintBtc(_x9, _x10, _x11) {
+  return _submitPrepayOrderMintBtc.apply(this, arguments);
 }
-function _submitPrepayOrderRedeemBtc() {
-  _submitPrepayOrderRedeemBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee4(network, data, options) {
+function _submitPrepayOrderMintBtc() {
+  _submitPrepayOrderMintBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee4(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
-          return _context4.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context4.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderMintBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -14652,17 +12271,17 @@ function _submitPrepayOrderRedeemBtc() {
       }
     }, _callee4);
   }));
-  return _submitPrepayOrderRedeemBtc.apply(this, arguments);
+  return _submitPrepayOrderMintBtc.apply(this, arguments);
 }
-function submitPrepayOrderRedeemBrc20(_x12, _x13, _x14) {
-  return _submitPrepayOrderRedeemBrc.apply(this, arguments);
+function createPrepayOrderMintMrc20(_x12, _x13, _x14) {
+  return _createPrepayOrderMintMrc.apply(this, arguments);
 }
-function _submitPrepayOrderRedeemBrc() {
-  _submitPrepayOrderRedeemBrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee5(network, data, options) {
+function _createPrepayOrderMintMrc() {
+  _createPrepayOrderMintMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee5(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee5$(_context5) {
       while (1) switch (_context5.prev = _context5.next) {
         case 0:
-          return _context5.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemBrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context5.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderMintMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -14672,17 +12291,17 @@ function _submitPrepayOrderRedeemBrc() {
       }
     }, _callee5);
   }));
-  return _submitPrepayOrderRedeemBrc.apply(this, arguments);
+  return _createPrepayOrderMintMrc.apply(this, arguments);
 }
-function createPrepayOrderMintBtc(_x15, _x16, _x17) {
-  return _createPrepayOrderMintBtc.apply(this, arguments);
+function submitPrepayOrderMintMrc20(_x15, _x16, _x17) {
+  return _submitPrepayOrderMintMrc.apply(this, arguments);
 }
-function _createPrepayOrderMintBtc() {
-  _createPrepayOrderMintBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee6(network, data, options) {
+function _submitPrepayOrderMintMrc() {
+  _submitPrepayOrderMintMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee6(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee6$(_context6) {
       while (1) switch (_context6.prev = _context6.next) {
         case 0:
-          return _context6.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getOrdersHost(network), "/bridge/createPrepayOrderMintBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context6.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderMintMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -14692,17 +12311,17 @@ function _createPrepayOrderMintBtc() {
       }
     }, _callee6);
   }));
-  return _createPrepayOrderMintBtc.apply(this, arguments);
+  return _submitPrepayOrderMintMrc.apply(this, arguments);
 }
-function createPrepayOrderMintBRC20(_x18, _x19, _x20) {
-  return _createPrepayOrderMintBRC.apply(this, arguments);
+function createPrepayOrderRedeemBtc(_x18, _x19, _x20) {
+  return _createPrepayOrderRedeemBtc.apply(this, arguments);
 }
-function _createPrepayOrderMintBRC() {
-  _createPrepayOrderMintBRC = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee7(network, data, options) {
+function _createPrepayOrderRedeemBtc() {
+  _createPrepayOrderRedeemBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee7(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee7$(_context7) {
       while (1) switch (_context7.prev = _context7.next) {
         case 0:
-          return _context7.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderMintBRC20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context7.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderRedeemBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -14712,17 +12331,17 @@ function _createPrepayOrderMintBRC() {
       }
     }, _callee7);
   }));
-  return _createPrepayOrderMintBRC.apply(this, arguments);
+  return _createPrepayOrderRedeemBtc.apply(this, arguments);
 }
-function submitPrepayOrderMintBtc(_x21, _x22, _x23) {
-  return _submitPrepayOrderMintBtc.apply(this, arguments);
+function submitPrepayOrderRedeemBtc(_x21, _x22, _x23) {
+  return _submitPrepayOrderRedeemBtc.apply(this, arguments);
 }
-function _submitPrepayOrderMintBtc() {
-  _submitPrepayOrderMintBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee8(network, data, options) {
+function _submitPrepayOrderRedeemBtc() {
+  _submitPrepayOrderRedeemBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee8(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee8$(_context8) {
       while (1) switch (_context8.prev = _context8.next) {
         case 0:
-          return _context8.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getOrdersHost(network), "/bridge/submitPrepayOrderMintBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context8.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -14732,17 +12351,17 @@ function _submitPrepayOrderMintBtc() {
       }
     }, _callee8);
   }));
-  return _submitPrepayOrderMintBtc.apply(this, arguments);
+  return _submitPrepayOrderRedeemBtc.apply(this, arguments);
 }
-function submitPrepayOrderMintBrc20(_x24, _x25, _x26) {
-  return _submitPrepayOrderMintBrc.apply(this, arguments);
+function createPrepayOrderRedeemMrc20(_x24, _x25, _x26) {
+  return _createPrepayOrderRedeemMrc.apply(this, arguments);
 }
-function _submitPrepayOrderMintBrc() {
-  _submitPrepayOrderMintBrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee9(network, data, options) {
+function _createPrepayOrderRedeemMrc() {
+  _createPrepayOrderRedeemMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee9(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee9$(_context9) {
       while (1) switch (_context9.prev = _context9.next) {
         case 0:
-          return _context9.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderMintBrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context9.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderRedeemMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -14752,17 +12371,17 @@ function _submitPrepayOrderMintBrc() {
       }
     }, _callee9);
   }));
-  return _submitPrepayOrderMintBrc.apply(this, arguments);
+  return _createPrepayOrderRedeemMrc.apply(this, arguments);
 }
-function createPrepayOrderMintRunes(_x27, _x28, _x29) {
-  return _createPrepayOrderMintRunes.apply(this, arguments);
+function submitPrepayOrderRedeemMrc20(_x27, _x28, _x29) {
+  return _submitPrepayOrderRedeemMrc.apply(this, arguments);
 }
-function _createPrepayOrderMintRunes() {
-  _createPrepayOrderMintRunes = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee10(network, data, options) {
+function _submitPrepayOrderRedeemMrc() {
+  _submitPrepayOrderRedeemMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee10(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee10$(_context10) {
       while (1) switch (_context10.prev = _context10.next) {
         case 0:
-          return _context10.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderMintRunes"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context10.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -14772,19 +12391,19 @@ function _createPrepayOrderMintRunes() {
       }
     }, _callee10);
   }));
-  return _createPrepayOrderMintRunes.apply(this, arguments);
+  return _submitPrepayOrderRedeemMrc.apply(this, arguments);
 }
-function createPrepayOrderMintMrc20(_x30, _x31, _x32) {
-  return _createPrepayOrderMintMrc.apply(this, arguments);
+function getBridgeHistory(_x30, _x31, _x32) {
+  return _getBridgeHistory.apply(this, arguments);
 }
-function _createPrepayOrderMintMrc() {
-  _createPrepayOrderMintMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee11(network, data, options) {
+function _getBridgeHistory() {
+  _getBridgeHistory = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee11(network, params, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee11$(_context11) {
       while (1) switch (_context11.prev = _context11.next) {
         case 0:
-          return _context11.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getOrdersHost(network), "/bridge/createPrepayOrderMintMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "POST",
-            data: data
+          return _context11.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/queryTransactionsByAddress"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+            method: "GET",
+            params: params
           }, options || {})));
         case 1:
         case "end":
@@ -14792,220 +12411,22 @@ function _createPrepayOrderMintMrc() {
       }
     }, _callee11);
   }));
-  return _createPrepayOrderMintMrc.apply(this, arguments);
-}
-function submitPrepayOrderMintRunes(_x33, _x34, _x35) {
-  return _submitPrepayOrderMintRunes.apply(this, arguments);
-}
-function _submitPrepayOrderMintRunes() {
-  _submitPrepayOrderMintRunes = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee12(network, data, options) {
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee12$(_context12) {
-      while (1) switch (_context12.prev = _context12.next) {
-        case 0:
-          return _context12.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderMintRunes"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "POST",
-            data: data
-          }, options || {})));
-        case 1:
-        case "end":
-          return _context12.stop();
-      }
-    }, _callee12);
-  }));
-  return _submitPrepayOrderMintRunes.apply(this, arguments);
-}
-function createPrepayOrderRedeemRunes(_x36, _x37, _x38) {
-  return _createPrepayOrderRedeemRunes.apply(this, arguments);
-}
-function _createPrepayOrderRedeemRunes() {
-  _createPrepayOrderRedeemRunes = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee13(network, data, options) {
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee13$(_context13) {
-      while (1) switch (_context13.prev = _context13.next) {
-        case 0:
-          return _context13.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderRedeemRunes"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "POST",
-            data: data
-          }, options || {})));
-        case 1:
-        case "end":
-          return _context13.stop();
-      }
-    }, _callee13);
-  }));
-  return _createPrepayOrderRedeemRunes.apply(this, arguments);
-}
-function createPrepayOrderRedeemMrc20(_x39, _x40, _x41) {
-  return _createPrepayOrderRedeemMrc.apply(this, arguments);
-}
-function _createPrepayOrderRedeemMrc() {
-  _createPrepayOrderRedeemMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee14(network, data, options) {
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee14$(_context14) {
-      while (1) switch (_context14.prev = _context14.next) {
-        case 0:
-          return _context14.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderRedeemMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "POST",
-            data: data
-          }, options || {})));
-        case 1:
-        case "end":
-          return _context14.stop();
-      }
-    }, _callee14);
-  }));
-  return _createPrepayOrderRedeemMrc.apply(this, arguments);
-}
-function submitPrepayOrderRedeemRunes(_x42, _x43, _x44) {
-  return _submitPrepayOrderRedeemRunes.apply(this, arguments);
-}
-function _submitPrepayOrderRedeemRunes() {
-  _submitPrepayOrderRedeemRunes = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee15(network, data, options) {
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee15$(_context15) {
-      while (1) switch (_context15.prev = _context15.next) {
-        case 0:
-          return _context15.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemRunes"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "POST",
-            data: data
-          }, options || {})));
-        case 1:
-        case "end":
-          return _context15.stop();
-      }
-    }, _callee15);
-  }));
-  return _submitPrepayOrderRedeemRunes.apply(this, arguments);
-}
-function submitPrepayOrderRedeemMrc20(_x45, _x46, _x47) {
-  return _submitPrepayOrderRedeemMrc.apply(this, arguments);
-}
-function _submitPrepayOrderRedeemMrc() {
-  _submitPrepayOrderRedeemMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee16(network, data, options) {
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee16$(_context16) {
-      while (1) switch (_context16.prev = _context16.next) {
-        case 0:
-          return _context16.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "POST",
-            data: data
-          }, options || {})));
-        case 1:
-        case "end":
-          return _context16.stop();
-      }
-    }, _callee16);
-  }));
-  return _submitPrepayOrderRedeemMrc.apply(this, arguments);
-}
-function submitPrepayOrderMintMrc20(_x48, _x49, _x50) {
-  return _submitPrepayOrderMintMrc.apply(this, arguments);
-}
-// history
-function _submitPrepayOrderMintMrc() {
-  _submitPrepayOrderMintMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee17(network, data, options) {
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee17$(_context17) {
-      while (1) switch (_context17.prev = _context17.next) {
-        case 0:
-          return _context17.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getOrdersHost(network), "/bridge/submitPrepayOrderMintMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "POST",
-            data: data
-          }, options || {})));
-        case 1:
-        case "end":
-          return _context17.stop();
-      }
-    }, _callee17);
-  }));
-  return _submitPrepayOrderMintMrc.apply(this, arguments);
-}
-function getBridgeHistory(_x51, _x52, _x53) {
   return _getBridgeHistory.apply(this, arguments);
 }
-
-// TODO need replace with new api
-function _getBridgeHistory() {
-  _getBridgeHistory = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee18(network, params, options) {
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee18$(_context18) {
-      while (1) switch (_context18.prev = _context18.next) {
-        case 0:
-          return _context18.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/queryTransactionsByAddress"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "GET",
-            params: params
-          }, options || {})));
-        case 1:
-        case "end":
-          return _context18.stop();
-      }
-    }, _callee18);
-  }));
-  return _getBridgeHistory.apply(this, arguments);
-}
-function fetchRunesUtxos(_x54, _x55, _x56) {
-  return _fetchRunesUtxos.apply(this, arguments);
-}
-function _fetchRunesUtxos() {
-  _fetchRunesUtxos = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee19(address, runeId, network) {
-    var offset,
-      limit,
-      _args19 = arguments;
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee19$(_context19) {
-      while (1) switch (_context19.prev = _context19.next) {
-        case 0:
-          offset = _args19.length > 3 && _args19[3] !== undefined ? _args19[3] : 0;
-          limit = _args19.length > 4 && _args19[4] !== undefined ? _args19[4] : 50;
-          return _context19.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(getOrdersHost(network) + "/common/runes/address/utxo", {
-            method: "GET",
-            params: {
-              address: address,
-              runeId: runeId,
-              offset: offset,
-              limit: limit,
-              net: network === "mainnet" ? "livenet" : "testnet"
-            }
-          }));
-        case 3:
-        case "end":
-          return _context19.stop();
-      }
-    }, _callee19);
-  }));
-  return _fetchRunesUtxos.apply(this, arguments);
-}
-function getUserRunesBalance(_x57, _x58, _x59) {
-  return _getUserRunesBalance.apply(this, arguments);
-}
-function _getUserRunesBalance() {
-  _getUserRunesBalance = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee20(address, network, runeId) {
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee20$(_context20) {
-      while (1) switch (_context20.prev = _context20.next) {
-        case 0:
-          return _context20.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(getOrdersHost(network) + "/common/runes/address/balance-info", {
-            method: "GET",
-            params: {
-              address: address,
-              runeId: runeId,
-              net: network === "mainnet" ? "livenet" : "testnet"
-            }
-          }));
-        case 1:
-        case "end":
-          return _context20.stop();
-      }
-    }, _callee20);
-  }));
-  return _getUserRunesBalance.apply(this, arguments);
-}
-function getUserMrc20Balance(_x60, _x61, _x62) {
+function getUserMrc20Balance(_x33, _x34, _x35) {
   return _getUserMrc20Balance.apply(this, arguments);
 }
 function _getUserMrc20Balance() {
-  _getUserMrc20Balance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee21(address, network, tickId) {
+  _getUserMrc20Balance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12(address, network, tickId) {
     var cursor,
       size,
-      _args21 = arguments;
-    return _regeneratorRuntime().wrap(function _callee21$(_context21) {
-      while (1) switch (_context21.prev = _context21.next) {
+      _args12 = arguments;
+    return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+      while (1) switch (_context12.prev = _context12.next) {
         case 0:
-          cursor = _args21.length > 3 && _args21[3] !== undefined ? _args21[3] : 0;
-          size = _args21.length > 4 && _args21[4] !== undefined ? _args21[4] : 50;
-          return _context21.abrupt("return", request(getOrdersHost(network) + "/common/mrc20/address/utxo", {
+          cursor = _args12.length > 3 && _args12[3] !== undefined ? _args12[3] : 0;
+          size = _args12.length > 4 && _args12[4] !== undefined ? _args12[4] : 50;
+          return _context12.abrupt("return", request("".concat(getHost(network), "/common/mrc20/address/utxo"), {
             method: "GET",
             params: {
               address: address,
@@ -15017,26 +12438,26 @@ function _getUserMrc20Balance() {
           }));
         case 3:
         case "end":
-          return _context21.stop();
+          return _context12.stop();
       }
-    }, _callee21);
+    }, _callee12);
   }));
   return _getUserMrc20Balance.apply(this, arguments);
 }
-function getUserMrc20Balances(_x63, _x64) {
+function getUserMrc20Balances(_x36, _x37) {
   return _getUserMrc20Balances.apply(this, arguments);
 }
 function _getUserMrc20Balances() {
-  _getUserMrc20Balances = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee22(address, network) {
+  _getUserMrc20Balances = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee13(address, network) {
     var cursor,
       size,
-      _args22 = arguments;
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee22$(_context22) {
-      while (1) switch (_context22.prev = _context22.next) {
+      _args13 = arguments;
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee13$(_context13) {
+      while (1) switch (_context13.prev = _context13.next) {
         case 0:
-          cursor = _args22.length > 2 && _args22[2] !== undefined ? _args22[2] : 0;
-          size = _args22.length > 3 && _args22[3] !== undefined ? _args22[3] : 50;
-          return _context22.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(getOrdersHost(network) + "/common/mrc20/address/balance-list", {
+          cursor = _args13.length > 2 && _args13[2] !== undefined ? _args13[2] : 0;
+          size = _args13.length > 3 && _args13[3] !== undefined ? _args13[3] : 50;
+          return _context13.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/common/mrc20/address/balance-list"), {
             method: "GET",
             params: {
               address: address,
@@ -15047,85 +12468,28 @@ function _getUserMrc20Balances() {
           }));
         case 3:
         case "end":
-          return _context22.stop();
+          return _context13.stop();
       }
-    }, _callee22);
+    }, _callee13);
   }));
   return _getUserMrc20Balances.apply(this, arguments);
-}
-function getUserBRC20(_x65, _x66, _x67) {
-  return _getUserBRC.apply(this, arguments);
-}
-function _getUserBRC() {
-  _getUserBRC = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee23(network, params, options) {
-    var address, tick, url;
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee23$(_context23) {
-      while (1) switch (_context23.prev = _context23.next) {
-        case 0:
-          address = params.address, tick = params.tick;
-          url = getOrdersHost(network) + "/brc20/address/".concat(address, "/").concat(tick);
-          return _context23.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(url, _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "GET",
-            params: {
-              net: network
-            }
-          }, options || {})));
-        case 3:
-        case "end":
-          return _context23.stop();
-      }
-    }, _callee23);
-  }));
-  return _getUserBRC.apply(this, arguments);
-}
-function getRawTx(_x68, _x69, _x70) {
-  return _getRawTx.apply(this, arguments);
-}
-function _getRawTx() {
-  _getRawTx = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee24(network, params, options) {
-    var txid, url;
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee24$(_context24) {
-      while (1) switch (_context24.prev = _context24.next) {
-        case 0:
-          txid = params.txid;
-          url = getOrdersHost(network) + "/tx/raw";
-          return _context24.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)(url, _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "GET",
-            params: {
-              net: network,
-              txId: txid
-            }
-          }, options || {})));
-        case 3:
-        case "end":
-          return _context24.stop();
-      }
-    }, _callee24);
-  }));
-  return _getRawTx.apply(this, arguments);
 }
 
 /***/ }),
 
-/***/ 33595:
+/***/ 99737:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  QG: function() { return /* binding */ mintBrc; },
   gb: function() { return /* binding */ mintBtc; },
   l8: function() { return /* binding */ mintMrc20; },
-  s0: function() { return /* binding */ mintRunes; },
-  KA: function() { return /* binding */ redeemBrc20; },
   qO: function() { return /* binding */ redeemBtc; },
   rP: function() { return /* binding */ redeemMrc20; },
-  a9: function() { return /* binding */ redeemRunes; },
   EX: function() { return /* binding */ supportRedeemAddressType; }
 });
-
-// UNUSED EXPORTS: getBtcTxSizeByOutputType, getOutput, sleep
 
 // NAMESPACE OBJECT (decoupled): ./node_modules/@bitcoin-js/tiny-secp256k1-asmjs/lib/rand.browser.js
 var rand_browser_namespaceObject = {};
@@ -15163,19 +12527,26 @@ __webpack_require__.d(lib_namespaceObject, {
   xOnlyPointFromScalar: function() { return lib_xOnlyPointFromScalar; }
 });
 
+// EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/typeof.js
+var helpers_typeof = __webpack_require__(63859);
+var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/regeneratorRuntime.js
 var regeneratorRuntime = __webpack_require__(55420);
 var regeneratorRuntime_default = /*#__PURE__*/__webpack_require__.n(regeneratorRuntime);
-// EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/createForOfIteratorHelper.js
-var createForOfIteratorHelper = __webpack_require__(59224);
-var createForOfIteratorHelper_default = /*#__PURE__*/__webpack_require__.n(createForOfIteratorHelper);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/asyncToGenerator.js
 var asyncToGenerator = __webpack_require__(98312);
 var asyncToGenerator_default = /*#__PURE__*/__webpack_require__.n(asyncToGenerator);
-// EXTERNAL MODULE: ./node_modules/bitcoinjs-lib/src/index.js
-var src = __webpack_require__(21757);
+// EXTERNAL MODULE: ./src/servies/api.ts
+var api = __webpack_require__(28651);
+// EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/createForOfIteratorHelper.js
+var createForOfIteratorHelper = __webpack_require__(59224);
+var createForOfIteratorHelper_default = /*#__PURE__*/__webpack_require__.n(createForOfIteratorHelper);
 // EXTERNAL MODULE: ./node_modules/decimal.js/decimal.mjs
 var decimal = __webpack_require__(76582);
+// EXTERNAL MODULE: ./src/utils/psbtBuildV2.ts
+var psbtBuildV2 = __webpack_require__(19240);
+// EXTERNAL MODULE: ./node_modules/bitcoinjs-lib/src/index.js
+var src = __webpack_require__(21757);
 ;// ./node_modules/uint8array-tools/src/mjs/browser.js
 const HEX_STRINGS = "0123456789abcdefABCDEF";
 const HEX_CODES = HEX_STRINGS.split("").map((c) => c.codePointAt(0));
@@ -48685,750 +46056,9 @@ function lib_verifySchnorr(h, Q, signature) {
     }
 }
 
-// EXTERNAL MODULE: ./src/servies/api.ts
-var api = __webpack_require__(28651);
-// EXTERNAL MODULE: ./src/utils/utils.ts + 1 modules
-var utils = __webpack_require__(79502);
-// EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/typeof.js
-var helpers_typeof = __webpack_require__(63859);
-var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
-// EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/slicedToArray.js
-var slicedToArray = __webpack_require__(11604);
-var slicedToArray_default = /*#__PURE__*/__webpack_require__.n(slicedToArray);
-// EXTERNAL MODULE: ./src/utils/psbtBuild.ts
-var psbtBuild = __webpack_require__(66268);
-// EXTERNAL MODULE: ./node_modules/@magiceden-oss/runestone-lib/dist/index.js
-var dist = __webpack_require__(63843);
-;// ./src/utils/runes.ts
-
-
-
-
-
-
-
-
-
-
-var DUST_SIZE = 546;
-var selectRuneUTXOs = function selectRuneUTXOs(utxos, targetAmount) {
-  var totalAmount = new decimal/* Decimal */.W(0);
-  var selectedUtxos = [];
-  var _iterator = createForOfIteratorHelper_default()(utxos),
-    _step;
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var utxo = _step.value;
-      if (!(utxo !== null && utxo !== void 0 && utxo.runes)) {
-        throw new Error("Invalid Rune UTXO");
-      }
-      selectedUtxos.push(utxo);
-      totalAmount = totalAmount.add(utxo.runes.reduce(function (acc, cur) {
-        return acc + Number(cur.amount);
-      }, 0));
-      if (totalAmount.gte(targetAmount)) {
-        break;
-      }
-    }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
-  }
-  if (totalAmount.lt(targetAmount)) {
-    throw new Error("Insufficient funds to reach the target rune amount");
-  }
-  return selectedUtxos;
-};
-var parseRuneid = function parseRuneid(runeId) {
-  try {
-    var _runeId$split = runeId.split(":"),
-      _runeId$split2 = slicedToArray_default()(_runeId$split, 2),
-      block = _runeId$split2[0],
-      tx = _runeId$split2[1];
-    return {
-      tx: parseInt(tx),
-      block: BigInt(block)
-    };
-  } catch (err) {
-    throw new Error("Invalid rune id");
-  }
-};
-var sendRunes = /*#__PURE__*/function () {
-  var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2(_ref) {
-    var runeId, feeRate, recipient, runeAmount, divisibility, _ref$outputValue, outputValue, net, addressType, senderAddress, _yield$fetchRunesUtxo, runeUtxos, utxos, filteredUtxos, selectedRuneUtxos, btcNetwork, ret;
-    return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
-        case 0:
-          runeId = _ref.runeId, feeRate = _ref.feeRate, recipient = _ref.recipient, runeAmount = _ref.runeAmount, divisibility = _ref.divisibility, _ref$outputValue = _ref.outputValue, outputValue = _ref$outputValue === void 0 ? 546 : _ref$outputValue, net = _ref.net, addressType = _ref.addressType;
-          _context2.next = 3;
-          return window.metaidwallet.btc.getAddress();
-        case 3:
-          senderAddress = _context2.sent;
-          _context2.next = 6;
-          return (0,api/* fetchRunesUtxos */.L7)(senderAddress, runeId, net);
-        case 6:
-          _yield$fetchRunesUtxo = _context2.sent;
-          runeUtxos = _yield$fetchRunesUtxo.data.list;
-          _context2.next = 10;
-          return (0,psbtBuild/* getUtxos */._8)(senderAddress);
-        case 10:
-          utxos = _context2.sent;
-          filteredUtxos = utxos.filter(function (utxo) {
-            return !runeUtxos.some(function (runeUtxo) {
-              return runeUtxo.txId === utxo.txId && runeUtxo.outputIndex === utxo.outputIndex;
-            });
-          });
-          selectedRuneUtxos = selectRuneUTXOs(runeUtxos, new decimal/* Decimal */.W(runeAmount));
-          btcNetwork = net === "mainnet" ? src/* networks */.o8.bitcoin : src/* networks */.o8.testnet;
-          _context2.next = 16;
-          return (0,psbtBuild/* buildTx */.pr)(filteredUtxos, new decimal/* Decimal */.W(outputValue * 2), feeRate, {
-            runeId: runeId,
-            recipient: recipient,
-            runeUtxos: selectedRuneUtxos,
-            outputValue: outputValue,
-            runeAmount: new decimal/* Decimal */.W(10).toPower(divisibility).mul(runeAmount)
-          }, senderAddress, /*#__PURE__*/function () {
-            var _ref3 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(buildPsbtParams, selectedUTXOs, change, needChange) {
-              var runeId, runeUtxos, runeAmount, recipient, _buildPsbtParams$outp, outputValue, psbt, _iterator2, _step2, runeUtxo, psbtInput, _iterator3, _step3, utxo, _psbtInput, _signPsbt, signPsbt;
-              return regeneratorRuntime_default()().wrap(function _callee$(_context) {
-                while (1) switch (_context.prev = _context.next) {
-                  case 0:
-                    runeId = buildPsbtParams.runeId, runeUtxos = buildPsbtParams.runeUtxos, runeAmount = buildPsbtParams.runeAmount, recipient = buildPsbtParams.recipient, _buildPsbtParams$outp = buildPsbtParams.outputValue, outputValue = _buildPsbtParams$outp === void 0 ? 546 : _buildPsbtParams$outp;
-                    if (runeUtxos.length) {
-                      _context.next = 3;
-                      break;
-                    }
-                    throw new Error("No available rune to send");
-                  case 3:
-                    psbt = new src/* Psbt */.iL({
-                      network: btcNetwork
-                    });
-                    _iterator2 = createForOfIteratorHelper_default()(runeUtxos);
-                    _context.prev = 5;
-                    _iterator2.s();
-                  case 7:
-                    if ((_step2 = _iterator2.n()).done) {
-                      _context.next = 15;
-                      break;
-                    }
-                    runeUtxo = _step2.value;
-                    _context.next = 11;
-                    return (0,psbtBuild/* createPsbtInput */.uz)({
-                      utxo: runeUtxo,
-                      network: net,
-                      addressType: addressType
-                    });
-                  case 11:
-                    psbtInput = _context.sent;
-                    psbt.addInput(psbtInput);
-                  case 13:
-                    _context.next = 7;
-                    break;
-                  case 15:
-                    _context.next = 20;
-                    break;
-                  case 17:
-                    _context.prev = 17;
-                    _context.t0 = _context["catch"](5);
-                    _iterator2.e(_context.t0);
-                  case 20:
-                    _context.prev = 20;
-                    _iterator2.f();
-                    return _context.finish(20);
-                  case 23:
-                    _iterator3 = createForOfIteratorHelper_default()(selectedUTXOs);
-                    _context.prev = 24;
-                    _iterator3.s();
-                  case 26:
-                    if ((_step3 = _iterator3.n()).done) {
-                      _context.next = 34;
-                      break;
-                    }
-                    utxo = _step3.value;
-                    _context.next = 30;
-                    return (0,psbtBuild/* createPsbtInput */.uz)({
-                      utxo: utxo,
-                      network: net,
-                      addressType: addressType
-                    });
-                  case 30:
-                    _psbtInput = _context.sent;
-                    psbt.addInput(_psbtInput);
-                  case 32:
-                    _context.next = 26;
-                    break;
-                  case 34:
-                    _context.next = 39;
-                    break;
-                  case 36:
-                    _context.prev = 36;
-                    _context.t1 = _context["catch"](24);
-                    _iterator3.e(_context.t1);
-                  case 39:
-                    _context.prev = 39;
-                    _iterator3.f();
-                    return _context.finish(39);
-                  case 42:
-                    psbt.addOutput({
-                      address: senderAddress,
-                      value: outputValue
-                    });
-                    psbt.addOutput({
-                      address: recipient,
-                      value: outputValue
-                    });
-                    psbt.addOutput({
-                      value: 0,
-                      script: (0,dist/* encodeRunestone */.wX)({
-                        edicts: [{
-                          id: parseRuneid(runeId),
-                          amount: BigInt(runeAmount.toString()),
-                          output: 1
-                        }]
-                      }).encodedRunestone
-                    });
-                    if (needChange || change.gt(DUST_SIZE)) {
-                      psbt.addOutput({
-                        address: senderAddress,
-                        value: change.toNumber()
-                      });
-                    }
-                    _context.next = 48;
-                    return window.metaidwallet.btc.signPsbt({
-                      psbtHex: psbt.toHex()
-                    });
-                  case 48:
-                    _signPsbt = _context.sent;
-                    if (!(typeof_default()(_signPsbt) === "object")) {
-                      _context.next = 53;
-                      break;
-                    }
-                    if (!(_signPsbt.status === "canceled")) {
-                      _context.next = 52;
-                      break;
-                    }
-                    throw new Error("canceled");
-                  case 52:
-                    throw new Error("");
-                  case 53:
-                    signPsbt = src/* Psbt */.iL.fromHex(_signPsbt);
-                    return _context.abrupt("return", signPsbt);
-                  case 55:
-                  case "end":
-                    return _context.stop();
-                }
-              }, _callee, null, [[5, 17, 20, 23], [24, 36, 39, 42]]);
-            }));
-            return function (_x2, _x3, _x4, _x5) {
-              return _ref3.apply(this, arguments);
-            };
-          }());
-        case 16:
-          ret = _context2.sent;
-          return _context2.abrupt("return", ret);
-        case 18:
-        case "end":
-          return _context2.stop();
-      }
-    }, _callee2);
-  }));
-  return function sendRunes(_x) {
-    return _ref2.apply(this, arguments);
-  };
-}();
-// EXTERNAL MODULE: ./node_modules/@mempool/mempool.js/lib/index.js
-var lib = __webpack_require__(12255);
-var lib_default = /*#__PURE__*/__webpack_require__.n(lib);
-// EXTERNAL MODULE: ./node_modules/bitcoinjs-lib/src/psbt/bip371.js
-var bip371 = __webpack_require__(60477);
-;// ./src/utils/psbtBuildV2.ts
+;// ./src/utils/btc.ts
 /* unused harmony import specifier */ var _regeneratorRuntime;
 /* unused harmony import specifier */ var _asyncToGenerator;
-/* unused harmony import specifier */ var Decimal;
-/* unused harmony import specifier */ var payments;
-
-
-
-
-
-
-
-
-var TX_EMPTY_SIZE = 4 + 1 + 1 + 4;
-var TX_INPUT_BASE = 32 + 4 + 1 + 4; // 41
-var TX_INPUT_PUBKEYHASH = 107;
-var TX_INPUT_SEGWIT = 27;
-var TX_INPUT_TAPROOT = 17; // round up 16.5 bytes
-var TX_OUTPUT_BASE = 8 + 1;
-var TX_OUTPUT_PUBKEYHASH = 25;
-var TX_OUTPUT_SCRIPTHASH = 23;
-var TX_OUTPUT_SEGWIT = 22;
-var TX_OUTPUT_SEGWIT_SCRIPTHASH = 34;
-var TX_INPUT_SCRIPT_BASE = 0;
-function selectUTXOs(utxos, targetAmount) {
-  var totalAmount = new decimal/* Decimal */.W(0);
-  var selectedUtxos = [];
-  var _iterator = createForOfIteratorHelper_default()(utxos),
-    _step;
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var utxo = _step.value;
-      selectedUtxos.push(utxo);
-      totalAmount = totalAmount.add(utxo.satoshis);
-      if (totalAmount.gte(targetAmount)) {
-        break;
-      }
-    }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
-  }
-  if (totalAmount.lt(targetAmount)) {
-    throw new Error('Insufficient funds to reach the target amount');
-  }
-  return selectedUtxos;
-}
-var getNetworks = function getNetworks(network) {
-  return network === "mainnet" ? src/* networks */.o8.bitcoin : src/* networks */.o8.testnet;
-};
-function getTotalSatoshi(utxos) {
-  return utxos.reduce(function (total, utxo) {
-    return total.add(utxo.satoshis);
-  }, new decimal/* Decimal */.W(0));
-}
-function calculateEstimatedFee(psbt, feeRate) {
-  var tx = psbt.extractTransaction();
-  var size = tx.virtualSize();
-  return new Decimal(size).mul(feeRate);
-}
-function inputBytes(input) {
-  // todo: script length
-
-  if ((0,bip371.isTaprootInput)(input)) {
-    return TX_INPUT_BASE + TX_INPUT_TAPROOT;
-  }
-  if (input.redeemScript) return TX_INPUT_BASE + input.redeemScript.length;
-  if (input.nonWitnessUtxo) return TX_INPUT_BASE + TX_INPUT_PUBKEYHASH;
-  if (input.witnessUtxo) return TX_INPUT_BASE + TX_INPUT_SEGWIT;
-  return TX_INPUT_BASE + TX_INPUT_PUBKEYHASH;
-}
-function outputBytes(output) {
-  var _output$address, _output$address2, _output$address3, _output$address4, _output$address5;
-  // if output is op-return, use it's buffer size
-
-  return TX_OUTPUT_BASE + (output.script ? output.script.length : (_output$address = output.address) !== null && _output$address !== void 0 && _output$address.startsWith('bc1') || (_output$address2 = output.address) !== null && _output$address2 !== void 0 && _output$address2.startsWith('tb1') ? ((_output$address3 = output.address) === null || _output$address3 === void 0 ? void 0 : _output$address3.length) === 42 // TODO: looks like something wrong here
-  ? TX_OUTPUT_SEGWIT : TX_OUTPUT_SEGWIT_SCRIPTHASH : (_output$address4 = output.address) !== null && _output$address4 !== void 0 && _output$address4.startsWith('3') || (_output$address5 = output.address) !== null && _output$address5 !== void 0 && _output$address5.startsWith('2') ? TX_OUTPUT_SCRIPTHASH : TX_OUTPUT_PUBKEYHASH);
-}
-function transactionBytes(inputs, outputs) {
-  var inputsSize = inputs.reduce(function (a, x) {
-    return a + inputBytes(x);
-  }, 0);
-  var outputsSize = outputs.reduce(function (a, x, index) {
-    return a + outputBytes(x);
-  }, 0);
-  console.log({
-    inputsSize: inputsSize,
-    outputsSize: outputsSize,
-    TX_EMPTY_SIZE: TX_EMPTY_SIZE
-  });
-  return TX_EMPTY_SIZE + inputsSize + outputsSize;
-}
-function calcFee(psbt, feeRate) {
-  var inputs = psbt.data.inputs;
-  var outputs = psbt.txOutputs;
-  var bytes = transactionBytes(inputs, outputs);
-  console.log({
-    bytes: bytes
-  });
-  return new decimal/* Decimal */.W(bytes).mul(feeRate);
-}
-function buildTx(_x, _x2, _x3, _x4, _x5, _x6) {
-  return _buildTx.apply(this, arguments);
-}
-function _buildTx() {
-  _buildTx = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee5(utxos, amount, feeRate, buildPsbtParams, address, buildPsbt) {
-    var extract,
-      signPsbt,
-      selectedUTXOs,
-      total,
-      psbt,
-      estimatedFee,
-      _args5 = arguments;
-    return regeneratorRuntime_default()().wrap(function _callee5$(_context5) {
-      while (1) switch (_context5.prev = _context5.next) {
-        case 0:
-          extract = _args5.length > 6 && _args5[6] !== undefined ? _args5[6] : false;
-          signPsbt = _args5.length > 7 && _args5[7] !== undefined ? _args5[7] : true;
-          selectedUTXOs = selectUTXOs(utxos, amount);
-          total = getTotalSatoshi(selectedUTXOs);
-          _context5.next = 6;
-          return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount), true, false);
-        case 6:
-          psbt = _context5.sent;
-          estimatedFee = calcFee(psbt, feeRate);
-        case 8:
-          if (!total.lt(amount.add(estimatedFee))) {
-            _context5.next = 19;
-            break;
-          }
-          if (!(selectedUTXOs.length === utxos.length)) {
-            _context5.next = 11;
-            break;
-          }
-          throw new Error('Insufficient funds');
-        case 11:
-          selectedUTXOs = selectUTXOs(utxos, amount.add(estimatedFee));
-          total = getTotalSatoshi(selectedUTXOs);
-          _context5.next = 15;
-          return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount.add(estimatedFee)), true, false);
-        case 15:
-          psbt = _context5.sent;
-          estimatedFee = calcFee(psbt, feeRate);
-          _context5.next = 8;
-          break;
-        case 19:
-          _context5.next = 21;
-          return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount.add(estimatedFee)), false, signPsbt);
-        case 21:
-          psbt = _context5.sent;
-          console.log(psbt, 'psbt in buildTx');
-          return _context5.abrupt("return", {
-            psbt: psbt,
-            fee: total.minus(psbt.txOutputs.reduce(function (acc, cur) {
-              return acc + Number(cur.value);
-            }, 0)).toString(),
-            txId: !extract ? '' : psbt.extractTransaction().getId(),
-            rawTx: !extract ? psbt.toHex() : psbt.extractTransaction().toHex(),
-            txInputs: selectedUTXOs.map(function (utxo) {
-              return {
-                address: address,
-                value: utxo.satoshis
-              };
-            }),
-            txOutputs: psbt.txOutputs.map(function (out) {
-              return {
-                address: out.address || '',
-                value: out.value
-              };
-            })
-          });
-        case 24:
-        case "end":
-          return _context5.stop();
-      }
-    }, _callee5);
-  }));
-  return _buildTx.apply(this, arguments);
-}
-function createPsbtInput(_x7) {
-  return _createPsbtInput.apply(this, arguments);
-}
-function _createPsbtInput() {
-  _createPsbtInput = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee6(_ref) {
-    var utxo, addressType, publicKey, script, network, payInput, tx, mempoolReturn, rawTx, _tx, _payments$p2sh, redeem;
-    return regeneratorRuntime_default()().wrap(function _callee6$(_context6) {
-      while (1) switch (_context6.prev = _context6.next) {
-        case 0:
-          utxo = _ref.utxo, addressType = _ref.addressType, publicKey = _ref.publicKey, script = _ref.script, network = _ref.network;
-          payInput = {
-            hash: utxo.txId,
-            index: utxo.vout,
-            sequence: 0xffffffff // These are defaults. This line is not needed.
-          };
-          if (['P2TR'].includes(addressType)) {
-            payInput['tapInternalKey'] = publicKey.subarray(1);
-            payInput['witnessUtxo'] = {
-              value: utxo.satoshi,
-              script: script
-            };
-          }
-          if (['P2WPKH'].includes(addressType)) {
-            payInput['witnessUtxo'] = {
-              value: utxo.satoshi,
-              script: script
-            };
-          }
-          if (!['P2PKH'].includes(addressType)) {
-            _context6.next = 16;
-            break;
-          }
-          if (!utxo.rawTx) {
-            _context6.next = 10;
-            break;
-          }
-          tx = src/* Transaction */.ZX.fromHex(utxo.rawTx);
-          payInput['nonWitnessUtxo'] = tx.toBuffer();
-          _context6.next = 16;
-          break;
-        case 10:
-          mempoolReturn = lib_default()({
-            hostname: 'mempool.space',
-            network: network === 'testnet' ? 'testnet' : 'main'
-          });
-          _context6.next = 13;
-          return mempoolReturn.bitcoin.transactions.getTxHex({
-            txid: utxo.txId
-          });
-        case 13:
-          rawTx = _context6.sent;
-          _tx = src/* Transaction */.ZX.fromHex(rawTx);
-          payInput['nonWitnessUtxo'] = _tx.toBuffer();
-        case 16:
-          if (!['P2SH'].includes(addressType)) {
-            _context6.next = 22;
-            break;
-          }
-          _payments$p2sh = src/* payments */.KT.p2sh({
-            redeem: src/* payments */.KT.p2wpkh({
-              pubkey: publicKey,
-              network: getNetworks(network)
-            }),
-            network: getNetworks(network)
-          }), redeem = _payments$p2sh.redeem;
-          if (redeem) {
-            _context6.next = 20;
-            break;
-          }
-          throw new Error('redeemScript');
-        case 20:
-          payInput.redeemScript = redeem.output;
-          payInput['witnessUtxo'] = {
-            value: utxo.satoshi,
-            script: script
-          };
-        case 22:
-          return _context6.abrupt("return", payInput);
-        case 23:
-        case "end":
-          return _context6.stop();
-      }
-    }, _callee6);
-  }));
-  return _createPsbtInput.apply(this, arguments);
-}
-function fillInternalKey(_x8) {
-  return _fillInternalKey.apply(this, arguments);
-}
-function _fillInternalKey() {
-  _fillInternalKey = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(_ref2) {
-    var publicKey, addressType, network, payInput, _payments$p2sh2, redeem;
-    return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-      while (1) switch (_context7.prev = _context7.next) {
-        case 0:
-          publicKey = _ref2.publicKey, addressType = _ref2.addressType, network = _ref2.network;
-          payInput = {};
-          if (['P2TR'].includes(addressType)) {
-            payInput['tapInternalKey'] = publicKey.subarray(1);
-          }
-          if (!['P2SH'].includes(addressType)) {
-            _context7.next = 9;
-            break;
-          }
-          console.log('input.tapInternalKey');
-          _payments$p2sh2 = payments.p2sh({
-            redeem: payments.p2wpkh({
-              pubkey: publicKey,
-              network: getNetworks(network)
-            }),
-            network: getNetworks(network)
-          }), redeem = _payments$p2sh2.redeem;
-          if (redeem) {
-            _context7.next = 8;
-            break;
-          }
-          throw new Error('redeemScript');
-        case 8:
-          payInput.redeemScript = redeem.output;
-        case 9:
-          return _context7.abrupt("return", payInput);
-        case 10:
-        case "end":
-          return _context7.stop();
-      }
-    }, _callee7);
-  }));
-  return _fillInternalKey.apply(this, arguments);
-}
-var getUtxos = /*#__PURE__*/function () {
-  var _ref3 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(address, network) {
-    var addressType, utxos;
-    return regeneratorRuntime_default()().wrap(function _callee$(_context) {
-      while (1) switch (_context.prev = _context.next) {
-        case 0:
-          addressType = (0,utils/* determineAddressInfo */.AG)(address).toUpperCase();
-          _context.next = 3;
-          return window.metaidwallet.btc.getUtxos({
-            needRawTx: ['P2PKH'].includes(addressType),
-            useUnconfirmed: true
-          });
-        case 3:
-          utxos = _context.sent;
-          return _context.abrupt("return", utxos);
-        case 5:
-        case "end":
-          return _context.stop();
-      }
-    }, _callee);
-  }));
-  return function getUtxos(_x9, _x10) {
-    return _ref3.apply(this, arguments);
-  };
-}();
-var addUtxoSafe = /*#__PURE__*/(/* unused pure expression or super */ null && (function () {
-  var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(address, utxos) {
-    var i, _utxos$i, txId, vout, ret;
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
-        case 0:
-          i = 0;
-        case 1:
-          if (!(i < utxos.length)) {
-            _context2.next = 15;
-            break;
-          }
-          _context2.prev = 2;
-          _utxos$i = utxos[i], txId = _utxos$i.txId, vout = _utxos$i.vout;
-          _context2.next = 6;
-          return window.metaidwallet.btc.addSafeUtxo({
-            address: address,
-            unspentOutput: "".concat(txId, ":").concat(vout)
-          });
-        case 6:
-          ret = _context2.sent;
-          _context2.next = 12;
-          break;
-        case 9:
-          _context2.prev = 9;
-          _context2.t0 = _context2["catch"](2);
-          console.log(_context2.t0);
-        case 12:
-          i++;
-          _context2.next = 1;
-          break;
-        case 15:
-        case "end":
-          return _context2.stop();
-      }
-    }, _callee2, null, [[2, 9]]);
-  }));
-  return function addUtxoSafe(_x11, _x12) {
-    return _ref4.apply(this, arguments);
-  };
-}()));
-function toXOnly(pubKey) {
-  return pubKey.length === 32 ? pubKey : pubKey.slice(1, 33);
-}
-function updateInputKey(_x13) {
-  return _updateInputKey.apply(this, arguments);
-}
-function _updateInputKey() {
-  _updateInputKey = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(_ref5) {
-    var publicKey, addressType, network, payInput, tapInternalKey, _payments$p2sh3, redeem;
-    return _regeneratorRuntime().wrap(function _callee8$(_context8) {
-      while (1) switch (_context8.prev = _context8.next) {
-        case 0:
-          publicKey = _ref5.publicKey, addressType = _ref5.addressType, network = _ref5.network;
-          payInput = {};
-          if (['P2TR'].includes(addressType)) {
-            tapInternalKey = toXOnly(publicKey);
-            payInput['tapInternalKey'] = tapInternalKey;
-          }
-          if (!['P2SH'].includes(addressType)) {
-            _context8.next = 9;
-            break;
-          }
-          console.log('input.tapInternalKey');
-          _payments$p2sh3 = payments.p2sh({
-            redeem: payments.p2wpkh({
-              pubkey: publicKey,
-              network: getNetworks(network)
-            }),
-            network: getNetworks(network)
-          }), redeem = _payments$p2sh3.redeem;
-          if (redeem) {
-            _context8.next = 8;
-            break;
-          }
-          throw new Error('redeemScript');
-        case 8:
-          payInput.redeemScript = redeem.output;
-        case 9:
-          return _context8.abrupt("return", payInput);
-        case 10:
-        case "end":
-          return _context8.stop();
-      }
-    }, _callee8);
-  }));
-  return _updateInputKey.apply(this, arguments);
-}
-var getUtxoBalance = /*#__PURE__*/(/* unused pure expression or super */ null && (function () {
-  var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(address) {
-    var utxos;
-    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-      while (1) switch (_context3.prev = _context3.next) {
-        case 0:
-          if (address) {
-            _context3.next = 4;
-            break;
-          }
-          _context3.next = 3;
-          return window.metaidwallet.btc.getAddress();
-        case 3:
-          address = _context3.sent;
-        case 4:
-          _context3.next = 6;
-          return getUtxos(address);
-        case 6:
-          utxos = _context3.sent;
-          return _context3.abrupt("return", utxos.reduce(function (acc, cur) {
-            return acc + cur.satoshis;
-          }, 0));
-        case 8:
-        case "end":
-          return _context3.stop();
-      }
-    }, _callee3);
-  }));
-  return function getUtxoBalance(_x14) {
-    return _ref6.apply(this, arguments);
-  };
-}()));
-var checkWalletAddress = /*#__PURE__*/(/* unused pure expression or super */ null && (function () {
-  var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(address) {
-    var _address;
-    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-      while (1) switch (_context4.prev = _context4.next) {
-        case 0:
-          _context4.next = 2;
-          return window.metaidwallet.btc.getAddress();
-        case 2:
-          _address = _context4.sent;
-          if (!(address !== _address)) {
-            _context4.next = 5;
-            break;
-          }
-          return _context4.abrupt("return", {
-            status: false,
-            message: 'Wallet address is not matched'
-          });
-        case 5:
-          return _context4.abrupt("return", {
-            status: true
-          });
-        case 6:
-        case "end":
-          return _context4.stop();
-      }
-    }, _callee4);
-  }));
-  return function checkWalletAddress(_x15) {
-    return _ref7.apply(this, arguments);
-  };
-}()));
-;// ./src/utils/btc.ts
 /* provided dependency */ var Buffer = __webpack_require__(48287).Buffer;
 
 
@@ -49439,7 +46069,7 @@ var checkWalletAddress = /*#__PURE__*/(/* unused pure expression or super */ nul
 
 
 var SIGHASH_ALL = 0x01;
-var btc_DUST_SIZE = 546;
+var DUST_SIZE = 546;
 var _buildTransferBTCsPsbt = /*#__PURE__*/function () {
   var _ref = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(params, selectedUTXOs, change, needChange, signPsbt) {
     var network, addressType, publicKey, script, transfers, address, psbt, _iterator, _step, utxo, psbtInput, _iterator2, _step2, transfer, _signed, signed;
@@ -49448,7 +46078,7 @@ var _buildTransferBTCsPsbt = /*#__PURE__*/function () {
         case 0:
           network = params.network, addressType = params.addressType, publicKey = params.publicKey, script = params.script, transfers = params.transfers, address = params.address;
           psbt = new src/* Psbt */.iL({
-            network: getNetworks(network)
+            network: (0,psbtBuildV2/* getNetworks */.S)(network)
           });
           _iterator = createForOfIteratorHelper_default()(selectedUTXOs);
           _context.prev = 3;
@@ -49460,7 +46090,7 @@ var _buildTransferBTCsPsbt = /*#__PURE__*/function () {
           }
           utxo = _step.value;
           _context.next = 9;
-          return createPsbtInput({
+          return (0,psbtBuildV2/* createPsbtInput */.uz)({
             utxo: utxo,
             addressType: addressType,
             publicKey: publicKey,
@@ -49492,7 +46122,7 @@ var _buildTransferBTCsPsbt = /*#__PURE__*/function () {
               transfer = _step2.value;
               psbt.addOutput({
                 address: transfer.toAddress,
-                value: transfer.satoshis
+                value: Math.round(transfer.satoshis)
               });
             }
           } catch (err) {
@@ -49500,10 +46130,10 @@ var _buildTransferBTCsPsbt = /*#__PURE__*/function () {
           } finally {
             _iterator2.f();
           }
-          if (needChange || change.gt(btc_DUST_SIZE)) {
+          if (needChange || change.gt(DUST_SIZE)) {
             psbt.addOutput({
               address: address,
-              value: change.toNumber()
+              value: Math.floor(change.toNumber())
             });
           }
           if (signPsbt) {
@@ -49531,7 +46161,7 @@ var _buildTransferBTCsPsbt = /*#__PURE__*/function () {
           }
           throw new Error("canceled");
         case 33:
-          throw new Error("");
+          throw new Error(_signed.status || "signPsbt rejected");
         case 34:
           signed = src/* Psbt */.iL.fromHex(_signed);
           return _context.abrupt("return", signed);
@@ -49545,30 +46175,31 @@ var _buildTransferBTCsPsbt = /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }();
-var transferBTCs = /*#__PURE__*/function () {
+var transferBTCsWithMeta = /*#__PURE__*/function () {
   var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2(params) {
-    var address, transfers, feeRate, addressType, network, totalAmount, utxos, publicKey, script, commitTx;
+    var _commitTx$txOutputs$l;
+    var address, transfers, feeRate, addressType, network, totalAmount, utxos, publicKey, script, commitTx, lastIndex, changeUtxo;
     return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
           (0,src/* initEccLib */.f0)(lib_namespaceObject);
           address = params.address, transfers = params.transfers, feeRate = params.feeRate, addressType = params.addressType, network = params.network;
           totalAmount = transfers.reduce(function (acc, cur) {
-            return acc + cur.satoshis;
+            return acc + Math.round(cur.satoshis);
           }, 0);
           _context2.next = 5;
-          return getUtxos(address, network);
+          return (0,psbtBuildV2/* getUtxos */._8)(address, network);
         case 5:
           utxos = _context2.sent.sort(function (a, b) {
-            return b.satoshi - a.satoshi;
+            return (0,psbtBuildV2/* getUtxoSats */.eD)(b) - (0,psbtBuildV2/* getUtxoSats */.eD)(a);
           });
           _context2.next = 8;
           return window.metaidwallet.btc.getPublicKey();
         case 8:
           publicKey = _context2.sent;
-          script = src/* address */.hl.toOutputScript(address, getNetworks(network));
+          script = src/* address */.hl.toOutputScript(address, (0,psbtBuildV2/* getNetworks */.S)(network));
           _context2.next = 12;
-          return buildTx(utxos, new decimal/* default */.A(totalAmount), feeRate, {
+          return (0,psbtBuildV2/* buildTx */.pr)(utxos, new decimal/* default */.A(totalAmount), Math.max(1, Math.ceil(feeRate || 2)), {
             addressType: addressType,
             address: address,
             publicKey: Buffer.from(publicKey, "hex"),
@@ -49578,29 +46209,48 @@ var transferBTCs = /*#__PURE__*/function () {
           }, address, _buildTransferBTCsPsbt, true, true);
         case 12:
           commitTx = _context2.sent;
-          return _context2.abrupt("return", commitTx.rawTx);
-        case 14:
+          lastIndex = commitTx.txOutputs.length - 1;
+          changeUtxo = lastIndex >= transfers.length && ((_commitTx$txOutputs$l = commitTx.txOutputs[lastIndex]) === null || _commitTx$txOutputs$l === void 0 ? void 0 : _commitTx$txOutputs$l.address) === address ? {
+            txId: commitTx.txId,
+            vout: lastIndex
+          } : undefined;
+          return _context2.abrupt("return", {
+            rawTx: commitTx.rawTx,
+            txId: commitTx.txId,
+            changeUtxo: changeUtxo
+          });
+        case 16:
         case "end":
           return _context2.stop();
       }
     }, _callee2);
   }));
-  return function transferBTCs(_x6) {
+  return function transferBTCsWithMeta(_x6) {
     return _ref2.apply(this, arguments);
   };
 }();
+var transferBTCs = /*#__PURE__*/(/* unused pure expression or super */ null && (function () {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(params) {
+    var res;
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
+        case 0:
+          _context3.next = 2;
+          return transferBTCsWithMeta(params);
+        case 2:
+          res = _context3.sent;
+          return _context3.abrupt("return", res.rawTx);
+        case 4:
+        case "end":
+          return _context3.stop();
+      }
+    }, _callee3);
+  }));
+  return function transferBTCs(_x7) {
+    return _ref3.apply(this, arguments);
+  };
+}()));
 ;// ./src/servies/wrapping.ts
-/* unused harmony import specifier */ var wrapping_regeneratorRuntime;
-/* unused harmony import specifier */ var _createForOfIteratorHelper;
-/* unused harmony import specifier */ var wrapping_asyncToGenerator;
-/* unused harmony import specifier */ var networks;
-/* unused harmony import specifier */ var wrapping_payments;
-/* provided dependency */ var wrapping_Buffer = __webpack_require__(48287).Buffer;
-
-
-
-
-
 
 
 
@@ -49608,75 +46258,98 @@ var transferBTCs = /*#__PURE__*/function () {
 
 
 var supportRedeemAddressType = ["P2TR", "P2WPKH", "P2PKH"];
-var sleep = function sleep(ms) {
-  return new Promise(function (resolve) {
-    return setTimeout(resolve, ms);
-  });
-};
 function extractApiErrorMessage(error) {
   var _error$response, _error$response2, _error$data, _error$data2;
   return (error === null || error === void 0 || (_error$response = error.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || (error === null || error === void 0 || (_error$response2 = error.response) === null || _error$response2 === void 0 || (_error$response2 = _error$response2.data) === null || _error$response2 === void 0 ? void 0 : _error$response2.msg) || (error === null || error === void 0 || (_error$data = error.data) === null || _error$data === void 0 ? void 0 : _error$data.message) || (error === null || error === void 0 || (_error$data2 = error.data) === null || _error$data2 === void 0 ? void 0 : _error$data2.msg) || (error === null || error === void 0 ? void 0 : error.message) || (error === null || error === void 0 ? void 0 : error.msg) || "unknown error";
 }
-// send mvc side token
-function sendToken(_x, _x2, _x3, _x4) {
-  return _sendToken.apply(this, arguments);
-} // sign redeem  publicKey
-function _sendToken() {
-  _sendToken = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(amount, address, targetTokenCodeHash, targetTokenGenesis) {
-    var decimal,
-      res,
-      _args = arguments;
+
+/**
+ * Local noBroadcast signing on MVC:
+ * Chains [mvcFeeTx (SPACE), ftTransferTx (MCP02 FT)] in a single transfer({ broadcast: false })
+ * call so the SPACE change UTXO feeds directly into the FT transfer without double-spending!
+ */
+function signMvcRedeemBundle(_x) {
+  return _signMvcRedeemBundle.apply(this, arguments);
+}
+function _signMvcRedeemBundle() {
+  _signMvcRedeemBundle = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(params) {
+    var _res$res$;
+    var redeemAmount, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, tokenDecimal, mvcFeeSats, mvcFeeAddress, tasks, needSpaceFee, res, mvcFeeTxHex, ftResult, txHexList;
     return regeneratorRuntime_default()().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
-          decimal = _args.length > 4 && _args[4] !== undefined ? _args[4] : 0;
-          _context.next = 3;
+          redeemAmount = params.redeemAmount, bridgeAddress = params.bridgeAddress, targetTokenCodeHash = params.targetTokenCodeHash, targetTokenGenesis = params.targetTokenGenesis, tokenDecimal = params.tokenDecimal, mvcFeeSats = params.mvcFeeSats, mvcFeeAddress = params.mvcFeeAddress;
+          tasks = [];
+          needSpaceFee = mvcFeeSats > 0 && Boolean(mvcFeeAddress);
+          if (needSpaceFee) {
+            tasks.push({
+              type: "space",
+              receivers: [{
+                address: mvcFeeAddress,
+                amount: String(mvcFeeSats),
+                decimal: 8
+              }]
+            });
+          }
+          tasks.push({
+            type: "token",
+            codehash: targetTokenCodeHash,
+            genesis: targetTokenGenesis,
+            receivers: [{
+              address: bridgeAddress,
+              amount: String(redeemAmount),
+              decimal: tokenDecimal
+            }]
+          });
+          _context.next = 7;
           return window.metaidwallet.transfer({
             broadcast: false,
-            tasks: [{
-              type: "token",
-              codehash: targetTokenCodeHash,
-              genesis: targetTokenGenesis,
-              receivers: [{
-                address: address,
-                amount: amount,
-                decimal: decimal
-              }]
-            }]
+            tasks: tasks
           })["catch"](function (e) {
-            throw new Error(e);
+            throw new Error(extractApiErrorMessage(e));
           });
-        case 3:
+        case 7:
           res = _context.sent;
           if (!res.status) {
-            _context.next = 6;
+            _context.next = 10;
             break;
           }
           throw new Error(res.status);
-        case 6:
-          if (!(!res.res[0] || !res.res[0].routeCheckTxHex)) {
-            _context.next = 8;
+        case 10:
+          if (!(!Array.isArray(res.res) || res.res.length < tasks.length)) {
+            _context.next = 12;
             break;
           }
-          throw new Error("send token failed");
-        case 8:
+          throw new Error("MVC transaction signing cancelled or incomplete");
+        case 12:
+          mvcFeeTxHex = needSpaceFee ? (_res$res$ = res.res[0]) === null || _res$res$ === void 0 ? void 0 : _res$res$.txHex : undefined;
+          ftResult = needSpaceFee ? res.res[1] : res.res[0];
+          if (!(!ftResult || !ftResult.txHex || !ftResult.txid)) {
+            _context.next = 16;
+            break;
+          }
+          throw new Error("Failed to sign MVC token redeem transaction");
+        case 16:
+          txHexList = ftResult.routeCheckTxHex ? [ftResult.routeCheckTxHex, ftResult.txHex] : [ftResult.txHex];
           return _context.abrupt("return", {
-            txHexList: [res.res[0].routeCheckTxHex, res.res[0].txHex],
-            txid: res.res[0].txid
+            mvcFeeTxHex: mvcFeeTxHex,
+            txHexList: txHexList,
+            txid: ftResult.txid
           });
-        case 9:
+        case 18:
         case "end":
           return _context.stop();
       }
     }, _callee);
   }));
-  return _sendToken.apply(this, arguments);
+  return _signMvcRedeemBundle.apply(this, arguments);
 }
-function signPublicKey() {
-  return _signPublicKey.apply(this, arguments);
-} // sign mint publicKey
-function _signPublicKey() {
-  _signPublicKey = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
+function signRedeemPublicKeys() {
+  return _signRedeemPublicKeys.apply(this, arguments);
+}
+function _signRedeemPublicKeys() {
+  _signRedeemPublicKeys = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
+    var _ret$signature;
     var publicKey, publicKeyReceive, publicKeyReceiveSign, ret, publicKeySign;
     return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
@@ -49693,7 +46366,7 @@ function _signPublicKey() {
           return window.metaidwallet.btc.signMessage(publicKeyReceive);
         case 8:
           publicKeyReceiveSign = _context2.sent;
-          if (!(publicKeyReceiveSign.status === "canceled")) {
+          if (!(typeof_default()(publicKeyReceiveSign) === "object" && (publicKeyReceiveSign === null || publicKeyReceiveSign === void 0 ? void 0 : publicKeyReceiveSign.status) === "canceled")) {
             _context2.next = 11;
             break;
           }
@@ -49706,35 +46379,33 @@ function _signPublicKey() {
           });
         case 13:
           ret = _context2.sent;
-          if (!(ret.status === "canceled")) {
+          if (!((ret === null || ret === void 0 ? void 0 : ret.status) === "canceled")) {
             _context2.next = 16;
             break;
           }
           throw new Error("canceled");
         case 16:
-          publicKeySign = ret.signature.signature;
-          if (typeof ret.signature === "string") {
-            publicKeySign = ret.signature;
-          }
+          publicKeySign = typeof (ret === null || ret === void 0 ? void 0 : ret.signature) === "string" ? ret.signature : ret === null || ret === void 0 || (_ret$signature = ret.signature) === null || _ret$signature === void 0 ? void 0 : _ret$signature.signature;
           return _context2.abrupt("return", {
             publicKey: publicKey,
             publicKeySign: publicKeySign,
-            publicKeyReceiveSign: publicKeyReceiveSign,
+            publicKeyReceiveSign: String(publicKeyReceiveSign),
             publicKeyReceive: publicKeyReceive
           });
-        case 19:
+        case 18:
         case "end":
           return _context2.stop();
       }
     }, _callee2);
   }));
-  return _signPublicKey.apply(this, arguments);
+  return _signRedeemPublicKeys.apply(this, arguments);
 }
-function signMintPublicKey() {
-  return _signMintPublicKey.apply(this, arguments);
-} // 4 redeem methods for 4 different assets types easy to understand
-function _signMintPublicKey() {
-  _signMintPublicKey = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
+function signMintPublicKeys() {
+  return _signMintPublicKeys.apply(this, arguments);
+}
+function _signMintPublicKeys() {
+  _signMintPublicKeys = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
+    var _ret$signature2;
     var publicKeyReceive, publicKey, publicKeySign, ret, publicKeyReceiveSign;
     return regeneratorRuntime_default()().wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
@@ -49751,7 +46422,7 @@ function _signMintPublicKey() {
           return window.metaidwallet.btc.signMessage(publicKey);
         case 8:
           publicKeySign = _context3.sent;
-          if (!(publicKeySign.status === "canceled")) {
+          if (!(typeof_default()(publicKeySign) === "object" && (publicKeySign === null || publicKeySign === void 0 ? void 0 : publicKeySign.status) === "canceled")) {
             _context3.next = 11;
             break;
           }
@@ -49764,52 +46435,47 @@ function _signMintPublicKey() {
           });
         case 13:
           ret = _context3.sent;
-          if (!(ret.status === "canceled")) {
+          if (!((ret === null || ret === void 0 ? void 0 : ret.status) === "canceled")) {
             _context3.next = 16;
             break;
           }
           throw new Error("canceled");
         case 16:
-          console.log(ret, "signMessage");
-          publicKeyReceiveSign = ret.signature.signature; //2.7 {signature:{signature:'xxx'}}
-          //3.0 {signature:''}；
-          if (typeof ret.signature === "string") {
-            publicKeyReceiveSign = ret.signature;
-          }
+          publicKeyReceiveSign = typeof (ret === null || ret === void 0 ? void 0 : ret.signature) === "string" ? ret.signature : ret === null || ret === void 0 || (_ret$signature2 = ret.signature) === null || _ret$signature2 === void 0 ? void 0 : _ret$signature2.signature;
           return _context3.abrupt("return", {
             publicKey: publicKey,
-            publicKeySign: publicKeySign,
+            publicKeySign: String(publicKeySign),
             publicKeyReceiveSign: publicKeyReceiveSign,
             publicKeyReceive: publicKeyReceive
           });
-        case 20:
+        case 18:
         case "end":
           return _context3.stop();
       }
     }, _callee3);
   }));
-  return _signMintPublicKey.apply(this, arguments);
+  return _signMintPublicKeys.apply(this, arguments);
 }
-function redeemBtc(_x5, _x6, _x7, _x8) {
+function redeemBtc(_x2, _x3, _x4, _x5, _x6) {
   return _redeemBtc.apply(this, arguments);
 }
 function _redeemBtc() {
-  _redeemBtc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4(redeemAmount, btcAsset, addressType, network) {
-    var _yield$signPublicKey, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, _yield$sendToken, txHexList, txid, submitPrepayOrderRedeemDto, ret;
+  _redeemBtc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4(redeemAmount, btcAsset, addressType, network, assetInfo) {
+    var _yield$signRedeemPubl, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr, createResp, orderId, bridgeAddress, _createResp$mvcFeeSat, mvcFeeSats, _createResp$mvcFeeAdd, mvcFeeAddress, _createResp$btcFeeSat, btcFeeSats, _createResp$btcFeeAdd, btcFeeAddress, _yield$signMvcRedeemB, mvcFeeTxHex, txHexList, txid, btcAddress, btcFeeTxHex, btcChangeUtxo, btcFeeTx, ret;
     return regeneratorRuntime_default()().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
           _context4.prev = 0;
           _context4.next = 3;
-          return signPublicKey();
+          return signRedeemPublicKeys();
         case 3:
-          _yield$signPublicKey = _context4.sent;
-          publicKey = _yield$signPublicKey.publicKey;
-          publicKeySign = _yield$signPublicKey.publicKeySign;
-          publicKeyReceiveSign = _yield$signPublicKey.publicKeyReceiveSign;
-          publicKeyReceive = _yield$signPublicKey.publicKeyReceive;
+          _yield$signRedeemPubl = _context4.sent;
+          publicKey = _yield$signRedeemPubl.publicKey;
+          publicKeySign = _yield$signRedeemPubl.publicKeySign;
+          publicKeyReceiveSign = _yield$signRedeemPubl.publicKeyReceiveSign;
+          publicKeyReceive = _yield$signRedeemPubl.publicKeyReceive;
           createPrepayOrderDto = {
-            amount: redeemAmount,
+            amount: String(redeemAmount),
             originTokenId: btcAsset.originTokenId,
             addressType: addressType,
             publicKey: publicKey,
@@ -49822,68 +46488,105 @@ function _redeemBtc() {
         case 11:
           _yield$createPrepayOr = _context4.sent;
           createResp = _yield$createPrepayOr.data;
-          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
-          targetTokenCodeHash = btcAsset.targetTokenCodeHash, targetTokenGenesis = btcAsset.targetTokenGenesis;
-          _context4.next = 17;
-          return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis, btcAsset.decimals - btcAsset.trimDecimals);
-        case 17:
-          _yield$sendToken = _context4.sent;
-          txHexList = _yield$sendToken.txHexList;
-          txid = _yield$sendToken.txid;
-          submitPrepayOrderRedeemDto = {
-            orderId: orderId,
-            txHexList: txHexList,
-            txid: txid
-          };
-          _context4.next = 23;
-          return sleep(3000);
-        case 23:
-          _context4.next = 25;
-          return (0,api/* submitPrepayOrderRedeemBtc */.rS)(network, submitPrepayOrderRedeemDto);
-        case 25:
-          ret = _context4.sent;
-          if (ret.success) {
-            _context4.next = 28;
+          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress, _createResp$mvcFeeSat = createResp.mvcFeeSats, mvcFeeSats = _createResp$mvcFeeSat === void 0 ? 0 : _createResp$mvcFeeSat, _createResp$mvcFeeAdd = createResp.mvcFeeAddress, mvcFeeAddress = _createResp$mvcFeeAdd === void 0 ? "" : _createResp$mvcFeeAdd, _createResp$btcFeeSat = createResp.btcFeeSats, btcFeeSats = _createResp$btcFeeSat === void 0 ? 0 : _createResp$btcFeeSat, _createResp$btcFeeAdd = createResp.btcFeeAddress, btcFeeAddress = _createResp$btcFeeAdd === void 0 ? "" : _createResp$btcFeeAdd; // 1. Local MVC signing (broadcast: false): [mvcFeeTx, routeCheckTx, ftTx]
+          _context4.next = 16;
+          return signMvcRedeemBundle({
+            redeemAmount: String(redeemAmount),
+            bridgeAddress: bridgeAddress,
+            targetTokenCodeHash: btcAsset.targetTokenCodeHash,
+            targetTokenGenesis: btcAsset.targetTokenGenesis,
+            tokenDecimal: btcAsset.decimals - btcAsset.trimDecimals,
+            mvcFeeSats: Number(mvcFeeSats || 0),
+            mvcFeeAddress: mvcFeeAddress
+          });
+        case 16:
+          _yield$signMvcRedeemB = _context4.sent;
+          mvcFeeTxHex = _yield$signMvcRedeemB.mvcFeeTxHex;
+          txHexList = _yield$signMvcRedeemB.txHexList;
+          txid = _yield$signMvcRedeemB.txid;
+          _context4.next = 22;
+          return window.metaidwallet.btc.getAddress();
+        case 22:
+          btcAddress = _context4.sent;
+          if (!(Number(btcFeeSats) > 0 && btcFeeAddress)) {
+            _context4.next = 29;
             break;
           }
-          throw new Error(ret.msg);
-        case 28:
-          return _context4.abrupt("return", {
+          _context4.next = 26;
+          return transferBTCsWithMeta({
+            transfers: [{
+              toAddress: btcFeeAddress,
+              satoshis: Number(btcFeeSats)
+            }],
+            address: btcAddress,
+            feeRate: (assetInfo === null || assetInfo === void 0 ? void 0 : assetInfo.feeBtc) || 2,
+            addressType: addressType,
+            network: network
+          });
+        case 26:
+          btcFeeTx = _context4.sent;
+          btcFeeTxHex = btcFeeTx.rawTx;
+          btcChangeUtxo = btcFeeTx.changeUtxo;
+        case 29:
+          _context4.next = 31;
+          return (0,api/* submitPrepayOrderRedeemBtc */.rS)(network, {
             orderId: orderId,
-            txid: ""
+            txid: txid,
+            txHexList: txHexList,
+            mvcFeeTxHex: mvcFeeTxHex,
+            btcFeeTxHex: btcFeeTxHex
           });
         case 31:
-          _context4.prev = 31;
-          _context4.t0 = _context4["catch"](0);
-          throw new Error(_context4.t0);
+          ret = _context4.sent;
+          if (ret.success) {
+            _context4.next = 34;
+            break;
+          }
+          throw new Error(ret.msg || ret.message || "Redeem BTC submit failed");
         case 34:
+          if (!btcChangeUtxo) {
+            _context4.next = 37;
+            break;
+          }
+          _context4.next = 37;
+          return (0,psbtBuildV2/* addUtxoSafe */.v3)(btcAddress, [btcChangeUtxo]);
+        case 37:
+          return _context4.abrupt("return", {
+            orderId: orderId,
+            txid: txid
+          });
+        case 40:
+          _context4.prev = 40;
+          _context4.t0 = _context4["catch"](0);
+          throw new Error(extractApiErrorMessage(_context4.t0));
+        case 43:
         case "end":
           return _context4.stop();
       }
-    }, _callee4, null, [[0, 31]]);
+    }, _callee4, null, [[0, 40]]);
   }));
   return _redeemBtc.apply(this, arguments);
 }
-function redeemBrc20(_x9, _x10, _x11, _x12) {
-  return _redeemBrc.apply(this, arguments);
+function redeemMrc20(_x7, _x8, _x9, _x10, _x11) {
+  return _redeemMrc.apply(this, arguments);
 }
-function _redeemBrc() {
-  _redeemBrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee5(redeemAmount, asset, addressType, network) {
-    var _yield$signPublicKey2, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr2, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, _yield$sendToken2, txHexList, txid, submitPrepayOrderRedeemDto, ret;
+function _redeemMrc() {
+  _redeemMrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee5(redeemAmount, asset, addressType, network, assetInfo) {
+    var _yield$signRedeemPubl2, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr2, createResp, orderId, bridgeAddress, _createResp$mvcFeeSat2, mvcFeeSats, _createResp$mvcFeeAdd2, mvcFeeAddress, _createResp$btcFeeSat2, btcFeeSats, _createResp$btcFeeAdd2, btcFeeAddress, _yield$signMvcRedeemB2, mvcFeeTxHex, txHexList, txid, btcAddress, btcFeeTxHex, btcChangeUtxo, btcFeeTx, ret;
     return regeneratorRuntime_default()().wrap(function _callee5$(_context5) {
       while (1) switch (_context5.prev = _context5.next) {
         case 0:
           _context5.prev = 0;
           _context5.next = 3;
-          return signPublicKey();
+          return signRedeemPublicKeys();
         case 3:
-          _yield$signPublicKey2 = _context5.sent;
-          publicKey = _yield$signPublicKey2.publicKey;
-          publicKeySign = _yield$signPublicKey2.publicKeySign;
-          publicKeyReceiveSign = _yield$signPublicKey2.publicKeyReceiveSign;
-          publicKeyReceive = _yield$signPublicKey2.publicKeyReceive;
+          _yield$signRedeemPubl2 = _context5.sent;
+          publicKey = _yield$signRedeemPubl2.publicKey;
+          publicKeySign = _yield$signRedeemPubl2.publicKeySign;
+          publicKeyReceiveSign = _yield$signRedeemPubl2.publicKeyReceiveSign;
+          publicKeyReceive = _yield$signRedeemPubl2.publicKeyReceive;
           createPrepayOrderDto = {
-            amount: redeemAmount,
+            amount: String(redeemAmount),
             originTokenId: asset.originTokenId,
             addressType: addressType,
             publicKey: publicKey,
@@ -49892,73 +46595,110 @@ function _redeemBrc() {
             publicKeyReceiveSign: publicKeyReceiveSign
           };
           _context5.next = 11;
-          return (0,api/* createPrepayOrderRedeemBrc20 */.pR)(network, createPrepayOrderDto);
+          return (0,api/* createPrepayOrderRedeemMrc20 */.UC)(network, createPrepayOrderDto);
         case 11:
           _yield$createPrepayOr2 = _context5.sent;
           createResp = _yield$createPrepayOr2.data;
-          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
-          targetTokenCodeHash = asset.targetTokenCodeHash, targetTokenGenesis = asset.targetTokenGenesis;
-          _context5.next = 17;
-          return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis, asset.decimals - asset.trimDecimals);
-        case 17:
-          _yield$sendToken2 = _context5.sent;
-          txHexList = _yield$sendToken2.txHexList;
-          txid = _yield$sendToken2.txid;
-          submitPrepayOrderRedeemDto = {
-            orderId: orderId,
-            txid: txid,
-            txHexList: txHexList
-          };
-          _context5.next = 23;
-          return sleep(3000);
-        case 23:
-          _context5.next = 25;
-          return (0,api/* submitPrepayOrderRedeemBrc20 */.PG)(network, submitPrepayOrderRedeemDto);
-        case 25:
-          ret = _context5.sent;
-          if (ret.success) {
-            _context5.next = 28;
+          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress, _createResp$mvcFeeSat2 = createResp.mvcFeeSats, mvcFeeSats = _createResp$mvcFeeSat2 === void 0 ? 0 : _createResp$mvcFeeSat2, _createResp$mvcFeeAdd2 = createResp.mvcFeeAddress, mvcFeeAddress = _createResp$mvcFeeAdd2 === void 0 ? "" : _createResp$mvcFeeAdd2, _createResp$btcFeeSat2 = createResp.btcFeeSats, btcFeeSats = _createResp$btcFeeSat2 === void 0 ? 0 : _createResp$btcFeeSat2, _createResp$btcFeeAdd2 = createResp.btcFeeAddress, btcFeeAddress = _createResp$btcFeeAdd2 === void 0 ? "" : _createResp$btcFeeAdd2; // 1. Local MVC signing (broadcast: false): [mvcFeeTx, routeCheckTx, ftTx]
+          _context5.next = 16;
+          return signMvcRedeemBundle({
+            redeemAmount: String(redeemAmount),
+            bridgeAddress: bridgeAddress,
+            targetTokenCodeHash: asset.targetTokenCodeHash,
+            targetTokenGenesis: asset.targetTokenGenesis,
+            tokenDecimal: asset.decimals - asset.trimDecimals,
+            mvcFeeSats: Number(mvcFeeSats || 0),
+            mvcFeeAddress: mvcFeeAddress
+          });
+        case 16:
+          _yield$signMvcRedeemB2 = _context5.sent;
+          mvcFeeTxHex = _yield$signMvcRedeemB2.mvcFeeTxHex;
+          txHexList = _yield$signMvcRedeemB2.txHexList;
+          txid = _yield$signMvcRedeemB2.txid;
+          _context5.next = 22;
+          return window.metaidwallet.btc.getAddress();
+        case 22:
+          btcAddress = _context5.sent;
+          if (!(Number(btcFeeSats) > 0 && btcFeeAddress)) {
+            _context5.next = 29;
             break;
           }
-          throw new Error(ret.msg);
-        case 28:
+          _context5.next = 26;
+          return transferBTCsWithMeta({
+            transfers: [{
+              toAddress: btcFeeAddress,
+              satoshis: Number(btcFeeSats)
+            }],
+            address: btcAddress,
+            feeRate: (assetInfo === null || assetInfo === void 0 ? void 0 : assetInfo.feeBtc) || 2,
+            addressType: addressType,
+            network: network
+          });
+        case 26:
+          btcFeeTx = _context5.sent;
+          btcFeeTxHex = btcFeeTx.rawTx;
+          btcChangeUtxo = btcFeeTx.changeUtxo;
+        case 29:
+          _context5.next = 31;
+          return (0,api/* submitPrepayOrderRedeemMrc20 */.gm)(network, {
+            orderId: orderId,
+            txid: txid,
+            txHexList: txHexList,
+            mvcFeeTxHex: mvcFeeTxHex,
+            btcFeeTxHex: btcFeeTxHex
+          });
+        case 31:
+          ret = _context5.sent;
+          if (ret.success) {
+            _context5.next = 34;
+            break;
+          }
+          throw new Error(ret.msg || ret.message || "Redeem MRC20 submit failed");
+        case 34:
+          if (!btcChangeUtxo) {
+            _context5.next = 37;
+            break;
+          }
+          _context5.next = 37;
+          return (0,psbtBuildV2/* addUtxoSafe */.v3)(btcAddress, [btcChangeUtxo]);
+        case 37:
           return _context5.abrupt("return", {
             orderId: orderId,
             txid: txid
           });
-        case 31:
-          _context5.prev = 31;
+        case 40:
+          _context5.prev = 40;
           _context5.t0 = _context5["catch"](0);
-          throw new Error(_context5.t0);
-        case 34:
+          throw new Error(extractApiErrorMessage(_context5.t0));
+        case 43:
         case "end":
           return _context5.stop();
       }
-    }, _callee5, null, [[0, 31]]);
+    }, _callee5, null, [[0, 40]]);
   }));
-  return _redeemBrc.apply(this, arguments);
+  return _redeemMrc.apply(this, arguments);
 }
-function redeemRunes(_x13, _x14, _x15, _x16) {
-  return _redeemRunes.apply(this, arguments);
+function mintBtc(_x12, _x13, _x14, _x15, _x16) {
+  return _mintBtc.apply(this, arguments);
 }
-function _redeemRunes() {
-  _redeemRunes = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee6(redeemAmount, asset, addressType, network) {
-    var _yield$signPublicKey3, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr3, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, _yield$sendToken3, txHexList, txid, submitPrepayOrderRedeemDto, ret;
+function _mintBtc() {
+  _mintBtc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee6(mintAmount, btcAsset, addressType, network, assetInfo) {
+    var _ref, _yield$signMintPublic, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr3, createResp, orderId, bridgeAddress, btcFeeAddress, btcFeeSats, bridgeRuleServiceAddress, bridgeRuleServiceMintFee, serviceAddress, serviceFeeSats, transfers, btcAddress, _yield$transferBTCsWi, rawTx, changeUtxo, submitRes;
     return regeneratorRuntime_default()().wrap(function _callee6$(_context6) {
       while (1) switch (_context6.prev = _context6.next) {
         case 0:
           _context6.prev = 0;
           _context6.next = 3;
-          return signPublicKey();
+          return signMintPublicKeys();
         case 3:
-          _yield$signPublicKey3 = _context6.sent;
-          publicKey = _yield$signPublicKey3.publicKey;
-          publicKeySign = _yield$signPublicKey3.publicKeySign;
-          publicKeyReceiveSign = _yield$signPublicKey3.publicKeyReceiveSign;
-          publicKeyReceive = _yield$signPublicKey3.publicKeyReceive;
+          _yield$signMintPublic = _context6.sent;
+          publicKey = _yield$signMintPublic.publicKey;
+          publicKeySign = _yield$signMintPublic.publicKeySign;
+          publicKeyReceiveSign = _yield$signMintPublic.publicKeyReceiveSign;
+          publicKeyReceive = _yield$signMintPublic.publicKeyReceive;
           createPrepayOrderDto = {
-            amount: redeemAmount,
-            originTokenId: asset.originTokenId,
+            amount: String(mintAmount),
+            originTokenId: btcAsset.originTokenId,
             addressType: addressType,
             publicKey: publicKey,
             publicKeySign: publicKeySign,
@@ -49966,761 +46706,93 @@ function _redeemRunes() {
             publicKeyReceiveSign: publicKeyReceiveSign
           };
           _context6.next = 11;
-          return (0,api/* createPrepayOrderRedeemRunes */.d6)(network, createPrepayOrderDto);
+          return (0,api/* createPrepayOrderMintBtc */.hT)(network, createPrepayOrderDto);
         case 11:
           _yield$createPrepayOr3 = _context6.sent;
           createResp = _yield$createPrepayOr3.data;
-          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
-          targetTokenCodeHash = asset.targetTokenCodeHash, targetTokenGenesis = asset.targetTokenGenesis;
-          _context6.next = 17;
-          return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis, asset.decimals - asset.trimDecimals);
-        case 17:
-          _yield$sendToken3 = _context6.sent;
-          txHexList = _yield$sendToken3.txHexList;
-          txid = _yield$sendToken3.txid;
-          submitPrepayOrderRedeemDto = {
-            orderId: orderId,
-            txid: txid,
-            txHexList: txHexList
-          };
+          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress, btcFeeAddress = createResp.btcFeeAddress, btcFeeSats = createResp.btcFeeSats, bridgeRuleServiceAddress = createResp.bridgeRuleServiceAddress, bridgeRuleServiceMintFee = createResp.bridgeRuleServiceMintFee;
+          serviceAddress = btcFeeAddress || bridgeRuleServiceAddress;
+          serviceFeeSats = Number((_ref = btcFeeSats !== null && btcFeeSats !== void 0 ? btcFeeSats : bridgeRuleServiceMintFee) !== null && _ref !== void 0 ? _ref : 0);
+          transfers = [{
+            toAddress: bridgeAddress,
+            satoshis: Number(mintAmount)
+          }];
+          if (serviceAddress && serviceFeeSats > 0) {
+            transfers.push({
+              toAddress: serviceAddress,
+              satoshis: serviceFeeSats
+            });
+          }
+          _context6.next = 20;
+          return window.metaidwallet.btc.getAddress();
+        case 20:
+          btcAddress = _context6.sent;
           _context6.next = 23;
-          return sleep(3000);
+          return transferBTCsWithMeta({
+            transfers: transfers,
+            address: btcAddress,
+            feeRate: assetInfo.feeBtc || 2,
+            addressType: addressType,
+            network: network
+          });
         case 23:
-          _context6.next = 25;
-          return (0,api/* submitPrepayOrderRedeemRunes */.d_)(network, submitPrepayOrderRedeemDto);
-        case 25:
-          ret = _context6.sent;
-          if (ret.success) {
-            _context6.next = 28;
+          _yield$transferBTCsWi = _context6.sent;
+          rawTx = _yield$transferBTCsWi.rawTx;
+          changeUtxo = _yield$transferBTCsWi.changeUtxo;
+          _context6.next = 28;
+          return (0,api/* submitPrepayOrderMintBtc */.TG)(network, {
+            orderId: orderId,
+            txHex: rawTx
+          });
+        case 28:
+          submitRes = _context6.sent;
+          if (submitRes.success) {
+            _context6.next = 31;
             break;
           }
-          throw new Error(ret.msg);
-        case 28:
-          return _context6.abrupt("return", {
-            orderId: orderId,
-            txid: txid
-          });
+          throw new Error(submitRes.msg || submitRes.message || "Mint BTC failed");
         case 31:
-          _context6.prev = 31;
-          _context6.t0 = _context6["catch"](0);
-          throw new Error(_context6.t0);
+          if (!changeUtxo) {
+            _context6.next = 34;
+            break;
+          }
+          _context6.next = 34;
+          return (0,psbtBuildV2/* addUtxoSafe */.v3)(btcAddress, [changeUtxo]);
         case 34:
+          return _context6.abrupt("return", submitRes);
+        case 37:
+          _context6.prev = 37;
+          _context6.t0 = _context6["catch"](0);
+          throw new Error(extractApiErrorMessage(_context6.t0));
+        case 40:
         case "end":
           return _context6.stop();
       }
-    }, _callee6, null, [[0, 31]]);
+    }, _callee6, null, [[0, 37]]);
   }));
-  return _redeemRunes.apply(this, arguments);
+  return _mintBtc.apply(this, arguments);
 }
-function redeemMrc20(_x17, _x18, _x19, _x20) {
-  return _redeemMrc.apply(this, arguments);
+function mintMrc20(_x17, _x18, _x19, _x20, _x21) {
+  return _mintMrc.apply(this, arguments);
 }
-
-// send btc
-function _redeemMrc() {
-  _redeemMrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee7(redeemAmount, asset, addressType, network) {
-    var _yield$signPublicKey4, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr4, createResp, orderId, bridgeAddress, targetTokenCodeHash, targetTokenGenesis, _yield$sendToken4, txHexList, txid, submitPrepayOrderRedeemDto, ret;
+function _mintMrc() {
+  _mintMrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee7(mintAmount, asset, addressType, network, assetInfo) {
+    var _ref2, _yield$signMintPublic2, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, amountStr, createPrepayOrderDto, _yield$createPrepayOr4, createResp, orderId, bridgeAddress, btcFeeAddress, btcFeeSats, bridgeRuleServiceAddress, bridgeRuleServiceMintFee, serviceAddress, serviceFeeSats, params, mrc20Transfer, commitTx, revealTx, submitRes;
     return regeneratorRuntime_default()().wrap(function _callee7$(_context7) {
       while (1) switch (_context7.prev = _context7.next) {
         case 0:
           _context7.prev = 0;
           _context7.next = 3;
-          return signPublicKey();
+          return signMintPublicKeys();
         case 3:
-          _yield$signPublicKey4 = _context7.sent;
-          publicKey = _yield$signPublicKey4.publicKey;
-          publicKeySign = _yield$signPublicKey4.publicKeySign;
-          publicKeyReceiveSign = _yield$signPublicKey4.publicKeyReceiveSign;
-          publicKeyReceive = _yield$signPublicKey4.publicKeyReceive;
-          createPrepayOrderDto = {
-            amount: redeemAmount,
-            originTokenId: asset.originTokenId,
-            addressType: addressType,
-            publicKey: publicKey,
-            publicKeySign: publicKeySign,
-            publicKeyReceive: publicKeyReceive,
-            publicKeyReceiveSign: publicKeyReceiveSign
-          };
-          _context7.next = 11;
-          return (0,api/* createPrepayOrderRedeemMrc20 */.UC)(network, createPrepayOrderDto);
-        case 11:
-          _yield$createPrepayOr4 = _context7.sent;
-          createResp = _yield$createPrepayOr4.data;
-          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
-          targetTokenCodeHash = asset.targetTokenCodeHash, targetTokenGenesis = asset.targetTokenGenesis;
-          _context7.next = 17;
-          return sendToken(String(redeemAmount), bridgeAddress, targetTokenCodeHash, targetTokenGenesis, asset.decimals - asset.trimDecimals);
-        case 17:
-          _yield$sendToken4 = _context7.sent;
-          txHexList = _yield$sendToken4.txHexList;
-          txid = _yield$sendToken4.txid;
-          submitPrepayOrderRedeemDto = {
-            orderId: orderId,
-            txid: txid,
-            txHexList: txHexList
-          };
-          _context7.next = 23;
-          return sleep(3000);
-        case 23:
-          _context7.next = 25;
-          return (0,api/* submitPrepayOrderRedeemMrc20 */.gm)(network, submitPrepayOrderRedeemDto);
-        case 25:
-          ret = _context7.sent;
-          if (ret.success) {
-            _context7.next = 28;
-            break;
-          }
-          throw new Error(ret.msg);
-        case 28:
-          return _context7.abrupt("return", {
-            orderId: orderId,
-            txid: txid
-          });
-        case 31:
-          _context7.prev = 31;
-          _context7.t0 = _context7["catch"](0);
-          throw new Error(_context7.t0);
-        case 34:
-        case "end":
-          return _context7.stop();
-      }
-    }, _callee7, null, [[0, 31]]);
-  }));
-  return _redeemMrc.apply(this, arguments);
-}
-function transferBTC(_x21) {
-  return _transferBTC.apply(this, arguments);
-}
-function _transferBTC() {
-  _transferBTC = wrapping_asyncToGenerator( /*#__PURE__*/wrapping_regeneratorRuntime().mark(function _callee8(parmas) {
-    var ret;
-    return wrapping_regeneratorRuntime().wrap(function _callee8$(_context8) {
-      while (1) switch (_context8.prev = _context8.next) {
-        case 0:
-          _context8.next = 2;
-          return window.metaidwallet.btc.transfer(parmas)["catch"](function (e) {
-            throw new Error(e);
-          });
-        case 2:
-          ret = _context8.sent;
-          if (!ret.status) {
-            _context8.next = 5;
-            break;
-          }
-          throw new Error(ret.status);
-        case 5:
-          return _context8.abrupt("return", ret.txHex);
-        case 6:
-        case "end":
-          return _context8.stop();
-      }
-    }, _callee8);
-  }));
-  return _transferBTC.apply(this, arguments);
-}
-function mintBtc(_x22, _x23, _x24, _x25, _x26) {
-  return _mintBtc.apply(this, arguments);
-}
-
-// TODO send BRC20
-function _mintBtc() {
-  _mintBtc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee9(mintAmount, btcAsset, addressType, network, assetInfo) {
-    var _yield$signMintPublic, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr5, createResp, orderId, bridgeAddress, bridgeRuleServiceAddress, bridgeRuleServiceMintFee, transfers, txHex, submitPrepayOrderMintDto, submitRes;
-    return regeneratorRuntime_default()().wrap(function _callee9$(_context9) {
-      while (1) switch (_context9.prev = _context9.next) {
-        case 0:
-          _context9.next = 2;
-          return signMintPublicKey();
-        case 2:
-          _yield$signMintPublic = _context9.sent;
-          publicKey = _yield$signMintPublic.publicKey;
-          publicKeySign = _yield$signMintPublic.publicKeySign;
-          publicKeyReceiveSign = _yield$signMintPublic.publicKeyReceiveSign;
-          publicKeyReceive = _yield$signMintPublic.publicKeyReceive;
-          createPrepayOrderDto = {
-            amount: mintAmount,
-            originTokenId: btcAsset.originTokenId,
-            addressType: addressType,
-            publicKey: publicKey,
-            publicKeySign: publicKeySign,
-            publicKeyReceive: publicKeyReceive,
-            publicKeyReceiveSign: publicKeyReceiveSign
-          };
-          _context9.prev = 8;
-          _context9.next = 11;
-          return (0,api/* createPrepayOrderMintBtc */.hT)(network, createPrepayOrderDto);
-        case 11:
-          _yield$createPrepayOr5 = _context9.sent;
-          createResp = _yield$createPrepayOr5.data;
-          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress, bridgeRuleServiceAddress = createResp.bridgeRuleServiceAddress, bridgeRuleServiceMintFee = createResp.bridgeRuleServiceMintFee;
-          transfers = [{
-            toAddress: bridgeAddress,
-            satoshis: Number(mintAmount)
-          }];
-          if (bridgeRuleServiceAddress && bridgeRuleServiceMintFee) {
-            transfers.push({
-              toAddress: bridgeRuleServiceAddress,
-              satoshis: bridgeRuleServiceMintFee
-            });
-          }
-          // transfer btc to bridge address and service address
-          _context9.t0 = transferBTCs;
-          _context9.t1 = transfers;
-          _context9.next = 20;
-          return window.metaidwallet.btc.getAddress();
-        case 20:
-          _context9.t2 = _context9.sent;
-          _context9.t3 = assetInfo.feeBtc;
-          _context9.t4 = addressType;
-          _context9.t5 = network;
-          _context9.t6 = {
-            transfers: _context9.t1,
-            address: _context9.t2,
-            feeRate: _context9.t3,
-            addressType: _context9.t4,
-            network: _context9.t5
-          };
-          _context9.next = 27;
-          return (0, _context9.t0)(_context9.t6);
-        case 27:
-          txHex = _context9.sent;
-          submitPrepayOrderMintDto = {
-            orderId: orderId,
-            txHex: txHex
-          };
-          _context9.next = 31;
-          return (0,api/* submitPrepayOrderMintBtc */.TG)(network, submitPrepayOrderMintDto);
-        case 31:
-          submitRes = _context9.sent;
-          if (submitRes.success) {
-            _context9.next = 34;
-            break;
-          }
-          throw new Error(submitRes.msg);
-        case 34:
-          return _context9.abrupt("return", submitRes);
-        case 37:
-          _context9.prev = 37;
-          _context9.t7 = _context9["catch"](8);
-          throw new Error(extractApiErrorMessage(_context9.t7));
-        case 40:
-        case "end":
-          return _context9.stop();
-      }
-    }, _callee9, null, [[8, 37]]);
-  }));
-  return _mintBtc.apply(this, arguments);
-}
-function wrapping_getTotalSatoshi(utxos) {
-  return utxos.reduce(function (total, utxo) {
-    return total.add(utxo.satoshi);
-  }, new decimal/* default */.A(0));
-}
-function _createPayment(_x27, _x28) {
-  return _createPayment2.apply(this, arguments);
-}
-function _createPayment2() {
-  _createPayment2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee10(network, address) {
-    var btcNetwork, publicKeyString, publicKey, addressType;
-    return regeneratorRuntime_default()().wrap(function _callee10$(_context10) {
-      while (1) switch (_context10.prev = _context10.next) {
-        case 0:
-          (0,src/* initEccLib */.f0)(lib_namespaceObject);
-          btcNetwork = network === "mainnet" ? src/* networks */.o8.bitcoin : src/* networks */.o8.testnet;
-          _context10.next = 4;
-          return window.metaidwallet.btc.getPublicKey();
-        case 4:
-          publicKeyString = _context10.sent;
-          publicKey = wrapping_Buffer.from(publicKeyString, "hex");
-          addressType = (0,utils/* determineAddressInfo */.AG)(address);
-          _context10.t0 = addressType.toUpperCase();
-          _context10.next = _context10.t0 === "P2PKH" ? 10 : _context10.t0 === "P2WPKH" ? 11 : 12;
-          break;
-        case 10:
-          return _context10.abrupt("return", src/* payments */.KT.p2pkh({
-            pubkey: publicKey,
-            network: btcNetwork
-          }));
-        case 11:
-          return _context10.abrupt("return", src/* payments */.KT.p2wpkh({
-            pubkey: publicKey,
-            network: btcNetwork
-          }));
-        case 12:
-          return _context10.abrupt("return", src/* payments */.KT.p2pkh({
-            pubkey: publicKey,
-            network: btcNetwork
-          }));
-        case 13:
-        case "end":
-          return _context10.stop();
-      }
-    }, _callee10);
-  }));
-  return _createPayment2.apply(this, arguments);
-}
-function getWitnessUtxo(out) {
-  delete out.address;
-  out.script = wrapping_Buffer.from(out.script, "hex");
-  return out;
-}
-function _createPayInput(_x29) {
-  return _createPayInput2.apply(this, arguments);
-}
-function _createPayInput2() {
-  _createPayInput2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee11(_ref) {
-    var utxo, addressType, network, payInput, _yield$getRawTx, rawTx, tx;
-    return regeneratorRuntime_default()().wrap(function _callee11$(_context11) {
-      while (1) switch (_context11.prev = _context11.next) {
-        case 0:
-          utxo = _ref.utxo, addressType = _ref.addressType, network = _ref.network;
-          payInput = {
-            hash: utxo.txId,
-            index: utxo.vout
-          };
-          _context11.next = 4;
-          return (0,api/* getRawTx */.xt)(network, {
-            txid: utxo.txId
-          });
-        case 4:
-          _yield$getRawTx = _context11.sent;
-          rawTx = _yield$getRawTx.data.rawTx;
-          tx = src/* Transaction */.ZX.fromHex(rawTx);
-          if (["P2WPKH"].includes(addressType)) {
-            payInput["witnessUtxo"] = getWitnessUtxo(tx.outs[utxo.vout]);
-          }
-          if (["P2PKH"].includes(addressType)) {
-            payInput["nonWitnessUtxo"] = tx.toBuffer();
-          }
-          return _context11.abrupt("return", payInput);
-        case 10:
-        case "end":
-          return _context11.stop();
-      }
-    }, _callee11);
-  }));
-  return _createPayInput2.apply(this, arguments);
-}
-function _calculateFee(psbt, feeRate) {
-  var tx = psbt.extractTransaction();
-  var size = tx.virtualSize();
-  return size * feeRate;
-}
-var wrapping_selectUTXOs = function selectUTXOs(utxos, targetAmount) {
-  var totalAmount = new decimal/* default */.A(0);
-  var selectedUtxos = [];
-  var _iterator = createForOfIteratorHelper_default()(utxos),
-    _step;
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var utxo = _step.value;
-      selectedUtxos.push(utxo);
-      totalAmount = totalAmount.add(utxo.satoshi);
-      if (totalAmount.gte(targetAmount)) {
-        break;
-      }
-    }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
-  }
-  if (totalAmount.lt(targetAmount)) {
-    throw new Error("Insufficient funds to reach the target amount");
-  }
-  return selectedUtxos;
-};
-function sendBRC(_x30, _x31, _x32, _x33) {
-  return _sendBRC.apply(this, arguments);
-}
-function _sendBRC() {
-  _sendBRC = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee13(recipient, utxo, feeRate, net) {
-    var amount, btcNetwork, address, addressType, payment, utxos, buildPsbt, selecedtUTXOs, total, psbt, fee, _psbt;
-    return regeneratorRuntime_default()().wrap(function _callee13$(_context13) {
-      while (1) switch (_context13.prev = _context13.next) {
-        case 0:
-          amount = wrapping_getTotalSatoshi([utxo]);
-          btcNetwork = net === "mainnet" ? src/* networks */.o8.bitcoin : src/* networks */.o8.testnet;
-          _context13.next = 4;
-          return window.metaidwallet.btc.getAddress();
-        case 4:
-          address = _context13.sent;
-          addressType = (0,utils/* determineAddressInfo */.AG)(address);
-          _context13.next = 8;
-          return _createPayment(net, address);
-        case 8:
-          payment = _context13.sent;
-          _context13.next = 11;
-          return (0,psbtBuild/* getUtxos */._8)(address);
-        case 11:
-          utxos = _context13.sent;
-          if (utxos.length) {
-            _context13.next = 14;
-            break;
-          }
-          throw new Error("your account currently has no available UTXO.");
-        case 14:
-          utxos.sort(function (a, b) {
-            return b.satoshi - a.satoshi;
-          });
-          buildPsbt = /*#__PURE__*/function () {
-            var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee12(selectedUtxos, change) {
-              var psbt, payInput, _iterator3, _step3, _utxo, _payInput, _signPsbt, signPsbt;
-              return regeneratorRuntime_default()().wrap(function _callee12$(_context12) {
-                while (1) switch (_context12.prev = _context12.next) {
-                  case 0:
-                    psbt = new src/* Psbt */.iL({
-                      network: btcNetwork
-                    });
-                    _context12.next = 3;
-                    return _createPayInput({
-                      utxo: utxo,
-                      network: net,
-                      addressType: addressType.toUpperCase()
-                    });
-                  case 3:
-                    payInput = _context12.sent;
-                    psbt.addInput(payInput);
-                    psbt.addOutput({
-                      value: utxo.satoshi,
-                      address: recipient
-                    });
-                    if (change.gt(546)) {
-                      psbt.addOutput({
-                        value: change.toNumber(),
-                        address: address
-                      });
-                    }
-                    _iterator3 = createForOfIteratorHelper_default()(selectedUtxos);
-                    _context12.prev = 8;
-                    _iterator3.s();
-                  case 10:
-                    if ((_step3 = _iterator3.n()).done) {
-                      _context12.next = 18;
-                      break;
-                    }
-                    _utxo = _step3.value;
-                    _context12.next = 14;
-                    return _createPayInput({
-                      utxo: _utxo,
-                      network: net,
-                      addressType: addressType.toUpperCase()
-                    });
-                  case 14:
-                    _payInput = _context12.sent;
-                    psbt.addInput(_payInput);
-                  case 16:
-                    _context12.next = 10;
-                    break;
-                  case 18:
-                    _context12.next = 23;
-                    break;
-                  case 20:
-                    _context12.prev = 20;
-                    _context12.t0 = _context12["catch"](8);
-                    _iterator3.e(_context12.t0);
-                  case 23:
-                    _context12.prev = 23;
-                    _iterator3.f();
-                    return _context12.finish(23);
-                  case 26:
-                    _context12.next = 28;
-                    return window.metaidwallet.btc.signPsbt({
-                      psbtHex: psbt.toHex()
-                    });
-                  case 28:
-                    _signPsbt = _context12.sent;
-                    if (!(_signPsbt.status === "canceled")) {
-                      _context12.next = 31;
-                      break;
-                    }
-                    throw new Error("canceled");
-                  case 31:
-                    signPsbt = src/* Psbt */.iL.fromHex(_signPsbt);
-                    return _context12.abrupt("return", signPsbt);
-                  case 33:
-                  case "end":
-                    return _context12.stop();
-                }
-              }, _callee12, null, [[8, 20, 23, 26]]);
-            }));
-            return function buildPsbt(_x50, _x51) {
-              return _ref2.apply(this, arguments);
-            };
-          }();
-          selecedtUTXOs = [utxos[0]];
-          total = wrapping_getTotalSatoshi(selecedtUTXOs);
-          _context13.next = 20;
-          return buildPsbt(selecedtUTXOs, total.minus(amount));
-        case 20:
-          psbt = _context13.sent;
-          fee = _calculateFee(psbt, feeRate);
-        case 22:
-          if (!wrapping_getTotalSatoshi(selecedtUTXOs).lt(amount.add(fee))) {
-            _context13.next = 33;
-            break;
-          }
-          if (!(selecedtUTXOs.length === utxos.length)) {
-            _context13.next = 25;
-            break;
-          }
-          throw new Error("Insufficient funds");
-        case 25:
-          selecedtUTXOs = wrapping_selectUTXOs(utxos, amount.add(fee));
-          total = wrapping_getTotalSatoshi(selecedtUTXOs);
-          _context13.next = 29;
-          return buildPsbt(selecedtUTXOs, total.minus(amount).minus(fee));
-        case 29:
-          _psbt = _context13.sent;
-          fee = _calculateFee(_psbt, feeRate);
-          _context13.next = 22;
-          break;
-        case 33:
-          _context13.next = 35;
-          return buildPsbt(selecedtUTXOs, total.minus(amount).minus(fee));
-        case 35:
-          psbt = _context13.sent;
-          return _context13.abrupt("return", psbt);
-        case 37:
-        case "end":
-          return _context13.stop();
-      }
-    }, _callee13);
-  }));
-  return _sendBRC.apply(this, arguments);
-}
-var getOutput = function getOutput(pubkey) {
-  var _network = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "mainnet";
-  var _addressType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "P2PKH";
-  var publicKeyBuffer = wrapping_Buffer.from(pubkey, "hex");
-  var _output;
-  var network = _network === "mainnet" ? networks.bitcoin : networks.testnet;
-  if (_addressType === "P2PKH") {
-    _output = wrapping_payments.p2pkh({
-      pubkey: publicKeyBuffer,
-      network: network
-    }).output;
-  } else {
-    _output = wrapping_payments.p2wpkh({
-      pubkey: publicKeyBuffer,
-      network: network
-    }).output;
-  }
-  return _output;
-};
-function getVariableSize(n) {
-  if (n < 0xfd) {
-    return 1;
-  } else if (n < 0x10000) {
-    return 2 + 1;
-  } else if (n < 0x100000000) {
-    return 3 + 1;
-  } else if (n < 0x10000000000000000) {
-    return 4 + 1;
-  }
-  throw new Error("");
-}
-function getBtcTxSizeByOutputType(segWitInputNumber, tapRootInputNumber, insNumber, outputTypeList) {
-  var sizeSum = 0;
-  sizeSum += 4;
-  sizeSum += 1;
-  for (var i = 0; i < segWitInputNumber; i++) {
-    sizeSum += 91;
-  }
-  for (var _i = 0; _i < tapRootInputNumber; _i++) {
-    sizeSum += (4 * (32 + 4 + 1 + 4) + 1 + 1 + 64) / 4;
-  }
-  sizeSum += insNumber * 33;
-  sizeSum += 1;
-  var _iterator2 = _createForOfIteratorHelper(outputTypeList),
-    _step2;
-  try {
-    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-      var outputTypeListElement = _step2.value;
-      sizeSum += 8;
-      if (outputTypeListElement === "P2PKH") {
-        sizeSum += getVariableSize(25);
-        sizeSum += 25;
-      } else if (outputTypeListElement === "P2WPKH") {
-        sizeSum += getVariableSize(22);
-        sizeSum += 22;
-      } else if (outputTypeListElement === "P2TR") {
-        sizeSum += getVariableSize(34);
-        sizeSum += 34;
-      }
-    }
-  } catch (err) {
-    _iterator2.e(err);
-  } finally {
-    _iterator2.f();
-  }
-  sizeSum += 4; //nLockTime
-  return Math.ceil(sizeSum);
-}
-function mintBrc(_x34, _x35, _x36, _x37, _x38, _x39) {
-  return _mintBrc.apply(this, arguments);
-}
-function _mintBrc() {
-  _mintBrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee14(mintAmount, btcAsset, addressType, network, assetInfo, inscription) {
-    var _yield$signMintPublic2, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _inscriptionId, _inscriptionId2, _yield$createPrepayOr6, createResp, orderId, bridgeAddress, inscriptionUtxo, psbt, submitPrepayOrderMintDto, submitRes;
-    return regeneratorRuntime_default()().wrap(function _callee14$(_context14) {
-      while (1) switch (_context14.prev = _context14.next) {
-        case 0:
-          _context14.next = 2;
-          return signMintPublicKey();
-        case 2:
-          _yield$signMintPublic2 = _context14.sent;
+          _yield$signMintPublic2 = _context7.sent;
           publicKey = _yield$signMintPublic2.publicKey;
           publicKeySign = _yield$signMintPublic2.publicKeySign;
           publicKeyReceiveSign = _yield$signMintPublic2.publicKeyReceiveSign;
           publicKeyReceive = _yield$signMintPublic2.publicKeyReceive;
+          amountStr = String(mintAmount).trim();
           createPrepayOrderDto = {
-            amount: String(mintAmount),
-            originTokenId: btcAsset.originTokenId,
-            addressType: addressType,
-            publicKey: publicKey,
-            publicKeySign: publicKeySign,
-            publicKeyReceive: publicKeyReceive,
-            publicKeyReceiveSign: publicKeyReceiveSign
-          };
-          _context14.prev = 8;
-          _context14.next = 11;
-          return (0,api/* createPrepayOrderMintBRC20 */.PM)(network, createPrepayOrderDto);
-        case 11:
-          _yield$createPrepayOr6 = _context14.sent;
-          createResp = _yield$createPrepayOr6.data;
-          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
-          inscriptionUtxo = {
-            txId: (_inscriptionId = inscription.inscriptionId) === null || _inscriptionId === void 0 ? void 0 : _inscriptionId.slice(0, -2),
-            vout: +((_inscriptionId2 = inscription.inscriptionId) === null || _inscriptionId2 === void 0 ? void 0 : _inscriptionId2.split("i")[1]),
-            satoshi: +inscription.outValue,
-            confirmed: true,
-            inscriptions: null
-          };
-          _context14.next = 17;
-          return sendBRC(bridgeAddress, inscriptionUtxo, assetInfo.feeBtc, network);
-        case 17:
-          psbt = _context14.sent;
-          submitPrepayOrderMintDto = {
-            orderId: orderId,
-            txHex: psbt.extractTransaction().toHex()
-          };
-          _context14.next = 21;
-          return (0,api/* submitPrepayOrderMintBrc20 */.$W)(network, submitPrepayOrderMintDto);
-        case 21:
-          submitRes = _context14.sent;
-          if (submitRes.success) {
-            _context14.next = 24;
-            break;
-          }
-          throw new Error(submitRes.msg);
-        case 24:
-          return _context14.abrupt("return", submitRes);
-        case 27:
-          _context14.prev = 27;
-          _context14.t0 = _context14["catch"](8);
-          throw new Error(extractApiErrorMessage(_context14.t0));
-        case 30:
-        case "end":
-          return _context14.stop();
-      }
-    }, _callee14, null, [[8, 27]]);
-  }));
-  return _mintBrc.apply(this, arguments);
-}
-function mintRunes(_x40, _x41, _x42, _x43, _x44) {
-  return _mintRunes.apply(this, arguments);
-}
-function _mintRunes() {
-  _mintRunes = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee15(mintAmount, btcAsset, addressType, network, assetInfo) {
-    var _yield$signMintPublic3, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr7, createResp, orderId, bridgeAddress, _yield$sendRunes, psbt, submitPrepayOrderMintDto, submitRes;
-    return regeneratorRuntime_default()().wrap(function _callee15$(_context15) {
-      while (1) switch (_context15.prev = _context15.next) {
-        case 0:
-          _context15.next = 2;
-          return signMintPublicKey();
-        case 2:
-          _yield$signMintPublic3 = _context15.sent;
-          publicKey = _yield$signMintPublic3.publicKey;
-          publicKeySign = _yield$signMintPublic3.publicKeySign;
-          publicKeyReceiveSign = _yield$signMintPublic3.publicKeyReceiveSign;
-          publicKeyReceive = _yield$signMintPublic3.publicKeyReceive;
-          createPrepayOrderDto = {
-            amount: String(mintAmount),
-            originTokenId: btcAsset.originTokenId,
-            addressType: addressType,
-            publicKey: publicKey,
-            publicKeySign: publicKeySign,
-            publicKeyReceive: publicKeyReceive,
-            publicKeyReceiveSign: publicKeyReceiveSign
-          };
-          _context15.prev = 8;
-          _context15.next = 11;
-          return (0,api/* createPrepayOrderMintRunes */.DH)(network, createPrepayOrderDto);
-        case 11:
-          _yield$createPrepayOr7 = _context15.sent;
-          createResp = _yield$createPrepayOr7.data;
-          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress;
-          _context15.next = 16;
-          return sendRunes({
-            runeId: btcAsset.originTokenId,
-            feeRate: assetInfo.feeBtc,
-            net: network,
-            recipient: bridgeAddress,
-            runeAmount: String(mintAmount),
-            divisibility: btcAsset.decimals,
-            addressType: addressType
-          });
-        case 16:
-          _yield$sendRunes = _context15.sent;
-          psbt = _yield$sendRunes.psbt;
-          submitPrepayOrderMintDto = {
-            orderId: orderId,
-            txHex: psbt.extractTransaction().toHex()
-          };
-          _context15.next = 21;
-          return (0,api/* submitPrepayOrderMintRunes */.bV)(network, submitPrepayOrderMintDto);
-        case 21:
-          submitRes = _context15.sent;
-          if (submitRes.success) {
-            _context15.next = 24;
-            break;
-          }
-          throw new Error(submitRes.msg);
-        case 24:
-          return _context15.abrupt("return", submitRes);
-        case 27:
-          _context15.prev = 27;
-          _context15.t0 = _context15["catch"](8);
-          throw new Error(extractApiErrorMessage(_context15.t0));
-        case 30:
-        case "end":
-          return _context15.stop();
-      }
-    }, _callee15, null, [[8, 27]]);
-  }));
-  return _mintRunes.apply(this, arguments);
-}
-function mintMrc20(_x45, _x46, _x47, _x48, _x49) {
-  return _mintMrc.apply(this, arguments);
-}
-function _mintMrc() {
-  _mintMrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee16(mintAmount, asset, addressType, network, assetInfo) {
-    var _yield$signMintPublic4, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr8, createResp, orderId, bridgeAddress, bridgeRuleServiceAddress, bridgeRuleServiceMintFee, params, MRC20Transfer, commitTx, revealTx, submitPrepayOrderMintDto, submitRes;
-    return regeneratorRuntime_default()().wrap(function _callee16$(_context16) {
-      while (1) switch (_context16.prev = _context16.next) {
-        case 0:
-          _context16.prev = 0;
-          _context16.next = 3;
-          return signMintPublicKey();
-        case 3:
-          _yield$signMintPublic4 = _context16.sent;
-          publicKey = _yield$signMintPublic4.publicKey;
-          publicKeySign = _yield$signMintPublic4.publicKeySign;
-          publicKeyReceiveSign = _yield$signMintPublic4.publicKeyReceiveSign;
-          publicKeyReceive = _yield$signMintPublic4.publicKeyReceive;
-          createPrepayOrderDto = {
-            amount: String(mintAmount),
+            amount: amountStr,
             originTokenId: asset.originTokenId,
             addressType: addressType,
             publicKey: publicKey,
@@ -50728,71 +46800,69 @@ function _mintMrc() {
             publicKeyReceive: publicKeyReceive,
             publicKeyReceiveSign: publicKeyReceiveSign
           };
-          _context16.next = 11;
+          _context7.next = 12;
           return (0,api/* createPrepayOrderMintMrc20 */.yB)(network, createPrepayOrderDto);
-        case 11:
-          _yield$createPrepayOr8 = _context16.sent;
-          createResp = _yield$createPrepayOr8.data;
-          console.log("createResp", createResp);
-          // transfer mrc-20  to bridge address and serviceFee to service address
-          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress, bridgeRuleServiceAddress = createResp.bridgeRuleServiceAddress, bridgeRuleServiceMintFee = createResp.bridgeRuleServiceMintFee;
+        case 12:
+          _yield$createPrepayOr4 = _context7.sent;
+          createResp = _yield$createPrepayOr4.data;
+          orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress, btcFeeAddress = createResp.btcFeeAddress, btcFeeSats = createResp.btcFeeSats, bridgeRuleServiceAddress = createResp.bridgeRuleServiceAddress, bridgeRuleServiceMintFee = createResp.bridgeRuleServiceMintFee;
+          serviceAddress = btcFeeAddress || bridgeRuleServiceAddress;
+          serviceFeeSats = Number((_ref2 = btcFeeSats !== null && btcFeeSats !== void 0 ? btcFeeSats : bridgeRuleServiceMintFee) !== null && _ref2 !== void 0 ? _ref2 : 0);
           params = {
             body: JSON.stringify([{
-              amount: String(mintAmount),
+              amount: amountStr,
               vout: 1,
               id: asset.originTokenId
             }]),
-            amount: String(mintAmount),
+            amount: amountStr,
             mrc20TickId: asset.originTokenId,
             flag: "metaid",
             revealAddr: bridgeAddress,
-            commitFeeRate: assetInfo.feeBtc,
-            revealFeeRate: assetInfo.feeBtc
+            commitFeeRate: assetInfo.feeBtc || 2,
+            revealFeeRate: assetInfo.feeBtc || 2
           };
-          if (bridgeRuleServiceAddress && bridgeRuleServiceMintFee) {
+          if (serviceAddress && serviceFeeSats > 0) {
             params.service = {
-              address: bridgeRuleServiceAddress,
-              satoshis: bridgeRuleServiceMintFee
+              address: serviceAddress,
+              satoshis: String(serviceFeeSats)
             };
           }
-          _context16.next = 19;
+          _context7.next = 21;
           return window.metaidwallet.btc.transferMRC20(params)["catch"](function (e) {
-            throw new Error(e);
+            throw new Error(extractApiErrorMessage(e));
           });
-        case 19:
-          MRC20Transfer = _context16.sent;
-          if (!MRC20Transfer.status) {
-            _context16.next = 22;
+        case 21:
+          mrc20Transfer = _context7.sent;
+          if (!mrc20Transfer.status) {
+            _context7.next = 24;
             break;
           }
-          throw new Error(MRC20Transfer.status);
-        case 22:
-          commitTx = MRC20Transfer.commitTx, revealTx = MRC20Transfer.revealTx;
-          console.log("commitTx", commitTx);
-          submitPrepayOrderMintDto = {
+          throw new Error(mrc20Transfer.status);
+        case 24:
+          commitTx = mrc20Transfer.commitTx, revealTx = mrc20Transfer.revealTx;
+          _context7.next = 27;
+          return (0,api/* submitPrepayOrderMintMrc20 */.U_)(network, {
             orderId: orderId,
             txHexList: [commitTx.rawTx, revealTx.rawTx]
-          };
-          _context16.next = 27;
-          return (0,api/* submitPrepayOrderMintMrc20 */.U_)(network, submitPrepayOrderMintDto);
+          });
         case 27:
-          submitRes = _context16.sent;
+          submitRes = _context7.sent;
           if (submitRes.success) {
-            _context16.next = 30;
+            _context7.next = 30;
             break;
           }
-          throw new Error(submitRes.msg);
+          throw new Error(submitRes.msg || submitRes.message || "Mint MRC20 failed");
         case 30:
-          return _context16.abrupt("return", submitRes);
+          return _context7.abrupt("return", submitRes);
         case 33:
-          _context16.prev = 33;
-          _context16.t0 = _context16["catch"](0);
-          throw new Error(extractApiErrorMessage(_context16.t0));
+          _context7.prev = 33;
+          _context7.t0 = _context7["catch"](0);
+          throw new Error(extractApiErrorMessage(_context7.t0));
         case 36:
         case "end":
-          return _context16.stop();
+          return _context7.stop();
       }
-    }, _callee16, null, [[0, 33]]);
+    }, _callee7, null, [[0, 33]]);
   }));
   return _mintMrc.apply(this, arguments);
 }
@@ -50804,12 +46874,29 @@ function _mintMrc() {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SB: function() { return /* reexport safe */ _psbtBuildV2__WEBPACK_IMPORTED_MODULE_0__.SB; },
+/* harmony export */   p0: function() { return /* reexport safe */ _psbtBuildV2__WEBPACK_IMPORTED_MODULE_0__.p0; }
+/* harmony export */ });
+/* harmony import */ var _psbtBuildV2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(19240);
+
+
+/***/ }),
+
+/***/ 19240:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   S: function() { return /* binding */ getNetworks; },
 /* harmony export */   SB: function() { return /* binding */ checkWalletAddress; },
 /* harmony export */   _8: function() { return /* binding */ getUtxos; },
+/* harmony export */   eD: function() { return /* binding */ getUtxoSats; },
 /* harmony export */   p0: function() { return /* binding */ getUtxoBalance; },
 /* harmony export */   pr: function() { return /* binding */ buildTx; },
-/* harmony export */   uz: function() { return /* binding */ createPsbtInput; }
+/* harmony export */   uz: function() { return /* binding */ createPsbtInput; },
+/* harmony export */   v3: function() { return /* binding */ addUtxoSafe; }
 /* harmony export */ });
+/* unused harmony exports getUtxoVout, calcFee, toXOnly */
 /* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(55420);
 /* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(98312);
@@ -50818,9 +46905,10 @@ function _mintMrc() {
 /* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_createForOfIteratorHelper_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_createForOfIteratorHelper_js__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var decimal_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(76582);
 /* harmony import */ var bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(21757);
-/* harmony import */ var _servies_api__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(28651);
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(79502);
-/* provided dependency */ var Buffer = __webpack_require__(48287).Buffer;
+/* harmony import */ var _mempool_mempool_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12255);
+/* harmony import */ var _mempool_mempool_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_mempool_mempool_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var bitcoinjs_lib_src_psbt_bip371__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(60477);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(79502);
 
 
 
@@ -50828,6 +46916,25 @@ function _mintMrc() {
 
 
 
+
+var TX_EMPTY_SIZE = 4 + 1 + 1 + 4;
+var TX_INPUT_BASE = 32 + 4 + 1 + 4; // 41
+var TX_INPUT_PUBKEYHASH = 107;
+var TX_INPUT_SEGWIT = 27;
+var TX_INPUT_TAPROOT = 17; // round up 16.5 bytes
+var TX_OUTPUT_BASE = 8 + 1;
+var TX_OUTPUT_PUBKEYHASH = 25;
+var TX_OUTPUT_SCRIPTHASH = 23;
+var TX_OUTPUT_SEGWIT = 22;
+var TX_OUTPUT_SEGWIT_SCRIPTHASH = 34;
+var getUtxoSats = function getUtxoSats(utxo) {
+  var _ref, _utxo$satoshis;
+  return Number((_ref = (_utxo$satoshis = utxo === null || utxo === void 0 ? void 0 : utxo.satoshis) !== null && _utxo$satoshis !== void 0 ? _utxo$satoshis : utxo === null || utxo === void 0 ? void 0 : utxo.satoshi) !== null && _ref !== void 0 ? _ref : 0);
+};
+var getUtxoVout = function getUtxoVout(utxo) {
+  var _ref2, _utxo$vout;
+  return Number((_ref2 = (_utxo$vout = utxo.vout) !== null && _utxo$vout !== void 0 ? _utxo$vout : utxo.outputIndex) !== null && _ref2 !== void 0 ? _ref2 : 0);
+};
 function selectUTXOs(utxos, targetAmount) {
   var totalAmount = new decimal_js__WEBPACK_IMPORTED_MODULE_3__/* .Decimal */ .W(0);
   var selectedUtxos = [];
@@ -50836,8 +46943,10 @@ function selectUTXOs(utxos, targetAmount) {
   try {
     for (_iterator.s(); !(_step = _iterator.n()).done;) {
       var utxo = _step.value;
+      var sats = getUtxoSats(utxo);
+      if (sats <= 0) continue;
       selectedUtxos.push(utxo);
-      totalAmount = totalAmount.add(utxo.satoshis);
+      totalAmount = totalAmount.add(sats);
       if (totalAmount.gte(targetAmount)) {
         break;
       }
@@ -50848,72 +46957,108 @@ function selectUTXOs(utxos, targetAmount) {
     _iterator.f();
   }
   if (totalAmount.lt(targetAmount)) {
-    throw new Error("Insufficient funds to reach the target amount");
+    throw new Error("Insufficient BTC funds to reach the target amount");
   }
   return selectedUtxos;
 }
+var getNetworks = function getNetworks(network) {
+  return network === "mainnet" ? bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .networks */ .o8.bitcoin : bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .networks */ .o8.testnet;
+};
 function getTotalSatoshi(utxos) {
   return utxos.reduce(function (total, utxo) {
-    return total.add(utxo.satoshis);
+    return total.add(getUtxoSats(utxo));
   }, new decimal_js__WEBPACK_IMPORTED_MODULE_3__/* .Decimal */ .W(0));
 }
-function calculateEstimatedFee(psbt, feeRate) {
-  var tx = psbt.extractTransaction();
-  var size = tx.virtualSize();
-  return new decimal_js__WEBPACK_IMPORTED_MODULE_3__/* .Decimal */ .W(size).mul(feeRate);
+function inputBytes(input) {
+  if ((0,bitcoinjs_lib_src_psbt_bip371__WEBPACK_IMPORTED_MODULE_6__.isTaprootInput)(input)) {
+    return TX_INPUT_BASE + TX_INPUT_TAPROOT;
+  }
+  if (input.redeemScript) return TX_INPUT_BASE + input.redeemScript.length;
+  if (input.nonWitnessUtxo) return TX_INPUT_BASE + TX_INPUT_PUBKEYHASH;
+  if (input.witnessUtxo) return TX_INPUT_BASE + TX_INPUT_SEGWIT;
+  return TX_INPUT_BASE + TX_INPUT_PUBKEYHASH;
+}
+function outputBytes(output) {
+  var _output$address, _output$address2, _output$address3, _output$address4, _output$address5;
+  return TX_OUTPUT_BASE + (output.script ? output.script.length : (_output$address = output.address) !== null && _output$address !== void 0 && _output$address.startsWith("bc1") || (_output$address2 = output.address) !== null && _output$address2 !== void 0 && _output$address2.startsWith("tb1") ? ((_output$address3 = output.address) === null || _output$address3 === void 0 ? void 0 : _output$address3.length) === 42 ? TX_OUTPUT_SEGWIT : TX_OUTPUT_SEGWIT_SCRIPTHASH : (_output$address4 = output.address) !== null && _output$address4 !== void 0 && _output$address4.startsWith("3") || (_output$address5 = output.address) !== null && _output$address5 !== void 0 && _output$address5.startsWith("2") ? TX_OUTPUT_SCRIPTHASH : TX_OUTPUT_PUBKEYHASH);
+}
+function transactionBytes(inputs, outputs) {
+  var inputsSize = inputs.reduce(function (a, x) {
+    return a + inputBytes(x);
+  }, 0);
+  var outputsSize = outputs.reduce(function (a, x) {
+    return a + outputBytes(x);
+  }, 0);
+  return TX_EMPTY_SIZE + inputsSize + outputsSize;
+}
+function calcFee(psbt, feeRate) {
+  var inputs = psbt.data.inputs;
+  var outputs = psbt.txOutputs;
+  var bytes = transactionBytes(inputs, outputs);
+  return new decimal_js__WEBPACK_IMPORTED_MODULE_3__/* .Decimal */ .W(bytes).mul(feeRate).ceil();
 }
 function buildTx(_x, _x2, _x3, _x4, _x5, _x6) {
   return _buildTx.apply(this, arguments);
 }
 function _buildTx() {
-  _buildTx = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee4(utxos, amount, feeRate, buildPsbtParams, address, buildPsbt) {
-    var selectedUTXOs, total, psbt, estimatedFee;
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee4$(_context4) {
-      while (1) switch (_context4.prev = _context4.next) {
+  _buildTx = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee5(utxos, amount, feeRate, buildPsbtParams, address, buildPsbt) {
+    var extract,
+      signPsbt,
+      selectedUTXOs,
+      total,
+      psbt,
+      estimatedFee,
+      extractedTx,
+      _args5 = arguments;
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee5$(_context5) {
+      while (1) switch (_context5.prev = _context5.next) {
         case 0:
+          extract = _args5.length > 6 && _args5[6] !== undefined ? _args5[6] : false;
+          signPsbt = _args5.length > 7 && _args5[7] !== undefined ? _args5[7] : true;
           selectedUTXOs = selectUTXOs(utxos, amount);
           total = getTotalSatoshi(selectedUTXOs);
-          _context4.next = 4;
-          return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount), true);
-        case 4:
-          psbt = _context4.sent;
-          estimatedFee = calculateEstimatedFee(psbt, feeRate);
+          _context5.next = 6;
+          return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount), true, false);
         case 6:
+          psbt = _context5.sent;
+          estimatedFee = calcFee(psbt, feeRate);
+        case 8:
           if (!total.lt(amount.add(estimatedFee))) {
-            _context4.next = 17;
+            _context5.next = 19;
             break;
           }
           if (!(selectedUTXOs.length === utxos.length)) {
-            _context4.next = 9;
+            _context5.next = 11;
             break;
           }
-          throw new Error("Insufficient funds");
-        case 9:
+          throw new Error("Insufficient BTC funds for network fee");
+        case 11:
           selectedUTXOs = selectUTXOs(utxos, amount.add(estimatedFee));
           total = getTotalSatoshi(selectedUTXOs);
-          _context4.next = 13;
-          return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount.add(estimatedFee)), true);
-        case 13:
-          psbt = _context4.sent;
-          estimatedFee = calculateEstimatedFee(psbt, feeRate);
-          _context4.next = 6;
+          _context5.next = 15;
+          return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount.add(estimatedFee)), true, false);
+        case 15:
+          psbt = _context5.sent;
+          estimatedFee = calcFee(psbt, feeRate);
+          _context5.next = 8;
           break;
-        case 17:
-          _context4.next = 19;
-          return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount.add(estimatedFee)), false);
         case 19:
-          psbt = _context4.sent;
-          return _context4.abrupt("return", {
+          _context5.next = 21;
+          return buildPsbt(buildPsbtParams, selectedUTXOs, total.minus(amount.add(estimatedFee)), false, signPsbt);
+        case 21:
+          psbt = _context5.sent;
+          extractedTx = extract ? psbt.extractTransaction() : undefined;
+          return _context5.abrupt("return", {
             psbt: psbt,
             fee: total.minus(psbt.txOutputs.reduce(function (acc, cur) {
               return acc + Number(cur.value);
             }, 0)).toString(),
-            txId: psbt.extractTransaction().getId(),
-            rawTx: psbt.extractTransaction().toHex(),
+            txId: extractedTx ? extractedTx.getId() : "",
+            rawTx: extractedTx ? extractedTx.toHex() : psbt.toHex(),
             txInputs: selectedUTXOs.map(function (utxo) {
               return {
                 address: address,
-                value: utxo.satoshis
+                value: getUtxoSats(utxo)
               };
             }),
             txOutputs: psbt.txOutputs.map(function (out) {
@@ -50923,153 +47068,239 @@ function _buildTx() {
               };
             })
           });
-        case 21:
-        case "end":
-          return _context4.stop();
-      }
-    }, _callee4);
-  }));
-  return _buildTx.apply(this, arguments);
-}
-function getWitnessUtxo(out) {
-  delete out.address;
-  out.script = Buffer.from(out.script, "hex");
-  return out;
-}
-function createPsbtInput(_x7) {
-  return _createPsbtInput.apply(this, arguments);
-}
-function _createPsbtInput() {
-  _createPsbtInput = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee5(_ref) {
-    var utxo, addressType, network, payInput, _yield$getRawTx, rawTx, tx;
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee5$(_context5) {
-      while (1) switch (_context5.prev = _context5.next) {
-        case 0:
-          utxo = _ref.utxo, addressType = _ref.addressType, network = _ref.network;
-          payInput = {
-            hash: utxo.txId,
-            index: utxo.vout || utxo.outputIndex
-          };
-          _context5.next = 4;
-          return (0,_servies_api__WEBPACK_IMPORTED_MODULE_5__/* .getRawTx */ .xt)(network, {
-            txid: utxo.txId
-          });
-        case 4:
-          _yield$getRawTx = _context5.sent;
-          rawTx = _yield$getRawTx.data.rawTx;
-          tx = bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .Transaction */ .ZX.fromHex(rawTx);
-          if (["P2WPKH"].includes(addressType)) {
-            payInput["witnessUtxo"] = getWitnessUtxo(tx.outs[utxo.vout || utxo.outputIndex]);
-          }
-          if (["P2PKH"].includes(addressType)) {
-            payInput["nonWitnessUtxo"] = tx.toBuffer();
-          }
-          return _context5.abrupt("return", payInput);
-        case 10:
+        case 24:
         case "end":
           return _context5.stop();
       }
     }, _callee5);
   }));
+  return _buildTx.apply(this, arguments);
+}
+function createPsbtInput(_x7) {
+  return _createPsbtInput.apply(this, arguments);
+}
+function _createPsbtInput() {
+  _createPsbtInput = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee6(_ref3) {
+    var utxo, addressType, publicKey, script, network, sats, vout, payInput, tx, mempoolReturn, rawTx, _tx, _payments$p2sh, redeem;
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee6$(_context6) {
+      while (1) switch (_context6.prev = _context6.next) {
+        case 0:
+          utxo = _ref3.utxo, addressType = _ref3.addressType, publicKey = _ref3.publicKey, script = _ref3.script, network = _ref3.network;
+          sats = getUtxoSats(utxo);
+          vout = getUtxoVout(utxo);
+          payInput = {
+            hash: utxo.txId,
+            index: vout,
+            sequence: 0xffffffff
+          };
+          if (["P2TR"].includes(addressType)) {
+            payInput["tapInternalKey"] = toXOnly(publicKey);
+            payInput["witnessUtxo"] = {
+              value: sats,
+              script: script
+            };
+          }
+          if (["P2WPKH"].includes(addressType)) {
+            payInput["witnessUtxo"] = {
+              value: sats,
+              script: script
+            };
+          }
+          if (!["P2PKH"].includes(addressType)) {
+            _context6.next = 18;
+            break;
+          }
+          if (!utxo.rawTx) {
+            _context6.next = 12;
+            break;
+          }
+          tx = bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .Transaction */ .ZX.fromHex(utxo.rawTx);
+          payInput["nonWitnessUtxo"] = tx.toBuffer();
+          _context6.next = 18;
+          break;
+        case 12:
+          mempoolReturn = _mempool_mempool_js__WEBPACK_IMPORTED_MODULE_5___default()({
+            hostname: "mempool.space",
+            network: network === "testnet" ? "testnet" : "main"
+          });
+          _context6.next = 15;
+          return mempoolReturn.bitcoin.transactions.getTxHex({
+            txid: utxo.txId
+          });
+        case 15:
+          rawTx = _context6.sent;
+          _tx = bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .Transaction */ .ZX.fromHex(rawTx);
+          payInput["nonWitnessUtxo"] = _tx.toBuffer();
+        case 18:
+          if (!["P2SH"].includes(addressType)) {
+            _context6.next = 24;
+            break;
+          }
+          _payments$p2sh = bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .payments */ .KT.p2sh({
+            redeem: bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .payments */ .KT.p2wpkh({
+              pubkey: publicKey,
+              network: getNetworks(network)
+            }),
+            network: getNetworks(network)
+          }), redeem = _payments$p2sh.redeem;
+          if (redeem) {
+            _context6.next = 22;
+            break;
+          }
+          throw new Error("redeemScript");
+        case 22:
+          payInput.redeemScript = redeem.output;
+          payInput["witnessUtxo"] = {
+            value: sats,
+            script: script
+          };
+        case 24:
+          return _context6.abrupt("return", payInput);
+        case 25:
+        case "end":
+          return _context6.stop();
+      }
+    }, _callee6);
+  }));
   return _createPsbtInput.apply(this, arguments);
 }
 var getUtxos = /*#__PURE__*/function () {
-  var _ref2 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee(address) {
+  var _ref4 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee(address, _network) {
     var addressType, utxos;
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
-          if (address) {
-            _context.next = 4;
-            break;
-          }
+          addressType = (0,_utils__WEBPACK_IMPORTED_MODULE_7__/* .determineAddressInfo */ .AG)(address).toUpperCase();
           _context.next = 3;
-          return window.metaidwallet.btc.getAddress();
-        case 3:
-          address = _context.sent;
-        case 4:
-          addressType = (0,_utils__WEBPACK_IMPORTED_MODULE_6__/* .determineAddressInfo */ .AG)(address).toUpperCase();
-          _context.next = 7;
           return window.metaidwallet.btc.getUtxos({
             needRawTx: ["P2PKH"].includes(addressType),
             useUnconfirmed: true
           });
-        case 7:
+        case 3:
           utxos = _context.sent;
-          console.log(utxos, "utxos");
-          return _context.abrupt("return", utxos);
-        case 10:
+          return _context.abrupt("return", Array.isArray(utxos) ? utxos : []);
+        case 5:
         case "end":
           return _context.stop();
       }
     }, _callee);
   }));
-  return function getUtxos(_x8) {
-    return _ref2.apply(this, arguments);
+  return function getUtxos(_x8, _x9) {
+    return _ref4.apply(this, arguments);
   };
 }();
-var getUtxoBalance = /*#__PURE__*/function () {
-  var _ref3 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee2(address) {
-    var utxos;
+var addUtxoSafe = /*#__PURE__*/function () {
+  var _ref5 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee2(address, utxos) {
+    var _window$metaidwallet;
+    var i, _utxos$i, txId, vout;
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
-          if (address) {
-            _context2.next = 4;
+          if ((_window$metaidwallet = window.metaidwallet) !== null && _window$metaidwallet !== void 0 && (_window$metaidwallet = _window$metaidwallet.btc) !== null && _window$metaidwallet !== void 0 && _window$metaidwallet.addSafeUtxo) {
+            _context2.next = 2;
             break;
           }
-          _context2.next = 3;
-          return window.metaidwallet.btc.getAddress();
+          return _context2.abrupt("return");
+        case 2:
+          i = 0;
         case 3:
-          address = _context2.sent;
-        case 4:
-          _context2.next = 6;
-          return getUtxos(address);
-        case 6:
-          utxos = _context2.sent;
-          return _context2.abrupt("return", utxos.reduce(function (acc, cur) {
-            return acc + cur.satoshis;
-          }, 0));
+          if (!(i < utxos.length)) {
+            _context2.next = 16;
+            break;
+          }
+          _context2.prev = 4;
+          _utxos$i = utxos[i], txId = _utxos$i.txId, vout = _utxos$i.vout;
+          _context2.next = 8;
+          return window.metaidwallet.btc.addSafeUtxo({
+            address: address,
+            unspentOutput: "".concat(txId, ":").concat(vout)
+          });
         case 8:
+          _context2.next = 13;
+          break;
+        case 10:
+          _context2.prev = 10;
+          _context2.t0 = _context2["catch"](4);
+          console.log(_context2.t0);
+        case 13:
+          i++;
+          _context2.next = 3;
+          break;
+        case 16:
         case "end":
           return _context2.stop();
       }
-    }, _callee2);
+    }, _callee2, null, [[4, 10]]);
   }));
-  return function getUtxoBalance(_x9) {
-    return _ref3.apply(this, arguments);
+  return function addUtxoSafe(_x10, _x11) {
+    return _ref5.apply(this, arguments);
   };
 }();
-var checkWalletAddress = /*#__PURE__*/function () {
-  var _ref4 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee3(address) {
-    var _address;
+function toXOnly(pubKey) {
+  return pubKey.length === 32 ? pubKey : pubKey.slice(1, 33);
+}
+var getUtxoBalance = /*#__PURE__*/function () {
+  var _ref6 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee3(address) {
+    var utxos;
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
-          _context3.next = 2;
-          return window.metaidwallet.btc.getAddress();
-        case 2:
-          _address = _context3.sent;
-          if (!(address !== _address)) {
-            _context3.next = 5;
+          if (address) {
+            _context3.next = 4;
             break;
           }
-          return _context3.abrupt("return", {
-            status: false,
-            message: 'Wallet address is not matched'
-          });
-        case 5:
-          return _context3.abrupt("return", {
-            status: true
-          });
+          _context3.next = 3;
+          return window.metaidwallet.btc.getAddress();
+        case 3:
+          address = _context3.sent;
+        case 4:
+          _context3.next = 6;
+          return getUtxos(address);
         case 6:
+          utxos = _context3.sent;
+          return _context3.abrupt("return", utxos.reduce(function (acc, cur) {
+            return acc + getUtxoSats(cur);
+          }, 0));
+        case 8:
         case "end":
           return _context3.stop();
       }
     }, _callee3);
   }));
-  return function checkWalletAddress(_x10) {
-    return _ref4.apply(this, arguments);
+  return function getUtxoBalance(_x12) {
+    return _ref6.apply(this, arguments);
+  };
+}();
+var checkWalletAddress = /*#__PURE__*/function () {
+  var _ref7 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee4(address) {
+    var _address;
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee4$(_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.next = 2;
+          return window.metaidwallet.btc.getAddress();
+        case 2:
+          _address = _context4.sent;
+          if (!(address !== _address)) {
+            _context4.next = 5;
+            break;
+          }
+          return _context4.abrupt("return", {
+            status: false,
+            message: "Wallet address is not matched"
+          });
+        case 5:
+          return _context4.abrupt("return", {
+            status: true
+          });
+        case 6:
+        case "end":
+          return _context4.stop();
+      }
+    }, _callee4);
+  }));
+  return function checkWalletAddress(_x13) {
+    return _ref7.apply(this, arguments);
   };
 }();
 
@@ -51093,13 +47324,14 @@ __webpack_require__.d(__webpack_exports__, {
   V7: function() { return /* binding */ prettyTimestamp; }
 });
 
-// UNUSED EXPORTS: calcMintBrc20Info, calcMintBrc20Range, calcMintBtcInfo, calcMintBtcRange, calcMintMRC20Info, calcMintRunesInfo, calcRedeemBrc20Info, calcRedeemBtcInfo, calcRedeemBtcRange, calcRedeemMrc20Info, calcRedeemRunesInfo, formatUnitToSats
+// UNUSED EXPORTS: confirmNumberBySeqAndAmount, formatUnitToSats
 
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/slicedToArray.js
 var slicedToArray = __webpack_require__(11604);
 var slicedToArray_default = /*#__PURE__*/__webpack_require__.n(slicedToArray);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/createForOfIteratorHelper.js
 var createForOfIteratorHelper = __webpack_require__(59224);
+var createForOfIteratorHelper_default = /*#__PURE__*/__webpack_require__.n(createForOfIteratorHelper);
 // EXTERNAL MODULE: ./node_modules/decimal.js/decimal.mjs
 var decimal_js_decimal = __webpack_require__(76582);
 ;// ./node_modules/bignumber.js/bignumber.mjs
@@ -54014,11 +50246,9 @@ var BigNumber = clone();
 // EXTERNAL MODULE: ./node_modules/dayjs/dayjs.min.js
 var dayjs_min = __webpack_require__(74353);
 var dayjs_min_default = /*#__PURE__*/__webpack_require__.n(dayjs_min);
-// EXTERNAL MODULE: ./src/servies/wrapping.ts + 10 modules
-var wrapping = __webpack_require__(33595);
+// EXTERNAL MODULE: ./src/servies/wrapping.ts + 8 modules
+var wrapping = __webpack_require__(99737);
 ;// ./src/utils/utils.ts
-/* unused harmony import specifier */ var _slicedToArray;
-/* unused harmony import specifier */ var _createForOfIteratorHelper;
 /* unused harmony import specifier */ var Decimal;
 
 
@@ -54028,11 +50258,11 @@ var wrapping = __webpack_require__(33595);
 
 var formatSat = function formatSat(value) {
   var dec = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 8;
-  if (!value) return "0";
+  if (value === undefined || value === null || value === "") return "0";
   var v = bignumber(value).div(Math.pow(10, dec));
   var arr = v.toString().split(".");
   if (v.toString().indexOf("e") > -1 || arr[1] && arr[1].length > dec) {
-    return bignumber(v).toFixed(dec);
+    return bignumber(v).toFixed(dec).replace(/\.?0+$/, "") || "0";
   }
   return v.toString();
 };
@@ -54047,32 +50277,23 @@ function amountRaw(amount, decimals, maxValue) {
   return _amountRaw.toFixed(0);
 }
 var confirmNumberBySeqAndAmount = function confirmNumberBySeqAndAmount(amount, seq, network) {
-  var _iterator = _createForOfIteratorHelper(seq),
+  if (!Array.isArray(seq)) return 1;
+  var _iterator = createForOfIteratorHelper_default()(seq),
     _step;
   try {
     for (_iterator.s(); !(_step = _iterator.n()).done;) {
       var item = _step.value;
-      var _item = _slicedToArray(item, 4),
+      var _item = slicedToArray_default()(item, 4),
         start = _item[0],
         end = _item[1],
         confirmBtc = _item[2],
         confirmMvc = _item[3];
       if (end) {
         if (start <= amount && amount <= end) {
-          if (network === "MVC") {
-            return confirmMvc;
-          } else {
-            return confirmBtc;
-          }
+          return network === "MVC" ? confirmMvc : confirmBtc;
         }
-      } else {
-        if (start <= amount) {
-          if (network === "MVC") {
-            return confirmMvc;
-          } else {
-            return confirmBtc;
-          }
-        }
+      } else if (start <= amount) {
+        return network === "MVC" ? confirmMvc : confirmBtc;
       }
     }
   } catch (err) {
@@ -54080,190 +50301,21 @@ var confirmNumberBySeqAndAmount = function confirmNumberBySeqAndAmount(amount, s
   } finally {
     _iterator.f();
   }
-  return 5;
-};
-var calcRedeemBtcInfo = function calcRedeemBtcInfo(redeemAmount, assetInfo) {
-  var feeBtc = assetInfo.feeBtc,
-    amountLimitMaximum = assetInfo.amountLimitMaximum,
-    amountLimitMinimum = assetInfo.amountLimitMinimum,
-    confirmSequence = assetInfo.confirmSequence,
-    transactionSize = assetInfo.transactionSize,
-    assetList = assetInfo.assetList;
-  if (redeemAmount < Number(amountLimitMinimum)) {
-    throw new Error("amount less than minimum amount");
-  }
-  if (redeemAmount > Number(amountLimitMaximum)) {
-    throw new Error("amount greater than maximum amount");
-  }
-  var confirmNumber = confirmNumberBySeqAndAmount(redeemAmount, confirmSequence,
-  // mint btc -> mvc, get mvc confirm number
-  "MVC");
-  var btcAsset = assetList.find(function (item) {
-    return item.network === "BTC";
-  });
-  if (!btcAsset) throw new Error("no assrt");
-  var bridgeFee = redeemAmount * btcAsset.feeRateNumeratorRedeem / 10000 + btcAsset.feeRateConstRedeem;
-  var minerFee = transactionSize.BTC_REDEEM * feeBtc;
-  var totalFee = Math.floor(bridgeFee + minerFee);
-  var receiveAmount = redeemAmount - totalFee;
-  debugger;
-  return {
-    receiveAmount: formatSat(receiveAmount),
-    minerFee: formatSat(minerFee),
-    bridgeFee: formatSat(bridgeFee),
-    totalFee: formatSat(totalFee),
-    confirmNumber: confirmNumber
-  };
-};
-var calcRedeemBrc20Info = function calcRedeemBrc20Info(redeemAmount, assetInfo, asset) {
-  var btcPrice = assetInfo.btcPrice,
-    feeBtc = assetInfo.feeBtc,
-    amountLimitMaximum = assetInfo.amountLimitMaximum,
-    amountLimitMinimum = assetInfo.amountLimitMinimum,
-    confirmSequence = assetInfo.confirmSequence,
-    transactionSize = assetInfo.transactionSize;
-  var brcAmount = redeemAmount / Math.pow(10, asset.decimals - asset.trimDecimals);
-  var redeemBrc20EqualBtcAmount = asset.price * Number(brcAmount) / btcPrice * Math.pow(10, 8);
-  if (redeemBrc20EqualBtcAmount < Number(amountLimitMinimum)) {
-    throw new Error("amount less than minimum amount");
-  }
-  if (redeemBrc20EqualBtcAmount > Number(amountLimitMaximum)) {
-    throw new Error("amount greater than maximum amount");
-  }
-  var confirmNumber = confirmNumberBySeqAndAmount(redeemBrc20EqualBtcAmount, confirmSequence,
-  // mint btc -> mvc, get mvc confirm number
-  "MVC");
-  var bridgeFeeConst = BigInt(Math.floor(asset.feeRateConstRedeem / Math.pow(10, 8) * btcPrice / asset.price * Math.pow(10, asset.decimals - asset.trimDecimals)));
-  var bridgeFeePercent = BigInt(redeemAmount) * BigInt(asset.feeRateNumeratorRedeem) / 10000n;
-  var bridgeFee = bridgeFeeConst + bridgeFeePercent;
-  var minerFee = BigInt(Math.floor(transactionSize.BRC20_REDEEM / Math.pow(10, 8) * feeBtc * btcPrice / asset.price * Math.pow(10, asset.decimals - asset.trimDecimals)));
-  var totalFee = bridgeFee + minerFee;
-  var receiveAmount = BigInt(redeemAmount) - totalFee;
-  return {
-    receiveAmount: formatSat(String(receiveAmount), asset.decimals - asset.trimDecimals),
-    minerFee: formatSat(String(minerFee), asset.decimals - asset.trimDecimals),
-    bridgeFee: formatSat(String(bridgeFee), asset.decimals - asset.trimDecimals),
-    totalFee: formatSat(String(totalFee), asset.decimals - asset.trimDecimals),
-    confirmNumber: confirmNumber
-  };
-};
-var calcMintBtcInfo = function calcMintBtcInfo(mintAmount, assetInfo) {
-  var btcPrice = assetInfo.btcPrice,
-    mvcPrice = assetInfo.mvcPrice,
-    feeBtc = assetInfo.feeBtc,
-    feeMvc = assetInfo.feeMvc,
-    amountLimitMaximum = assetInfo.amountLimitMaximum,
-    amountLimitMinimum = assetInfo.amountLimitMinimum,
-    confirmSequence = assetInfo.confirmSequence,
-    transactionSize = assetInfo.transactionSize,
-    assetList = assetInfo.assetList;
-  if (mintAmount < Number(amountLimitMinimum)) {
-    throw new Error("amount less than minimum amount");
-  }
-  if (mintAmount > Number(amountLimitMaximum)) {
-    throw new Error("amount greater than maximum amount");
-  }
-  var confirmNumber = confirmNumberBySeqAndAmount(mintAmount, confirmSequence,
-  // mint btc -> mvc, get mvc confirm number
-  "BTC");
-  var btcAsset = assetList.find(function (item) {
-    return item.network === "BTC";
-  });
-  if (!btcAsset) throw new Error("no asset");
-  var bridgeFee = 0;
-  var minerFee = 0;
-  if (btcAsset.feeRateNumeratorMint > 0 || btcAsset.feeRateConstMint > 0) {
-    bridgeFee = mintAmount * btcAsset.feeRateNumeratorMint / 10000 + btcAsset.feeRateConstMint;
-    minerFee = transactionSize.BTC_MINT * feeMvc * mvcPrice / btcPrice;
-  }
-  var totalFee = Math.floor(bridgeFee + minerFee);
-  var receiveAmount = mintAmount - totalFee;
-  return {
-    receiveAmount: formatSat(receiveAmount),
-    minerFee: formatSat(minerFee),
-    bridgeFee: formatSat(bridgeFee),
-    totalFee: formatSat(totalFee),
-    confirmNumber: confirmNumber
-  };
-};
-var calcMintBtcRange = function calcMintBtcRange(assetInfo) {
-  var amountLimitMaximum = assetInfo.amountLimitMaximum,
-    amountLimitMinimum = assetInfo.amountLimitMinimum;
-  return [Number(formatSat(amountLimitMinimum)), Number(formatSat(amountLimitMaximum))];
-};
-var calcRedeemBtcRange = function calcRedeemBtcRange(assetInfo) {
-  var amountLimitMaximum = assetInfo.amountLimitMaximum,
-    amountLimitMinimum = assetInfo.amountLimitMinimum;
-  return [Number(formatSat(amountLimitMinimum)), Number(formatSat(amountLimitMaximum))];
-};
-var calcMintBrc20Info = function calcMintBrc20Info(mintAmount, assetInfo, asset) {
-  var btcPrice = assetInfo.btcPrice,
-    mvcPrice = assetInfo.mvcPrice,
-    feeBtc = assetInfo.feeBtc,
-    feeMvc = assetInfo.feeMvc,
-    amountLimitMaximum = assetInfo.amountLimitMaximum,
-    amountLimitMinimum = assetInfo.amountLimitMinimum,
-    confirmSequence = assetInfo.confirmSequence,
-    transactionSize = assetInfo.transactionSize,
-    assetList = assetInfo.assetList;
-  var assetRdex = asset;
-  var mintBrc20EqualBtcAmount = assetRdex.price * Number(mintAmount) / btcPrice * Math.pow(10, 8);
-  if (Number(mintBrc20EqualBtcAmount) < Number(amountLimitMinimum)) {
-    throw new Error("amount less than minimum amount");
-  }
-  if (Number(mintBrc20EqualBtcAmount) > Number(amountLimitMaximum)) {
-    throw new Error("amount greater than maximum amount");
-  }
-  var confirmNumber = confirmNumberBySeqAndAmount(mintBrc20EqualBtcAmount, confirmSequence,
-  // mint btc -> mvc, get mvc confirm number
-  "BRC20");
-  var bridgeFee = 0;
-  var minerFee = 0;
-  if (assetRdex.feeRateNumeratorMint > 0 || assetRdex.feeRateConstMint > 0) {
-    bridgeFee = Number(mintAmount) * assetRdex.feeRateNumeratorMint / 10000 + assetRdex.feeRateConstMint / Math.pow(10, 8) * btcPrice / assetRdex.price;
-    minerFee = transactionSize.BTC_MINT * feeMvc * mvcPrice / Math.pow(10, 8) / assetRdex.price;
-  }
-  var totalFee = bridgeFee + minerFee;
-  var receiveAmount = Number(mintAmount) - totalFee;
-  var receiveAmountFixed = receiveAmount.toFixed(assetRdex.decimals - assetRdex.trimDecimals);
-  return {
-    receiveAmount: receiveAmountFixed,
-    minerFee: minerFee,
-    bridgeFee: bridgeFee,
-    totalFee: totalFee,
-    confirmNumber: confirmNumber
-  };
-};
-var calcMintBrc20Range = function calcMintBrc20Range(assetInfo, asset) {
-  var btcPrice = assetInfo.btcPrice,
-    amountLimitMaximum = assetInfo.amountLimitMaximum,
-    amountLimitMinimum = assetInfo.amountLimitMinimum;
-  var assetRdex = asset;
-  var minAmount = Number(amountLimitMinimum) / 1e8 * btcPrice / assetRdex.price;
-  var maxAmount = Number(amountLimitMaximum) / 1e8 * btcPrice / assetRdex.price;
-  return [minAmount, maxAmount];
+  return 2;
 };
 function determineAddressInfo(address) {
-  if (address.startsWith("bc1q")) {
+  if (!address) return "unknown";
+  if (address.startsWith("bc1q") || address.startsWith("tb1q")) {
     return "p2wpkh";
   }
-  if (address.startsWith("tb1q")) {
-    return "p2wpkh";
-  }
-  if (address.startsWith("bc1p")) {
+  if (address.startsWith("bc1p") || address.startsWith("tb1p")) {
     return "p2tr";
   }
-  if (address.startsWith("tb1p")) {
-    return "p2tr";
-  }
-  if (address.startsWith("1")) {
+  if (address.startsWith("1") || address.startsWith("m") || address.startsWith("n")) {
     return "p2pkh";
   }
   if (address.startsWith("3") || address.startsWith("2")) {
     return "p2sh";
-  }
-  if (address.startsWith("m") || address.startsWith("n")) {
-    return "p2pkh";
   }
   return "unknown";
 }
@@ -54276,267 +50328,106 @@ function prettyTimestamp(timestamp) {
 }
 var formatUnitToSats = function formatUnitToSats(value) {
   var decimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 8;
-  if (!value) {
-    return 0;
-  }
+  if (!value) return 0;
   return new Decimal(value).mul(Math.pow(10, decimal)).toNumber();
 };
 var formatUnitToBtc = function formatUnitToBtc(value) {
   var decimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 8;
-  if (!value) {
-    return 0;
-  }
+  if (!value) return 0;
   return new decimal_js_decimal/* default */.A(value).div(Math.pow(10, decimal)).toNumber();
 };
-var calcMintRunesInfo = function calcMintRunesInfo(mintAmount, assetInfo, asset) {
-  var btcPrice = assetInfo.btcPrice,
-    mvcPrice = assetInfo.mvcPrice,
-    feeBtc = assetInfo.feeBtc,
-    feeMvc = assetInfo.feeMvc,
-    amountLimitMaximum = assetInfo.amountLimitMaximum,
-    amountLimitMinimum = assetInfo.amountLimitMinimum,
-    confirmSequence = assetInfo.confirmSequence,
-    transactionSize = assetInfo.transactionSize,
-    assetList = assetInfo.assetList;
-  console.log("asset:", asset);
-  console.log(new Decimal(mintAmount).mul(Math.pow(10, asset.decimals)));
 
-  // // 转换成btc价值
-  var mintRunesEqualBtcAmount = asset.price * Number(mintAmount) / btcPrice * Math.pow(10, 8);
-  console.log("mintRunesEqualBtcAmount:", mintRunesEqualBtcAmount);
-  console.log("mintRunesEqualBtcAmount:", amountLimitMinimum, amountLimitMaximum);
-  if (Number(mintRunesEqualBtcAmount) < Number(amountLimitMinimum)) {
-    throw new Error("amount less than minimum amount");
-  }
-  if (Number(mintRunesEqualBtcAmount) > Number(amountLimitMaximum)) {
-    throw new Error("amount greater than maximum amount");
-  }
-  var confirmNumber = confirmNumberBySeqAndAmount(mintRunesEqualBtcAmount, confirmSequence,
-  // mint btc -> mvc, get mvc confirm number
-  "RUNES");
-  var bridgeFee = 0;
-  var minerFee = 0;
-  if (asset.feeRateNumeratorMint > 0 || asset.feeRateConstMint > 0) {
-    bridgeFee = Number(mintAmount) * asset.feeRateNumeratorMint / 10000 + asset.feeRateConstMint / Math.pow(10, 8) * btcPrice / asset.price;
-    minerFee = transactionSize.BTC_MINT * feeMvc * mvcPrice / Math.pow(10, 8) / asset.price;
-  }
-  var totalFee = bridgeFee + minerFee;
-  var receiveAmount = Number(mintAmount) - totalFee;
-  var receiveAmountFixed = receiveAmount.toFixed(asset.decimals - asset.trimDecimals);
-  return {
-    receiveAmount: receiveAmountFixed,
-    minerFee: minerFee,
-    bridgeFee: bridgeFee,
-    totalFee: totalFee,
-    confirmNumber: confirmNumber
-  };
-};
-var calcRedeemRunesInfo = function calcRedeemRunesInfo(redeemAmount, assetInfo, asset) {
-  var btcPrice = assetInfo.btcPrice,
-    feeBtc = assetInfo.feeBtc,
-    amountLimitMaximum = assetInfo.amountLimitMaximum,
-    amountLimitMinimum = assetInfo.amountLimitMinimum,
-    confirmSequence = assetInfo.confirmSequence,
-    transactionSize = assetInfo.transactionSize;
-  var runesAmount = redeemAmount / Math.pow(10, asset.decimals - asset.trimDecimals);
-  var redeemBrc20EqualBtcAmount = asset.price * Number(runesAmount) / btcPrice * Math.pow(10, 8);
-  if (redeemBrc20EqualBtcAmount < Number(amountLimitMinimum)) {
-    throw new Error("amount less than minimum amount");
-  }
-  if (redeemBrc20EqualBtcAmount > Number(amountLimitMaximum)) {
-    throw new Error("amount greater than maximum amount");
-  }
-  var confirmNumber = confirmNumberBySeqAndAmount(redeemBrc20EqualBtcAmount, confirmSequence,
-  // mint btc -> mvc, get mvc confirm number
-  "MVC");
-  var bridgeFeeConst = BigInt(Math.floor(asset.feeRateConstRedeem / Math.pow(10, 8) * btcPrice / asset.price * Math.pow(10, asset.decimals - asset.trimDecimals)));
-  var bridgeFeePercent = BigInt(redeemAmount) * BigInt(asset.feeRateNumeratorRedeem) / 10000n;
-  var bridgeFee = bridgeFeeConst + bridgeFeePercent;
-  var minerFee = BigInt(Math.floor(transactionSize.RUNES_REDEEM / Math.pow(10, 8) * feeBtc * btcPrice / asset.price * Math.pow(10, asset.decimals - asset.trimDecimals)));
-  var totalFee = bridgeFee + minerFee;
-  var receiveAmount = BigInt(redeemAmount) - totalFee;
-  return {
-    receiveAmount: formatSat(String(receiveAmount), asset.decimals - asset.trimDecimals),
-    minerFee: formatSat(String(minerFee), asset.decimals - asset.trimDecimals),
-    bridgeFee: formatSat(String(bridgeFee), asset.decimals - asset.trimDecimals),
-    totalFee: formatSat(String(totalFee), asset.decimals - asset.trimDecimals),
-    confirmNumber: confirmNumber
-  };
-};
-var calcRedeemMrc20Info = function calcRedeemMrc20Info(redeemAmount, assetInfo, asset) {
-  var btcPrice = assetInfo.btcPrice,
-    feeBtc = assetInfo.feeBtc,
-    amountLimitMaximum = assetInfo.amountLimitMaximum,
-    amountLimitMinimum = assetInfo.amountLimitMinimum,
-    confirmSequence = assetInfo.confirmSequence,
-    transactionSize = assetInfo.transactionSize;
-  var brcAmount = redeemAmount / Math.pow(10, asset.decimals - asset.trimDecimals);
-  var redeemMrc20EqualBtcAmount = asset.price * Number(brcAmount) / btcPrice * Math.pow(10, 8);
-  if (redeemMrc20EqualBtcAmount < Number(amountLimitMinimum)) {
-    throw new Error("amount less than minimum amount");
-  }
-  if (redeemMrc20EqualBtcAmount > Number(amountLimitMaximum)) {
-    throw new Error("amount greater than maximum amount");
-  }
-  var confirmNumber = confirmNumberBySeqAndAmount(redeemMrc20EqualBtcAmount, confirmSequence,
-  // mint btc -> mvc, get mvc confirm number
-  "MVC");
-  var bridgeFeeConst = BigInt(Math.floor(asset.feeRateConstRedeem / Math.pow(10, 8) * btcPrice / asset.price * Math.pow(10, asset.decimals - asset.trimDecimals)));
-  var bridgeFeePercent = BigInt(redeemAmount) * BigInt(asset.feeRateNumeratorRedeem) / 10000n;
-  var bridgeFee = bridgeFeeConst + bridgeFeePercent;
-  var minerFee = BigInt(Math.floor(transactionSize.RUNES_REDEEM / Math.pow(10, 8) * feeBtc * btcPrice / asset.price * Math.pow(10, asset.decimals - asset.trimDecimals)));
-  var totalFee = bridgeFee + minerFee;
-  var receiveAmount = BigInt(redeemAmount) - totalFee;
-  return {
-    receiveAmount: formatSat(String(receiveAmount), asset.decimals - asset.trimDecimals),
-    minerFee: formatSat(String(minerFee), asset.decimals - asset.trimDecimals),
-    bridgeFee: formatSat(String(bridgeFee), asset.decimals - asset.trimDecimals),
-    totalFee: formatSat(String(totalFee), asset.decimals - asset.trimDecimals),
-    confirmNumber: confirmNumber
-  };
-};
-var calcMintMRC20Info = function calcMintMRC20Info(mintAmount, assetInfo, asset) {
-  var btcPrice = assetInfo.btcPrice,
-    mvcPrice = assetInfo.mvcPrice,
-    feeBtc = assetInfo.feeBtc,
-    feeMvc = assetInfo.feeMvc,
-    amountLimitMaximum = assetInfo.amountLimitMaximum,
-    amountLimitMinimum = assetInfo.amountLimitMinimum,
-    confirmSequence = assetInfo.confirmSequence,
-    transactionSize = assetInfo.transactionSize,
-    assetList = assetInfo.assetList;
-  var mintRawAmount = new Decimal(mintAmount).mul(Math.pow(10, asset.decimals)).toFixed(0);
-  var mintMrc20EqualBtcAmount = asset.price * Number(mintAmount) / btcPrice * Math.pow(10, 8);
-  if (Number(mintMrc20EqualBtcAmount) < Number(amountLimitMinimum)) {
-    throw new Error("amount less than minimum amount");
-  }
-  if (Number(mintMrc20EqualBtcAmount) > Number(amountLimitMaximum)) {
-    throw new Error("amount greater than maximum amount");
-  }
-  var confirmNumber = confirmNumberBySeqAndAmount(mintMrc20EqualBtcAmount, confirmSequence,
-  // mint btc -> mvc, get mvc confirm number
-  "MRC20");
-  var bridgeFee = 0;
-  var minerFee = 0;
-  if (asset.feeRateNumeratorMint > 0 || asset.feeRateConstMint > 0) {
-    bridgeFee = Number(mintAmount) * asset.feeRateNumeratorMint / 10000 + asset.feeRateConstMint / Math.pow(10, 8) * btcPrice / asset.price;
-    minerFee = transactionSize.BTC_MINT * feeMvc * mvcPrice / Math.pow(10, 8) / asset.price;
-  }
-  var totalFee = bridgeFee + minerFee;
-  var receiveAmount = Number(mintAmount) - totalFee;
-  var receiveAmountFixed = receiveAmount.toFixed(asset.decimals - asset.trimDecimals);
-  return {
-    receiveAmount: receiveAmountFixed,
-    minerFee: minerFee.toFixed(asset.decimals),
-    bridgeFee: bridgeFee.toFixed(asset.decimals),
-    totalFee: totalFee.toFixed(asset.decimals),
-    confirmNumber: confirmNumber
-  };
-};
-var getTransactionSize = function getTransactionSize(transactionSize, actionType) {
-  switch (actionType) {
-    case "mintbtc":
-      return transactionSize.BTC_MINT;
-    case "mintbrc20":
-      return transactionSize.BTC_MINT;
-    case "mintmrc20":
-      return transactionSize.BTC_MINT;
-    case "mintrunes":
-      return transactionSize.BTC_MINT;
-    case "redeembtc":
-      return transactionSize.BTC_REDEEM;
-    case "redeembrc20":
-      return transactionSize.BRC20_REDEEM;
-    case "redeemrunes":
-      return transactionSize.BRC20_REDEEM;
-    case "redeemmrc20":
-      return transactionSize.BRC20_REDEEM;
-    default:
-      console.log(actionType);
-      throw new Error("unsupport protocol");
-  }
-};
+/**
+ * Price-decoupled bridging quantity range:
+ * - BTC: [amountLimitMinimum / 1e8, amountLimitMaximum / 1e8]
+ * - MRC20: [0, 0] (no price-dependent limit; validated by > 0 and token precision)
+ */
 var calculateQuantityLimitRange = function calculateQuantityLimitRange(assetInfo, asset) {
-  var btcPrice = assetInfo.btcPrice,
-    amountLimitMaximum = assetInfo.amountLimitMaximum,
-    amountLimitMinimum = assetInfo.amountLimitMinimum;
-  var price = asset.network === "BTC" ? btcPrice : asset.price || 0;
-  var minAmount = new decimal_js_decimal/* default */.A(amountLimitMinimum).div(1e8).mul(btcPrice).div(price).toNumber();
-  var maxAmount = new decimal_js_decimal/* default */.A(amountLimitMaximum).div(1e8).mul(btcPrice).div(price).toNumber();
-  return [minAmount, maxAmount];
+  if (asset.network === "BTC") {
+    var minAmount = new decimal_js_decimal/* default */.A(assetInfo.amountLimitMinimum || "10000").div(1e8).toNumber();
+    var maxAmount = new decimal_js_decimal/* default */.A(assetInfo.amountLimitMaximum || "100000000").div(1e8).toNumber();
+    return [minAmount, maxAmount];
+  }
+  return [0, 0];
 };
-var calcRedeemInfo = function calcRedeemInfo(amount, assetInfo, asset) {
-  var btcPrice = assetInfo.btcPrice,
-    feeBtc = assetInfo.feeBtc,
-    transactionSize = assetInfo.transactionSize;
-  var decimals = asset.decimals - asset.trimDecimals;
-  var bigIntAmount = new decimal_js_decimal/* default */.A(amount).mul(Math.pow(10, decimals)).toFixed(0);
-  // 资产价格
-  var price = asset.network === "BTC" ? btcPrice : asset.price;
+function validateAmountAndPrecision(rawInput, maxDecimals, minAmount, maxAmount) {
+  var str = String(rawInput).trim();
+  if (!str || Number.isNaN(Number(str))) {
+    throw new Error("Invalid amount");
+  }
+  var dec = new decimal_js_decimal/* default */.A(str);
+  if (dec.lte(0)) {
+    throw new Error("Amount must be greater than 0");
+  }
+  if (dec.decimalPlaces() > maxDecimals) {
+    throw new Error("Maximum precision is ".concat(maxDecimals, " decimals"));
+  }
+  if (minAmount > 0 && dec.lt(minAmount)) {
+    throw new Error("Amount less than minimum (".concat(minAmount, ")"));
+  }
+  if (maxAmount > 0 && dec.gt(maxAmount)) {
+    throw new Error("Amount greater than maximum (".concat(maxAmount, ")"));
+  }
+  return dec;
+}
 
-  // 判断是否在限额范围内
+/**
+ * 1:1 full arrival calculation for Mint (BTC -> WBTC, MRC20 -> MetaContract).
+ * Bridge service fee is paid externally in native BTC.
+ */
+var calcMintInfo = function calcMintInfo(amount, assetInfo, asset, quote) {
+  var _quote$btcFeeSats;
+  var maxDecimals = asset.network === "BTC" ? asset.decimals : Math.max(0, asset.decimals - asset.trimDecimals);
   var _calculateQuantityLim = calculateQuantityLimitRange(assetInfo, asset),
     _calculateQuantityLim2 = slicedToArray_default()(_calculateQuantityLim, 2),
     minAmount = _calculateQuantityLim2[0],
     maxAmount = _calculateQuantityLim2[1];
-  if (amount < minAmount) {
-    throw new Error("amount less than minimum amount");
-  }
-  if (amount > maxAmount) {
-    throw new Error("amount greater than maximum amount");
-  }
-  // 固定费用
-  var bridgeFeeConst = BigInt(Math.floor(asset.feeRateConstRedeem / Math.pow(10, 8) * btcPrice / price * Math.pow(10, decimals)));
-  // 按比例收取的费用
-  var bridgeFeePercent = BigInt(bigIntAmount) * BigInt(asset.feeRateNumeratorRedeem) / 10000n;
-  // 桥费
-  var bridgeFee = bridgeFeeConst + bridgeFeePercent;
-  var tragetTransactionSize = getTransactionSize(transactionSize, "redeem".concat(asset.network.toLowerCase()));
-  // target tx 矿工费
-
-  var minerFee = BigInt(Math.floor(tragetTransactionSize / Math.pow(10, 8) * feeBtc * btcPrice / price * Math.pow(10, decimals)));
-  var totalFee = bridgeFee + minerFee;
-  var receiveAmount = BigInt(bigIntAmount) - totalFee;
+  var dec = validateAmountAndPrecision(amount, maxDecimals, minAmount, maxAmount);
+  var defaultFeeSats = asset.network === "BTC" ? 800 : 1000;
+  var btcFeeSats = Number((_quote$btcFeeSats = quote === null || quote === void 0 ? void 0 : quote.btcFeeSats) !== null && _quote$btcFeeSats !== void 0 ? _quote$btcFeeSats : defaultFeeSats);
+  var btcRate = Number((quote === null || quote === void 0 ? void 0 : quote.btcFeeRate) || assetInfo.feeBtc || 2);
+  var estMinerSats = asset.network === "BTC" ? Math.ceil(160 * btcRate) : 546 + Math.ceil(300 * btcRate);
+  var confirmAmountSats = asset.network === "BTC" ? dec.mul(1e8).toNumber() : 0;
+  var confirmNumber = confirmNumberBySeqAndAmount(confirmAmountSats, assetInfo.confirmSequence, asset.network === "BTC" ? "BTC" : "MRC20");
   return {
-    receiveAmount: new decimal_js_decimal/* default */.A(receiveAmount.toString()).div(Math.pow(10, decimals)).toFixed(decimals),
-    minerFee: new decimal_js_decimal/* default */.A(minerFee.toString()).div(Math.pow(10, decimals)).toFixed(decimals),
-    bridgeFee: new decimal_js_decimal/* default */.A(bridgeFee.toString()).div(Math.pow(10, decimals)).toFixed(decimals),
-    totalFee: new decimal_js_decimal/* default */.A(totalFee.toString()).div(Math.pow(10, decimals)).toFixed(decimals)
+    receiveAmount: dec.toFixed(),
+    bridgeFee: "".concat(formatSat(btcFeeSats, 8), " BTC"),
+    minerFee: "~".concat(formatSat(estMinerSats, 8), " BTC"),
+    totalFee: "~".concat(formatSat(btcFeeSats + estMinerSats, 8), " BTC"),
+    confirmNumber: confirmNumber,
+    btcBridgeFeeSats: btcFeeSats,
+    mvcBridgeFeeSats: 0
   };
 };
-var calcMintInfo = function calcMintInfo(amount, assetInfo, asset) {
-  var btcPrice = assetInfo.btcPrice,
-    mvcPrice = assetInfo.mvcPrice,
-    feeMvc = assetInfo.feeMvc,
-    transactionSize = assetInfo.transactionSize;
-  var decimals = asset.decimals;
-  var bigIntAmount = new decimal_js_decimal/* default */.A(amount).mul(Math.pow(10, decimals)).toFixed(0);
-  // 资产价格
-  var price = asset.network === "BTC" ? btcPrice : asset.price;
+
+/**
+ * 1:1 full arrival calculation for Redeem (WBTC -> BTC, MetaContract -> MRC20).
+ * Bridge service fees are paid externally in MVC SPACE + BTC.
+ */
+var calcRedeemInfo = function calcRedeemInfo(amount, assetInfo, asset, quote) {
+  var _quote$mvcFeeSats, _quote$btcFeeSats2;
+  var maxDecimals = asset.network === "BTC" ? asset.decimals : Math.max(0, asset.decimals - asset.trimDecimals);
   var _calculateQuantityLim3 = calculateQuantityLimitRange(assetInfo, asset),
     _calculateQuantityLim4 = slicedToArray_default()(_calculateQuantityLim3, 2),
     minAmount = _calculateQuantityLim4[0],
     maxAmount = _calculateQuantityLim4[1];
-  if (amount < minAmount) {
-    throw new Error("amount less than minimum amount");
-  }
-  if (amount > maxAmount) {
-    throw new Error("amount greater than maximum amount");
-  }
-  var bridgeFeeConst = BigInt(Math.floor(asset.feeRateConstMint / Math.pow(10, 8) * btcPrice / price * Math.pow(10, decimals)));
-  // 按比例收取的费用
-  var bridgeFeePercent = BigInt(bigIntAmount) * BigInt(asset.feeRateNumeratorMint) / 10000n;
-  var bridgeFee = bridgeFeeConst + bridgeFeePercent;
-  var tragetTransactionSize = getTransactionSize(transactionSize, "mint".concat(asset.network.toLowerCase()));
-  // target tx 矿工费
-  var minerFee = BigInt(Math.floor(tragetTransactionSize / Math.pow(10, 8) * feeMvc * mvcPrice / price * Math.pow(10, decimals)));
-  var totalFee = bridgeFee + minerFee;
-  var receiveAmount = BigInt(bigIntAmount) - totalFee;
+  var dec = validateAmountAndPrecision(amount, maxDecimals, minAmount, maxAmount);
+  var mvcFeeSats = Number((_quote$mvcFeeSats = quote === null || quote === void 0 ? void 0 : quote.mvcFeeSats) !== null && _quote$mvcFeeSats !== void 0 ? _quote$mvcFeeSats : 50000);
+  var defaultBtcFee = asset.network === "BTC" ? 880 : 2066;
+  var btcFeeSats = Number((_quote$btcFeeSats2 = quote === null || quote === void 0 ? void 0 : quote.btcFeeSats) !== null && _quote$btcFeeSats2 !== void 0 ? _quote$btcFeeSats2 : defaultBtcFee);
+  var btcRate = Number((quote === null || quote === void 0 ? void 0 : quote.btcFeeRate) || assetInfo.feeBtc || 2);
+  var estBtcMinerSats = Math.ceil(150 * btcRate);
+  var estMvcMinerSats = 4500;
+  var confirmAmountSats = asset.network === "BTC" ? dec.mul(1e8).toNumber() : 0;
+  var confirmNumber = confirmNumberBySeqAndAmount(confirmAmountSats, assetInfo.confirmSequence, "MVC");
   return {
-    receiveAmount: new decimal_js_decimal/* default */.A(receiveAmount.toString()).div(Math.pow(10, decimals)).toFixed(asset.decimals - asset.trimDecimals),
-    minerFee: new decimal_js_decimal/* default */.A(minerFee.toString()).div(Math.pow(10, decimals)).toFixed(decimals),
-    bridgeFee: new decimal_js_decimal/* default */.A(bridgeFee.toString()).div(Math.pow(10, decimals)).toFixed(decimals),
-    totalFee: new decimal_js_decimal/* default */.A(totalFee.toString()).div(Math.pow(10, decimals)).toFixed(decimals)
+    receiveAmount: dec.toFixed(),
+    bridgeFee: "".concat(formatSat(mvcFeeSats, 8), " SPACE + ").concat(formatSat(btcFeeSats, 8), " BTC"),
+    minerFee: "~".concat(formatSat(estMvcMinerSats, 8), " SPACE + ~").concat(formatSat(estBtcMinerSats, 8), " BTC"),
+    totalFee: "".concat(formatSat(mvcFeeSats + estMvcMinerSats, 8), " SPACE + ").concat(formatSat(btcFeeSats + estBtcMinerSats, 8), " BTC"),
+    confirmNumber: confirmNumber,
+    btcBridgeFeeSats: btcFeeSats,
+    mvcBridgeFeeSats: mvcFeeSats
   };
 };
 var checkAddressType = function checkAddressType(address) {
@@ -167920,7 +163811,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"2.16.840.1.101.3.4.1.1":"aes-128-ecb
 /******/ 	
 /******/ 	/* webpack/runtime/get javascript chunk filename */
 /******/ 	// This function allow to reference async chunks
-/******/ 	__webpack_require__.u = function(chunkId) { return ({"73":"p__index","266":"layouts__index","807":"p__wrapping__index"}[chunkId] || chunkId) + "." + {"73":"27e19d1c","266":"6382c484","267":"34562599","504":"5b777e3f","639":"c1fa9d1f","807":"de94bc83","969":"ac097453"}[chunkId] + ".async.js"; };
+/******/ 	__webpack_require__.u = function(chunkId) { return ({"73":"p__index","266":"layouts__index","807":"p__wrapping__index"}[chunkId] || chunkId) + "." + {"73":"167e2d29","103":"ab6584b7","266":"6382c484","267":"a89cbef2","639":"c1fa9d1f","807":"69168abf","969":"ac097453"}[chunkId] + ".async.js"; };
 /******/ 	
 /******/ 	/* webpack/runtime/get mini-css chunk filename */
 /******/ 	// This function allow to reference async chunks
@@ -169170,8 +165061,10 @@ function _extends() {
 
 
 
-var html_excluded = ["content"],
-  _excluded2 = ["content"];
+
+var html_excluded = ["src", "content"],
+  _excluded2 = ["content"],
+  _excluded3 = ["content"];
 
 var RE_URL = /^(http:|https:)?\/\//;
 function isUrl(str) {
@@ -169206,6 +165099,11 @@ function getClientCssPaths(manifest) {
     return typeof asset === 'string' && isCssAsset(asset) && !isUtoopackSingleCss(asset);
   });
 }
+function serializeInlineScriptValue(value) {
+  var _JSON$stringify;
+  // JSON string escaping alone does not protect the HTML script boundary.
+  return ((_JSON$stringify = JSON.stringify(value)) !== null && _JSON$stringify !== void 0 ? _JSON$stringify : 'undefined').replace(/</g, "\\u003c").replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
+}
 var GlobalDataScript = function GlobalDataScript(props) {
   var loaderData = props.loaderData,
     htmlPageOpts = props.htmlPageOpts,
@@ -169214,7 +165112,7 @@ var GlobalDataScript = function GlobalDataScript(props) {
   return /*#__PURE__*/react.createElement("script", {
     suppressHydrationWarning: true,
     dangerouslySetInnerHTML: {
-      __html: "window.__UMI_LOADER_DATA__ = ".concat(JSON.stringify(loaderData || {}), "; window.__UMI_METADATA_LOADER_DATA__ = ").concat(JSON.stringify(htmlPageOpts || {}), "; window.__UMI_BUILD_ClIENT_CSS__ = ").concat(JSON.stringify(clientCssPaths.length <= 1 ? clientCssPaths[0] || '' : clientCssPaths))
+      __html: "window.__UMI_LOADER_DATA__ = ".concat(serializeInlineScriptValue(loaderData || {}), "; window.__UMI_METADATA_LOADER_DATA__ = ").concat(serializeInlineScriptValue(htmlPageOpts || {}), "; window.__UMI_BUILD_ClIENT_CSS__ = ").concat(serializeInlineScriptValue(clientCssPaths.length <= 1 ? clientCssPaths[0] || '' : clientCssPaths))
     }
   });
 };
@@ -169232,14 +165130,33 @@ function normalizeScripts(script) {
     throw new Error("Invalid script type: ".concat(_typeof(script)));
   }
 }
-function generatorStyle(style) {
+function normalizeStyle(style) {
+  if (typeof style !== 'string') return style;
   return isUrl(style) ? {
-    type: 'link',
-    href: style
+    src: style
   } : {
-    type: 'style',
     content: style
   };
+}
+var styleAttributes = new Map([['blocking', 'blocking'], ['class', 'className'], ['classname', 'className'], ['dir', 'dir'], ['id', 'id'], ['lang', 'lang'], ['media', 'media'], ['nonce', 'nonce'], ['title', 'title'], ['type', 'type']]);
+var stylesheetLinkAttributes = new Map([['crossorigin', 'crossOrigin'], ['disabled', 'disabled'], ['fetchpriority', 'fetchpriority'], ['hreflang', 'hrefLang'], ['integrity', 'integrity'], ['referrerpolicy', 'referrerPolicy']]);
+function getStylesheetAttributes(attrs, linked) {
+  return Object.fromEntries(Object.entries(attrs).flatMap(function (_ref) {
+    var _ref3, _styleAttributes$get;
+    var _ref2 = _slicedToArray(_ref, 2),
+      key = _ref2[0],
+      value = _ref2[1];
+    var name = key.toLowerCase();
+    var attr = (_ref3 = (_styleAttributes$get = styleAttributes.get(name)) !== null && _styleAttributes$get !== void 0 ? _styleAttributes$get : linked ? stylesheetLinkAttributes.get(name) : undefined) !== null && _ref3 !== void 0 ? _ref3 : /^(?:aria|data)-[a-z0-9_.:-]+$/.test(name) ? name : undefined;
+    return attr ? [[attr, value]] : [];
+  }));
+}
+function escapeStyleText(css) {
+  // Escape the tag name as CSS so the HTML parser keeps reading style text.
+  return css.replace(/<\/(s)(tyle)/gi, function (_, first, rest) {
+    var escaped = first === 's' ? '\\73 ' : '\\53 ';
+    return "</".concat(escaped).concat(rest);
+  });
 }
 var HydrateMetadata = function HydrateMetadata(props) {
   var _htmlPageOpts$favicon, _htmlPageOpts$keyword, _htmlPageOpts$metas, _htmlPageOpts$links, _htmlPageOpts$styles, _htmlPageOpts$headScr;
@@ -169268,25 +165185,28 @@ var HydrateMetadata = function HydrateMetadata(props) {
       key: key
     }, link));
   }), htmlPageOpts === null || htmlPageOpts === void 0 || (_htmlPageOpts$styles = htmlPageOpts.styles) === null || _htmlPageOpts$styles === void 0 ? void 0 : _htmlPageOpts$styles.map(function (style, key) {
-    var _generatorStyle = generatorStyle(style),
-      type = _generatorStyle.type,
-      href = _generatorStyle.href,
-      content = _generatorStyle.content;
-    if (type === 'link') {
-      return /*#__PURE__*/react.createElement("link", {
-        key: key,
-        rel: "stylesheet",
-        href: href
-      });
-    } else if (type === 'style') {
-      return /*#__PURE__*/react.createElement("style", {
-        key: key
-      }, content);
-    }
+    var _normalizeStyle = normalizeStyle(style),
+      src = _normalizeStyle.src,
+      content = _normalizeStyle.content,
+      attrs = _objectWithoutProperties(_normalizeStyle, html_excluded);
+    var linked = typeof src === 'string' && !!src;
+    var stylesheetAttrs = getStylesheetAttributes(attrs, linked);
+    return linked ? /*#__PURE__*/react.createElement("link", _extends({
+      key: key
+    }, stylesheetAttrs, {
+      rel: "stylesheet",
+      href: src
+    })) : /*#__PURE__*/react.createElement("style", _extends({
+      key: key
+    }, stylesheetAttrs, {
+      dangerouslySetInnerHTML: {
+        __html: typeof content === 'string' ? escapeStyleText(content) : ''
+      }
+    }));
   }), htmlPageOpts === null || htmlPageOpts === void 0 || (_htmlPageOpts$headScr = htmlPageOpts.headScripts) === null || _htmlPageOpts$headScr === void 0 ? void 0 : _htmlPageOpts$headScr.map(function (script, key) {
     var _normalizeScripts = normalizeScripts(script),
       content = _normalizeScripts.content,
-      rest = _objectWithoutProperties(_normalizeScripts, html_excluded);
+      rest = _objectWithoutProperties(_normalizeScripts, _excluded2);
     return /*#__PURE__*/react.createElement("script", _extends({
       dangerouslySetInnerHTML: {
         __html: content
@@ -169295,14 +165215,14 @@ var HydrateMetadata = function HydrateMetadata(props) {
     }, rest));
   }));
 };
-function Html(_ref) {
+function Html(_ref4) {
   var _htmlPageOpts$scripts;
-  var children = _ref.children,
-    loaderData = _ref.loaderData,
-    manifest = _ref.manifest,
-    htmlPageOpts = _ref.htmlPageOpts,
-    __INTERNAL_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = _ref.__INTERNAL_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,
-    mountElementId = _ref.mountElementId;
+  var children = _ref4.children,
+    loaderData = _ref4.loaderData,
+    manifest = _ref4.manifest,
+    htmlPageOpts = _ref4.htmlPageOpts,
+    __INTERNAL_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = _ref4.__INTERNAL_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,
+    mountElementId = _ref4.mountElementId;
   // TODO: 处理 head 标签，比如 favicon.ico 的一致性
   // TODO: root 支持配置
   if (__INTERNAL_DO_NOT_USE_OR_YOU_WILL_BE_FIRED !== null && __INTERNAL_DO_NOT_USE_OR_YOU_WILL_BE_FIRED !== void 0 && __INTERNAL_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.pureHtml) {
@@ -169349,7 +165269,7 @@ function Html(_ref) {
     }), htmlPageOpts === null || htmlPageOpts === void 0 || (_htmlPageOpts$scripts = htmlPageOpts.scripts) === null || _htmlPageOpts$scripts === void 0 ? void 0 : _htmlPageOpts$scripts.map(function (script, key) {
       var _normalizeScripts2 = normalizeScripts(script),
         content = _normalizeScripts2.content,
-        rest = _objectWithoutProperties(_normalizeScripts2, _excluded2);
+        rest = _objectWithoutProperties(_normalizeScripts2, _excluded3);
       return /*#__PURE__*/react.createElement("script", _extends({
         dangerouslySetInnerHTML: {
           __html: content
@@ -169846,7 +165766,7 @@ function _getRoutes() {
                 return Promise.all(/* import() | p__index */[__webpack_require__.e(969), __webpack_require__.e(639), __webpack_require__.e(73)]).then(__webpack_require__.bind(__webpack_require__, 73097));
               }),
               '2': /*#__PURE__*/react.lazy(function () {
-                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(969), __webpack_require__.e(267), __webpack_require__.e(504), __webpack_require__.e(807)]).then(__webpack_require__.bind(__webpack_require__, 59613));
+                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(969), __webpack_require__.e(267), __webpack_require__.e(103), __webpack_require__.e(807)]).then(__webpack_require__.bind(__webpack_require__, 22953));
               }),
               '@@/global-layout': /*#__PURE__*/react.lazy(function () {
                 return Promise.all(/* import() | layouts__index */[__webpack_require__.e(969), __webpack_require__.e(267), __webpack_require__.e(266)]).then(__webpack_require__.bind(__webpack_require__, 45845));
@@ -170002,7 +165922,7 @@ function _render() {
 render();
 if (typeof window !== 'undefined') {
   window.g_umi = {
-    version: '4.7.36'
+    version: '4.7.40'
   };
 }
 }();
