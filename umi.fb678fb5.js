@@ -8855,10 +8855,14 @@ function _fetchMvcSpaceSats() {
       } catch (_unused4) {}
     }
   }, [minFeeRate]);
-  var commitCustomFeeRate = (0,react.useCallback)(function () {
+  var commitCustomFeeRate = (0,react.useCallback)(function (e) {
+    var _e$target;
+    var domRaw = e === null || e === void 0 || (_e$target = e.target) === null || _e$target === void 0 ? void 0 : _e$target.value;
     setCustomFeeRate(function (prev) {
-      var parsed = Math.round(Number(prev));
-      var clamped = prev !== null && Number.isFinite(parsed) ? Math.min(mempool/* MAX_CUSTOM_BTC_FEE_RATE */.F, Math.max(minFeeRate, parsed)) : minFeeRate;
+      var candidate = domRaw !== undefined && domRaw !== "" ? Number(domRaw) : Number(prev);
+      var hasValue = domRaw !== undefined && domRaw !== "" || prev !== null;
+      var parsed = Math.round(candidate);
+      var clamped = hasValue && Number.isFinite(parsed) ? Math.min(mempool/* MAX_CUSTOM_BTC_FEE_RATE */.F, Math.max(minFeeRate, parsed)) : minFeeRate;
       try {
         localStorage.setItem(STORAGE_CUSTOM_RATE_KEY, String(clamped));
       } catch (_unused5) {}
@@ -9267,8 +9271,8 @@ var defaultChains = [{
     setAssetsInfo = _useState16[1];
   var _useState17 = (0,react.useState)(),
     _useState18 = slicedToArray_default()(_useState17, 2),
-    feeQuote = _useState18[0],
-    setFeeQuote = _useState18[1];
+    rawFeeQuote = _useState18[0],
+    setRawFeeQuote = _useState18[1];
   var _useState19 = (0,react.useState)(""),
     _useState20 = slicedToArray_default()(_useState19, 2),
     amount = _useState20[0],
@@ -9299,6 +9303,7 @@ var defaultChains = [{
     _useState30 = slicedToArray_default()(_useState29, 2),
     refetchAssets = _useState30[0],
     setRefetchAssets = _useState30[1];
+  var prevQuoteCtxRef = (0,react.useRef)("");
   var bridgeType = (0,react.useMemo)(function () {
     if (fromChain.key === "btc") return "mint";
     return "redeem";
@@ -9376,48 +9381,73 @@ var defaultChains = [{
   }, [AssetsInfo, protocolType]);
   (0,react.useEffect)(function () {
     var didCancel = false;
-    var timer = window.setTimeout( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
-      var assetNetwork, ret;
-      return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
-        while (1) switch (_context2.prev = _context2.next) {
-          case 0:
-            if (network) {
-              _context2.next = 2;
+    var assetNetwork = protocolType === "btc" ? "BTC" : "MRC20";
+    var ctxKey = "".concat(network, ":").concat(assetNetwork, ":").concat(bridgeType, ":").concat((asset === null || asset === void 0 ? void 0 : asset.originTokenId) || "");
+    var isSameCtx = prevQuoteCtxRef.current === ctxKey;
+    prevQuoteCtxRef.current = ctxKey;
+    var runQuoteFetch = /*#__PURE__*/function () {
+      var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
+        var ret;
+        return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              if (network) {
+                _context2.next = 2;
+                break;
+              }
+              return _context2.abrupt("return");
+            case 2:
+              _context2.prev = 2;
+              _context2.next = 5;
+              return (0,api/* getFeeQuote */.T8)(network, {
+                network: assetNetwork,
+                direction: bridgeType,
+                originTokenId: asset === null || asset === void 0 ? void 0 : asset.originTokenId,
+                btcFeeRate: feeRate
+              });
+            case 5:
+              ret = _context2.sent;
+              if (!didCancel && ret !== null && ret !== void 0 && ret.data) {
+                setRawFeeQuote(ret.data);
+              }
+              _context2.next = 12;
               break;
-            }
-            return _context2.abrupt("return");
-          case 2:
-            assetNetwork = protocolType === "btc" ? "BTC" : "MRC20";
-            _context2.prev = 3;
-            _context2.next = 6;
-            return (0,api/* getFeeQuote */.T8)(network, {
-              network: assetNetwork,
-              direction: bridgeType,
-              originTokenId: asset === null || asset === void 0 ? void 0 : asset.originTokenId,
-              btcFeeRate: feeRate
-            });
-          case 6:
-            ret = _context2.sent;
-            if (!didCancel && ret !== null && ret !== void 0 && ret.data) {
-              setFeeQuote(ret.data);
-            }
-            _context2.next = 13;
-            break;
-          case 10:
-            _context2.prev = 10;
-            _context2.t0 = _context2["catch"](3);
-            console.log("getFeeQuote error:", _context2.t0);
-          case 13:
-          case "end":
-            return _context2.stop();
-        }
-      }, _callee2, null, [[3, 10]]);
-    })), 150);
+            case 9:
+              _context2.prev = 9;
+              _context2.t0 = _context2["catch"](2);
+              console.log("getFeeQuote error:", _context2.t0);
+            case 12:
+            case "end":
+              return _context2.stop();
+          }
+        }, _callee2, null, [[2, 9]]);
+      }));
+      return function runQuoteFetch() {
+        return _ref2.apply(this, arguments);
+      };
+    }();
+    if (!isSameCtx) {
+      void runQuoteFetch();
+      return function () {
+        didCancel = true;
+      };
+    }
+    var timer = window.setTimeout(runQuoteFetch, 120);
     return function () {
       didCancel = true;
       window.clearTimeout(timer);
     };
   }, [network, protocolType, bridgeType, asset === null || asset === void 0 ? void 0 : asset.originTokenId, feeRate, refetchAssets]);
+
+  // Ensure stale Redeem/MRC20 quote never bleeds into Mint/BTC during switches
+  var feeQuote = (0,react.useMemo)(function () {
+    if (!rawFeeQuote) return undefined;
+    var expectedNetwork = protocolType === "btc" ? "BTC" : "MRC20";
+    if (rawFeeQuote.network !== expectedNetwork || rawFeeQuote.direction !== bridgeType) {
+      return undefined;
+    }
+    return rawFeeQuote;
+  }, [rawFeeQuote, protocolType, bridgeType]);
   var handleRefetchAssets = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
     return regeneratorRuntime_default()().wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
