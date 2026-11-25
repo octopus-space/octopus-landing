@@ -8615,6 +8615,9 @@ var objectSpread2 = __webpack_require__(1974);
 var objectSpread2_default = /*#__PURE__*/__webpack_require__.n(objectSpread2);
 // EXTERNAL MODULE: ./src/.umi-production/plugin-model/index.tsx
 var plugin_model = __webpack_require__(1423);
+// EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/typeof.js
+var helpers_typeof = __webpack_require__(63859);
+var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/regeneratorRuntime.js
 var regeneratorRuntime = __webpack_require__(55420);
 var regeneratorRuntime_default = /*#__PURE__*/__webpack_require__.n(regeneratorRuntime);
@@ -8629,6 +8632,7 @@ var psbtBuild = __webpack_require__(66268);
 // EXTERNAL MODULE: ./src/utils/utils.ts + 1 modules
 var utils = __webpack_require__(79502);
 ;// ./src/models/wallet.ts
+
 
 
 
@@ -8663,7 +8667,7 @@ function _fetchMvcSpaceSats() {
             break;
           }
           _context5.next = 6;
-          return window.metaidwallet.getMvcBalance();
+          return (0,utils/* withTimeout */.wj)(window.metaidwallet.getMvcBalance(), 5000, "getMvcBalance");
         case 6:
           bal = _context5.sent;
           sum = Number((_bal$confirmed = bal === null || bal === void 0 ? void 0 : bal.confirmed) !== null && _bal$confirmed !== void 0 ? _bal$confirmed : 0) + Number((_bal$unconfirmed = bal === null || bal === void 0 ? void 0 : bal.unconfirmed) !== null && _bal$unconfirmed !== void 0 ? _bal$unconfirmed : 0);
@@ -8674,7 +8678,7 @@ function _fetchMvcSpaceSats() {
             break;
           }
           _context5.next = 12;
-          return window.metaidwallet.getBalance();
+          return (0,utils/* withTimeout */.wj)(window.metaidwallet.getBalance(), 5000, "getBalance");
         case 12:
           _bal = _context5.sent;
           _sum = Number((_bal$confirmed2 = _bal === null || _bal === void 0 ? void 0 : _bal.confirmed) !== null && _bal$confirmed2 !== void 0 ? _bal$confirmed2 : 0) + Number((_bal$unconfirmed2 = _bal === null || _bal === void 0 ? void 0 : _bal.unconfirmed) !== null && _bal$unconfirmed2 !== void 0 ? _bal$unconfirmed2 : 0);
@@ -8685,7 +8689,7 @@ function _fetchMvcSpaceSats() {
             break;
           }
           _context5.next = 18;
-          return window.metaidwallet.getUtxos();
+          return (0,utils/* withTimeout */.wj)(window.metaidwallet.getUtxos(), 5000, "getUtxos");
         case 18:
           utxos = _context5.sent;
           if (!Array.isArray(utxos)) {
@@ -8693,8 +8697,8 @@ function _fetchMvcSpaceSats() {
             break;
           }
           return _context5.abrupt("return", utxos.reduce(function (acc, u) {
-            var _ref5, _u$satoshis;
-            return acc + Number((_ref5 = (_u$satoshis = u === null || u === void 0 ? void 0 : u.satoshis) !== null && _u$satoshis !== void 0 ? _u$satoshis : u === null || u === void 0 ? void 0 : u.satoshi) !== null && _ref5 !== void 0 ? _ref5 : 0);
+            var _ref5, _ref6, _u$satoshis;
+            return acc + Number((_ref5 = (_ref6 = (_u$satoshis = u === null || u === void 0 ? void 0 : u.satoshis) !== null && _u$satoshis !== void 0 ? _u$satoshis : u === null || u === void 0 ? void 0 : u.satoshi) !== null && _ref6 !== void 0 ? _ref6 : u === null || u === void 0 ? void 0 : u.value) !== null && _ref5 !== void 0 ? _ref5 : 0);
           }, 0));
         case 21:
           _context5.next = 26;
@@ -8741,9 +8745,13 @@ function _fetchMvcSpaceSats() {
     _useState14 = slicedToArray_default()(_useState13, 2),
     userBal = _useState14[0],
     setUserBal = _useState14[1];
+  var btcAddrRef = (0,react.useRef)(undefined);
+  var networkRef = (0,react.useRef)("mainnet");
+  btcAddrRef.current = btcAddress;
+  networkRef.current = network;
   var getBal = (0,react.useCallback)( /*#__PURE__*/function () {
-    var _ref = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(forceConnected) {
-      var _yield$Promise$all, _yield$Promise$all2, btcSats, spaceSats, tokens, _bals;
+    var _ref = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(forceConnected, addrOverride, netOverride) {
+      var targetAddr, targetNet, _window$metaidwallet$, _yield$Promise$all, _yield$Promise$all2, btcSats, spaceSats, tokens, _bals;
       return regeneratorRuntime_default()().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
@@ -8759,19 +8767,29 @@ function _fetchMvcSpaceSats() {
             }
             return _context.abrupt("return");
           case 4:
-            _context.prev = 4;
-            _context.next = 7;
-            return Promise.all([(0,psbtBuild/* getUtxoBalance */.p0)()["catch"](function () {
+            targetAddr = addrOverride || btcAddrRef.current;
+            targetNet = netOverride || networkRef.current || "mainnet";
+            _context.prev = 6;
+            _context.next = 9;
+            return Promise.all([(0,psbtBuild/* getUtxoBalance */.p0)(targetAddr, targetNet)["catch"](function () {
               return 0;
-            }), fetchMvcSpaceSats(), window.metaidwallet.token.getBalance()["catch"](function () {
+            }), fetchMvcSpaceSats()["catch"](function () {
+              return 0;
+            }), (_window$metaidwallet$ = window.metaidwallet.token) !== null && _window$metaidwallet$ !== void 0 && _window$metaidwallet$.getBalance ? (0,utils/* withTimeout */.wj)(window.metaidwallet.token.getBalance(), 5000, "token.getBalance")["catch"](function () {
               return [];
-            })]);
-          case 7:
+            }) : Promise.resolve([])]);
+          case 9:
             _yield$Promise$all = _context.sent;
             _yield$Promise$all2 = slicedToArray_default()(_yield$Promise$all, 3);
             btcSats = _yield$Promise$all2[0];
             spaceSats = _yield$Promise$all2[1];
             tokens = _yield$Promise$all2[2];
+            if (!(targetAddr && btcAddrRef.current && targetAddr !== btcAddrRef.current)) {
+              _context.next = 16;
+              break;
+            }
+            return _context.abrupt("return");
+          case 16:
             _bals = {
               btc: (0,utils/* formatSat */.Q0)(btcSats, 8),
               btcSats: Number(btcSats || 0),
@@ -8786,79 +8804,107 @@ function _fetchMvcSpaceSats() {
               });
             }
             setUserBal(_bals);
-            _context.next = 20;
+            _context.next = 24;
             break;
-          case 17:
-            _context.prev = 17;
-            _context.t0 = _context["catch"](4);
+          case 21:
+            _context.prev = 21;
+            _context.t0 = _context["catch"](6);
             console.log("getBal error:", _context.t0);
-          case 20:
+          case 24:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[4, 17]]);
+      }, _callee, null, [[6, 21]]);
     }));
-    return function (_x) {
+    return function (_x, _x2, _x3) {
       return _ref.apply(this, arguments);
     };
   }(), [connected]);
   var init = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
-    var isConnected, _mvc, _yield$window$metaidw, walletNet, _btcAddress, _checkAddressType, pass, message;
+    var skipIsConnectedCheck,
+      isConn,
+      _yield$Promise$all3,
+      _yield$Promise$all4,
+      _mvc,
+      netInfo,
+      _btcAddress,
+      _checkAddressType,
+      pass,
+      message,
+      normNet,
+      _args2 = arguments;
     return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
+          skipIsConnectedCheck = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : false;
           if (!(walletName === "metalet" && window.metaidwallet)) {
-            _context2.next = 25;
+            _context2.next = 30;
             break;
           }
-          _context2.next = 3;
-          return window.metaidwallet.isConnected();
-        case 3:
-          isConnected = _context2.sent;
-          if (!(isConnected === true)) {
-            _context2.next = 25;
+          isConn = skipIsConnectedCheck ? true : false;
+          if (skipIsConnectedCheck) {
+            _context2.next = 7;
             break;
           }
-          _context2.next = 7;
-          return window.metaidwallet.getAddress();
+          _context2.next = 6;
+          return (0,utils/* withTimeout */.wj)(window.metaidwallet.isConnected(), 4000, "isConnected")["catch"](function () {
+            return false;
+          });
+        case 6:
+          isConn = _context2.sent;
         case 7:
-          _mvc = _context2.sent;
+          if (!(isConn === true)) {
+            _context2.next = 30;
+            break;
+          }
           _context2.next = 10;
-          return window.metaidwallet.getNetwork();
+          return Promise.all([(0,utils/* withTimeout */.wj)(window.metaidwallet.getAddress(), 5000, "getAddress"), (0,utils/* withTimeout */.wj)(window.metaidwallet.getNetwork(), 5000, "getNetwork"), (0,utils/* withTimeout */.wj)(window.metaidwallet.btc.getAddress(), 5000, "btc.getAddress")]);
         case 10:
-          _yield$window$metaidw = _context2.sent;
-          walletNet = _yield$window$metaidw.network;
-          _context2.next = 14;
-          return window.metaidwallet.btc.getAddress();
-        case 14:
-          _btcAddress = _context2.sent;
+          _yield$Promise$all3 = _context2.sent;
+          _yield$Promise$all4 = slicedToArray_default()(_yield$Promise$all3, 3);
+          _mvc = _yield$Promise$all4[0];
+          netInfo = _yield$Promise$all4[1];
+          _btcAddress = _yield$Promise$all4[2];
+          if (!(typeof _btcAddress !== "string" || !_btcAddress)) {
+            _context2.next = 17;
+            break;
+          }
+          return _context2.abrupt("return", {
+            pass: false,
+            message: (_btcAddress === null || _btcAddress === void 0 ? void 0 : _btcAddress.status) || "Failed to read BTC address from wallet"
+          });
+        case 17:
           _checkAddressType = (0,utils/* checkAddressType */.xW)(_btcAddress), pass = _checkAddressType.pass, message = _checkAddressType.message;
           if (pass) {
-            _context2.next = 18;
+            _context2.next = 20;
             break;
           }
           return _context2.abrupt("return", {
             pass: pass,
             message: message
           });
-        case 18:
-          setConnected(true);
-          setMVCAddress(_mvc);
-          setNetwork(walletNet);
+        case 20:
+          normNet = (0,utils/* normalizeWalletNetwork */.ZS)(netInfo === null || netInfo === void 0 ? void 0 : netInfo.network);
+          btcAddrRef.current = _btcAddress;
+          networkRef.current = normNet;
+          setMVCAddress(typeof _mvc === "string" ? _mvc : "");
+          setNetwork(normNet);
           setBTCAddress(_btcAddress);
-          _context2.next = 24;
-          return getBal(true);
-        case 24:
-          return _context2.abrupt("return", {
-            pass: pass,
-            message: message
-          });
-        case 25:
+          setConnected(true);
+          setLoginModalShow(false);
+
+          // Fetch balances asynchronously so login & modal dismissal never block!
+          void getBal(true, _btcAddress, normNet);
           return _context2.abrupt("return", {
             pass: true,
             message: ""
           });
-        case 26:
+        case 30:
+          return _context2.abrupt("return", {
+            pass: true,
+            message: ""
+          });
+        case 31:
         case "end":
           return _context2.stop();
       }
@@ -8877,16 +8923,18 @@ function _fetchMvcSpaceSats() {
             return _context3.abrupt("return");
           case 2:
             _context3.next = 4;
-            return window.metaidwallet.isConnected();
+            return (0,utils/* withTimeout */.wj)(window.metaidwallet.isConnected(), 4000, "isConnected")["catch"](function () {
+              return false;
+            });
           case 4:
             isConnected = _context3.sent;
-            if (!(isConnected && isConnected.status === "locked")) {
+            if (!(isConnected && typeof_default()(isConnected) === "object" && isConnected.status === "locked")) {
               _context3.next = 7;
               break;
             }
-            throw new Error("unlock first");
+            throw new Error("Please unlock Metalet Wallet first");
           case 7:
-            if (isConnected) {
+            if (!(isConnected !== true)) {
               _context3.next = 13;
               break;
             }
@@ -8894,14 +8942,14 @@ function _fetchMvcSpaceSats() {
             return window.metaidwallet.connect();
           case 10:
             ret = _context3.sent;
-            if (!ret.status) {
+            if (!(ret && ret.status)) {
               _context3.next = 13;
               break;
             }
             throw new Error(ret.status);
           case 13:
             _context3.next = 15;
-            return init();
+            return init(true);
           case 15:
             _yield$init = _context3.sent;
             pass = _yield$init.pass;
@@ -8910,8 +8958,10 @@ function _fetchMvcSpaceSats() {
               _context3.next = 20;
               break;
             }
-            throw new Error(message);
+            throw new Error(message || "Failed to connect wallet");
           case 20:
+            setLoginModalShow(false);
+          case 21:
           case "end":
             return _context3.stop();
         }
@@ -8938,7 +8988,9 @@ function _fetchMvcSpaceSats() {
               break;
             }
             _context4.next = 5;
-            return window.metaidwallet.disconnect();
+            return window.metaidwallet.disconnect()["catch"](function () {
+              return null;
+            });
           case 5:
             ret = _context4.sent;
             if (!((ret === null || ret === void 0 ? void 0 : ret.status) === "canceled")) {
@@ -8947,11 +8999,12 @@ function _fetchMvcSpaceSats() {
             }
             return _context4.abrupt("return");
           case 8:
+            btcAddrRef.current = undefined;
             setConnected(false);
             setMVCAddress("");
             setBTCAddress("");
             setUserBal({});
-          case 12:
+          case 13:
           case "end":
             return _context4.stop();
         }
@@ -8970,28 +9023,28 @@ function _fetchMvcSpaceSats() {
     };
   }, [init]);
   (0,react.useEffect)(function () {
-    if (connected) {
-      getBal(true);
+    if (connected && btcAddress) {
+      void getBal(true, btcAddress, network);
     }
-  }, [network, connected, getBal]);
+  }, [network, connected, btcAddress, getBal]);
   (0,react.useEffect)(function () {
     var handleAccountChange = function handleAccountChange() {
-      init();
+      void init();
     };
     var handleNetChange = function handleNetChange() {
-      init();
+      void init();
     };
-    if (walletName === "metalet" && window.metaidwallet && connected) {
+    if (walletName === "metalet" && window.metaidwallet) {
       window.metaidwallet.on("accountsChanged", handleAccountChange);
       window.metaidwallet.on("networkChanged", handleNetChange);
     }
     return function () {
-      if (walletName === "metalet" && window.metaidwallet && connected) {
+      if (walletName === "metalet" && window.metaidwallet) {
         window.metaidwallet.removeListener("accountsChanged", handleAccountChange);
         window.metaidwallet.removeListener("networkChanged", handleNetChange);
       }
     };
-  }, [walletName, connected, init]);
+  }, [walletName, init]);
   return {
     mvcAddress: mvcAddress,
     btcAddress: btcAddress,
@@ -12158,6 +12211,7 @@ var useIntervalAsync = function useIntervalAsync(fn, ms) {
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Hi: function() { return /* binding */ createPrepayOrderRedeemBtc; },
+/* harmony export */   O$: function() { return /* binding */ getSafeBtcUtxos; },
 /* harmony export */   T8: function() { return /* binding */ getFeeQuote; },
 /* harmony export */   TG: function() { return /* binding */ submitPrepayOrderMintBtc; },
 /* harmony export */   UC: function() { return /* binding */ createPrepayOrderRedeemMrc20; },
@@ -12413,57 +12467,54 @@ function _getBridgeHistory() {
   }));
   return _getBridgeHistory.apply(this, arguments);
 }
-function getUserMrc20Balance(_x33, _x34, _x35) {
+function getSafeBtcUtxos(_x33, _x34) {
+  return _getSafeBtcUtxos.apply(this, arguments);
+}
+function _getSafeBtcUtxos() {
+  _getSafeBtcUtxos = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee12(address, network) {
+    var useUnconfirmed,
+      _args12 = arguments;
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee12$(_context12) {
+      while (1) switch (_context12.prev = _context12.next) {
+        case 0:
+          useUnconfirmed = _args12.length > 2 && _args12[2] !== undefined ? _args12[2] : true;
+          return _context12.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/common/btc/address/utxo"), {
+            method: "GET",
+            params: {
+              address: address,
+              unconfirmed: useUnconfirmed ? "1" : "0"
+            }
+          }));
+        case 2:
+        case "end":
+          return _context12.stop();
+      }
+    }, _callee12);
+  }));
+  return _getSafeBtcUtxos.apply(this, arguments);
+}
+function getUserMrc20Balance(_x35, _x36, _x37) {
   return _getUserMrc20Balance.apply(this, arguments);
 }
 function _getUserMrc20Balance() {
-  _getUserMrc20Balance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12(address, network, tickId) {
+  _getUserMrc20Balance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13(address, network, tickId) {
     var cursor,
       size,
-      _args12 = arguments;
-    return _regeneratorRuntime().wrap(function _callee12$(_context12) {
-      while (1) switch (_context12.prev = _context12.next) {
+      _args13 = arguments;
+    return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+      while (1) switch (_context13.prev = _context13.next) {
         case 0:
-          cursor = _args12.length > 3 && _args12[3] !== undefined ? _args12[3] : 0;
-          size = _args12.length > 4 && _args12[4] !== undefined ? _args12[4] : 50;
-          return _context12.abrupt("return", request("".concat(getHost(network), "/common/mrc20/address/utxo"), {
+          cursor = _args13.length > 3 && _args13[3] !== undefined ? _args13[3] : 0;
+          size = _args13.length > 4 && _args13[4] !== undefined ? _args13[4] : 50;
+          return _context13.abrupt("return", request("".concat(getHost(network), "/common/mrc20/address/utxo"), {
             method: "GET",
             params: {
               address: address,
               tickId: tickId,
               cursor: cursor * size,
               size: size,
-              net: network === "mainnet" ? "livenet" : "testnet"
-            }
-          }));
-        case 3:
-        case "end":
-          return _context12.stop();
-      }
-    }, _callee12);
-  }));
-  return _getUserMrc20Balance.apply(this, arguments);
-}
-function getUserMrc20Balances(_x36, _x37) {
-  return _getUserMrc20Balances.apply(this, arguments);
-}
-function _getUserMrc20Balances() {
-  _getUserMrc20Balances = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee13(address, network) {
-    var cursor,
-      size,
-      _args13 = arguments;
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee13$(_context13) {
-      while (1) switch (_context13.prev = _context13.next) {
-        case 0:
-          cursor = _args13.length > 2 && _args13[2] !== undefined ? _args13[2] : 0;
-          size = _args13.length > 3 && _args13[3] !== undefined ? _args13[3] : 50;
-          return _context13.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/common/mrc20/address/balance-list"), {
-            method: "GET",
-            params: {
-              address: address,
-              cursor: cursor * size,
-              size: size,
-              net: network === "mainnet" ? "livenet" : "testnet"
+              net: network === "mainnet" ? "livenet" : "testnet",
+              source: "mrc20-v2"
             }
           }));
         case 3:
@@ -12471,6 +12522,37 @@ function _getUserMrc20Balances() {
           return _context13.stop();
       }
     }, _callee13);
+  }));
+  return _getUserMrc20Balance.apply(this, arguments);
+}
+function getUserMrc20Balances(_x38, _x39) {
+  return _getUserMrc20Balances.apply(this, arguments);
+}
+function _getUserMrc20Balances() {
+  _getUserMrc20Balances = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee14(address, network) {
+    var cursor,
+      size,
+      _args14 = arguments;
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee14$(_context14) {
+      while (1) switch (_context14.prev = _context14.next) {
+        case 0:
+          cursor = _args14.length > 2 && _args14[2] !== undefined ? _args14[2] : 0;
+          size = _args14.length > 3 && _args14[3] !== undefined ? _args14[3] : 50;
+          return _context14.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/common/mrc20/address/balance-list"), {
+            method: "GET",
+            params: {
+              address: address,
+              cursor: cursor * size,
+              size: size,
+              net: network === "mainnet" ? "livenet" : "testnet",
+              source: "mrc20-v2"
+            }
+          }));
+        case 3:
+        case "end":
+          return _context14.stop();
+      }
+    }, _callee14);
   }));
   return _getUserMrc20Balances.apply(this, arguments);
 }
@@ -46899,16 +46981,21 @@ function _mintMrc() {
 /* unused harmony exports getUtxoVout, calcFee, toXOnly */
 /* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(55420);
 /* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(98312);
-/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_createForOfIteratorHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(59224);
-/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_createForOfIteratorHelper_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_createForOfIteratorHelper_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var decimal_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(76582);
-/* harmony import */ var bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(21757);
-/* harmony import */ var _mempool_mempool_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12255);
-/* harmony import */ var _mempool_mempool_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_mempool_mempool_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var bitcoinjs_lib_src_psbt_bip371__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(60477);
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(79502);
+/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1974);
+/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(98312);
+/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_createForOfIteratorHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(59224);
+/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_createForOfIteratorHelper_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_createForOfIteratorHelper_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var decimal_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(76582);
+/* harmony import */ var bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(21757);
+/* harmony import */ var _mempool_mempool_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(12255);
+/* harmony import */ var _mempool_mempool_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_mempool_mempool_js__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var bitcoinjs_lib_src_psbt_bip371__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(60477);
+/* harmony import */ var _servies_api__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(28651);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(79502);
+
+
 
 
 
@@ -46936,9 +47023,9 @@ var getUtxoVout = function getUtxoVout(utxo) {
   return Number((_ref2 = (_utxo$vout = utxo.vout) !== null && _utxo$vout !== void 0 ? _utxo$vout : utxo.outputIndex) !== null && _ref2 !== void 0 ? _ref2 : 0);
 };
 function selectUTXOs(utxos, targetAmount) {
-  var totalAmount = new decimal_js__WEBPACK_IMPORTED_MODULE_3__/* .Decimal */ .W(0);
+  var totalAmount = new decimal_js__WEBPACK_IMPORTED_MODULE_4__/* .Decimal */ .W(0);
   var selectedUtxos = [];
-  var _iterator = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_createForOfIteratorHelper_js__WEBPACK_IMPORTED_MODULE_2___default()(utxos),
+  var _iterator = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_createForOfIteratorHelper_js__WEBPACK_IMPORTED_MODULE_3___default()(utxos),
     _step;
   try {
     for (_iterator.s(); !(_step = _iterator.n()).done;) {
@@ -46962,15 +47049,15 @@ function selectUTXOs(utxos, targetAmount) {
   return selectedUtxos;
 }
 var getNetworks = function getNetworks(network) {
-  return network === "mainnet" ? bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .networks */ .o8.bitcoin : bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .networks */ .o8.testnet;
+  return network === "mainnet" ? bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_5__/* .networks */ .o8.bitcoin : bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_5__/* .networks */ .o8.testnet;
 };
 function getTotalSatoshi(utxos) {
   return utxos.reduce(function (total, utxo) {
     return total.add(getUtxoSats(utxo));
-  }, new decimal_js__WEBPACK_IMPORTED_MODULE_3__/* .Decimal */ .W(0));
+  }, new decimal_js__WEBPACK_IMPORTED_MODULE_4__/* .Decimal */ .W(0));
 }
 function inputBytes(input) {
-  if ((0,bitcoinjs_lib_src_psbt_bip371__WEBPACK_IMPORTED_MODULE_6__.isTaprootInput)(input)) {
+  if ((0,bitcoinjs_lib_src_psbt_bip371__WEBPACK_IMPORTED_MODULE_7__.isTaprootInput)(input)) {
     return TX_INPUT_BASE + TX_INPUT_TAPROOT;
   }
   if (input.redeemScript) return TX_INPUT_BASE + input.redeemScript.length;
@@ -46995,13 +47082,13 @@ function calcFee(psbt, feeRate) {
   var inputs = psbt.data.inputs;
   var outputs = psbt.txOutputs;
   var bytes = transactionBytes(inputs, outputs);
-  return new decimal_js__WEBPACK_IMPORTED_MODULE_3__/* .Decimal */ .W(bytes).mul(feeRate).ceil();
+  return new decimal_js__WEBPACK_IMPORTED_MODULE_4__/* .Decimal */ .W(bytes).mul(feeRate).ceil();
 }
 function buildTx(_x, _x2, _x3, _x4, _x5, _x6) {
   return _buildTx.apply(this, arguments);
 }
 function _buildTx() {
-  _buildTx = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee5(utxos, amount, feeRate, buildPsbtParams, address, buildPsbt) {
+  _buildTx = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee5(utxos, amount, feeRate, buildPsbtParams, address, buildPsbt) {
     var extract,
       signPsbt,
       selectedUTXOs,
@@ -47080,7 +47167,7 @@ function createPsbtInput(_x7) {
   return _createPsbtInput.apply(this, arguments);
 }
 function _createPsbtInput() {
-  _createPsbtInput = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee6(_ref3) {
+  _createPsbtInput = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee6(_ref3) {
     var utxo, addressType, publicKey, script, network, sats, vout, payInput, tx, mempoolReturn, rawTx, _tx, _payments$p2sh, redeem;
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee6$(_context6) {
       while (1) switch (_context6.prev = _context6.next) {
@@ -47114,12 +47201,12 @@ function _createPsbtInput() {
             _context6.next = 12;
             break;
           }
-          tx = bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .Transaction */ .ZX.fromHex(utxo.rawTx);
+          tx = bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_5__/* .Transaction */ .ZX.fromHex(utxo.rawTx);
           payInput["nonWitnessUtxo"] = tx.toBuffer();
           _context6.next = 18;
           break;
         case 12:
-          mempoolReturn = _mempool_mempool_js__WEBPACK_IMPORTED_MODULE_5___default()({
+          mempoolReturn = _mempool_mempool_js__WEBPACK_IMPORTED_MODULE_6___default()({
             hostname: "mempool.space",
             network: network === "testnet" ? "testnet" : "main"
           });
@@ -47129,15 +47216,15 @@ function _createPsbtInput() {
           });
         case 15:
           rawTx = _context6.sent;
-          _tx = bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .Transaction */ .ZX.fromHex(rawTx);
+          _tx = bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_5__/* .Transaction */ .ZX.fromHex(rawTx);
           payInput["nonWitnessUtxo"] = _tx.toBuffer();
         case 18:
           if (!["P2SH"].includes(addressType)) {
             _context6.next = 24;
             break;
           }
-          _payments$p2sh = bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .payments */ .KT.p2sh({
-            redeem: bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_4__/* .payments */ .KT.p2wpkh({
+          _payments$p2sh = bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_5__/* .payments */ .KT.p2sh({
+            redeem: bitcoinjs_lib__WEBPACK_IMPORTED_MODULE_5__/* .payments */ .KT.p2wpkh({
               pubkey: publicKey,
               network: getNetworks(network)
             }),
@@ -47164,39 +47251,86 @@ function _createPsbtInput() {
   }));
   return _createPsbtInput.apply(this, arguments);
 }
+function normalizeUtxoItem(u) {
+  var _ref4, _u$txId, _ref5, _u$vout, _ref6, _ref7, _u$satoshis, _ref8, _u$confirmed, _u$status;
+  var txId = String((_ref4 = (_u$txId = u === null || u === void 0 ? void 0 : u.txId) !== null && _u$txId !== void 0 ? _u$txId : u === null || u === void 0 ? void 0 : u.txid) !== null && _ref4 !== void 0 ? _ref4 : "");
+  var vout = Number((_ref5 = (_u$vout = u === null || u === void 0 ? void 0 : u.vout) !== null && _u$vout !== void 0 ? _u$vout : u === null || u === void 0 ? void 0 : u.outputIndex) !== null && _ref5 !== void 0 ? _ref5 : 0);
+  var satoshis = Number((_ref6 = (_ref7 = (_u$satoshis = u === null || u === void 0 ? void 0 : u.satoshis) !== null && _u$satoshis !== void 0 ? _u$satoshis : u === null || u === void 0 ? void 0 : u.satoshi) !== null && _ref7 !== void 0 ? _ref7 : u === null || u === void 0 ? void 0 : u.value) !== null && _ref6 !== void 0 ? _ref6 : 0);
+  return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({}, u), {}, {
+    txId: txId,
+    txid: txId,
+    vout: vout,
+    outputIndex: vout,
+    satoshis: satoshis,
+    satoshi: satoshis,
+    confirmed: Boolean((_ref8 = (_u$confirmed = u === null || u === void 0 ? void 0 : u.confirmed) !== null && _u$confirmed !== void 0 ? _u$confirmed : u === null || u === void 0 || (_u$status = u.status) === null || _u$status === void 0 ? void 0 : _u$status.confirmed) !== null && _ref8 !== void 0 ? _ref8 : false)
+  });
+}
 var getUtxos = /*#__PURE__*/function () {
-  var _ref4 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee(address, _network) {
-    var addressType, utxos;
+  var _ref9 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee(address) {
+    var _window$metaidwallet, _resp$data;
+    var network,
+      walletTimeoutMs,
+      addressType,
+      utxos,
+      resp,
+      list,
+      _args = arguments;
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
-          addressType = (0,_utils__WEBPACK_IMPORTED_MODULE_7__/* .determineAddressInfo */ .AG)(address).toUpperCase();
-          _context.next = 3;
-          return window.metaidwallet.btc.getUtxos({
+          network = _args.length > 1 && _args[1] !== undefined ? _args[1] : "mainnet";
+          walletTimeoutMs = _args.length > 2 && _args[2] !== undefined ? _args[2] : 3000;
+          addressType = (0,_utils__WEBPACK_IMPORTED_MODULE_9__/* .determineAddressInfo */ .AG)(address).toUpperCase();
+          if (!((_window$metaidwallet = window.metaidwallet) !== null && _window$metaidwallet !== void 0 && (_window$metaidwallet = _window$metaidwallet.btc) !== null && _window$metaidwallet !== void 0 && _window$metaidwallet.getUtxos)) {
+            _context.next = 15;
+            break;
+          }
+          _context.prev = 4;
+          _context.next = 7;
+          return (0,_utils__WEBPACK_IMPORTED_MODULE_9__/* .withTimeout */ .wj)(window.metaidwallet.btc.getUtxos({
             needRawTx: ["P2PKH"].includes(addressType),
             useUnconfirmed: true
-          });
-        case 3:
+          }), walletTimeoutMs, "btc.getUtxos");
+        case 7:
           utxos = _context.sent;
-          return _context.abrupt("return", Array.isArray(utxos) ? utxos : []);
-        case 5:
+          if (!Array.isArray(utxos)) {
+            _context.next = 10;
+            break;
+          }
+          return _context.abrupt("return", utxos.map(normalizeUtxoItem));
+        case 10:
+          _context.next = 15;
+          break;
+        case 12:
+          _context.prev = 12;
+          _context.t0 = _context["catch"](4);
+          console.warn("Metalet btc.getUtxos slow/failed, falling back to bridge safe UTXO API:", _context.t0);
+        case 15:
+          _context.next = 17;
+          return (0,_servies_api__WEBPACK_IMPORTED_MODULE_8__/* .getSafeBtcUtxos */ .O$)(address, network, true);
+        case 17:
+          resp = _context.sent;
+          list = resp === null || resp === void 0 || (_resp$data = resp.data) === null || _resp$data === void 0 ? void 0 : _resp$data.list;
+          return _context.abrupt("return", Array.isArray(list) ? list.map(normalizeUtxoItem) : []);
+        case 20:
         case "end":
           return _context.stop();
       }
-    }, _callee);
+    }, _callee, null, [[4, 12]]);
   }));
-  return function getUtxos(_x8, _x9) {
-    return _ref4.apply(this, arguments);
+  return function getUtxos(_x8) {
+    return _ref9.apply(this, arguments);
   };
 }();
 var addUtxoSafe = /*#__PURE__*/function () {
-  var _ref5 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee2(address, utxos) {
-    var _window$metaidwallet;
+  var _ref10 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee2(address, utxos) {
+    var _window$metaidwallet2;
     var i, _utxos$i, txId, vout;
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
-          if ((_window$metaidwallet = window.metaidwallet) !== null && _window$metaidwallet !== void 0 && (_window$metaidwallet = _window$metaidwallet.btc) !== null && _window$metaidwallet !== void 0 && _window$metaidwallet.addSafeUtxo) {
+          if ((_window$metaidwallet2 = window.metaidwallet) !== null && _window$metaidwallet2 !== void 0 && (_window$metaidwallet2 = _window$metaidwallet2.btc) !== null && _window$metaidwallet2 !== void 0 && _window$metaidwallet2.addSafeUtxo) {
             _context2.next = 2;
             break;
           }
@@ -47211,10 +47345,10 @@ var addUtxoSafe = /*#__PURE__*/function () {
           _context2.prev = 4;
           _utxos$i = utxos[i], txId = _utxos$i.txId, vout = _utxos$i.vout;
           _context2.next = 8;
-          return window.metaidwallet.btc.addSafeUtxo({
+          return (0,_utils__WEBPACK_IMPORTED_MODULE_9__/* .withTimeout */ .wj)(window.metaidwallet.btc.addSafeUtxo({
             address: address,
             unspentOutput: "".concat(txId, ":").concat(vout)
-          });
+          }), 3000, "btc.addSafeUtxo");
         case 8:
           _context2.next = 13;
           break;
@@ -47232,53 +47366,122 @@ var addUtxoSafe = /*#__PURE__*/function () {
       }
     }, _callee2, null, [[4, 10]]);
   }));
-  return function addUtxoSafe(_x10, _x11) {
-    return _ref5.apply(this, arguments);
+  return function addUtxoSafe(_x9, _x10) {
+    return _ref10.apply(this, arguments);
   };
 }();
 function toXOnly(pubKey) {
   return pubKey.length === 32 ? pubKey : pubKey.slice(1, 33);
 }
 var getUtxoBalance = /*#__PURE__*/function () {
-  var _ref6 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee3(address) {
-    var utxos;
+  var _ref11 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee3(address) {
+    var _window$metaidwallet3, _window$metaidwallet4;
+    var network,
+      resp,
+      _resp$data$totalSats,
+      utxos,
+      _ref12,
+      _ref13,
+      _bal$safeBalance,
+      bal,
+      sats,
+      _args3 = arguments;
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
-          if (address) {
-            _context3.next = 4;
+          network = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : "mainnet";
+          if (!(!address && (_window$metaidwallet3 = window.metaidwallet) !== null && _window$metaidwallet3 !== void 0 && (_window$metaidwallet3 = _window$metaidwallet3.btc) !== null && _window$metaidwallet3 !== void 0 && _window$metaidwallet3.getAddress)) {
+            _context3.next = 5;
             break;
           }
-          _context3.next = 3;
-          return window.metaidwallet.btc.getAddress();
-        case 3:
-          address = _context3.sent;
+          _context3.next = 4;
+          return (0,_utils__WEBPACK_IMPORTED_MODULE_9__/* .withTimeout */ .wj)(window.metaidwallet.btc.getAddress(), 4000, "btc.getAddress");
         case 4:
-          _context3.next = 6;
-          return getUtxos(address);
-        case 6:
+          address = _context3.sent;
+        case 5:
+          if (!(!address || typeof address !== "string")) {
+            _context3.next = 7;
+            break;
+          }
+          return _context3.abrupt("return", 0);
+        case 7:
+          if (!(network === "mainnet")) {
+            _context3.next = 19;
+            break;
+          }
+          _context3.prev = 8;
+          _context3.next = 11;
+          return (0,_servies_api__WEBPACK_IMPORTED_MODULE_8__/* .getSafeBtcUtxos */ .O$)(address, network, true);
+        case 11:
+          resp = _context3.sent;
+          if (!(resp !== null && resp !== void 0 && resp.data && Array.isArray(resp.data.list))) {
+            _context3.next = 14;
+            break;
+          }
+          return _context3.abrupt("return", Number((_resp$data$totalSats = resp.data.totalSats) !== null && _resp$data$totalSats !== void 0 ? _resp$data$totalSats : resp.data.list.reduce(function (acc, cur) {
+            return acc + getUtxoSats(cur);
+          }, 0)));
+        case 14:
+          _context3.next = 19;
+          break;
+        case 16:
+          _context3.prev = 16;
+          _context3.t0 = _context3["catch"](8);
+          console.warn("Bridge safe BTC UTXO balance fallback:", _context3.t0);
+        case 19:
+          _context3.prev = 19;
+          _context3.next = 22;
+          return getUtxos(address, network, 3500);
+        case 22:
           utxos = _context3.sent;
           return _context3.abrupt("return", utxos.reduce(function (acc, cur) {
             return acc + getUtxoSats(cur);
           }, 0));
-        case 8:
+        case 26:
+          _context3.prev = 26;
+          _context3.t1 = _context3["catch"](19);
+        case 28:
+          if (!(typeof ((_window$metaidwallet4 = window.metaidwallet) === null || _window$metaidwallet4 === void 0 || (_window$metaidwallet4 = _window$metaidwallet4.btc) === null || _window$metaidwallet4 === void 0 ? void 0 : _window$metaidwallet4.getBalance) === "function")) {
+            _context3.next = 40;
+            break;
+          }
+          _context3.prev = 29;
+          _context3.next = 32;
+          return (0,_utils__WEBPACK_IMPORTED_MODULE_9__/* .withTimeout */ .wj)(window.metaidwallet.btc.getBalance(), 4000, "btc.getBalance");
+        case 32:
+          bal = _context3.sent;
+          sats = Number((_ref12 = (_ref13 = (_bal$safeBalance = bal === null || bal === void 0 ? void 0 : bal.safeBalance) !== null && _bal$safeBalance !== void 0 ? _bal$safeBalance : bal === null || bal === void 0 ? void 0 : bal.confirmed) !== null && _ref13 !== void 0 ? _ref13 : bal === null || bal === void 0 ? void 0 : bal.total) !== null && _ref12 !== void 0 ? _ref12 : 0);
+          if (!(Number.isFinite(sats) && sats >= 0)) {
+            _context3.next = 36;
+            break;
+          }
+          return _context3.abrupt("return", sats);
+        case 36:
+          _context3.next = 40;
+          break;
+        case 38:
+          _context3.prev = 38;
+          _context3.t2 = _context3["catch"](29);
+        case 40:
+          return _context3.abrupt("return", 0);
+        case 41:
         case "end":
           return _context3.stop();
       }
-    }, _callee3);
+    }, _callee3, null, [[8, 16], [19, 26], [29, 38]]);
   }));
-  return function getUtxoBalance(_x12) {
-    return _ref6.apply(this, arguments);
+  return function getUtxoBalance(_x11) {
+    return _ref11.apply(this, arguments);
   };
 }();
 var checkWalletAddress = /*#__PURE__*/function () {
-  var _ref7 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee4(address) {
+  var _ref14 = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee4(address) {
     var _address;
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
           _context4.next = 2;
-          return window.metaidwallet.btc.getAddress();
+          return (0,_utils__WEBPACK_IMPORTED_MODULE_9__/* .withTimeout */ .wj)(window.metaidwallet.btc.getAddress(), 4000, "btc.getAddress");
         case 2:
           _address = _context4.sent;
           if (!(address !== _address)) {
@@ -47299,8 +47502,8 @@ var checkWalletAddress = /*#__PURE__*/function () {
       }
     }, _callee4);
   }));
-  return function checkWalletAddress(_x13) {
-    return _ref7.apply(this, arguments);
+  return function checkWalletAddress(_x12) {
+    return _ref14.apply(this, arguments);
   };
 }();
 
@@ -47321,7 +47524,9 @@ __webpack_require__.d(__webpack_exports__, {
   AG: function() { return /* binding */ determineAddressInfo; },
   Q0: function() { return /* binding */ formatSat; },
   Iz: function() { return /* binding */ formatUnitToBtc; },
-  V7: function() { return /* binding */ prettyTimestamp; }
+  ZS: function() { return /* binding */ normalizeWalletNetwork; },
+  V7: function() { return /* binding */ prettyTimestamp; },
+  wj: function() { return /* binding */ withTimeout; }
 });
 
 // UNUSED EXPORTS: confirmNumberBySeqAndAmount, formatUnitToSats
@@ -50443,6 +50648,25 @@ var checkAddressType = function checkAddressType(address) {
     message: "Only ".concat(wrapping/* supportRedeemAddressType */.EX.join(","), " address is supported")
   };
 };
+function withTimeout(promise) {
+  var timeoutMs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5000;
+  var label = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "Wallet request";
+  return new Promise(function (resolve, reject) {
+    var timer = setTimeout(function () {
+      reject(new Error("".concat(label, " timed out after ").concat(timeoutMs, "ms")));
+    }, timeoutMs);
+    Promise.resolve(promise).then(function (val) {
+      clearTimeout(timer);
+      resolve(val);
+    }, function (err) {
+      clearTimeout(timer);
+      reject(err);
+    });
+  });
+}
+function normalizeWalletNetwork(rawNet) {
+  return rawNet === "testnet" ? "testnet" : "mainnet";
+}
 
 /***/ }),
 
@@ -163811,7 +164035,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"2.16.840.1.101.3.4.1.1":"aes-128-ecb
 /******/ 	
 /******/ 	/* webpack/runtime/get javascript chunk filename */
 /******/ 	// This function allow to reference async chunks
-/******/ 	__webpack_require__.u = function(chunkId) { return ({"73":"p__index","266":"layouts__index","807":"p__wrapping__index"}[chunkId] || chunkId) + "." + {"73":"167e2d29","103":"ab6584b7","266":"6382c484","267":"a89cbef2","639":"c1fa9d1f","807":"69168abf","969":"ac097453"}[chunkId] + ".async.js"; };
+/******/ 	__webpack_require__.u = function(chunkId) { return ({"73":"p__index","266":"layouts__index","807":"p__wrapping__index"}[chunkId] || chunkId) + "." + {"73":"167e2d29","103":"ab6584b7","266":"2d035ced","267":"a89cbef2","639":"c1fa9d1f","807":"182f1ea7","969":"ac097453"}[chunkId] + ".async.js"; };
 /******/ 	
 /******/ 	/* webpack/runtime/get mini-css chunk filename */
 /******/ 	// This function allow to reference async chunks

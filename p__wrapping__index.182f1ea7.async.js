@@ -717,8 +717,11 @@ var Search = input/* default */.A.Search;
     setList = _useState4[1];
   (0,react.useEffect)(function () {
     if (searchWord) {
+      var kw = searchWord.trim().toUpperCase();
       var _list = assets.filter(function (item) {
-        return item.targetName.toUpperCase().includes(searchWord.trim().toUpperCase()) || item.targetName.toUpperCase().includes(searchWord.trim().toUpperCase());
+        return [item.originName, item.originSymbol, item.targetName, item.targetSymbol].filter(Boolean).some(function (s) {
+          return s.toUpperCase().includes(kw);
+        });
       });
       setList(_list);
     } else {
@@ -1567,6 +1570,14 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
     return undefined;
   }, [asset]);
   (0,react.useEffect)(function () {
+    if (!connected || !btcAddress) {
+      setMrc20Info([]);
+      setLoadingInput(false);
+      return;
+    }
+    if (!network || actionType !== "mintmrc20" || !mrc20OriginTokenId) {
+      return;
+    }
     var didCancel = false;
     var fetchMrcBalances = /*#__PURE__*/function () {
       var _ref = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
@@ -1574,67 +1585,60 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
         return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              if (!(!network || !btcAddress)) {
-                _context2.next = 2;
-                break;
-              }
-              return _context2.abrupt("return");
-            case 2:
-              if (!(actionType === "mintmrc20" && mrc20OriginTokenId)) {
-                _context2.next = 30;
-                break;
-              }
               setLoadingInput(true);
-              _context2.prev = 4;
+              _context2.prev = 1;
               list = [];
               i = 0;
-            case 7:
+            case 4:
               if (!(i < 10)) {
-                _context2.next = 21;
+                _context2.next = 18;
                 break;
               }
-              _context2.next = 10;
+              _context2.next = 7;
               return (0,api/* getUserMrc20Balances */.hL)(btcAddress, network, i, 50);
-            case 10:
+            case 7:
               ret = _context2.sent;
-              if (!(ret.code === 0 && (_ret$data = ret.data) !== null && _ret$data !== void 0 && _ret$data.list)) {
-                _context2.next = 17;
+              if (!(ret.code === 0 && Array.isArray((_ret$data = ret.data) === null || _ret$data === void 0 ? void 0 : _ret$data.list))) {
+                _context2.next = 14;
                 break;
               }
               list = [].concat(toConsumableArray_default()(list), toConsumableArray_default()(ret.data.list));
               if (!(ret.data.list.length < 50)) {
-                _context2.next = 15;
+                _context2.next = 12;
                 break;
               }
-              return _context2.abrupt("break", 21);
+              return _context2.abrupt("break", 18);
+            case 12:
+              _context2.next = 15;
+              break;
+            case 14:
+              return _context2.abrupt("break", 18);
             case 15:
-              _context2.next = 18;
-              break;
-            case 17:
-              return _context2.abrupt("break", 21);
-            case 18:
               i++;
-              _context2.next = 7;
+              _context2.next = 4;
               break;
-            case 21:
+            case 18:
               if (!didCancel) {
                 setMrc20Info(list);
               }
-              _context2.next = 27;
+              _context2.next = 25;
               break;
-            case 24:
-              _context2.prev = 24;
-              _context2.t0 = _context2["catch"](4);
+            case 21:
+              _context2.prev = 21;
+              _context2.t0 = _context2["catch"](1);
               console.log(_context2.t0);
-            case 27:
-              _context2.prev = 27;
+              if (!didCancel) {
+                setMrc20Info([]);
+              }
+            case 25:
+              _context2.prev = 25;
               if (!didCancel) setLoadingInput(false);
-              return _context2.finish(27);
-            case 30:
+              return _context2.finish(25);
+            case 28:
             case "end":
               return _context2.stop();
           }
-        }, _callee2, null, [[4, 24, 27, 30]]);
+        }, _callee2, null, [[1, 21, 25, 28]]);
       }));
       return function fetchMrcBalances() {
         return _ref.apply(this, arguments);
@@ -1644,7 +1648,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
     return function () {
       didCancel = true;
     };
-  }, [actionType, network, btcAddress, mrc20OriginTokenId, setMrc20Info]);
+  }, [connected, actionType, network, btcAddress, mrc20OriginTokenId, setMrc20Info]);
   var inputRange = (0,react.useMemo)(function () {
     var minAmount = 0;
     var maxAmount = 0;

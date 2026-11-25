@@ -258,6 +258,9 @@ var regeneratorRuntime_default = /*#__PURE__*/__webpack_require__.n(regeneratorR
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/asyncToGenerator.js
 var asyncToGenerator = __webpack_require__(98312);
 var asyncToGenerator_default = /*#__PURE__*/__webpack_require__.n(asyncToGenerator);
+// EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/slicedToArray.js
+var slicedToArray = __webpack_require__(11604);
+var slicedToArray_default = /*#__PURE__*/__webpack_require__.n(slicedToArray);
 // EXTERNAL MODULE: ./src/components/ResponPopup/index.tsx + 1 modules
 var ResponPopup = __webpack_require__(15434);
 // EXTERNAL MODULE: ./src/assets/metalet.png
@@ -279,32 +282,57 @@ var es_button = __webpack_require__(71277);
 
 
 
+
+
 /* harmony default export */ var LoginModal = (function (_ref) {
   var show = _ref.show,
     onClose = _ref.onClose;
   var _useModel = (0,_umi_production_exports.useModel)("wallet"),
-    connect = _useModel.connect;
+    connect = _useModel.connect,
+    connected = _useModel.connected;
+  var _useState = (0,react.useState)(false),
+    _useState2 = slicedToArray_default()(_useState, 2),
+    connecting = _useState2[0],
+    setConnecting = _useState2[1];
+  (0,react.useEffect)(function () {
+    if (connected && show) {
+      onClose();
+    }
+  }, [connected, show, onClose]);
   var handleConnect = /*#__PURE__*/function () {
     var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee() {
       return regeneratorRuntime_default()().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
-            _context.prev = 0;
-            _context.next = 3;
+            if (!connecting) {
+              _context.next = 2;
+              break;
+            }
+            return _context.abrupt("return");
+          case 2:
+            setConnecting(true);
+            _context.prev = 3;
+            _context.next = 6;
             return connect();
-          case 3:
-            onClose();
-            _context.next = 9;
-            break;
           case 6:
-            _context.prev = 6;
-            _context.t0 = _context["catch"](0);
-            message/* default */.Ay.error(_context.t0.message || 'unknown error');
+            onClose();
+            _context.next = 12;
+            break;
           case 9:
+            _context.prev = 9;
+            _context.t0 = _context["catch"](3);
+            if (_context.t0 !== null && _context.t0 !== void 0 && _context.t0.message && _context.t0.message !== "canceled") {
+              message/* default */.Ay.error(_context.t0.message || "unknown error");
+            }
+          case 12:
+            _context.prev = 12;
+            setConnecting(false);
+            return _context.finish(12);
+          case 15:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[0, 6]]);
+      }, _callee, null, [[3, 9, 12, 15]]);
     }));
     return function handleConnect() {
       return _ref2.apply(this, arguments);
@@ -326,6 +354,7 @@ var es_button = __webpack_require__(71277);
         className: "item",
         type: "primary",
         onClick: handleConnect,
+        loading: connecting,
         block: true,
         children: [/*#__PURE__*/(0,jsx_runtime.jsx)("img", {
           src: metalet,
