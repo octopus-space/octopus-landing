@@ -1,6 +1,87 @@
 "use strict";
 (self["webpackChunk"] = self["webpackChunk"] || []).push([[266],{
 
+/***/ 41557:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+/* harmony import */ var decimal_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(76582);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(74159);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(74848);
+
+
+
+
+
+var NumberFormat = function NumberFormat(props) {
+  var prefix = props.prefix,
+    suffix = props.suffix;
+  var beautyNumber = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(function () {
+    var value = props.value,
+      _props$precision = props.precision,
+      precision = _props$precision === void 0 ? 16 : _props$precision,
+      kmt = props.kmt,
+      _props$isBig = props.isBig,
+      isBig = _props$isBig === void 0 ? false : _props$isBig,
+      decimal = props.decimal,
+      _props$tiny = props.tiny,
+      tiny = _props$tiny === void 0 ? false : _props$tiny,
+      _props$floor = props.floor,
+      floor = _props$floor === void 0 ? false : _props$floor,
+      _props$minDig = props.minDig,
+      minDig = _props$minDig === void 0 ? 0 : _props$minDig;
+    var _value = value;
+    if (Number.isNaN(Number(_value))) return '--';
+    if (isBig && decimal) {
+      if (String(_value).indexOf('.') > -1) {
+        _value = new decimal_js__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .A(new decimal_js__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .A(_value).times(1e8)).div(Math.pow(10, Number(decimal) + 8));
+      } else {
+        _value = new decimal_js__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .A(_value).div(Math.pow(10, Number(decimal)));
+      }
+    }
+    try {
+      if (tiny && Number(_value) < 0.0000001 && Number(_value) > 0) {
+        var string = String(parseFloat(String(_value)));
+        var ret = string.replace('.', '').match(/(\d+)e-(\d+)/);
+        var left = '';
+        var dex = '';
+        if (ret && ret[1] && ret[2]) {
+          left = ret[1].substring(0, precision);
+          dex = String(Number(ret[2]) - 1);
+        }
+        return {
+          type: 'tiny',
+          left: left,
+          dex: dex
+        };
+      }
+    } catch (err) {
+      return '--';
+    }
+    if (floor) {
+      _value = Math.floor(Number(_value) * Math.pow(10, precision)) / Math.pow(10, precision);
+    }
+    return Number(_value).toLocaleString(undefined, {
+      minimumFractionDigits: minDig,
+      maximumFractionDigits: precision
+    });
+  }, [props]);
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.Fragment, {
+    children: [prefix, typeof beautyNumber === 'string' ? beautyNumber : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.Fragment, {
+      children: ["0.0", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+        style: {
+          fontSize: '0.8em',
+          top: "0.2em",
+          position: "relative"
+        },
+        children: beautyNumber.dex
+      }), beautyNumber.left]
+    }), suffix]
+  });
+};
+/* harmony default export */ __webpack_exports__.A = (NumberFormat);
+
+/***/ }),
+
 /***/ 15434:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -92,7 +173,7 @@ var Popup = function Popup(_ref) {
 
 /***/ }),
 
-/***/ 45845:
+/***/ 31646:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 // ESM COMPAT FLAG
@@ -368,6 +449,528 @@ var es_button = __webpack_require__(71277);
   });
 });
 __webpack_require__.dn(LoginModal);
+// EXTERNAL MODULE: ./node_modules/classnames/index.js
+var classnames = __webpack_require__(46942);
+var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
+// EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
+var context = __webpack_require__(62279);
+// EXTERNAL MODULE: ./node_modules/antd/es/config-provider/hooks/useSize.js
+var useSize = __webpack_require__(829);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs/es/index.js + 36 modules
+var es = __webpack_require__(69631);
+// EXTERNAL MODULE: ./node_modules/antd/es/style/index.js
+var style = __webpack_require__(25905);
+// EXTERNAL MODULE: ./node_modules/antd/es/theme/util/genStyleUtils.js
+var genStyleUtils = __webpack_require__(37358);
+// EXTERNAL MODULE: ./node_modules/@ant-design/cssinjs-utils/es/index.js + 12 modules
+var cssinjs_utils_es = __webpack_require__(52180);
+;// ./node_modules/antd/es/divider/style/index.js
+
+
+
+// ============================== Size ================================
+const genSizeDividerStyle = token => {
+  const {
+    componentCls
+  } = token;
+  return {
+    [componentCls]: {
+      '&-horizontal': {
+        [`&${componentCls}`]: {
+          '&-sm': {
+            marginBlock: token.marginXS
+          },
+          '&-md': {
+            marginBlock: token.margin
+          }
+        }
+      }
+    }
+  };
+};
+// ============================== Shared ==============================
+const genSharedDividerStyle = token => {
+  const {
+    componentCls,
+    sizePaddingEdgeHorizontal,
+    colorSplit,
+    lineWidth,
+    textPaddingInline,
+    orientationMargin,
+    verticalMarginInline
+  } = token;
+  return {
+    [componentCls]: Object.assign(Object.assign({}, (0,style/* resetComponent */.dF)(token)), {
+      borderBlockStart: `${(0,es/* unit */.zA)(lineWidth)} solid ${colorSplit}`,
+      // vertical
+      '&-vertical': {
+        position: 'relative',
+        top: '-0.06em',
+        display: 'inline-block',
+        height: '0.9em',
+        marginInline: verticalMarginInline,
+        marginBlock: 0,
+        verticalAlign: 'middle',
+        borderTop: 0,
+        borderInlineStart: `${(0,es/* unit */.zA)(lineWidth)} solid ${colorSplit}`
+      },
+      '&-horizontal': {
+        display: 'flex',
+        clear: 'both',
+        width: '100%',
+        minWidth: '100%',
+        // Fix https://github.com/ant-design/ant-design/issues/10914
+        margin: `${(0,es/* unit */.zA)(token.marginLG)} 0`
+      },
+      [`&-horizontal${componentCls}-with-text`]: {
+        display: 'flex',
+        alignItems: 'center',
+        margin: `${(0,es/* unit */.zA)(token.dividerHorizontalWithTextGutterMargin)} 0`,
+        color: token.colorTextHeading,
+        fontWeight: 500,
+        fontSize: token.fontSizeLG,
+        whiteSpace: 'nowrap',
+        textAlign: 'center',
+        borderBlockStart: `0 ${colorSplit}`,
+        '&::before, &::after': {
+          position: 'relative',
+          width: '50%',
+          borderBlockStart: `${(0,es/* unit */.zA)(lineWidth)} solid transparent`,
+          // Chrome not accept `inherit` in `border-top`
+          borderBlockStartColor: 'inherit',
+          borderBlockEnd: 0,
+          transform: 'translateY(50%)',
+          content: "''"
+        }
+      },
+      [`&-horizontal${componentCls}-with-text-start`]: {
+        '&::before': {
+          width: `calc(${orientationMargin} * 100%)`
+        },
+        '&::after': {
+          width: `calc(100% - ${orientationMargin} * 100%)`
+        }
+      },
+      [`&-horizontal${componentCls}-with-text-end`]: {
+        '&::before': {
+          width: `calc(100% - ${orientationMargin} * 100%)`
+        },
+        '&::after': {
+          width: `calc(${orientationMargin} * 100%)`
+        }
+      },
+      [`${componentCls}-inner-text`]: {
+        display: 'inline-block',
+        paddingBlock: 0,
+        paddingInline: textPaddingInline
+      },
+      '&-dashed': {
+        background: 'none',
+        borderColor: colorSplit,
+        borderStyle: 'dashed',
+        borderWidth: `${(0,es/* unit */.zA)(lineWidth)} 0 0`
+      },
+      [`&-horizontal${componentCls}-with-text${componentCls}-dashed`]: {
+        '&::before, &::after': {
+          borderStyle: 'dashed none none'
+        }
+      },
+      [`&-vertical${componentCls}-dashed`]: {
+        borderInlineStartWidth: lineWidth,
+        borderInlineEnd: 0,
+        borderBlockStart: 0,
+        borderBlockEnd: 0
+      },
+      '&-dotted': {
+        background: 'none',
+        borderColor: colorSplit,
+        borderStyle: 'dotted',
+        borderWidth: `${(0,es/* unit */.zA)(lineWidth)} 0 0`
+      },
+      [`&-horizontal${componentCls}-with-text${componentCls}-dotted`]: {
+        '&::before, &::after': {
+          borderStyle: 'dotted none none'
+        }
+      },
+      [`&-vertical${componentCls}-dotted`]: {
+        borderInlineStartWidth: lineWidth,
+        borderInlineEnd: 0,
+        borderBlockStart: 0,
+        borderBlockEnd: 0
+      },
+      [`&-plain${componentCls}-with-text`]: {
+        color: token.colorText,
+        fontWeight: 'normal',
+        fontSize: token.fontSize
+      },
+      [`&-horizontal${componentCls}-with-text-start${componentCls}-no-default-orientation-margin-start`]: {
+        '&::before': {
+          width: 0
+        },
+        '&::after': {
+          width: '100%'
+        },
+        [`${componentCls}-inner-text`]: {
+          paddingInlineStart: sizePaddingEdgeHorizontal
+        }
+      },
+      [`&-horizontal${componentCls}-with-text-end${componentCls}-no-default-orientation-margin-end`]: {
+        '&::before': {
+          width: '100%'
+        },
+        '&::after': {
+          width: 0
+        },
+        [`${componentCls}-inner-text`]: {
+          paddingInlineEnd: sizePaddingEdgeHorizontal
+        }
+      }
+    })
+  };
+};
+const prepareComponentToken = token => ({
+  textPaddingInline: '1em',
+  orientationMargin: 0.05,
+  verticalMarginInline: token.marginXS
+});
+// ============================== Export ==============================
+/* harmony default export */ var divider_style = ((0,genStyleUtils/* genStyleHooks */.OF)('Divider', token => {
+  const dividerToken = (0,cssinjs_utils_es/* mergeToken */.oX)(token, {
+    dividerHorizontalWithTextGutterMargin: token.margin,
+    sizePaddingEdgeHorizontal: 0
+  });
+  return [genSharedDividerStyle(dividerToken), genSizeDividerStyle(dividerToken)];
+}, prepareComponentToken, {
+  unitless: {
+    orientationMargin: true
+  }
+}));
+;// ./node_modules/antd/es/divider/index.js
+"use client";
+
+var __rest = undefined && undefined.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+
+
+
+
+
+
+const sizeClassNameMap = {
+  small: 'sm',
+  middle: 'md'
+};
+const Divider = props => {
+  const {
+    getPrefixCls,
+    direction,
+    className: dividerClassName,
+    style: dividerStyle
+  } = (0,context/* useComponentConfig */.TP)('divider');
+  const {
+      prefixCls: customizePrefixCls,
+      type = 'horizontal',
+      orientation = 'center',
+      orientationMargin,
+      className,
+      rootClassName,
+      children,
+      dashed,
+      variant = 'solid',
+      plain,
+      style,
+      size: customSize
+    } = props,
+    restProps = __rest(props, ["prefixCls", "type", "orientation", "orientationMargin", "className", "rootClassName", "children", "dashed", "variant", "plain", "style", "size"]);
+  const prefixCls = getPrefixCls('divider', customizePrefixCls);
+  const [wrapCSSVar, hashId, cssVarCls] = divider_style(prefixCls);
+  const sizeFullName = (0,useSize/* default */.A)(customSize);
+  const sizeCls = sizeClassNameMap[sizeFullName];
+  const hasChildren = !!children;
+  const mergedOrientation = react.useMemo(() => {
+    if (orientation === 'left') {
+      return direction === 'rtl' ? 'end' : 'start';
+    }
+    if (orientation === 'right') {
+      return direction === 'rtl' ? 'start' : 'end';
+    }
+    return orientation;
+  }, [direction, orientation]);
+  const hasMarginStart = mergedOrientation === 'start' && orientationMargin != null;
+  const hasMarginEnd = mergedOrientation === 'end' && orientationMargin != null;
+  const classString = classnames_default()(prefixCls, dividerClassName, hashId, cssVarCls, `${prefixCls}-${type}`, {
+    [`${prefixCls}-with-text`]: hasChildren,
+    [`${prefixCls}-with-text-${mergedOrientation}`]: hasChildren,
+    [`${prefixCls}-dashed`]: !!dashed,
+    [`${prefixCls}-${variant}`]: variant !== 'solid',
+    [`${prefixCls}-plain`]: !!plain,
+    [`${prefixCls}-rtl`]: direction === 'rtl',
+    [`${prefixCls}-no-default-orientation-margin-start`]: hasMarginStart,
+    [`${prefixCls}-no-default-orientation-margin-end`]: hasMarginEnd,
+    [`${prefixCls}-${sizeCls}`]: !!sizeCls
+  }, className, rootClassName);
+  const memoizedOrientationMargin = react.useMemo(() => {
+    if (typeof orientationMargin === 'number') {
+      return orientationMargin;
+    }
+    if (/^\d+$/.test(orientationMargin)) {
+      return Number(orientationMargin);
+    }
+    return orientationMargin;
+  }, [orientationMargin]);
+  const innerStyle = {
+    marginInlineStart: hasMarginStart ? memoizedOrientationMargin : undefined,
+    marginInlineEnd: hasMarginEnd ? memoizedOrientationMargin : undefined
+  };
+  // Warning children not work in vertical mode
+  if (false) // removed by dead control flow
+{}
+  return wrapCSSVar(/*#__PURE__*/react.createElement("div", Object.assign({
+    className: classString,
+    style: Object.assign(Object.assign({}, dividerStyle), style)
+  }, restProps, {
+    role: "separator"
+  }), children && type !== 'vertical' && (/*#__PURE__*/react.createElement("span", {
+    className: `${prefixCls}-inner-text`,
+    style: innerStyle
+  }, children))));
+};
+if (false) // removed by dead control flow
+{}
+/* harmony default export */ var divider = (Divider);
+// EXTERNAL MODULE: ./node_modules/antd/es/row/index.js + 2 modules
+var row = __webpack_require__(26144);
+// EXTERNAL MODULE: ./node_modules/antd/es/col/index.js + 1 modules
+var col = __webpack_require__(58366);
+// EXTERNAL MODULE: ./node_modules/antd/es/input-number/index.js + 18 modules
+var input_number = __webpack_require__(49625);
+// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/CheckOutlined.js + 1 modules
+var CheckOutlined = __webpack_require__(40236);
+// EXTERNAL MODULE: ./src/components/NumberFormat/index.tsx
+var NumberFormat = __webpack_require__(41557);
+// EXTERNAL MODULE: ./src/utils/mempool.ts
+var mempool = __webpack_require__(8766);
+;// ./src/components/SetFeeRate/index.less
+// extracted by mini-css-extract-plugin
+
+;// ./src/components/SetFeeRate/index.tsx
+
+
+
+
+
+
+
+
+
+
+var PlanIcon = function PlanIcon(_ref) {
+  var plan = _ref.plan;
+  if (plan === "Fast") {
+    return /*#__PURE__*/(0,jsx_runtime.jsx)("svg", {
+      width: "18",
+      height: "18",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      children: /*#__PURE__*/(0,jsx_runtime.jsx)("path", {
+        d: "M13 2L4 14h7l-1 8 10-12h-7l0-8z",
+        stroke: "currentColor",
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      })
+    });
+  }
+  if (plan === "Avg") {
+    return /*#__PURE__*/(0,jsx_runtime.jsxs)("svg", {
+      width: "18",
+      height: "18",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      children: [/*#__PURE__*/(0,jsx_runtime.jsx)("circle", {
+        cx: "12",
+        cy: "12",
+        r: "9",
+        stroke: "currentColor",
+        strokeWidth: "2"
+      }), /*#__PURE__*/(0,jsx_runtime.jsx)("path", {
+        d: "M12 7v5l3.5 2",
+        stroke: "currentColor",
+        strokeWidth: "2",
+        strokeLinecap: "round"
+      })]
+    });
+  }
+  if (plan === "Slow") {
+    return /*#__PURE__*/(0,jsx_runtime.jsx)("svg", {
+      width: "18",
+      height: "18",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      children: /*#__PURE__*/(0,jsx_runtime.jsx)("path", {
+        d: "M12 3a9 9 0 109 9c0-4.97-4.03-9-9-9zm0 4v5h4",
+        stroke: "currentColor",
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      })
+    });
+  }
+  return /*#__PURE__*/(0,jsx_runtime.jsx)("svg", {
+    width: "18",
+    height: "18",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    children: /*#__PURE__*/(0,jsx_runtime.jsx)("path", {
+      d: "M4 7h16M4 17h16M8 4v6M16 14v6",
+      stroke: "currentColor",
+      strokeWidth: "2",
+      strokeLinecap: "round"
+    })
+  });
+};
+/* harmony default export */ var SetFeeRate = (function () {
+  var _useModel = (0,_umi_production_exports.useModel)("wallet"),
+    feeRate = _useModel.feeRate,
+    feeRateType = _useModel.feeRateType,
+    feeRates = _useModel.feeRates,
+    minFeeRate = _useModel.minFeeRate,
+    customFeeRate = _useModel.customFeeRate,
+    feeRateModalVisible = _useModel.feeRateModalVisible,
+    setFeeRateModalVisible = _useModel.setFeeRateModalVisible,
+    selectFeeRatePlan = _useModel.selectFeeRatePlan,
+    updateCustomFeeRate = _useModel.updateCustomFeeRate,
+    commitCustomFeeRate = _useModel.commitCustomFeeRate;
+  return /*#__PURE__*/(0,jsx_runtime.jsx)(ResponPopup/* default */.A, {
+    show: feeRateModalVisible,
+    onClose: function onClose() {
+      return setFeeRateModalVisible(false);
+    },
+    title: "BTC Network Fee",
+    closable: true,
+    modalWidth: 440,
+    children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+      className: "octopusFeeModal",
+      children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+        className: "heroRate",
+        children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+          className: "curRate",
+          children: /*#__PURE__*/(0,jsx_runtime.jsx)(NumberFormat/* default */.A, {
+            value: feeRate,
+            suffix: " sat/vB"
+          })
+        }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+          className: "subNote",
+          children: "Applies to BTC transactions in both directions \xB7 MVC defaults to 1 sat/B"
+        })]
+      }), /*#__PURE__*/(0,jsx_runtime.jsx)(divider, {
+        style: {
+          borderColor: "rgba(255,255,255,0.08)",
+          margin: "16px 0"
+        }
+      }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+        className: "sectionLabel",
+        children: "Choose BTC Gas Plan"
+      }), /*#__PURE__*/(0,jsx_runtime.jsxs)(row/* default */.A, {
+        gutter: [12, 12],
+        children: [feeRates.map(function (item) {
+          var active = feeRateType === item.label;
+          return /*#__PURE__*/(0,jsx_runtime.jsx)(col/* default */.A, {
+            span: 24,
+            onClick: function onClick() {
+              return selectFeeRatePlan(item.label);
+            },
+            children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+              className: "planCard ".concat(active ? "active" : ""),
+              children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                className: "planLeft",
+                children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                  className: "planTitle",
+                  children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                    className: "planIcon",
+                    children: /*#__PURE__*/(0,jsx_runtime.jsx)(PlanIcon, {
+                      plan: item.label
+                    })
+                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                    children: item.label
+                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                    className: "planEta",
+                    children: item.time
+                  })]
+                }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                  className: "planRate",
+                  children: [item.value, " sat/vB"]
+                })]
+              }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                className: "planCheck",
+                children: /*#__PURE__*/(0,jsx_runtime.jsx)(CheckOutlined/* default */.A, {})
+              })]
+            })
+          }, item.label);
+        }), /*#__PURE__*/(0,jsx_runtime.jsx)(col/* default */.A, {
+          span: 24,
+          onClick: function onClick() {
+            return selectFeeRatePlan("Custom");
+          },
+          children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+            className: "planCard ".concat(feeRateType === "Custom" ? "active" : ""),
+            children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+              className: "planLeft",
+              children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                className: "planTitle",
+                children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  className: "planIcon",
+                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(PlanIcon, {
+                    plan: "Custom"
+                  })
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  children: "Custom"
+                }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+                  className: "planEta",
+                  children: ["Min ", minFeeRate, " sat/vB"]
+                })]
+              }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                className: "planRate customRow",
+                onClick: function onClick(e) {
+                  return e.stopPropagation();
+                },
+                children: [/*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.A, {
+                  value: customFeeRate,
+                  onFocus: function onFocus() {
+                    return selectFeeRatePlan("Custom");
+                  },
+                  onChange: function onChange(val) {
+                    selectFeeRatePlan("Custom");
+                    updateCustomFeeRate(val);
+                  },
+                  onBlur: commitCustomFeeRate,
+                  min: minFeeRate,
+                  max: mempool/* MAX_CUSTOM_BTC_FEE_RATE */.F,
+                  precision: 0,
+                  controls: false,
+                  placeholder: String(minFeeRate),
+                  className: "customRateInput"
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  children: "sat/vB"
+                })]
+              })]
+            }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+              className: "planCheck",
+              children: /*#__PURE__*/(0,jsx_runtime.jsx)(CheckOutlined/* default */.A, {})
+            })]
+          })
+        })]
+      })]
+    })
+  });
+});
+__webpack_require__.dn(SetFeeRate);
 // EXTERNAL MODULE: ./node_modules/antd/es/dropdown/index.js + 24 modules
 var dropdown = __webpack_require__(3253);
 ;// ./src/assets/wrapping.svg
@@ -478,6 +1081,7 @@ const SvgExit = (props) => /* @__PURE__ */ exit_React.createElement("svg", exit_
 
 
 
+
 /* harmony default export */ var Header = (function () {
   var _useModel = (0,_umi_production_exports.useModel)("wallet"),
     disConnect = _useModel.disConnect,
@@ -485,7 +1089,10 @@ const SvgExit = (props) => /* @__PURE__ */ exit_React.createElement("svg", exit_
     loginModalShow = _useModel.loginModalShow,
     setLoginModalShow = _useModel.setLoginModalShow,
     connected = _useModel.connected,
-    network = _useModel.network;
+    network = _useModel.network,
+    feeRate = _useModel.feeRate,
+    feeRateType = _useModel.feeRateType,
+    setFeeRateModalVisible = _useModel.setFeeRateModalVisible;
   var showAddress = (0,react.useMemo)(function () {
     if (btcAddress) return btcAddress.replace(/(\w{5})\w+(\w{3})/, "$1...$2");
   }, [btcAddress]);
@@ -500,10 +1107,10 @@ const SvgExit = (props) => /* @__PURE__ */ exit_React.createElement("svg", exit_
           alt: "",
           className: "logo",
           onClick: function onClick() {
-            return _umi_production_exports.history.push('/');
+            return _umi_production_exports.history.push("/");
           }
         }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-          className: "routes ",
+          className: "routes",
           children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
             children: [/*#__PURE__*/(0,jsx_runtime.jsx)("img", {
@@ -513,7 +1120,7 @@ const SvgExit = (props) => /* @__PURE__ */ exit_React.createElement("svg", exit_
               className: "desc",
               children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
                 className: "title",
-                children: ["Wrapping ", network === 'testnet' && /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+                children: ["Wrapping", " ", network === "testnet" && /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
                   className: "beta",
                   children: "BETA"
                 })]
@@ -539,9 +1146,27 @@ const SvgExit = (props) => /* @__PURE__ */ exit_React.createElement("svg", exit_
             })]
           })]
         })]
-      }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+      }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
         className: "navWrap",
-        children: connected ? /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.A, {
+        style: {
+          gap: 12
+        },
+        children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+          className: "headerGasPill",
+          onClick: function onClick() {
+            return setFeeRateModalVisible(true);
+          },
+          title: "Click to customize BTC transaction fee rate",
+          children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+            className: "gasDot"
+          }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+            className: "gasLabel",
+            children: "BTC Gas"
+          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+            className: "gasVal",
+            children: [feeRateType, " \xB7 ", feeRate, " sat/vB"]
+          })]
+        }), connected ? /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.A, {
           dropdownRender: function dropdownRender() {
             return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
               className: "walletInfo",
@@ -578,14 +1203,14 @@ const SvgExit = (props) => /* @__PURE__ */ exit_React.createElement("svg", exit_
             return setLoginModalShow(true);
           },
           children: "Connect"
-        })
+        })]
       })]
     }), /*#__PURE__*/(0,jsx_runtime.jsx)(LoginModal, {
       show: loginModalShow,
       onClose: function onClose() {
         return setLoginModalShow(false);
       }
-    })]
+    }), /*#__PURE__*/(0,jsx_runtime.jsx)(SetFeeRate, {})]
   });
 });
 __webpack_require__.dn(Header);
@@ -696,6 +1321,319 @@ function Layout() {
     })]
   });
 }
+
+/***/ }),
+
+/***/ 58366:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  A: function() { return /* binding */ es_col; }
+});
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(74159);
+// EXTERNAL MODULE: ./node_modules/classnames/index.js
+var classnames = __webpack_require__(46942);
+var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
+// EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
+var context = __webpack_require__(62279);
+// EXTERNAL MODULE: ./node_modules/antd/es/grid/RowContext.js
+var RowContext = __webpack_require__(36121);
+// EXTERNAL MODULE: ./node_modules/antd/es/grid/style/index.js
+var grid_style = __webpack_require__(25006);
+;// ./node_modules/antd/es/grid/col.js
+"use client";
+
+var __rest = undefined && undefined.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+
+
+
+
+
+function parseFlex(flex) {
+  if (flex === 'auto') {
+    return '1 1 auto';
+  }
+  if (typeof flex === 'number') {
+    return `${flex} ${flex} auto`;
+  }
+  if (/^\d+(\.\d+)?(px|em|rem|%)$/.test(flex)) {
+    return `0 0 ${flex}`;
+  }
+  return flex;
+}
+const sizes = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'];
+const Col = /*#__PURE__*/react.forwardRef((props, ref) => {
+  const {
+    getPrefixCls,
+    direction
+  } = react.useContext(context/* ConfigContext */.QO);
+  const {
+    gutter,
+    wrap
+  } = react.useContext(RowContext/* default */.A);
+  const {
+      prefixCls: customizePrefixCls,
+      span,
+      order,
+      offset,
+      push,
+      pull,
+      className,
+      children,
+      flex,
+      style
+    } = props,
+    others = __rest(props, ["prefixCls", "span", "order", "offset", "push", "pull", "className", "children", "flex", "style"]);
+  const prefixCls = getPrefixCls('col', customizePrefixCls);
+  const [wrapCSSVar, hashId, cssVarCls] = (0,grid_style/* useColStyle */.xV)(prefixCls);
+  // ===================== Size ======================
+  const sizeStyle = {};
+  let sizeClassObj = {};
+  sizes.forEach(size => {
+    let sizeProps = {};
+    const propSize = props[size];
+    if (typeof propSize === 'number') {
+      sizeProps.span = propSize;
+    } else if (typeof propSize === 'object') {
+      sizeProps = propSize || {};
+    }
+    delete others[size];
+    sizeClassObj = Object.assign(Object.assign({}, sizeClassObj), {
+      [`${prefixCls}-${size}-${sizeProps.span}`]: sizeProps.span !== undefined,
+      [`${prefixCls}-${size}-order-${sizeProps.order}`]: sizeProps.order || sizeProps.order === 0,
+      [`${prefixCls}-${size}-offset-${sizeProps.offset}`]: sizeProps.offset || sizeProps.offset === 0,
+      [`${prefixCls}-${size}-push-${sizeProps.push}`]: sizeProps.push || sizeProps.push === 0,
+      [`${prefixCls}-${size}-pull-${sizeProps.pull}`]: sizeProps.pull || sizeProps.pull === 0,
+      [`${prefixCls}-rtl`]: direction === 'rtl'
+    });
+    // Responsive flex layout
+    if (sizeProps.flex) {
+      sizeClassObj[`${prefixCls}-${size}-flex`] = true;
+      sizeStyle[`--${prefixCls}-${size}-flex`] = parseFlex(sizeProps.flex);
+    }
+  });
+  // ==================== Normal =====================
+  const classes = classnames_default()(prefixCls, {
+    [`${prefixCls}-${span}`]: span !== undefined,
+    [`${prefixCls}-order-${order}`]: order,
+    [`${prefixCls}-offset-${offset}`]: offset,
+    [`${prefixCls}-push-${push}`]: push,
+    [`${prefixCls}-pull-${pull}`]: pull
+  }, className, sizeClassObj, hashId, cssVarCls);
+  const mergedStyle = {};
+  // Horizontal gutter use padding
+  if (gutter === null || gutter === void 0 ? void 0 : gutter[0]) {
+    const horizontalGutter = typeof gutter[0] === 'number' ? `${gutter[0] / 2}px` : `calc(${gutter[0]} / 2)`;
+    mergedStyle.paddingLeft = horizontalGutter;
+    mergedStyle.paddingRight = horizontalGutter;
+  }
+  if (flex) {
+    mergedStyle.flex = parseFlex(flex);
+    // Hack for Firefox to avoid size issue
+    // https://github.com/ant-design/ant-design/pull/20023#issuecomment-564389553
+    if (wrap === false && !mergedStyle.minWidth) {
+      mergedStyle.minWidth = 0;
+    }
+  }
+  // ==================== Render =====================
+  return wrapCSSVar(/*#__PURE__*/react.createElement("div", Object.assign({}, others, {
+    style: Object.assign(Object.assign(Object.assign({}, mergedStyle), style), sizeStyle),
+    className: classes,
+    ref: ref
+  }), children));
+});
+if (false) // removed by dead control flow
+{}
+/* harmony default export */ var col = (Col);
+;// ./node_modules/antd/es/col/index.js
+"use client";
+
+
+/* harmony default export */ var es_col = (col);
+
+/***/ }),
+
+/***/ 36121:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(74159);
+
+const RowContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)({});
+/* harmony default export */ __webpack_exports__.A = (RowContext);
+
+/***/ }),
+
+/***/ 26144:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  A: function() { return /* binding */ es_row; }
+});
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(74159);
+// EXTERNAL MODULE: ./node_modules/classnames/index.js
+var classnames = __webpack_require__(46942);
+var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
+// EXTERNAL MODULE: ./node_modules/antd/es/_util/responsiveObserver.js + 1 modules
+var responsiveObserver = __webpack_require__(8683);
+// EXTERNAL MODULE: ./node_modules/antd/es/config-provider/context.js
+var context = __webpack_require__(62279);
+// EXTERNAL MODULE: ./node_modules/antd/es/grid/hooks/useBreakpoint.js + 1 modules
+var useBreakpoint = __webpack_require__(10419);
+;// ./node_modules/antd/es/grid/hooks/useGutter.js
+
+function useGutter(gutter, screens) {
+  const results = [undefined, undefined];
+  const normalizedGutter = Array.isArray(gutter) ? gutter : [gutter, undefined];
+  // By default use as `xs`
+  const mergedScreens = screens || {
+    xs: true,
+    sm: true,
+    md: true,
+    lg: true,
+    xl: true,
+    xxl: true
+  };
+  normalizedGutter.forEach((g, index) => {
+    if (typeof g === 'object' && g !== null) {
+      for (let i = 0; i < responsiveObserver/* responsiveArray */.ye.length; i++) {
+        const breakpoint = responsiveObserver/* responsiveArray */.ye[i];
+        if (mergedScreens[breakpoint] && g[breakpoint] !== undefined) {
+          results[index] = g[breakpoint];
+          break;
+        }
+      }
+    } else {
+      results[index] = g;
+    }
+  });
+  return results;
+}
+// EXTERNAL MODULE: ./node_modules/antd/es/grid/RowContext.js
+var RowContext = __webpack_require__(36121);
+// EXTERNAL MODULE: ./node_modules/antd/es/grid/style/index.js
+var grid_style = __webpack_require__(25006);
+;// ./node_modules/antd/es/grid/row.js
+"use client";
+
+var __rest = undefined && undefined.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+
+
+
+
+
+
+
+
+const _RowAligns = (/* unused pure expression or super */ null && (['top', 'middle', 'bottom', 'stretch']));
+const _RowJustify = (/* unused pure expression or super */ null && (['start', 'end', 'center', 'space-around', 'space-between', 'space-evenly']));
+function useMergedPropByScreen(oriProp, screen) {
+  const [prop, setProp] = react.useState(typeof oriProp === 'string' ? oriProp : '');
+  const calcMergedAlignOrJustify = () => {
+    if (typeof oriProp === 'string') {
+      setProp(oriProp);
+    }
+    if (typeof oriProp !== 'object') {
+      return;
+    }
+    for (let i = 0; i < responsiveObserver/* responsiveArray */.ye.length; i++) {
+      const breakpoint = responsiveObserver/* responsiveArray */.ye[i];
+      // if do not match, do nothing
+      if (!screen || !screen[breakpoint]) {
+        continue;
+      }
+      const curVal = oriProp[breakpoint];
+      if (curVal !== undefined) {
+        setProp(curVal);
+        return;
+      }
+    }
+  };
+  react.useEffect(() => {
+    calcMergedAlignOrJustify();
+  }, [JSON.stringify(oriProp), screen]);
+  return prop;
+}
+const Row = /*#__PURE__*/react.forwardRef((props, ref) => {
+  const {
+      prefixCls: customizePrefixCls,
+      justify,
+      align,
+      className,
+      style,
+      children,
+      gutter = 0,
+      wrap
+    } = props,
+    others = __rest(props, ["prefixCls", "justify", "align", "className", "style", "children", "gutter", "wrap"]);
+  const {
+    getPrefixCls,
+    direction
+  } = react.useContext(context/* ConfigContext */.QO);
+  const screens = (0,useBreakpoint/* default */.A)(true, null);
+  const mergedAlign = useMergedPropByScreen(align, screens);
+  const mergedJustify = useMergedPropByScreen(justify, screens);
+  const prefixCls = getPrefixCls('row', customizePrefixCls);
+  const [wrapCSSVar, hashId, cssVarCls] = (0,grid_style/* useRowStyle */.L3)(prefixCls);
+  const gutters = useGutter(gutter, screens);
+  const classes = classnames_default()(prefixCls, {
+    [`${prefixCls}-no-wrap`]: wrap === false,
+    [`${prefixCls}-${mergedJustify}`]: mergedJustify,
+    [`${prefixCls}-${mergedAlign}`]: mergedAlign,
+    [`${prefixCls}-rtl`]: direction === 'rtl'
+  }, className, hashId, cssVarCls);
+  // Add gutter related style
+  const rowStyle = {};
+  if (gutters === null || gutters === void 0 ? void 0 : gutters[0]) {
+    const horizontalGutter = typeof gutters[0] === 'number' ? `${gutters[0] / -2}px` : `calc(${gutters[0]} / -2)`;
+    rowStyle.marginLeft = horizontalGutter;
+    rowStyle.marginRight = horizontalGutter;
+  }
+  // "gutters" is a new array in each rendering phase, it'll make 'React.useMemo' effectless.
+  // So we deconstruct "gutters" variable here.
+  const [gutterH, gutterV] = gutters;
+  rowStyle.rowGap = gutterV;
+  const rowContext = react.useMemo(() => ({
+    gutter: [gutterH, gutterV],
+    wrap
+  }), [gutterH, gutterV, wrap]);
+  return wrapCSSVar(/*#__PURE__*/react.createElement(RowContext/* default */.A.Provider, {
+    value: rowContext
+  }, /*#__PURE__*/react.createElement("div", Object.assign({}, others, {
+    className: classes,
+    style: Object.assign(Object.assign({}, rowStyle), style),
+    ref: ref
+  }), children)));
+});
+if (false) // removed by dead control flow
+{}
+/* harmony default export */ var row = (Row);
+;// ./node_modules/antd/es/row/index.js
+"use client";
+
+
+/* harmony default export */ var es_row = (row);
 
 /***/ }),
 

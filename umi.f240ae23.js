@@ -8627,6 +8627,10 @@ var slicedToArray_default = /*#__PURE__*/__webpack_require__.n(slicedToArray);
 // EXTERNAL MODULE: ./node_modules/@umijs/babel-preset-umi/node_modules/@babel/runtime/helpers/asyncToGenerator.js
 var asyncToGenerator = __webpack_require__(98312);
 var asyncToGenerator_default = /*#__PURE__*/__webpack_require__.n(asyncToGenerator);
+// EXTERNAL MODULE: ./src/hooks/useIntervalAsync.ts
+var useIntervalAsync = __webpack_require__(26524);
+// EXTERNAL MODULE: ./src/utils/mempool.ts
+var mempool = __webpack_require__(8766);
 // EXTERNAL MODULE: ./src/utils/psbtBuild.ts
 var psbtBuild = __webpack_require__(66268);
 // EXTERNAL MODULE: ./src/utils/utils.ts + 1 modules
@@ -8639,6 +8643,28 @@ var utils = __webpack_require__(79502);
 
 
 
+
+
+var STORAGE_FEE_PLAN_KEY = "octopus_btc_fee_plan";
+var STORAGE_CUSTOM_RATE_KEY = "octopus_btc_custom_fee_rate";
+function readInitialPlan() {
+  try {
+    var raw = localStorage.getItem(STORAGE_FEE_PLAN_KEY);
+    if (raw === "Slow" || raw === "Avg" || raw === "Fast" || raw === "Custom") {
+      return raw;
+    }
+  } catch (_unused) {}
+  return "Avg";
+}
+function readInitialCustomRate() {
+  try {
+    var raw = Number(localStorage.getItem(STORAGE_CUSTOM_RATE_KEY));
+    if (Number.isFinite(raw) && raw >= 1) {
+      return Math.min(mempool/* MAX_CUSTOM_BTC_FEE_RATE */.F, Math.round(raw));
+    }
+  } catch (_unused2) {}
+  return 2;
+}
 var checkExtension = function checkExtension() {
   if (!window.metaidwallet) {
     window.open("https://chromewebstore.google.com/detail/metalet/lbjapbcmmceacocpimbpbidpgmlmoaao");
@@ -8650,70 +8676,70 @@ function fetchMvcSpaceSats() {
   return _fetchMvcSpaceSats.apply(this, arguments);
 }
 function _fetchMvcSpaceSats() {
-  _fetchMvcSpaceSats = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee5() {
+  _fetchMvcSpaceSats = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee6() {
     var _bal$confirmed, _bal$unconfirmed, _bal$total, bal, sum, _bal$confirmed2, _bal$unconfirmed2, _bal$total2, _bal, _sum, utxos;
-    return regeneratorRuntime_default()().wrap(function _callee5$(_context5) {
-      while (1) switch (_context5.prev = _context5.next) {
+    return regeneratorRuntime_default()().wrap(function _callee6$(_context6) {
+      while (1) switch (_context6.prev = _context6.next) {
         case 0:
           if (window.metaidwallet) {
-            _context5.next = 2;
+            _context6.next = 2;
             break;
           }
-          return _context5.abrupt("return", 0);
+          return _context6.abrupt("return", 0);
         case 2:
-          _context5.prev = 2;
+          _context6.prev = 2;
           if (!(typeof window.metaidwallet.getMvcBalance === "function")) {
-            _context5.next = 9;
+            _context6.next = 9;
             break;
           }
-          _context5.next = 6;
+          _context6.next = 6;
           return (0,utils/* withTimeout */.wj)(window.metaidwallet.getMvcBalance(), 5000, "getMvcBalance");
         case 6:
-          bal = _context5.sent;
+          bal = _context6.sent;
           sum = Number((_bal$confirmed = bal === null || bal === void 0 ? void 0 : bal.confirmed) !== null && _bal$confirmed !== void 0 ? _bal$confirmed : 0) + Number((_bal$unconfirmed = bal === null || bal === void 0 ? void 0 : bal.unconfirmed) !== null && _bal$unconfirmed !== void 0 ? _bal$unconfirmed : 0);
-          return _context5.abrupt("return", sum > 0 ? sum : Number((_bal$total = bal === null || bal === void 0 ? void 0 : bal.total) !== null && _bal$total !== void 0 ? _bal$total : 0));
+          return _context6.abrupt("return", sum > 0 ? sum : Number((_bal$total = bal === null || bal === void 0 ? void 0 : bal.total) !== null && _bal$total !== void 0 ? _bal$total : 0));
         case 9:
           if (!(typeof window.metaidwallet.getBalance === "function")) {
-            _context5.next = 15;
+            _context6.next = 15;
             break;
           }
-          _context5.next = 12;
+          _context6.next = 12;
           return (0,utils/* withTimeout */.wj)(window.metaidwallet.getBalance(), 5000, "getBalance");
         case 12:
-          _bal = _context5.sent;
+          _bal = _context6.sent;
           _sum = Number((_bal$confirmed2 = _bal === null || _bal === void 0 ? void 0 : _bal.confirmed) !== null && _bal$confirmed2 !== void 0 ? _bal$confirmed2 : 0) + Number((_bal$unconfirmed2 = _bal === null || _bal === void 0 ? void 0 : _bal.unconfirmed) !== null && _bal$unconfirmed2 !== void 0 ? _bal$unconfirmed2 : 0);
-          return _context5.abrupt("return", _sum > 0 ? _sum : Number((_bal$total2 = _bal === null || _bal === void 0 ? void 0 : _bal.total) !== null && _bal$total2 !== void 0 ? _bal$total2 : 0));
+          return _context6.abrupt("return", _sum > 0 ? _sum : Number((_bal$total2 = _bal === null || _bal === void 0 ? void 0 : _bal.total) !== null && _bal$total2 !== void 0 ? _bal$total2 : 0));
         case 15:
           if (!(typeof window.metaidwallet.getUtxos === "function")) {
-            _context5.next = 21;
+            _context6.next = 21;
             break;
           }
-          _context5.next = 18;
+          _context6.next = 18;
           return (0,utils/* withTimeout */.wj)(window.metaidwallet.getUtxos(), 5000, "getUtxos");
         case 18:
-          utxos = _context5.sent;
+          utxos = _context6.sent;
           if (!Array.isArray(utxos)) {
-            _context5.next = 21;
+            _context6.next = 21;
             break;
           }
-          return _context5.abrupt("return", utxos.reduce(function (acc, u) {
-            var _ref5, _ref6, _u$satoshis;
-            return acc + Number((_ref5 = (_ref6 = (_u$satoshis = u === null || u === void 0 ? void 0 : u.satoshis) !== null && _u$satoshis !== void 0 ? _u$satoshis : u === null || u === void 0 ? void 0 : u.satoshi) !== null && _ref6 !== void 0 ? _ref6 : u === null || u === void 0 ? void 0 : u.value) !== null && _ref5 !== void 0 ? _ref5 : 0);
+          return _context6.abrupt("return", utxos.reduce(function (acc, u) {
+            var _ref7, _ref8, _u$satoshis;
+            return acc + Number((_ref7 = (_ref8 = (_u$satoshis = u === null || u === void 0 ? void 0 : u.satoshis) !== null && _u$satoshis !== void 0 ? _u$satoshis : u === null || u === void 0 ? void 0 : u.satoshi) !== null && _ref8 !== void 0 ? _ref8 : u === null || u === void 0 ? void 0 : u.value) !== null && _ref7 !== void 0 ? _ref7 : 0);
           }, 0));
         case 21:
-          _context5.next = 26;
+          _context6.next = 26;
           break;
         case 23:
-          _context5.prev = 23;
-          _context5.t0 = _context5["catch"](2);
-          console.log("fetchMvcSpaceSats error:", _context5.t0);
+          _context6.prev = 23;
+          _context6.t0 = _context6["catch"](2);
+          console.log("fetchMvcSpaceSats error:", _context6.t0);
         case 26:
-          return _context5.abrupt("return", 0);
+          return _context6.abrupt("return", 0);
         case 27:
         case "end":
-          return _context5.stop();
+          return _context6.stop();
       }
-    }, _callee5, null, [[2, 23]]);
+    }, _callee6, null, [[2, 23]]);
   }));
   return _fetchMvcSpaceSats.apply(this, arguments);
 }
@@ -8745,32 +8771,135 @@ function _fetchMvcSpaceSats() {
     _useState14 = slicedToArray_default()(_useState13, 2),
     userBal = _useState14[0],
     setUserBal = _useState14[1];
+
+  // BTC fee rate selector state (applies to BTC txs in both BTC->MVC and MVC->BTC; MVC stays 1 sat/B)
+  var _useState15 = (0,react.useState)([{
+      label: "Fast",
+      value: 3,
+      time: "~10 mins"
+    }, {
+      label: "Avg",
+      value: 2,
+      time: "~30 mins"
+    }, {
+      label: "Slow",
+      value: 1,
+      time: "~60 mins"
+    }]),
+    _useState16 = slicedToArray_default()(_useState15, 2),
+    feeRates = _useState16[0],
+    setFeeRates = _useState16[1];
+  var _useState17 = (0,react.useState)(1),
+    _useState18 = slicedToArray_default()(_useState17, 2),
+    minFeeRate = _useState18[0],
+    setMinFeeRate = _useState18[1];
+  var _useState19 = (0,react.useState)(readInitialPlan),
+    _useState20 = slicedToArray_default()(_useState19, 2),
+    feeRateType = _useState20[0],
+    setFeeRateType = _useState20[1];
+  var _useState21 = (0,react.useState)(readInitialCustomRate),
+    _useState22 = slicedToArray_default()(_useState21, 2),
+    customFeeRate = _useState22[0],
+    setCustomFeeRate = _useState22[1];
+  var _useState23 = (0,react.useState)(false),
+    _useState24 = slicedToArray_default()(_useState23, 2),
+    feeRateModalVisible = _useState24[0],
+    setFeeRateModalVisible = _useState24[1];
   var btcAddrRef = (0,react.useRef)(undefined);
   var networkRef = (0,react.useRef)("mainnet");
   btcAddrRef.current = btcAddress;
   networkRef.current = network;
+  var refreshFeeRates = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee() {
+    var targetNet, summary;
+    return regeneratorRuntime_default()().wrap(function _callee$(_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          targetNet = networkRef.current || "mainnet";
+          _context.next = 3;
+          return (0,mempool/* fetchBtcFeeRateSummary */.C)(targetNet);
+        case 3:
+          summary = _context.sent;
+          setFeeRates(summary.tiers);
+          setMinFeeRate(summary.minimumFee);
+          setCustomFeeRate(function (prev) {
+            return prev === null ? prev : Math.max(summary.minimumFee, prev);
+          });
+        case 7:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee);
+  })), []);
+  (0,useIntervalAsync/* default */.A)(refreshFeeRates, 60000);
+  var selectFeeRatePlan = (0,react.useCallback)(function (plan) {
+    setFeeRateType(plan);
+    try {
+      localStorage.setItem(STORAGE_FEE_PLAN_KEY, plan);
+    } catch (_unused3) {}
+  }, []);
+  var updateCustomFeeRate = (0,react.useCallback)(function (val) {
+    if (val === null || val === "") {
+      setCustomFeeRate(null);
+      return;
+    }
+    var parsed = Math.round(Number(val));
+    if (!Number.isFinite(parsed)) {
+      setCustomFeeRate(null);
+      return;
+    }
+    var clamped = Math.min(mempool/* MAX_CUSTOM_BTC_FEE_RATE */.F, Math.max(1, parsed));
+    setCustomFeeRate(clamped);
+    if (clamped >= minFeeRate) {
+      try {
+        localStorage.setItem(STORAGE_CUSTOM_RATE_KEY, String(clamped));
+      } catch (_unused4) {}
+    }
+  }, [minFeeRate]);
+  var commitCustomFeeRate = (0,react.useCallback)(function () {
+    setCustomFeeRate(function (prev) {
+      var parsed = Math.round(Number(prev));
+      var clamped = prev !== null && Number.isFinite(parsed) ? Math.min(mempool/* MAX_CUSTOM_BTC_FEE_RATE */.F, Math.max(minFeeRate, parsed)) : minFeeRate;
+      try {
+        localStorage.setItem(STORAGE_CUSTOM_RATE_KEY, String(clamped));
+      } catch (_unused5) {}
+      return clamped;
+    });
+  }, [minFeeRate]);
+  var feeRate = (0,react.useMemo)(function () {
+    var _ref2, _matched$value;
+    if (feeRateType === "Custom") {
+      return Math.min(mempool/* MAX_CUSTOM_BTC_FEE_RATE */.F, Math.max(minFeeRate, Math.round(Number(customFeeRate)) || minFeeRate));
+    }
+    var matched = feeRates.find(function (t) {
+      return t.label === feeRateType;
+    });
+    var fallbackAvg = feeRates.find(function (t) {
+      return t.label === "Avg";
+    });
+    return Math.max(minFeeRate, Number((_ref2 = (_matched$value = matched === null || matched === void 0 ? void 0 : matched.value) !== null && _matched$value !== void 0 ? _matched$value : fallbackAvg === null || fallbackAvg === void 0 ? void 0 : fallbackAvg.value) !== null && _ref2 !== void 0 ? _ref2 : 2));
+  }, [feeRateType, customFeeRate, feeRates, minFeeRate]);
   var getBal = (0,react.useCallback)( /*#__PURE__*/function () {
-    var _ref = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(forceConnected, addrOverride, netOverride) {
+    var _ref3 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2(forceConnected, addrOverride, netOverride) {
       var targetAddr, targetNet, _window$metaidwallet$, _yield$Promise$all, _yield$Promise$all2, btcSats, spaceSats, tokens, _bals;
-      return regeneratorRuntime_default()().wrap(function _callee$(_context) {
-        while (1) switch (_context.prev = _context.next) {
+      return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
           case 0:
             if (window.metaidwallet) {
-              _context.next = 2;
+              _context2.next = 2;
               break;
             }
-            return _context.abrupt("return");
+            return _context2.abrupt("return");
           case 2:
             if (forceConnected || connected) {
-              _context.next = 4;
+              _context2.next = 4;
               break;
             }
-            return _context.abrupt("return");
+            return _context2.abrupt("return");
           case 4:
             targetAddr = addrOverride || btcAddrRef.current;
             targetNet = netOverride || networkRef.current || "mainnet";
-            _context.prev = 6;
-            _context.next = 9;
+            _context2.prev = 6;
+            _context2.next = 9;
             return Promise.all([(0,psbtBuild/* getUtxoBalance */.p0)(targetAddr, targetNet)["catch"](function () {
               return 0;
             }), fetchMvcSpaceSats()["catch"](function () {
@@ -8779,16 +8908,16 @@ function _fetchMvcSpaceSats() {
               return [];
             }) : Promise.resolve([])]);
           case 9:
-            _yield$Promise$all = _context.sent;
+            _yield$Promise$all = _context2.sent;
             _yield$Promise$all2 = slicedToArray_default()(_yield$Promise$all, 3);
             btcSats = _yield$Promise$all2[0];
             spaceSats = _yield$Promise$all2[1];
             tokens = _yield$Promise$all2[2];
             if (!(targetAddr && btcAddrRef.current && targetAddr !== btcAddrRef.current)) {
-              _context.next = 16;
+              _context2.next = 16;
               break;
             }
-            return _context.abrupt("return");
+            return _context2.abrupt("return");
           case 16:
             _bals = {
               btc: (0,utils/* formatSat */.Q0)(btcSats, 8),
@@ -8804,23 +8933,23 @@ function _fetchMvcSpaceSats() {
               });
             }
             setUserBal(_bals);
-            _context.next = 24;
+            _context2.next = 24;
             break;
           case 21:
-            _context.prev = 21;
-            _context.t0 = _context["catch"](6);
-            console.log("getBal error:", _context.t0);
+            _context2.prev = 21;
+            _context2.t0 = _context2["catch"](6);
+            console.log("getBal error:", _context2.t0);
           case 24:
           case "end":
-            return _context.stop();
+            return _context2.stop();
         }
-      }, _callee, null, [[6, 21]]);
+      }, _callee2, null, [[6, 21]]);
     }));
     return function (_x, _x2, _x3) {
-      return _ref.apply(this, arguments);
+      return _ref3.apply(this, arguments);
     };
   }(), [connected]);
-  var init = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
+  var init = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
     var skipIsConnectedCheck,
       isConn,
       _yield$Promise$all3,
@@ -8832,54 +8961,54 @@ function _fetchMvcSpaceSats() {
       pass,
       message,
       normNet,
-      _args2 = arguments;
-    return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
+      _args3 = arguments;
+    return regeneratorRuntime_default()().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
         case 0:
-          skipIsConnectedCheck = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : false;
+          skipIsConnectedCheck = _args3.length > 0 && _args3[0] !== undefined ? _args3[0] : false;
           if (!(walletName === "metalet" && window.metaidwallet)) {
-            _context2.next = 30;
+            _context3.next = 30;
             break;
           }
           isConn = skipIsConnectedCheck ? true : false;
           if (skipIsConnectedCheck) {
-            _context2.next = 7;
+            _context3.next = 7;
             break;
           }
-          _context2.next = 6;
+          _context3.next = 6;
           return (0,utils/* withTimeout */.wj)(window.metaidwallet.isConnected(), 4000, "isConnected")["catch"](function () {
             return false;
           });
         case 6:
-          isConn = _context2.sent;
+          isConn = _context3.sent;
         case 7:
           if (!(isConn === true)) {
-            _context2.next = 30;
+            _context3.next = 30;
             break;
           }
-          _context2.next = 10;
+          _context3.next = 10;
           return Promise.all([(0,utils/* withTimeout */.wj)(window.metaidwallet.getAddress(), 5000, "getAddress"), (0,utils/* withTimeout */.wj)(window.metaidwallet.getNetwork(), 5000, "getNetwork"), (0,utils/* withTimeout */.wj)(window.metaidwallet.btc.getAddress(), 5000, "btc.getAddress")]);
         case 10:
-          _yield$Promise$all3 = _context2.sent;
+          _yield$Promise$all3 = _context3.sent;
           _yield$Promise$all4 = slicedToArray_default()(_yield$Promise$all3, 3);
           _mvc = _yield$Promise$all4[0];
           netInfo = _yield$Promise$all4[1];
           _btcAddress = _yield$Promise$all4[2];
           if (!(typeof _btcAddress !== "string" || !_btcAddress)) {
-            _context2.next = 17;
+            _context3.next = 17;
             break;
           }
-          return _context2.abrupt("return", {
+          return _context3.abrupt("return", {
             pass: false,
             message: (_btcAddress === null || _btcAddress === void 0 ? void 0 : _btcAddress.status) || "Failed to read BTC address from wallet"
           });
         case 17:
           _checkAddressType = (0,utils/* checkAddressType */.xW)(_btcAddress), pass = _checkAddressType.pass, message = _checkAddressType.message;
           if (pass) {
-            _context2.next = 20;
+            _context3.next = 20;
             break;
           }
-          return _context2.abrupt("return", {
+          return _context3.abrupt("return", {
             pass: pass,
             message: message
           });
@@ -8895,85 +9024,24 @@ function _fetchMvcSpaceSats() {
 
           // Fetch balances asynchronously so login & modal dismissal never block!
           void getBal(true, _btcAddress, normNet);
-          return _context2.abrupt("return", {
+          return _context3.abrupt("return", {
             pass: true,
             message: ""
           });
         case 30:
-          return _context2.abrupt("return", {
+          return _context3.abrupt("return", {
             pass: true,
             message: ""
           });
         case 31:
         case "end":
-          return _context2.stop();
+          return _context3.stop();
       }
-    }, _callee2);
+    }, _callee3);
   })), [walletName, getBal]);
   var connect = /*#__PURE__*/function () {
-    var _ref3 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
+    var _ref5 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4() {
       var isConnected, ret, _yield$init, pass, message;
-      return regeneratorRuntime_default()().wrap(function _callee3$(_context3) {
-        while (1) switch (_context3.prev = _context3.next) {
-          case 0:
-            if (checkExtension()) {
-              _context3.next = 2;
-              break;
-            }
-            return _context3.abrupt("return");
-          case 2:
-            _context3.next = 4;
-            return (0,utils/* withTimeout */.wj)(window.metaidwallet.isConnected(), 4000, "isConnected")["catch"](function () {
-              return false;
-            });
-          case 4:
-            isConnected = _context3.sent;
-            if (!(isConnected && typeof_default()(isConnected) === "object" && isConnected.status === "locked")) {
-              _context3.next = 7;
-              break;
-            }
-            throw new Error("Please unlock Metalet Wallet first");
-          case 7:
-            if (!(isConnected !== true)) {
-              _context3.next = 13;
-              break;
-            }
-            _context3.next = 10;
-            return window.metaidwallet.connect();
-          case 10:
-            ret = _context3.sent;
-            if (!(ret && ret.status)) {
-              _context3.next = 13;
-              break;
-            }
-            throw new Error(ret.status);
-          case 13:
-            _context3.next = 15;
-            return init(true);
-          case 15:
-            _yield$init = _context3.sent;
-            pass = _yield$init.pass;
-            message = _yield$init.message;
-            if (pass) {
-              _context3.next = 20;
-              break;
-            }
-            throw new Error(message || "Failed to connect wallet");
-          case 20:
-            setLoginModalShow(false);
-          case 21:
-          case "end":
-            return _context3.stop();
-        }
-      }, _callee3);
-    }));
-    return function connect() {
-      return _ref3.apply(this, arguments);
-    };
-  }();
-  var disConnect = /*#__PURE__*/function () {
-    var _ref4 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4() {
-      var ret;
       return regeneratorRuntime_default()().wrap(function _callee4$(_context4) {
         while (1) switch (_context4.prev = _context4.next) {
           case 0:
@@ -8983,21 +9051,82 @@ function _fetchMvcSpaceSats() {
             }
             return _context4.abrupt("return");
           case 2:
-            if (!window.metaidwallet.disconnect) {
-              _context4.next = 8;
+            _context4.next = 4;
+            return (0,utils/* withTimeout */.wj)(window.metaidwallet.isConnected(), 4000, "isConnected")["catch"](function () {
+              return false;
+            });
+          case 4:
+            isConnected = _context4.sent;
+            if (!(isConnected && typeof_default()(isConnected) === "object" && isConnected.status === "locked")) {
+              _context4.next = 7;
               break;
             }
-            _context4.next = 5;
+            throw new Error("Please unlock Metalet Wallet first");
+          case 7:
+            if (!(isConnected !== true)) {
+              _context4.next = 13;
+              break;
+            }
+            _context4.next = 10;
+            return window.metaidwallet.connect();
+          case 10:
+            ret = _context4.sent;
+            if (!(ret && ret.status)) {
+              _context4.next = 13;
+              break;
+            }
+            throw new Error(ret.status);
+          case 13:
+            _context4.next = 15;
+            return init(true);
+          case 15:
+            _yield$init = _context4.sent;
+            pass = _yield$init.pass;
+            message = _yield$init.message;
+            if (pass) {
+              _context4.next = 20;
+              break;
+            }
+            throw new Error(message || "Failed to connect wallet");
+          case 20:
+            setLoginModalShow(false);
+          case 21:
+          case "end":
+            return _context4.stop();
+        }
+      }, _callee4);
+    }));
+    return function connect() {
+      return _ref5.apply(this, arguments);
+    };
+  }();
+  var disConnect = /*#__PURE__*/function () {
+    var _ref6 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee5() {
+      var ret;
+      return regeneratorRuntime_default()().wrap(function _callee5$(_context5) {
+        while (1) switch (_context5.prev = _context5.next) {
+          case 0:
+            if (checkExtension()) {
+              _context5.next = 2;
+              break;
+            }
+            return _context5.abrupt("return");
+          case 2:
+            if (!window.metaidwallet.disconnect) {
+              _context5.next = 8;
+              break;
+            }
+            _context5.next = 5;
             return window.metaidwallet.disconnect()["catch"](function () {
               return null;
             });
           case 5:
-            ret = _context4.sent;
+            ret = _context5.sent;
             if (!((ret === null || ret === void 0 ? void 0 : ret.status) === "canceled")) {
-              _context4.next = 8;
+              _context5.next = 8;
               break;
             }
-            return _context4.abrupt("return");
+            return _context5.abrupt("return");
           case 8:
             btcAddrRef.current = undefined;
             setConnected(false);
@@ -9006,12 +9135,12 @@ function _fetchMvcSpaceSats() {
             setUserBal({});
           case 13:
           case "end":
-            return _context4.stop();
+            return _context5.stop();
         }
-      }, _callee4);
+      }, _callee5);
     }));
     return function disConnect() {
-      return _ref4.apply(this, arguments);
+      return _ref6.apply(this, arguments);
     };
   }();
   (0,react.useEffect)(function () {
@@ -9022,6 +9151,9 @@ function _fetchMvcSpaceSats() {
       return clearTimeout(timer);
     };
   }, [init]);
+  (0,react.useEffect)(function () {
+    void refreshFeeRates();
+  }, [network, refreshFeeRates]);
   (0,react.useEffect)(function () {
     if (connected && btcAddress) {
       void getBal(true, btcAddress, network);
@@ -9055,7 +9187,18 @@ function _fetchMvcSpaceSats() {
     setLoginModalShow: setLoginModalShow,
     loginModalShow: loginModalShow,
     disConnect: disConnect,
-    getBal: getBal
+    getBal: getBal,
+    feeRates: feeRates,
+    feeRate: feeRate,
+    feeRateType: feeRateType,
+    customFeeRate: customFeeRate,
+    minFeeRate: minFeeRate,
+    feeRateModalVisible: feeRateModalVisible,
+    setFeeRateModalVisible: setFeeRateModalVisible,
+    selectFeeRatePlan: selectFeeRatePlan,
+    updateCustomFeeRate: updateCustomFeeRate,
+    commitCustomFeeRate: commitCustomFeeRate,
+    refreshFeeRates: refreshFeeRates
   };
 });
 __webpack_require__.dn(wallet);
@@ -9063,8 +9206,6 @@ __webpack_require__.dn(wallet);
 var _umi_production_exports = __webpack_require__(46297);
 // EXTERNAL MODULE: ./src/servies/api.ts
 var api = __webpack_require__(28651);
-// EXTERNAL MODULE: ./src/hooks/useIntervalAsync.ts
-var useIntervalAsync = __webpack_require__(26524);
 // EXTERNAL MODULE: ./src/assets/btc.png
 var btc = __webpack_require__(39039);
 // EXTERNAL MODULE: ./src/assets/mvc.png
@@ -9091,7 +9232,8 @@ var defaultChains = [{
 }];
 /* harmony default export */ var wrapping = (function () {
   var _useModel = (0,_umi_production_exports.useModel)("wallet"),
-    network = _useModel.network;
+    network = _useModel.network,
+    feeRate = _useModel.feeRate;
   var _useState = (0,react.useState)(defaultChains),
     _useState2 = slicedToArray_default()(_useState, 1),
     chains = _useState2[0];
@@ -9234,52 +9376,48 @@ var defaultChains = [{
   }, [AssetsInfo, protocolType]);
   (0,react.useEffect)(function () {
     var didCancel = false;
-    var fetchQuote = /*#__PURE__*/function () {
-      var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
-        var assetNetwork, ret;
-        return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
-            case 0:
-              if (network) {
-                _context2.next = 2;
-                break;
-              }
-              return _context2.abrupt("return");
-            case 2:
-              assetNetwork = protocolType === "btc" ? "BTC" : "MRC20";
-              _context2.prev = 3;
-              _context2.next = 6;
-              return (0,api/* getFeeQuote */.T8)(network, {
-                network: assetNetwork,
-                direction: bridgeType,
-                originTokenId: asset === null || asset === void 0 ? void 0 : asset.originTokenId
-              });
-            case 6:
-              ret = _context2.sent;
-              if (!didCancel && ret !== null && ret !== void 0 && ret.data) {
-                setFeeQuote(ret.data);
-              }
-              _context2.next = 13;
+    var timer = window.setTimeout( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
+      var assetNetwork, ret;
+      return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            if (network) {
+              _context2.next = 2;
               break;
-            case 10:
-              _context2.prev = 10;
-              _context2.t0 = _context2["catch"](3);
-              console.log("getFeeQuote error:", _context2.t0);
-            case 13:
-            case "end":
-              return _context2.stop();
-          }
-        }, _callee2, null, [[3, 10]]);
-      }));
-      return function fetchQuote() {
-        return _ref2.apply(this, arguments);
-      };
-    }();
-    fetchQuote();
+            }
+            return _context2.abrupt("return");
+          case 2:
+            assetNetwork = protocolType === "btc" ? "BTC" : "MRC20";
+            _context2.prev = 3;
+            _context2.next = 6;
+            return (0,api/* getFeeQuote */.T8)(network, {
+              network: assetNetwork,
+              direction: bridgeType,
+              originTokenId: asset === null || asset === void 0 ? void 0 : asset.originTokenId,
+              btcFeeRate: feeRate
+            });
+          case 6:
+            ret = _context2.sent;
+            if (!didCancel && ret !== null && ret !== void 0 && ret.data) {
+              setFeeQuote(ret.data);
+            }
+            _context2.next = 13;
+            break;
+          case 10:
+            _context2.prev = 10;
+            _context2.t0 = _context2["catch"](3);
+            console.log("getFeeQuote error:", _context2.t0);
+          case 13:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2, null, [[3, 10]]);
+    })), 150);
     return function () {
       didCancel = true;
+      window.clearTimeout(timer);
     };
-  }, [network, protocolType, bridgeType, asset === null || asset === void 0 ? void 0 : asset.originTokenId, refetchAssets]);
+  }, [network, protocolType, bridgeType, asset === null || asset === void 0 ? void 0 : asset.originTokenId, feeRate, refetchAssets]);
   var handleRefetchAssets = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
     return regeneratorRuntime_default()().wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
@@ -12220,6 +12358,7 @@ var useIntervalAsync = function useIntervalAsync(fn, ms) {
 /* harmony export */   gm: function() { return /* binding */ submitPrepayOrderRedeemMrc20; },
 /* harmony export */   hL: function() { return /* binding */ getUserMrc20Balances; },
 /* harmony export */   hT: function() { return /* binding */ createPrepayOrderMintBtc; },
+/* harmony export */   hh: function() { return /* binding */ getRecommendedFees; },
 /* harmony export */   rS: function() { return /* binding */ submitPrepayOrderRedeemBtc; },
 /* harmony export */   yB: function() { return /* binding */ createPrepayOrderMintMrc20; },
 /* harmony export */   yl: function() { return /* binding */ getBridgeHistory; }
@@ -12267,17 +12406,16 @@ function _getAssets() {
   }));
   return _getAssets.apply(this, arguments);
 }
-function getFeeQuote(_x3, _x4, _x5) {
-  return _getFeeQuote.apply(this, arguments);
+function getRecommendedFees(_x3, _x4) {
+  return _getRecommendedFees.apply(this, arguments);
 }
-function _getFeeQuote() {
-  _getFeeQuote = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee2(network, params, options) {
+function _getRecommendedFees() {
+  _getRecommendedFees = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee2(network, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
-          return _context2.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/feeQuote"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "GET",
-            params: params
+          return _context2.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/common/fee/recommended"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+            method: "GET"
           }, options || {})));
         case 1:
         case "end":
@@ -12285,19 +12423,19 @@ function _getFeeQuote() {
       }
     }, _callee2);
   }));
+  return _getRecommendedFees.apply(this, arguments);
+}
+function getFeeQuote(_x5, _x6, _x7) {
   return _getFeeQuote.apply(this, arguments);
 }
-function createPrepayOrderMintBtc(_x6, _x7, _x8) {
-  return _createPrepayOrderMintBtc.apply(this, arguments);
-}
-function _createPrepayOrderMintBtc() {
-  _createPrepayOrderMintBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee3(network, data, options) {
+function _getFeeQuote() {
+  _getFeeQuote = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee3(network, params, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
-          return _context3.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderMintBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "POST",
-            data: data
+          return _context3.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/feeQuote"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+            method: "GET",
+            params: params
           }, options || {})));
         case 1:
         case "end":
@@ -12305,17 +12443,17 @@ function _createPrepayOrderMintBtc() {
       }
     }, _callee3);
   }));
+  return _getFeeQuote.apply(this, arguments);
+}
+function createPrepayOrderMintBtc(_x8, _x9, _x10) {
   return _createPrepayOrderMintBtc.apply(this, arguments);
 }
-function submitPrepayOrderMintBtc(_x9, _x10, _x11) {
-  return _submitPrepayOrderMintBtc.apply(this, arguments);
-}
-function _submitPrepayOrderMintBtc() {
-  _submitPrepayOrderMintBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee4(network, data, options) {
+function _createPrepayOrderMintBtc() {
+  _createPrepayOrderMintBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee4(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
-          return _context4.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderMintBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context4.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderMintBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -12325,17 +12463,17 @@ function _submitPrepayOrderMintBtc() {
       }
     }, _callee4);
   }));
+  return _createPrepayOrderMintBtc.apply(this, arguments);
+}
+function submitPrepayOrderMintBtc(_x11, _x12, _x13) {
   return _submitPrepayOrderMintBtc.apply(this, arguments);
 }
-function createPrepayOrderMintMrc20(_x12, _x13, _x14) {
-  return _createPrepayOrderMintMrc.apply(this, arguments);
-}
-function _createPrepayOrderMintMrc() {
-  _createPrepayOrderMintMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee5(network, data, options) {
+function _submitPrepayOrderMintBtc() {
+  _submitPrepayOrderMintBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee5(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee5$(_context5) {
       while (1) switch (_context5.prev = _context5.next) {
         case 0:
-          return _context5.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderMintMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context5.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderMintBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -12345,17 +12483,17 @@ function _createPrepayOrderMintMrc() {
       }
     }, _callee5);
   }));
+  return _submitPrepayOrderMintBtc.apply(this, arguments);
+}
+function createPrepayOrderMintMrc20(_x14, _x15, _x16) {
   return _createPrepayOrderMintMrc.apply(this, arguments);
 }
-function submitPrepayOrderMintMrc20(_x15, _x16, _x17) {
-  return _submitPrepayOrderMintMrc.apply(this, arguments);
-}
-function _submitPrepayOrderMintMrc() {
-  _submitPrepayOrderMintMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee6(network, data, options) {
+function _createPrepayOrderMintMrc() {
+  _createPrepayOrderMintMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee6(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee6$(_context6) {
       while (1) switch (_context6.prev = _context6.next) {
         case 0:
-          return _context6.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderMintMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context6.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderMintMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -12365,17 +12503,17 @@ function _submitPrepayOrderMintMrc() {
       }
     }, _callee6);
   }));
+  return _createPrepayOrderMintMrc.apply(this, arguments);
+}
+function submitPrepayOrderMintMrc20(_x17, _x18, _x19) {
   return _submitPrepayOrderMintMrc.apply(this, arguments);
 }
-function createPrepayOrderRedeemBtc(_x18, _x19, _x20) {
-  return _createPrepayOrderRedeemBtc.apply(this, arguments);
-}
-function _createPrepayOrderRedeemBtc() {
-  _createPrepayOrderRedeemBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee7(network, data, options) {
+function _submitPrepayOrderMintMrc() {
+  _submitPrepayOrderMintMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee7(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee7$(_context7) {
       while (1) switch (_context7.prev = _context7.next) {
         case 0:
-          return _context7.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderRedeemBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context7.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderMintMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -12385,17 +12523,17 @@ function _createPrepayOrderRedeemBtc() {
       }
     }, _callee7);
   }));
+  return _submitPrepayOrderMintMrc.apply(this, arguments);
+}
+function createPrepayOrderRedeemBtc(_x20, _x21, _x22) {
   return _createPrepayOrderRedeemBtc.apply(this, arguments);
 }
-function submitPrepayOrderRedeemBtc(_x21, _x22, _x23) {
-  return _submitPrepayOrderRedeemBtc.apply(this, arguments);
-}
-function _submitPrepayOrderRedeemBtc() {
-  _submitPrepayOrderRedeemBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee8(network, data, options) {
+function _createPrepayOrderRedeemBtc() {
+  _createPrepayOrderRedeemBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee8(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee8$(_context8) {
       while (1) switch (_context8.prev = _context8.next) {
         case 0:
-          return _context8.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context8.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderRedeemBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -12405,17 +12543,17 @@ function _submitPrepayOrderRedeemBtc() {
       }
     }, _callee8);
   }));
+  return _createPrepayOrderRedeemBtc.apply(this, arguments);
+}
+function submitPrepayOrderRedeemBtc(_x23, _x24, _x25) {
   return _submitPrepayOrderRedeemBtc.apply(this, arguments);
 }
-function createPrepayOrderRedeemMrc20(_x24, _x25, _x26) {
-  return _createPrepayOrderRedeemMrc.apply(this, arguments);
-}
-function _createPrepayOrderRedeemMrc() {
-  _createPrepayOrderRedeemMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee9(network, data, options) {
+function _submitPrepayOrderRedeemBtc() {
+  _submitPrepayOrderRedeemBtc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee9(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee9$(_context9) {
       while (1) switch (_context9.prev = _context9.next) {
         case 0:
-          return _context9.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderRedeemMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context9.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemBtc"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -12425,17 +12563,17 @@ function _createPrepayOrderRedeemMrc() {
       }
     }, _callee9);
   }));
+  return _submitPrepayOrderRedeemBtc.apply(this, arguments);
+}
+function createPrepayOrderRedeemMrc20(_x26, _x27, _x28) {
   return _createPrepayOrderRedeemMrc.apply(this, arguments);
 }
-function submitPrepayOrderRedeemMrc20(_x27, _x28, _x29) {
-  return _submitPrepayOrderRedeemMrc.apply(this, arguments);
-}
-function _submitPrepayOrderRedeemMrc() {
-  _submitPrepayOrderRedeemMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee10(network, data, options) {
+function _createPrepayOrderRedeemMrc() {
+  _createPrepayOrderRedeemMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee10(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee10$(_context10) {
       while (1) switch (_context10.prev = _context10.next) {
         case 0:
-          return _context10.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+          return _context10.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/createPrepayOrderRedeemMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
             method: "POST",
             data: data
           }, options || {})));
@@ -12445,19 +12583,19 @@ function _submitPrepayOrderRedeemMrc() {
       }
     }, _callee10);
   }));
+  return _createPrepayOrderRedeemMrc.apply(this, arguments);
+}
+function submitPrepayOrderRedeemMrc20(_x29, _x30, _x31) {
   return _submitPrepayOrderRedeemMrc.apply(this, arguments);
 }
-function getBridgeHistory(_x30, _x31, _x32) {
-  return _getBridgeHistory.apply(this, arguments);
-}
-function _getBridgeHistory() {
-  _getBridgeHistory = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee11(network, params, options) {
+function _submitPrepayOrderRedeemMrc() {
+  _submitPrepayOrderRedeemMrc = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee11(network, data, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee11$(_context11) {
       while (1) switch (_context11.prev = _context11.next) {
         case 0:
-          return _context11.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/queryTransactionsByAddress"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
-            method: "GET",
-            params: params
+          return _context11.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/submitPrepayOrderRedeemMrc20"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+            method: "POST",
+            data: data
           }, options || {})));
         case 1:
         case "end":
@@ -12465,20 +12603,40 @@ function _getBridgeHistory() {
       }
     }, _callee11);
   }));
+  return _submitPrepayOrderRedeemMrc.apply(this, arguments);
+}
+function getBridgeHistory(_x32, _x33, _x34) {
   return _getBridgeHistory.apply(this, arguments);
 }
-function getSafeBtcUtxos(_x33, _x34) {
-  return _getSafeBtcUtxos.apply(this, arguments);
-}
-function _getSafeBtcUtxos() {
-  _getSafeBtcUtxos = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee12(address, network) {
-    var useUnconfirmed,
-      _args12 = arguments;
+function _getBridgeHistory() {
+  _getBridgeHistory = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee12(network, params, options) {
     return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee12$(_context12) {
       while (1) switch (_context12.prev = _context12.next) {
         case 0:
-          useUnconfirmed = _args12.length > 2 && _args12[2] !== undefined ? _args12[2] : true;
-          return _context12.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/common/btc/address/utxo"), {
+          return _context12.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/queryTransactionsByAddress"), _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_objectSpread2_js__WEBPACK_IMPORTED_MODULE_1___default()({
+            method: "GET",
+            params: params
+          }, options || {})));
+        case 1:
+        case "end":
+          return _context12.stop();
+      }
+    }, _callee12);
+  }));
+  return _getBridgeHistory.apply(this, arguments);
+}
+function getSafeBtcUtxos(_x35, _x36) {
+  return _getSafeBtcUtxos.apply(this, arguments);
+}
+function _getSafeBtcUtxos() {
+  _getSafeBtcUtxos = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee13(address, network) {
+    var useUnconfirmed,
+      _args13 = arguments;
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee13$(_context13) {
+      while (1) switch (_context13.prev = _context13.next) {
+        case 0:
+          useUnconfirmed = _args13.length > 2 && _args13[2] !== undefined ? _args13[2] : true;
+          return _context13.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/common/btc/address/utxo"), {
             method: "GET",
             params: {
               address: address,
@@ -12487,26 +12645,26 @@ function _getSafeBtcUtxos() {
           }));
         case 2:
         case "end":
-          return _context12.stop();
+          return _context13.stop();
       }
-    }, _callee12);
+    }, _callee13);
   }));
   return _getSafeBtcUtxos.apply(this, arguments);
 }
-function getUserMrc20Balance(_x35, _x36, _x37) {
+function getUserMrc20Balance(_x37, _x38, _x39) {
   return _getUserMrc20Balance.apply(this, arguments);
 }
 function _getUserMrc20Balance() {
-  _getUserMrc20Balance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13(address, network, tickId) {
+  _getUserMrc20Balance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14(address, network, tickId) {
     var cursor,
       size,
-      _args13 = arguments;
-    return _regeneratorRuntime().wrap(function _callee13$(_context13) {
-      while (1) switch (_context13.prev = _context13.next) {
+      _args14 = arguments;
+    return _regeneratorRuntime().wrap(function _callee14$(_context14) {
+      while (1) switch (_context14.prev = _context14.next) {
         case 0:
-          cursor = _args13.length > 3 && _args13[3] !== undefined ? _args13[3] : 0;
-          size = _args13.length > 4 && _args13[4] !== undefined ? _args13[4] : 50;
-          return _context13.abrupt("return", request("".concat(getHost(network), "/common/mrc20/address/utxo"), {
+          cursor = _args14.length > 3 && _args14[3] !== undefined ? _args14[3] : 0;
+          size = _args14.length > 4 && _args14[4] !== undefined ? _args14[4] : 50;
+          return _context14.abrupt("return", request("".concat(getHost(network), "/common/mrc20/address/utxo"), {
             method: "GET",
             params: {
               address: address,
@@ -12519,26 +12677,26 @@ function _getUserMrc20Balance() {
           }));
         case 3:
         case "end":
-          return _context13.stop();
+          return _context14.stop();
       }
-    }, _callee13);
+    }, _callee14);
   }));
   return _getUserMrc20Balance.apply(this, arguments);
 }
-function getUserMrc20Balances(_x38, _x39) {
+function getUserMrc20Balances(_x40, _x41) {
   return _getUserMrc20Balances.apply(this, arguments);
 }
 function _getUserMrc20Balances() {
-  _getUserMrc20Balances = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee14(address, network) {
+  _getUserMrc20Balances = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee15(address, network) {
     var cursor,
       size,
-      _args14 = arguments;
-    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee14$(_context14) {
-      while (1) switch (_context14.prev = _context14.next) {
+      _args15 = arguments;
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee15$(_context15) {
+      while (1) switch (_context15.prev = _context15.next) {
         case 0:
-          cursor = _args14.length > 2 && _args14[2] !== undefined ? _args14[2] : 0;
-          size = _args14.length > 3 && _args14[3] !== undefined ? _args14[3] : 50;
-          return _context14.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/common/mrc20/address/balance-list"), {
+          cursor = _args15.length > 2 && _args15[2] !== undefined ? _args15[2] : 0;
+          size = _args15.length > 3 && _args15[3] !== undefined ? _args15[3] : 50;
+          return _context15.abrupt("return", (0,umi__WEBPACK_IMPORTED_MODULE_3__.request)("".concat(getHost(network), "/common/mrc20/address/balance-list"), {
             method: "GET",
             params: {
               address: address,
@@ -12550,9 +12708,9 @@ function _getUserMrc20Balances() {
           }));
         case 3:
         case "end":
-          return _context14.stop();
+          return _context15.stop();
       }
-    }, _callee14);
+    }, _callee15);
   }));
   return _getUserMrc20Balances.apply(this, arguments);
 }
@@ -46538,19 +46696,20 @@ function _signMintPublicKeys() {
   }));
   return _signMintPublicKeys.apply(this, arguments);
 }
-function redeemBtc(_x2, _x3, _x4, _x5, _x6) {
+function redeemBtc(_x2, _x3, _x4, _x5, _x6, _x7) {
   return _redeemBtc.apply(this, arguments);
 }
 function _redeemBtc() {
-  _redeemBtc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4(redeemAmount, btcAsset, addressType, network, assetInfo) {
-    var _yield$signRedeemPubl, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr, createResp, orderId, bridgeAddress, _createResp$mvcFeeSat, mvcFeeSats, _createResp$mvcFeeAdd, mvcFeeAddress, _createResp$btcFeeSat, btcFeeSats, _createResp$btcFeeAdd, btcFeeAddress, _yield$signMvcRedeemB, mvcFeeTxHex, txHexList, txid, btcAddress, btcFeeTxHex, btcChangeUtxo, btcFeeTx, ret;
+  _redeemBtc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4(redeemAmount, btcAsset, addressType, network, assetInfo, userBtcFeeRate) {
+    var chosenBtcRate, _yield$signRedeemPubl, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr, createResp, orderId, bridgeAddress, _createResp$mvcFeeSat, mvcFeeSats, _createResp$mvcFeeAdd, mvcFeeAddress, _createResp$btcFeeSat, btcFeeSats, _createResp$btcFeeAdd, btcFeeAddress, _yield$signMvcRedeemB, mvcFeeTxHex, txHexList, txid, btcAddress, btcFeeTxHex, btcChangeUtxo, btcFeeTx, ret;
     return regeneratorRuntime_default()().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
           _context4.prev = 0;
-          _context4.next = 3;
+          chosenBtcRate = Math.max(1, Math.ceil(Number(userBtcFeeRate || (assetInfo === null || assetInfo === void 0 ? void 0 : assetInfo.feeBtc) || 2)));
+          _context4.next = 4;
           return signRedeemPublicKeys();
-        case 3:
+        case 4:
           _yield$signRedeemPubl = _context4.sent;
           publicKey = _yield$signRedeemPubl.publicKey;
           publicKeySign = _yield$signRedeemPubl.publicKeySign;
@@ -46563,15 +46722,16 @@ function _redeemBtc() {
             publicKey: publicKey,
             publicKeySign: publicKeySign,
             publicKeyReceive: publicKeyReceive,
-            publicKeyReceiveSign: publicKeyReceiveSign
+            publicKeyReceiveSign: publicKeyReceiveSign,
+            btcFeeRate: chosenBtcRate
           };
-          _context4.next = 11;
+          _context4.next = 12;
           return (0,api/* createPrepayOrderRedeemBtc */.Hi)(network, createPrepayOrderDto);
-        case 11:
+        case 12:
           _yield$createPrepayOr = _context4.sent;
           createResp = _yield$createPrepayOr.data;
           orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress, _createResp$mvcFeeSat = createResp.mvcFeeSats, mvcFeeSats = _createResp$mvcFeeSat === void 0 ? 0 : _createResp$mvcFeeSat, _createResp$mvcFeeAdd = createResp.mvcFeeAddress, mvcFeeAddress = _createResp$mvcFeeAdd === void 0 ? "" : _createResp$mvcFeeAdd, _createResp$btcFeeSat = createResp.btcFeeSats, btcFeeSats = _createResp$btcFeeSat === void 0 ? 0 : _createResp$btcFeeSat, _createResp$btcFeeAdd = createResp.btcFeeAddress, btcFeeAddress = _createResp$btcFeeAdd === void 0 ? "" : _createResp$btcFeeAdd; // 1. Local MVC signing (broadcast: false): [mvcFeeTx, routeCheckTx, ftTx]
-          _context4.next = 16;
+          _context4.next = 17;
           return signMvcRedeemBundle({
             redeemAmount: String(redeemAmount),
             bridgeAddress: bridgeAddress,
@@ -46581,36 +46741,36 @@ function _redeemBtc() {
             mvcFeeSats: Number(mvcFeeSats || 0),
             mvcFeeAddress: mvcFeeAddress
           });
-        case 16:
+        case 17:
           _yield$signMvcRedeemB = _context4.sent;
           mvcFeeTxHex = _yield$signMvcRedeemB.mvcFeeTxHex;
           txHexList = _yield$signMvcRedeemB.txHexList;
           txid = _yield$signMvcRedeemB.txid;
-          _context4.next = 22;
+          _context4.next = 23;
           return window.metaidwallet.btc.getAddress();
-        case 22:
+        case 23:
           btcAddress = _context4.sent;
           if (!(Number(btcFeeSats) > 0 && btcFeeAddress)) {
-            _context4.next = 29;
+            _context4.next = 30;
             break;
           }
-          _context4.next = 26;
+          _context4.next = 27;
           return transferBTCsWithMeta({
             transfers: [{
               toAddress: btcFeeAddress,
               satoshis: Number(btcFeeSats)
             }],
             address: btcAddress,
-            feeRate: (assetInfo === null || assetInfo === void 0 ? void 0 : assetInfo.feeBtc) || 2,
+            feeRate: chosenBtcRate,
             addressType: addressType,
             network: network
           });
-        case 26:
+        case 27:
           btcFeeTx = _context4.sent;
           btcFeeTxHex = btcFeeTx.rawTx;
           btcChangeUtxo = btcFeeTx.changeUtxo;
-        case 29:
-          _context4.next = 31;
+        case 30:
+          _context4.next = 32;
           return (0,api/* submitPrepayOrderRedeemBtc */.rS)(network, {
             orderId: orderId,
             txid: txid,
@@ -46618,50 +46778,51 @@ function _redeemBtc() {
             mvcFeeTxHex: mvcFeeTxHex,
             btcFeeTxHex: btcFeeTxHex
           });
-        case 31:
+        case 32:
           ret = _context4.sent;
           if (ret.success) {
-            _context4.next = 34;
+            _context4.next = 35;
             break;
           }
           throw new Error(ret.msg || ret.message || "Redeem BTC submit failed");
-        case 34:
+        case 35:
           if (!btcChangeUtxo) {
-            _context4.next = 37;
+            _context4.next = 38;
             break;
           }
-          _context4.next = 37;
+          _context4.next = 38;
           return (0,psbtBuildV2/* addUtxoSafe */.v3)(btcAddress, [btcChangeUtxo]);
-        case 37:
+        case 38:
           return _context4.abrupt("return", {
             orderId: orderId,
             txid: txid
           });
-        case 40:
-          _context4.prev = 40;
+        case 41:
+          _context4.prev = 41;
           _context4.t0 = _context4["catch"](0);
           throw new Error(extractApiErrorMessage(_context4.t0));
-        case 43:
+        case 44:
         case "end":
           return _context4.stop();
       }
-    }, _callee4, null, [[0, 40]]);
+    }, _callee4, null, [[0, 41]]);
   }));
   return _redeemBtc.apply(this, arguments);
 }
-function redeemMrc20(_x7, _x8, _x9, _x10, _x11) {
+function redeemMrc20(_x8, _x9, _x10, _x11, _x12, _x13) {
   return _redeemMrc.apply(this, arguments);
 }
 function _redeemMrc() {
-  _redeemMrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee5(redeemAmount, asset, addressType, network, assetInfo) {
-    var _yield$signRedeemPubl2, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr2, createResp, orderId, bridgeAddress, _createResp$mvcFeeSat2, mvcFeeSats, _createResp$mvcFeeAdd2, mvcFeeAddress, _createResp$btcFeeSat2, btcFeeSats, _createResp$btcFeeAdd2, btcFeeAddress, _yield$signMvcRedeemB2, mvcFeeTxHex, txHexList, txid, btcAddress, btcFeeTxHex, btcChangeUtxo, btcFeeTx, ret;
+  _redeemMrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee5(redeemAmount, asset, addressType, network, assetInfo, userBtcFeeRate) {
+    var chosenBtcRate, _yield$signRedeemPubl2, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr2, createResp, orderId, bridgeAddress, _createResp$mvcFeeSat2, mvcFeeSats, _createResp$mvcFeeAdd2, mvcFeeAddress, _createResp$btcFeeSat2, btcFeeSats, _createResp$btcFeeAdd2, btcFeeAddress, _yield$signMvcRedeemB2, mvcFeeTxHex, txHexList, txid, btcAddress, btcFeeTxHex, btcChangeUtxo, btcFeeTx, ret;
     return regeneratorRuntime_default()().wrap(function _callee5$(_context5) {
       while (1) switch (_context5.prev = _context5.next) {
         case 0:
           _context5.prev = 0;
-          _context5.next = 3;
+          chosenBtcRate = Math.max(1, Math.ceil(Number(userBtcFeeRate || (assetInfo === null || assetInfo === void 0 ? void 0 : assetInfo.feeBtc) || 2)));
+          _context5.next = 4;
           return signRedeemPublicKeys();
-        case 3:
+        case 4:
           _yield$signRedeemPubl2 = _context5.sent;
           publicKey = _yield$signRedeemPubl2.publicKey;
           publicKeySign = _yield$signRedeemPubl2.publicKeySign;
@@ -46674,15 +46835,16 @@ function _redeemMrc() {
             publicKey: publicKey,
             publicKeySign: publicKeySign,
             publicKeyReceive: publicKeyReceive,
-            publicKeyReceiveSign: publicKeyReceiveSign
+            publicKeyReceiveSign: publicKeyReceiveSign,
+            btcFeeRate: chosenBtcRate
           };
-          _context5.next = 11;
+          _context5.next = 12;
           return (0,api/* createPrepayOrderRedeemMrc20 */.UC)(network, createPrepayOrderDto);
-        case 11:
+        case 12:
           _yield$createPrepayOr2 = _context5.sent;
           createResp = _yield$createPrepayOr2.data;
           orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress, _createResp$mvcFeeSat2 = createResp.mvcFeeSats, mvcFeeSats = _createResp$mvcFeeSat2 === void 0 ? 0 : _createResp$mvcFeeSat2, _createResp$mvcFeeAdd2 = createResp.mvcFeeAddress, mvcFeeAddress = _createResp$mvcFeeAdd2 === void 0 ? "" : _createResp$mvcFeeAdd2, _createResp$btcFeeSat2 = createResp.btcFeeSats, btcFeeSats = _createResp$btcFeeSat2 === void 0 ? 0 : _createResp$btcFeeSat2, _createResp$btcFeeAdd2 = createResp.btcFeeAddress, btcFeeAddress = _createResp$btcFeeAdd2 === void 0 ? "" : _createResp$btcFeeAdd2; // 1. Local MVC signing (broadcast: false): [mvcFeeTx, routeCheckTx, ftTx]
-          _context5.next = 16;
+          _context5.next = 17;
           return signMvcRedeemBundle({
             redeemAmount: String(redeemAmount),
             bridgeAddress: bridgeAddress,
@@ -46692,36 +46854,36 @@ function _redeemMrc() {
             mvcFeeSats: Number(mvcFeeSats || 0),
             mvcFeeAddress: mvcFeeAddress
           });
-        case 16:
+        case 17:
           _yield$signMvcRedeemB2 = _context5.sent;
           mvcFeeTxHex = _yield$signMvcRedeemB2.mvcFeeTxHex;
           txHexList = _yield$signMvcRedeemB2.txHexList;
           txid = _yield$signMvcRedeemB2.txid;
-          _context5.next = 22;
+          _context5.next = 23;
           return window.metaidwallet.btc.getAddress();
-        case 22:
+        case 23:
           btcAddress = _context5.sent;
           if (!(Number(btcFeeSats) > 0 && btcFeeAddress)) {
-            _context5.next = 29;
+            _context5.next = 30;
             break;
           }
-          _context5.next = 26;
+          _context5.next = 27;
           return transferBTCsWithMeta({
             transfers: [{
               toAddress: btcFeeAddress,
               satoshis: Number(btcFeeSats)
             }],
             address: btcAddress,
-            feeRate: (assetInfo === null || assetInfo === void 0 ? void 0 : assetInfo.feeBtc) || 2,
+            feeRate: chosenBtcRate,
             addressType: addressType,
             network: network
           });
-        case 26:
+        case 27:
           btcFeeTx = _context5.sent;
           btcFeeTxHex = btcFeeTx.rawTx;
           btcChangeUtxo = btcFeeTx.changeUtxo;
-        case 29:
-          _context5.next = 31;
+        case 30:
+          _context5.next = 32;
           return (0,api/* submitPrepayOrderRedeemMrc20 */.gm)(network, {
             orderId: orderId,
             txid: txid,
@@ -46729,50 +46891,51 @@ function _redeemMrc() {
             mvcFeeTxHex: mvcFeeTxHex,
             btcFeeTxHex: btcFeeTxHex
           });
-        case 31:
+        case 32:
           ret = _context5.sent;
           if (ret.success) {
-            _context5.next = 34;
+            _context5.next = 35;
             break;
           }
           throw new Error(ret.msg || ret.message || "Redeem MRC20 submit failed");
-        case 34:
+        case 35:
           if (!btcChangeUtxo) {
-            _context5.next = 37;
+            _context5.next = 38;
             break;
           }
-          _context5.next = 37;
+          _context5.next = 38;
           return (0,psbtBuildV2/* addUtxoSafe */.v3)(btcAddress, [btcChangeUtxo]);
-        case 37:
+        case 38:
           return _context5.abrupt("return", {
             orderId: orderId,
             txid: txid
           });
-        case 40:
-          _context5.prev = 40;
+        case 41:
+          _context5.prev = 41;
           _context5.t0 = _context5["catch"](0);
           throw new Error(extractApiErrorMessage(_context5.t0));
-        case 43:
+        case 44:
         case "end":
           return _context5.stop();
       }
-    }, _callee5, null, [[0, 40]]);
+    }, _callee5, null, [[0, 41]]);
   }));
   return _redeemMrc.apply(this, arguments);
 }
-function mintBtc(_x12, _x13, _x14, _x15, _x16) {
+function mintBtc(_x14, _x15, _x16, _x17, _x18, _x19) {
   return _mintBtc.apply(this, arguments);
 }
 function _mintBtc() {
-  _mintBtc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee6(mintAmount, btcAsset, addressType, network, assetInfo) {
-    var _ref, _yield$signMintPublic, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr3, createResp, orderId, bridgeAddress, btcFeeAddress, btcFeeSats, bridgeRuleServiceAddress, bridgeRuleServiceMintFee, serviceAddress, serviceFeeSats, transfers, btcAddress, _yield$transferBTCsWi, rawTx, changeUtxo, submitRes;
+  _mintBtc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee6(mintAmount, btcAsset, addressType, network, assetInfo, userBtcFeeRate) {
+    var _ref, chosenBtcRate, _yield$signMintPublic, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, createPrepayOrderDto, _yield$createPrepayOr3, createResp, orderId, bridgeAddress, btcFeeAddress, btcFeeSats, bridgeRuleServiceAddress, bridgeRuleServiceMintFee, serviceAddress, serviceFeeSats, transfers, btcAddress, _yield$transferBTCsWi, rawTx, changeUtxo, submitRes;
     return regeneratorRuntime_default()().wrap(function _callee6$(_context6) {
       while (1) switch (_context6.prev = _context6.next) {
         case 0:
           _context6.prev = 0;
-          _context6.next = 3;
+          chosenBtcRate = Math.max(1, Math.ceil(Number(userBtcFeeRate || assetInfo.feeBtc || 2)));
+          _context6.next = 4;
           return signMintPublicKeys();
-        case 3:
+        case 4:
           _yield$signMintPublic = _context6.sent;
           publicKey = _yield$signMintPublic.publicKey;
           publicKeySign = _yield$signMintPublic.publicKeySign;
@@ -46785,11 +46948,12 @@ function _mintBtc() {
             publicKey: publicKey,
             publicKeySign: publicKeySign,
             publicKeyReceive: publicKeyReceive,
-            publicKeyReceiveSign: publicKeyReceiveSign
+            publicKeyReceiveSign: publicKeyReceiveSign,
+            btcFeeRate: chosenBtcRate
           };
-          _context6.next = 11;
+          _context6.next = 12;
           return (0,api/* createPrepayOrderMintBtc */.hT)(network, createPrepayOrderDto);
-        case 11:
+        case 12:
           _yield$createPrepayOr3 = _context6.sent;
           createResp = _yield$createPrepayOr3.data;
           orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress, btcFeeAddress = createResp.btcFeeAddress, btcFeeSats = createResp.btcFeeSats, bridgeRuleServiceAddress = createResp.bridgeRuleServiceAddress, bridgeRuleServiceMintFee = createResp.bridgeRuleServiceMintFee;
@@ -46805,68 +46969,69 @@ function _mintBtc() {
               satoshis: serviceFeeSats
             });
           }
-          _context6.next = 20;
+          _context6.next = 21;
           return window.metaidwallet.btc.getAddress();
-        case 20:
+        case 21:
           btcAddress = _context6.sent;
-          _context6.next = 23;
+          _context6.next = 24;
           return transferBTCsWithMeta({
             transfers: transfers,
             address: btcAddress,
-            feeRate: assetInfo.feeBtc || 2,
+            feeRate: chosenBtcRate,
             addressType: addressType,
             network: network
           });
-        case 23:
+        case 24:
           _yield$transferBTCsWi = _context6.sent;
           rawTx = _yield$transferBTCsWi.rawTx;
           changeUtxo = _yield$transferBTCsWi.changeUtxo;
-          _context6.next = 28;
+          _context6.next = 29;
           return (0,api/* submitPrepayOrderMintBtc */.TG)(network, {
             orderId: orderId,
             txHex: rawTx
           });
-        case 28:
+        case 29:
           submitRes = _context6.sent;
           if (submitRes.success) {
-            _context6.next = 31;
+            _context6.next = 32;
             break;
           }
           throw new Error(submitRes.msg || submitRes.message || "Mint BTC failed");
-        case 31:
+        case 32:
           if (!changeUtxo) {
-            _context6.next = 34;
+            _context6.next = 35;
             break;
           }
-          _context6.next = 34;
+          _context6.next = 35;
           return (0,psbtBuildV2/* addUtxoSafe */.v3)(btcAddress, [changeUtxo]);
-        case 34:
+        case 35:
           return _context6.abrupt("return", submitRes);
-        case 37:
-          _context6.prev = 37;
+        case 38:
+          _context6.prev = 38;
           _context6.t0 = _context6["catch"](0);
           throw new Error(extractApiErrorMessage(_context6.t0));
-        case 40:
+        case 41:
         case "end":
           return _context6.stop();
       }
-    }, _callee6, null, [[0, 37]]);
+    }, _callee6, null, [[0, 38]]);
   }));
   return _mintBtc.apply(this, arguments);
 }
-function mintMrc20(_x17, _x18, _x19, _x20, _x21) {
+function mintMrc20(_x20, _x21, _x22, _x23, _x24, _x25) {
   return _mintMrc.apply(this, arguments);
 }
 function _mintMrc() {
-  _mintMrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee7(mintAmount, asset, addressType, network, assetInfo) {
-    var _ref2, _yield$signMintPublic2, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, amountStr, createPrepayOrderDto, _yield$createPrepayOr4, createResp, orderId, bridgeAddress, btcFeeAddress, btcFeeSats, bridgeRuleServiceAddress, bridgeRuleServiceMintFee, serviceAddress, serviceFeeSats, params, mrc20Transfer, commitTx, revealTx, submitRes;
+  _mintMrc = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee7(mintAmount, asset, addressType, network, assetInfo, userBtcFeeRate) {
+    var _ref2, chosenBtcRate, _yield$signMintPublic2, publicKey, publicKeySign, publicKeyReceiveSign, publicKeyReceive, amountStr, createPrepayOrderDto, _yield$createPrepayOr4, createResp, orderId, bridgeAddress, btcFeeAddress, btcFeeSats, bridgeRuleServiceAddress, bridgeRuleServiceMintFee, serviceAddress, serviceFeeSats, params, mrc20Transfer, commitTx, revealTx, submitRes;
     return regeneratorRuntime_default()().wrap(function _callee7$(_context7) {
       while (1) switch (_context7.prev = _context7.next) {
         case 0:
           _context7.prev = 0;
-          _context7.next = 3;
+          chosenBtcRate = Math.max(1, Math.ceil(Number(userBtcFeeRate || assetInfo.feeBtc || 2)));
+          _context7.next = 4;
           return signMintPublicKeys();
-        case 3:
+        case 4:
           _yield$signMintPublic2 = _context7.sent;
           publicKey = _yield$signMintPublic2.publicKey;
           publicKeySign = _yield$signMintPublic2.publicKeySign;
@@ -46880,11 +47045,12 @@ function _mintMrc() {
             publicKey: publicKey,
             publicKeySign: publicKeySign,
             publicKeyReceive: publicKeyReceive,
-            publicKeyReceiveSign: publicKeyReceiveSign
+            publicKeyReceiveSign: publicKeyReceiveSign,
+            btcFeeRate: chosenBtcRate
           };
-          _context7.next = 12;
+          _context7.next = 13;
           return (0,api/* createPrepayOrderMintMrc20 */.yB)(network, createPrepayOrderDto);
-        case 12:
+        case 13:
           _yield$createPrepayOr4 = _context7.sent;
           createResp = _yield$createPrepayOr4.data;
           orderId = createResp.orderId, bridgeAddress = createResp.bridgeAddress, btcFeeAddress = createResp.btcFeeAddress, btcFeeSats = createResp.btcFeeSats, bridgeRuleServiceAddress = createResp.bridgeRuleServiceAddress, bridgeRuleServiceMintFee = createResp.bridgeRuleServiceMintFee;
@@ -46900,8 +47066,8 @@ function _mintMrc() {
             mrc20TickId: asset.originTokenId,
             flag: "metaid",
             revealAddr: bridgeAddress,
-            commitFeeRate: assetInfo.feeBtc || 2,
-            revealFeeRate: assetInfo.feeBtc || 2
+            commitFeeRate: chosenBtcRate,
+            revealFeeRate: chosenBtcRate
           };
           if (serviceAddress && serviceFeeSats > 0) {
             params.service = {
@@ -46909,44 +47075,143 @@ function _mintMrc() {
               satoshis: String(serviceFeeSats)
             };
           }
-          _context7.next = 21;
+          _context7.next = 22;
           return window.metaidwallet.btc.transferMRC20(params)["catch"](function (e) {
             throw new Error(extractApiErrorMessage(e));
           });
-        case 21:
+        case 22:
           mrc20Transfer = _context7.sent;
           if (!mrc20Transfer.status) {
-            _context7.next = 24;
+            _context7.next = 25;
             break;
           }
           throw new Error(mrc20Transfer.status);
-        case 24:
+        case 25:
           commitTx = mrc20Transfer.commitTx, revealTx = mrc20Transfer.revealTx;
-          _context7.next = 27;
+          _context7.next = 28;
           return (0,api/* submitPrepayOrderMintMrc20 */.U_)(network, {
             orderId: orderId,
             txHexList: [commitTx.rawTx, revealTx.rawTx]
           });
-        case 27:
+        case 28:
           submitRes = _context7.sent;
           if (submitRes.success) {
-            _context7.next = 30;
+            _context7.next = 31;
             break;
           }
           throw new Error(submitRes.msg || submitRes.message || "Mint MRC20 failed");
-        case 30:
+        case 31:
           return _context7.abrupt("return", submitRes);
-        case 33:
-          _context7.prev = 33;
+        case 34:
+          _context7.prev = 34;
           _context7.t0 = _context7["catch"](0);
           throw new Error(extractApiErrorMessage(_context7.t0));
-        case 36:
+        case 37:
         case "end":
           return _context7.stop();
       }
-    }, _callee7, null, [[0, 33]]);
+    }, _callee7, null, [[0, 34]]);
   }));
   return _mintMrc.apply(this, arguments);
+}
+
+/***/ }),
+
+/***/ 8766:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   C: function() { return /* binding */ fetchBtcFeeRateSummary; },
+/* harmony export */   F: function() { return /* binding */ MAX_CUSTOM_BTC_FEE_RATE; }
+/* harmony export */ });
+/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(55420);
+/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(98312);
+/* harmony import */ var _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _mempool_mempool_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12255);
+/* harmony import */ var _mempool_mempool_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_mempool_mempool_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _servies_api__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(28651);
+
+
+
+
+var MAX_CUSTOM_BTC_FEE_RATE = 500;
+function normalizeRecommended(raw) {
+  var minimumFee = Math.max(1, Math.ceil(Number((raw === null || raw === void 0 ? void 0 : raw.minimumFee) || 1)));
+  var slow = Math.max(minimumFee, Math.ceil(Number((raw === null || raw === void 0 ? void 0 : raw.hourFee) || (raw === null || raw === void 0 ? void 0 : raw.economyFee) || minimumFee)));
+  var avg = Math.max(slow, Math.ceil(Number((raw === null || raw === void 0 ? void 0 : raw.halfHourFee) || slow)));
+  var fast = Math.max(avg, Math.ceil(Number((raw === null || raw === void 0 ? void 0 : raw.fastestFee) || avg)));
+  return {
+    minimumFee: minimumFee,
+    tiers: [{
+      label: "Fast",
+      value: fast,
+      time: "~10 mins"
+    }, {
+      label: "Avg",
+      value: avg,
+      time: "~30 mins"
+    }, {
+      label: "Slow",
+      value: slow,
+      time: "~60 mins"
+    }]
+  };
+}
+function fetchBtcFeeRateSummary(_x) {
+  return _fetchBtcFeeRateSummary.apply(this, arguments);
+}
+function _fetchBtcFeeRateSummary() {
+  _fetchBtcFeeRateSummary = _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().mark(function _callee(network) {
+    var res, _mempoolJS, fees, rec;
+    return _home_runner_work_octopus_landing_octopus_landing_node_modules_umijs_babel_preset_umi_node_modules_babel_runtime_helpers_regeneratorRuntime_js__WEBPACK_IMPORTED_MODULE_0___default()().wrap(function _callee$(_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          _context.prev = 0;
+          _context.next = 3;
+          return (0,_servies_api__WEBPACK_IMPORTED_MODULE_3__/* .getRecommendedFees */ .hh)(network);
+        case 3:
+          res = _context.sent;
+          if (!(res !== null && res !== void 0 && res.data && (res.code === 0 || res.success))) {
+            _context.next = 6;
+            break;
+          }
+          return _context.abrupt("return", normalizeRecommended(res.data));
+        case 6:
+          _context.next = 10;
+          break;
+        case 8:
+          _context.prev = 8;
+          _context.t0 = _context["catch"](0);
+        case 10:
+          _context.prev = 10;
+          _mempoolJS = _mempool_mempool_js__WEBPACK_IMPORTED_MODULE_2___default()({
+            hostname: "mempool.space",
+            network: network === "mainnet" ? "main" : "testnet"
+          }), fees = _mempoolJS.bitcoin.fees;
+          _context.next = 14;
+          return fees.getFeesRecommended();
+        case 14:
+          rec = _context.sent;
+          return _context.abrupt("return", normalizeRecommended(rec));
+        case 18:
+          _context.prev = 18;
+          _context.t1 = _context["catch"](10);
+          return _context.abrupt("return", normalizeRecommended({
+            fastestFee: 3,
+            halfHourFee: 2,
+            hourFee: 1,
+            economyFee: 1,
+            minimumFee: 1
+          }));
+        case 21:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee, null, [[0, 8], [10, 18]]);
+  }));
+  return _fetchBtcFeeRateSummary.apply(this, arguments);
 }
 
 /***/ }),
@@ -47521,6 +47786,7 @@ __webpack_require__.d(__webpack_exports__, {
   gz: function() { return /* binding */ calcRedeemInfo; },
   II: function() { return /* binding */ calculateQuantityLimitRange; },
   xW: function() { return /* binding */ checkAddressType; },
+  VU: function() { return /* binding */ computeRedeemBtcServiceFeeSats; },
   AG: function() { return /* binding */ determineAddressInfo; },
   Q0: function() { return /* binding */ formatSat; },
   Iz: function() { return /* binding */ formatUnitToBtc; },
@@ -50577,10 +50843,26 @@ function validateAmountAndPrecision(rawInput, maxDecimals, minAmount, maxAmount)
 }
 
 /**
- * 1:1 full arrival calculation for Mint (BTC -> WBTC, MRC20 -> MetaContract).
- * Bridge service fee is paid externally in native BTC.
+ * Computes the Redeem BTC payout fee (sats) synchronously for a chosen BTC fee rate,
+ * matching backend calculateBridgeFeeQuote 1:1 so UI updates with zero latency.
  */
-var calcMintInfo = function calcMintInfo(amount, assetInfo, asset, quote) {
+var computeRedeemBtcServiceFeeSats = function computeRedeemBtcServiceFeeSats(assetNetwork, userBtcFeeRate, quote) {
+  var rate = Math.min(100, Math.max(1, Math.ceil(Number(userBtcFeeRate || (quote === null || quote === void 0 ? void 0 : quote.btcFeeRate) || 2))));
+  if (quote && Number(quote.btcFeeRate) === rate && Number(quote.btcFeeSats) > 0) {
+    return Number(quote.btcFeeSats);
+  }
+  var mult = Number((quote === null || quote === void 0 ? void 0 : quote.safetyMultiplier) || 2.0);
+  if (assetNetwork === "BTC") {
+    return Math.max(800, Math.ceil(rate * 220 * mult));
+  }
+  return Math.max(1800, Math.ceil(rate * 380 * mult) + 546);
+};
+
+/**
+ * 1:1 full arrival calculation for Mint (BTC -> WBTC, MRC20 -> MetaContract).
+ * Bridge service fee is paid externally in native BTC; user's BTC deposit miner fee uses userBtcFeeRate.
+ */
+var calcMintInfo = function calcMintInfo(amount, assetInfo, asset, quote, userBtcFeeRate) {
   var _quote$btcFeeSats;
   var maxDecimals = asset.network === "BTC" ? asset.decimals : Math.max(0, asset.decimals - asset.trimDecimals);
   var _calculateQuantityLim = calculateQuantityLimitRange(assetInfo, asset),
@@ -50590,7 +50872,7 @@ var calcMintInfo = function calcMintInfo(amount, assetInfo, asset, quote) {
   var dec = validateAmountAndPrecision(amount, maxDecimals, minAmount, maxAmount);
   var defaultFeeSats = asset.network === "BTC" ? 800 : 1000;
   var btcFeeSats = Number((_quote$btcFeeSats = quote === null || quote === void 0 ? void 0 : quote.btcFeeSats) !== null && _quote$btcFeeSats !== void 0 ? _quote$btcFeeSats : defaultFeeSats);
-  var btcRate = Number((quote === null || quote === void 0 ? void 0 : quote.btcFeeRate) || assetInfo.feeBtc || 2);
+  var btcRate = Math.max(1, Math.ceil(Number(userBtcFeeRate || (quote === null || quote === void 0 ? void 0 : quote.btcFeeRate) || assetInfo.feeBtc || 2)));
   var estMinerSats = asset.network === "BTC" ? Math.ceil(160 * btcRate) : 546 + Math.ceil(300 * btcRate);
   var confirmAmountSats = asset.network === "BTC" ? dec.mul(1e8).toNumber() : 0;
   var confirmNumber = confirmNumberBySeqAndAmount(confirmAmountSats, assetInfo.confirmSequence, asset.network === "BTC" ? "BTC" : "MRC20");
@@ -50607,10 +50889,10 @@ var calcMintInfo = function calcMintInfo(amount, assetInfo, asset, quote) {
 
 /**
  * 1:1 full arrival calculation for Redeem (WBTC -> BTC, MetaContract -> MRC20).
- * Bridge service fees are paid externally in MVC SPACE + BTC.
+ * MVC defaults to 1 sat/B; BTC payout fee & BTC prepay miner fee scale with userBtcFeeRate.
  */
-var calcRedeemInfo = function calcRedeemInfo(amount, assetInfo, asset, quote) {
-  var _quote$mvcFeeSats, _quote$btcFeeSats2;
+var calcRedeemInfo = function calcRedeemInfo(amount, assetInfo, asset, quote, userBtcFeeRate) {
+  var _quote$mvcFeeSats;
   var maxDecimals = asset.network === "BTC" ? asset.decimals : Math.max(0, asset.decimals - asset.trimDecimals);
   var _calculateQuantityLim3 = calculateQuantityLimitRange(assetInfo, asset),
     _calculateQuantityLim4 = slicedToArray_default()(_calculateQuantityLim3, 2),
@@ -50618,11 +50900,11 @@ var calcRedeemInfo = function calcRedeemInfo(amount, assetInfo, asset, quote) {
     maxAmount = _calculateQuantityLim4[1];
   var dec = validateAmountAndPrecision(amount, maxDecimals, minAmount, maxAmount);
   var mvcFeeSats = Number((_quote$mvcFeeSats = quote === null || quote === void 0 ? void 0 : quote.mvcFeeSats) !== null && _quote$mvcFeeSats !== void 0 ? _quote$mvcFeeSats : 50000);
-  var defaultBtcFee = asset.network === "BTC" ? 880 : 2066;
-  var btcFeeSats = Number((_quote$btcFeeSats2 = quote === null || quote === void 0 ? void 0 : quote.btcFeeSats) !== null && _quote$btcFeeSats2 !== void 0 ? _quote$btcFeeSats2 : defaultBtcFee);
-  var btcRate = Number((quote === null || quote === void 0 ? void 0 : quote.btcFeeRate) || assetInfo.feeBtc || 2);
+  var btcRate = Math.max(1, Math.ceil(Number(userBtcFeeRate || (quote === null || quote === void 0 ? void 0 : quote.btcFeeRate) || assetInfo.feeBtc || 2)));
+  var btcFeeSats = computeRedeemBtcServiceFeeSats(asset.network, btcRate, quote);
   var estBtcMinerSats = Math.ceil(150 * btcRate);
-  var estMvcMinerSats = 4500;
+  var estMvcMinerSats = 4500; // MVC fixed at 1 sat/B
+
   var confirmAmountSats = asset.network === "BTC" ? dec.mul(1e8).toNumber() : 0;
   var confirmNumber = confirmNumberBySeqAndAmount(confirmAmountSats, assetInfo.confirmSequence, "MVC");
   return {
@@ -164035,11 +164317,11 @@ module.exports = /*#__PURE__*/JSON.parse('{"2.16.840.1.101.3.4.1.1":"aes-128-ecb
 /******/ 	
 /******/ 	/* webpack/runtime/get javascript chunk filename */
 /******/ 	// This function allow to reference async chunks
-/******/ 	__webpack_require__.u = function(chunkId) { return ({"73":"p__index","266":"layouts__index","807":"p__wrapping__index"}[chunkId] || chunkId) + "." + {"73":"167e2d29","103":"ab6584b7","266":"2d035ced","267":"a89cbef2","639":"c1fa9d1f","807":"182f1ea7","969":"ac097453"}[chunkId] + ".async.js"; };
+/******/ 	__webpack_require__.u = function(chunkId) { return ({"73":"p__index","266":"layouts__index","807":"p__wrapping__index"}[chunkId] || chunkId) + "." + {"73":"167e2d29","146":"0f2ac58e","266":"029c6ce0","373":"fc05f852","639":"c1fa9d1f","807":"85ceb30e","969":"ac097453"}[chunkId] + ".async.js"; };
 /******/ 	
 /******/ 	/* webpack/runtime/get mini-css chunk filename */
 /******/ 	// This function allow to reference async chunks
-/******/ 	__webpack_require__.miniCssF = function(chunkId) { return {"73":"p__index","266":"layouts__index","807":"p__wrapping__index"}[chunkId] + "." + {"73":"69a4e62e","266":"88853524","807":"c9a9bb2e"}[chunkId] + ".chunk.css"; };
+/******/ 	__webpack_require__.miniCssF = function(chunkId) { return {"73":"p__index","266":"layouts__index","807":"p__wrapping__index"}[chunkId] + "." + {"73":"69a4e62e","266":"87783cf0","807":"e6bb394d"}[chunkId] + ".chunk.css"; };
 /******/ 	
 /******/ 	/* webpack/runtime/global */
 /******/ 	__webpack_require__.g = (function() {
@@ -165990,10 +166272,10 @@ function _getRoutes() {
                 return Promise.all(/* import() | p__index */[__webpack_require__.e(969), __webpack_require__.e(639), __webpack_require__.e(73)]).then(__webpack_require__.bind(__webpack_require__, 73097));
               }),
               '2': /*#__PURE__*/react.lazy(function () {
-                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(969), __webpack_require__.e(267), __webpack_require__.e(103), __webpack_require__.e(807)]).then(__webpack_require__.bind(__webpack_require__, 22953));
+                return Promise.all(/* import() | p__wrapping__index */[__webpack_require__.e(969), __webpack_require__.e(146), __webpack_require__.e(373), __webpack_require__.e(807)]).then(__webpack_require__.bind(__webpack_require__, 72869));
               }),
               '@@/global-layout': /*#__PURE__*/react.lazy(function () {
-                return Promise.all(/* import() | layouts__index */[__webpack_require__.e(969), __webpack_require__.e(267), __webpack_require__.e(266)]).then(__webpack_require__.bind(__webpack_require__, 45845));
+                return Promise.all(/* import() | layouts__index */[__webpack_require__.e(969), __webpack_require__.e(146), __webpack_require__.e(266)]).then(__webpack_require__.bind(__webpack_require__, 31646));
               })
             }
           });
