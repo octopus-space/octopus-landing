@@ -344,6 +344,7 @@ var useIntervalAsync = __webpack_require__(26524);
 
 
 
+
 var size = 10;
 /* harmony default export */ var HistoryPanel = (function (_ref) {
   var type = _ref.type;
@@ -368,78 +369,131 @@ var size = 10;
     _useState8 = slicedToArray_default()(_useState7, 2),
     loading = _useState8[0],
     setLoading = _useState8[1];
-  var fetchHistory = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee() {
-    var _yield$getBridgeHisto, txList, _list, originTxids;
-    return regeneratorRuntime_default()().wrap(function _callee$(_context) {
-      while (1) switch (_context.prev = _context.next) {
-        case 0:
-          if (AssetsInfo) {
-            _context.next = 2;
-            break;
-          }
-          return _context.abrupt("return");
-        case 2:
-          _context.prev = 2;
-          setLoading(true);
-          _context.next = 6;
-          return (0,api/* getBridgeHistory */.yl)(network, {
-            type: type,
-            cursor: page * size,
-            size: size,
-            order: "desc",
-            address: mvcAddress || ""
-          });
-        case 6:
-          _yield$getBridgeHisto = _context.sent;
-          txList = _yield$getBridgeHisto.txList;
-          if (txList.length < size) {
-            setIsEnd(true);
-          }
-          _list = txList.map(function (item) {
-            if (type === "btcToMvc" || type === "mrc20ToMvc") {
-              item.originNetwork = "BTC";
-              item.targetNetwork = "MVC";
-            }
-            if (type === "mvcToBtc" || type === "mvcToMrc20") {
-              item.originNetwork = "MVC";
-              item.targetNetwork = "BTC";
-            }
-            var timeD = (new Date().getTime() - Number(item.timestamp) * 1000) / 1000 / 60 / 20 * 100;
-            item.progess = item.status === "success" ? 100 : timeD > 98 ? 98 : Math.max(5, Math.ceil(timeD));
-            item.progess = item.status === "failed" ? 0 : item.progess;
-            item.timestamp = (0,utils/* prettyTimestamp */.V7)(Number(item.timestamp), true);
-            var currentToken = AssetsInfo.assetList.find(function (token) {
-              return token.originTokenId === item.originTokenId && token.targetTokenId === item.targetTokenId;
-            });
-            if (currentToken) {
-              item.amount = String((0,utils/* formatUnitToBtc */.Iz)(Number(item.amount), item.originNetwork === "BTC" || item.originNetwork === "MVC" && item.decimals <= 8 ? item.decimals : item.decimals - currentToken.trimDecimals));
-              item.symbol = item.symbol || currentToken.originSymbol || currentToken.originName;
-            }
-            return item;
-          });
-          originTxids = _list.map(function (item) {
-            return item.originTxid;
-          });
-          setList(function (prev) {
-            return [].concat(toConsumableArray_default()(prev.filter(function (item) {
-              return !originTxids.includes(item.originTxid);
-            })), toConsumableArray_default()(_list));
-          });
-          _context.next = 17;
-          break;
-        case 14:
-          _context.prev = 14;
-          _context.t0 = _context["catch"](2);
-          console.log(_context.t0);
-        case 17:
-          setLoading(false);
-        case 18:
-        case "end":
-          return _context.stop();
+  var trimmedAddress = (mvcAddress || "").trim();
+  (0,react.useEffect)(function () {
+    setPage(0);
+    setList([]);
+    setIsEnd(false);
+  }, [trimmedAddress, type, network]);
+  var formatTxItems = (0,react.useCallback)(function (txList) {
+    if (!AssetsInfo) return [];
+    return txList.map(function (raw) {
+      var item = objectSpread2_default()({}, raw);
+      if (type === "btcToMvc" || type === "mrc20ToMvc") {
+        item.originNetwork = "BTC";
+        item.targetNetwork = "MVC";
       }
-    }, _callee, null, [[2, 14]]);
-  })), [page, AssetsInfo, mvcAddress, network, type]);
-  (0,useIntervalAsync/* default */.A)(fetchHistory, 30 * 1000);
+      if (type === "mvcToBtc" || type === "mvcToMrc20") {
+        item.originNetwork = "MVC";
+        item.targetNetwork = "BTC";
+      }
+      var rawTs = Number(item.timestamp);
+      var timeD = (new Date().getTime() - rawTs * 1000) / 1000 / 60 / 20 * 100;
+      item.progess = item.status === "success" ? 100 : timeD > 98 ? 98 : Math.max(5, Math.ceil(timeD));
+      item.progess = item.status === "failed" ? 0 : item.progess;
+      item.timestamp = (0,utils/* prettyTimestamp */.V7)(rawTs, true);
+      var currentToken = AssetsInfo.assetList.find(function (token) {
+        return token.originTokenId === item.originTokenId && token.targetTokenId === item.targetTokenId;
+      });
+      if (currentToken) {
+        item.amount = String((0,utils/* formatUnitToBtc */.Iz)(Number(item.amount), item.originNetwork === "BTC" || item.originNetwork === "MVC" && item.decimals <= 8 ? item.decimals : item.decimals - currentToken.trimDecimals));
+        item.symbol = item.symbol || currentToken.originSymbol || currentToken.originName;
+      }
+      return item;
+    });
+  }, [AssetsInfo, type]);
+  var loadPage = (0,react.useCallback)( /*#__PURE__*/function () {
+    var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee(targetPage, mode) {
+      var _yield$getBridgeHisto, txList, formatted;
+      return regeneratorRuntime_default()().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            if (!(!AssetsInfo || !trimmedAddress)) {
+              _context.next = 3;
+              break;
+            }
+            if (!trimmedAddress) {
+              setList([]);
+              setIsEnd(true);
+            }
+            return _context.abrupt("return");
+          case 3:
+            _context.prev = 3;
+            setLoading(true);
+            _context.next = 7;
+            return (0,api/* getBridgeHistory */.yl)(network, {
+              type: type,
+              cursor: targetPage * size,
+              size: size,
+              order: "desc",
+              address: trimmedAddress
+            });
+          case 7:
+            _yield$getBridgeHisto = _context.sent;
+            txList = _yield$getBridgeHisto.txList;
+            formatted = formatTxItems(txList || []);
+            if (mode === "append" || targetPage === 0) {
+              if (formatted.length < size) {
+                setIsEnd(true);
+              }
+            }
+            setList(function (prev) {
+              if (mode === "refreshTop") {
+                var freshMap = new Map(formatted.map(function (item) {
+                  return [item.originTxid, item];
+                }));
+                var updatedPrev = prev.map(function (old) {
+                  return freshMap.get(old.originTxid) || old;
+                });
+                var _prevIds = new Set(updatedPrev.map(function (i) {
+                  return i.originTxid;
+                }));
+                var brandNew = formatted.filter(function (item) {
+                  return !_prevIds.has(item.originTxid);
+                });
+                return prev.length === 0 ? formatted : [].concat(toConsumableArray_default()(brandNew), toConsumableArray_default()(updatedPrev));
+              }
+              var prevIds = new Set(prev.map(function (i) {
+                return i.originTxid;
+              }));
+              var olderItems = formatted.filter(function (item) {
+                return !prevIds.has(item.originTxid);
+              });
+              return [].concat(toConsumableArray_default()(prev), toConsumableArray_default()(olderItems));
+            });
+            _context.next = 17;
+            break;
+          case 14:
+            _context.prev = 14;
+            _context.t0 = _context["catch"](3);
+            console.log(_context.t0);
+          case 17:
+            _context.prev = 17;
+            setLoading(false);
+            return _context.finish(17);
+          case 20:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee, null, [[3, 14, 17, 20]]);
+    }));
+    return function (_x, _x2) {
+      return _ref2.apply(this, arguments);
+    };
+  }(), [AssetsInfo, trimmedAddress, network, type, formatTxItems]);
+  var pollLatest = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
+    return regeneratorRuntime_default()().wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
+        case 0:
+          _context2.next = 2;
+          return loadPage(0, "refreshTop");
+        case 2:
+        case "end":
+          return _context2.stop();
+      }
+    }, _callee2);
+  })), [loadPage]);
+  (0,useIntervalAsync/* default */.A)(pollLatest, 30 * 1000);
   return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
     style: {
       minHeight: 500,
@@ -523,10 +577,11 @@ var size = 10;
       children: "no More"
     }), list.length > 0 && !isEnd && /*#__PURE__*/(0,jsx_runtime.jsx)(es_button/* default */.A, {
       type: "link",
+      disabled: loading,
       onClick: function onClick() {
-        setPage(function (prev) {
-          return prev + 1;
-        });
+        var nextPage = page + 1;
+        setPage(nextPage);
+        loadPage(nextPage, "append");
       },
       children: "load More"
     })]
@@ -1861,6 +1916,18 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
     var target = total.mul(ratio).toDP(assetMaxDecimals, decimal/* default */.A.ROUND_DOWN).toString();
     onInputChange(target);
   };
+  var unsupportedBtcAddrMsg = (0,react.useMemo)(function () {
+    if (!connected || !btcAddress) return "";
+    try {
+      var addrType = (0,utils/* determineAddressInfo */.AG)(btcAddress).toUpperCase();
+      if (!wrapping/* supportRedeemAddressType */.EX.includes(addrType)) {
+        return "Unsupported BTC address type (Nested Segwit / P2SH 3...). Please switch your BTC address in Metalet to Native Segwit (bc1q...), Taproot (bc1p...), or Legacy (1...).";
+      }
+    } catch (_unused3) {
+      return "Invalid or unsupported BTC wallet address.";
+    }
+    return "";
+  }, [connected, btcAddress]);
   var redeem = /*#__PURE__*/function () {
     var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
       var _yield$checkWalletAdd, status, addrErr, addressInfo, addressType;
@@ -1893,7 +1960,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
               _context3.next = 15;
               break;
             }
-            throw new Error("unsupport address type");
+            throw new Error("Unsupported BTC address type (P2SH/3...). Please switch to Native Segwit (bc1q), Taproot (bc1p), or Legacy (1...) in Metalet.");
           case 15:
             if (!(protocolType === "btc")) {
               _context3.next = 20;
@@ -1979,44 +2046,50 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
           case 14:
             addressInfo = (0,utils/* determineAddressInfo */.AG)(btcAddress);
             addressType = addressInfo.toUpperCase();
+            if (wrapping/* supportRedeemAddressType */.EX.includes(addressType)) {
+              _context4.next = 18;
+              break;
+            }
+            throw new Error("Unsupported BTC address type (P2SH/3...). Please switch to Native Segwit (bc1q), Taproot (bc1p), or Legacy (1...) in Metalet.");
+          case 18:
             if (!(protocolType === "btc")) {
-              _context4.next = 21;
+              _context4.next = 23;
               break;
             }
-            _context4.next = 19;
+            _context4.next = 21;
             return (0,wrapping/* mintBtc */.gb)((0,utils/* amountRaw */.Zc)(String(amount), 8), asset, addressType, network, AssetsInfo, feeRate);
-          case 19:
-            _context4.next = 24;
-            break;
           case 21:
+            _context4.next = 26;
+            break;
+          case 23:
             if (!(protocolType === "mrc20")) {
-              _context4.next = 24;
+              _context4.next = 26;
               break;
             }
-            _context4.next = 24;
+            _context4.next = 26;
             return (0,wrapping/* mintMrc20 */.l8)(String(amount), asset, addressType, network, AssetsInfo, feeRate);
-          case 24:
+          case 26:
             setSuccessVisible(true);
-            _context4.next = 27;
+            _context4.next = 29;
             return getBal(true);
-          case 27:
-            _context4.next = 34;
-            break;
           case 29:
-            _context4.prev = 29;
+            _context4.next = 36;
+            break;
+          case 31:
+            _context4.prev = 31;
             _context4.t0 = _context4["catch"](5);
             console.log(_context4.t0);
             errMsg = (_context4.t0 === null || _context4.t0 === void 0 || (_err$response = _context4.t0.response) === null || _err$response === void 0 || (_err$response = _err$response.data) === null || _err$response === void 0 ? void 0 : _err$response.message) || (_context4.t0 === null || _context4.t0 === void 0 || (_err$response2 = _context4.t0.response) === null || _err$response2 === void 0 || (_err$response2 = _err$response2.data) === null || _err$response2 === void 0 ? void 0 : _err$response2.msg) || (_context4.t0 === null || _context4.t0 === void 0 || (_err$data = _context4.t0.data) === null || _err$data === void 0 ? void 0 : _err$data.message) || (_context4.t0 === null || _context4.t0 === void 0 || (_err$data2 = _context4.t0.data) === null || _err$data2 === void 0 ? void 0 : _err$data2.msg) || (_context4.t0 === null || _context4.t0 === void 0 ? void 0 : _context4.t0.message) || (_context4.t0 === null || _context4.t0 === void 0 ? void 0 : _context4.t0.msg) || "unknown error";
             message/* default */.Ay.error(errMsg);
-          case 34:
-            _context4.prev = 34;
+          case 36:
+            _context4.prev = 36;
             setSubmitting(false);
-            return _context4.finish(34);
-          case 37:
+            return _context4.finish(36);
+          case 39:
           case "end":
             return _context4.stop();
         }
-      }, _callee4, null, [[5, 29, 34, 37]]);
+      }, _callee4, null, [[5, 31, 36, 39]]);
     }));
     return function mint() {
       return _ref3.apply(this, arguments);
@@ -2029,6 +2102,14 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
       type: "primary",
       onClick: function onClick() {
         message/* default */.Ay.warning(mintPausedMessage);
+      }
+    }, {
+      condition: Boolean(unsupportedBtcAddrMsg),
+      text: "Switch BTC Address Type",
+      type: "primary",
+      danger: true,
+      onClick: function onClick() {
+        message/* default */.Ay.warning(unsupportedBtcAddrMsg);
       }
     }, {
       condition: !amount || Number(amount) <= 0,
@@ -2049,7 +2130,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
         message/* default */.Ay.warning(balCheck);
       }
     }];
-  }, [ErrorMsg, amount, balCheck, isMintPaused, mintPausedMessage]);
+  }, [ErrorMsg, amount, balCheck, isMintPaused, mintPausedMessage, unsupportedBtcAddrMsg]);
   var handleSubmit = function handleSubmit() {
     if (bridgeType === "mint") return mint();
     if (bridgeType === "redeem") return redeem();
@@ -2057,6 +2138,10 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
   var handleConfirm = function handleConfirm() {
     if (isMintPaused) {
       message/* default */.Ay.warning(mintPausedMessage);
+      return;
+    }
+    if (unsupportedBtcAddrMsg) {
+      message/* default */.Ay.warning(unsupportedBtcAddrMsg);
       return;
     }
     if (balCheck) {
@@ -2426,6 +2511,13 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
           })]
         }), isMintPaused && /*#__PURE__*/(0,jsx_runtime.jsx)(es_alert/* default */.A, {
           message: mintPausedMessage,
+          type: "warning",
+          style: {
+            marginTop: 20
+          },
+          showIcon: true
+        }), unsupportedBtcAddrMsg && /*#__PURE__*/(0,jsx_runtime.jsx)(es_alert/* default */.A, {
+          message: unsupportedBtcAddrMsg,
           type: "warning",
           style: {
             marginTop: 20
