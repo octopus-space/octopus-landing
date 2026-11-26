@@ -2370,7 +2370,11 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
               children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
                 className: "label feeLabelWithHelp",
                 children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  className: "desktopFeeLabel",
                   children: "Bridge Service Fee"
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  className: "mobileFeeLabel",
+                  children: "Service Fee"
                 }), /*#__PURE__*/(0,jsx_runtime.jsx)(tooltip/* default */.A, {
                   trigger: ["hover", "click"],
                   title: liveFeeBreakdown.serviceFeeTooltip,
@@ -2397,7 +2401,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
                   children: ["Est. Network Miner Fee (", liveFeeBreakdown.btcRate, " sat/vB)"]
                 }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
                   className: "mobileFeeLabel",
-                  children: ["Est. Miner Fee (", liveFeeBreakdown.btcRate, " sat/vB)"]
+                  children: ["Miner Fee (", liveFeeBreakdown.btcRate, " sat/vB)"]
                 }), /*#__PURE__*/(0,jsx_runtime.jsx)(tooltip/* default */.A, {
                   trigger: ["hover", "click"],
                   title: /*#__PURE__*/(0,jsx_runtime.jsx)(MinerFeeBreakdownOverlay, {
