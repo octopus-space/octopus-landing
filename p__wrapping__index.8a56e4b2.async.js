@@ -217,12 +217,16 @@ var space = __webpack_require__(52771);
 var dropdown = __webpack_require__(3253);
 // EXTERNAL MODULE: ./node_modules/antd/es/input-number/index.js + 18 modules
 var input_number = __webpack_require__(49625);
+// EXTERNAL MODULE: ./node_modules/antd/es/tooltip/index.js + 8 modules
+var tooltip = __webpack_require__(3618);
 // EXTERNAL MODULE: ./node_modules/antd/es/alert/index.js + 4 modules
 var es_alert = __webpack_require__(98695);
 // EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/DownOutlined.js + 1 modules
 var DownOutlined = __webpack_require__(75389);
 // EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/EditOutlined.js + 1 modules
 var EditOutlined = __webpack_require__(67424);
+// EXTERNAL MODULE: ./node_modules/@ant-design/icons/es/icons/QuestionCircleOutlined.js + 1 modules
+var QuestionCircleOutlined = __webpack_require__(96805);
 // EXTERNAL MODULE: ./node_modules/react/index.js
 var react = __webpack_require__(74159);
 ;// ./src/pages/wrapping/index.less
@@ -889,22 +893,60 @@ const SvgArrowRight = (props) => /* @__PURE__ */ arrowRight_React.createElement(
 
 
 
-/* harmony default export */ var Summary = (function (_ref) {
-  var show = _ref.show,
-    onClose = _ref.onClose,
-    _ref$amount = _ref.amount,
-    amount = _ref$amount === void 0 ? "0" : _ref$amount,
-    _ref$reciveAmount = _ref.reciveAmount,
-    reciveAmount = _ref$reciveAmount === void 0 ? "0" : _ref$reciveAmount,
-    _ref$bridgeFee = _ref.bridgeFee,
-    bridgeFee = _ref$bridgeFee === void 0 ? "0" : _ref$bridgeFee,
-    _ref$totalFee = _ref.totalFee,
-    totalFee = _ref$totalFee === void 0 ? "0" : _ref$totalFee,
-    _ref$minerFee = _ref.minerFee,
-    minerFee = _ref$minerFee === void 0 ? "0" : _ref$minerFee,
-    handleSubmit = _ref.handleSubmit,
-    _ref$submitting = _ref.submitting,
-    submitting = _ref$submitting === void 0 ? false : _ref$submitting;
+
+var MinerFeeBreakdownOverlay = function MinerFeeBreakdownOverlay(_ref) {
+  var items = _ref.items,
+    total = _ref.total;
+  return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+    className: "minerFeeTooltipContent",
+    children: [/*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+      className: "tooltipHeader",
+      children: "Network Miner Fee & Postage Breakdown"
+    }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
+      className: "tooltipRows",
+      children: items.map(function (row) {
+        return /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+          className: "tooltipRow",
+          children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+            className: "tooltipRowLabel",
+            children: row.label
+          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+            className: "tooltipRowVal",
+            children: [row.value, row.sub ? /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+              className: "tooltipRowSub",
+              children: [" (", row.sub, ")"]
+            }) : null]
+          })]
+        }, row.label);
+      })
+    }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+      className: "tooltipFooter",
+      children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+        children: "Est. Miner & Postage Total"
+      }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+        children: total
+      })]
+    })]
+  });
+};
+/* harmony default export */ var Summary = (function (_ref2) {
+  var show = _ref2.show,
+    onClose = _ref2.onClose,
+    _ref2$amount = _ref2.amount,
+    amount = _ref2$amount === void 0 ? "0" : _ref2$amount,
+    _ref2$reciveAmount = _ref2.reciveAmount,
+    reciveAmount = _ref2$reciveAmount === void 0 ? "0" : _ref2$reciveAmount,
+    _ref2$bridgeFee = _ref2.bridgeFee,
+    bridgeFee = _ref2$bridgeFee === void 0 ? "0" : _ref2$bridgeFee,
+    _ref2$totalFee = _ref2.totalFee,
+    totalFee = _ref2$totalFee === void 0 ? "0" : _ref2$totalFee,
+    _ref2$minerFee = _ref2.minerFee,
+    minerFee = _ref2$minerFee === void 0 ? "0" : _ref2$minerFee,
+    serviceFeeTooltip = _ref2.serviceFeeTooltip,
+    minerFeeBreakdown = _ref2.minerFeeBreakdown,
+    handleSubmit = _ref2.handleSubmit,
+    _ref2$submitting = _ref2.submitting,
+    submitting = _ref2$submitting === void 0 ? false : _ref2$submitting;
   var _useModel = (0,_umi_production_exports.useModel)("wrapping"),
     asset = _useModel.asset,
     fromChain = _useModel.fromChain,
@@ -989,18 +1031,43 @@ const SvgArrowRight = (props) => /* @__PURE__ */ arrowRight_React.createElement(
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
-            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-              className: "label",
-              children: "Service Fee"
+            children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+              className: "label feeLabelWithHelp",
+              children: ["Bridge Service Fee", serviceFeeTooltip ? /*#__PURE__*/(0,jsx_runtime.jsx)(tooltip/* default */.A, {
+                title: serviceFeeTooltip,
+                overlayInnerStyle: {
+                  maxWidth: 340,
+                  background: "#14124a",
+                  border: "1px solid rgba(110, 102, 250, 0.45)",
+                  fontSize: 12
+                },
+                children: /*#__PURE__*/(0,jsx_runtime.jsx)(QuestionCircleOutlined/* default */.A, {
+                  className: "feeHelpIcon"
+                })
+              }) : null]
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "value",
               children: bridgeFee
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
-            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-              className: "label",
-              children: "Est. Network Fee"
+            children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+              className: "label feeLabelWithHelp",
+              children: ["Est. Network Miner Fee", minerFeeBreakdown && minerFeeBreakdown.length > 0 ? /*#__PURE__*/(0,jsx_runtime.jsx)(tooltip/* default */.A, {
+                title: /*#__PURE__*/(0,jsx_runtime.jsx)(MinerFeeBreakdownOverlay, {
+                  items: minerFeeBreakdown,
+                  total: minerFee
+                }),
+                overlayInnerStyle: {
+                  maxWidth: 400,
+                  background: "#14124a",
+                  border: "1px solid rgba(110, 102, 250, 0.45)",
+                  padding: "10px 12px"
+                },
+                children: /*#__PURE__*/(0,jsx_runtime.jsx)(QuestionCircleOutlined/* default */.A, {
+                  className: "feeHelpIcon"
+                })
+              }) : null]
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "value",
               children: minerFee
@@ -1706,27 +1773,15 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
     });
     return [slow, avg, fast].filter(Boolean);
   }, [feeRates]);
-  var liveServiceFeeSummary = (0,react.useMemo)(function () {
-    var _feeQuote$mvcFeeSats;
-    if (!asset) return "";
-    if (bridgeType === "mint") {
-      var _feeQuote$btcFeeSats;
-      var _btcFee = Number((_feeQuote$btcFeeSats = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeSats) !== null && _feeQuote$btcFeeSats !== void 0 ? _feeQuote$btcFeeSats : protocolType === "btc" ? 800 : 1000);
-      return "".concat((0,utils/* formatSat */.Q0)(_btcFee, 8), " BTC (").concat(_btcFee, " sats)");
-    }
-    var btcFee = (0,utils/* computeRedeemBtcServiceFeeSats */.VU)(protocolType === "btc" ? "BTC" : "MRC20", feeRate, feeQuote);
-    var mvcFee = Number((_feeQuote$mvcFeeSats = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.mvcFeeSats) !== null && _feeQuote$mvcFeeSats !== void 0 ? _feeQuote$mvcFeeSats : 50000);
-    return "".concat((0,utils/* formatSat */.Q0)(mvcFee, 8), " SPACE + ").concat((0,utils/* formatSat */.Q0)(btcFee, 8), " BTC");
-  }, [asset, bridgeType, protocolType, feeQuote, feeRate]);
-  var liveEstMinerFeeSummary = (0,react.useMemo)(function () {
-    var btcRate = Math.max(1, Math.ceil(Number(feeRate || 2)));
-    if (bridgeType === "mint") {
-      var estSats = protocolType === "btc" ? Math.ceil(160 * btcRate) : 546 + Math.ceil(300 * btcRate);
-      return "~".concat((0,utils/* formatSat */.Q0)(estSats, 8), " BTC");
-    }
-    var estBtcSats = Math.ceil(150 * btcRate);
-    return "~".concat((0,utils/* formatSat */.Q0)(4500, 8), " SPACE + ~").concat((0,utils/* formatSat */.Q0)(estBtcSats, 8), " BTC");
-  }, [bridgeType, protocolType, feeRate]);
+  var liveFeeBreakdown = (0,react.useMemo)(function () {
+    return (0,utils/* computeScenarioFeeBreakdown */.LE)({
+      protocolType: protocolType,
+      bridgeType: bridgeType,
+      userBtcFeeRate: feeRate,
+      quote: feeQuote,
+      defaultBtcRate: AssetsInfo === null || AssetsInfo === void 0 ? void 0 : AssetsInfo.feeBtc
+    });
+  }, [protocolType, bridgeType, feeRate, feeQuote, AssetsInfo]);
 
   /**
    * Dual-chain native gas & bridge fee pre-flight check:
@@ -1745,53 +1800,48 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
     }
     var btcSats = Number((_userBal$btcSats = userBal.btcSats) !== null && _userBal$btcSats !== void 0 ? _userBal$btcSats : 0);
     var spaceSats = Number((_userBal$spaceSats = userBal.spaceSats) !== null && _userBal$spaceSats !== void 0 ? _userBal$spaceSats : 0);
-    var btcRate = Math.max(1, Math.ceil(Number(feeRate || (feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeRate) || (AssetsInfo === null || AssetsInfo === void 0 ? void 0 : AssetsInfo.feeBtc) || 2)));
+    var btcRate = liveFeeBreakdown.btcRate,
+      btcServiceFeeSats = liveFeeBreakdown.btcServiceFeeSats,
+      mvcServiceFeeSats = liveFeeBreakdown.mvcServiceFeeSats,
+      estMinerBtcSats = liveFeeBreakdown.estMinerBtcSats,
+      estMinerMvcSats = liveFeeBreakdown.estMinerMvcSats,
+      totalOutlayBtcSats = liveFeeBreakdown.totalOutlayBtcSats,
+      totalOutlayMvcSats = liveFeeBreakdown.totalOutlayMvcSats;
     if (bridgeType === "mint") {
       if (protocolType === "btc") {
-        var _feeQuote$btcFeeSats2;
         var principalSats = Number((0,utils/* amountRaw */.Zc)(decAmount.toFixed(), 8));
-        var bridgeFeeSats = Number((_feeQuote$btcFeeSats2 = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeSats) !== null && _feeQuote$btcFeeSats2 !== void 0 ? _feeQuote$btcFeeSats2 : 800);
-        var estMinerSats = Math.ceil(180 * btcRate);
-        var requiredBtcSats = principalSats + bridgeFeeSats + estMinerSats;
+        var requiredBtcSats = principalSats + totalOutlayBtcSats;
         if (btcSats < requiredBtcSats) {
-          return "Insufficient BTC balance: need ~".concat((0,utils/* formatSat */.Q0)(requiredBtcSats, 8), " BTC (amount + ").concat((0,utils/* formatSat */.Q0)(bridgeFeeSats, 8), " BTC bridge fee + miner fee @ ").concat(btcRate, " sat/vB), available ").concat(userBal.btc || "0", " BTC.");
+          return "Insufficient BTC balance: need ~".concat((0,utils/* formatSat */.Q0)(requiredBtcSats, 8), " BTC (amount + ").concat((0,utils/* formatSat */.Q0)(btcServiceFeeSats, 8), " BTC service fee + ~").concat((0,utils/* formatSat */.Q0)(estMinerBtcSats, 8), " BTC miner fee @ ").concat(btcRate, " sat/vB), available ").concat(userBal.btc || "0", " BTC.");
         }
         return "";
       }
       if (protocolType === "mrc20") {
-        var _feeQuote$btcFeeSats3;
         if (decAmount.gt(new decimal/* default */.A(String(sendBal || "0")))) {
           return "Insufficient ".concat(asset.originSymbol, " balance.");
         }
-        var _bridgeFeeSats = Number((_feeQuote$btcFeeSats3 = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeSats) !== null && _feeQuote$btcFeeSats3 !== void 0 ? _feeQuote$btcFeeSats3 : 1000);
-        var estCommitRevealSats = 546 + Math.ceil(320 * btcRate);
-        var _requiredBtcSats = _bridgeFeeSats + estCommitRevealSats;
+        var _requiredBtcSats = totalOutlayBtcSats;
         if (btcSats < _requiredBtcSats) {
-          return "Insufficient BTC for bridge & network fee: need at least ~".concat((0,utils/* formatSat */.Q0)(_requiredBtcSats, 8), " BTC (").concat(_bridgeFeeSats, " sats bridge fee + commit/reveal gas @ ").concat(btcRate, " sat/vB), available ").concat(userBal.btc || "0", " BTC.");
+          return "Insufficient BTC for service & network miner fee: need at least ~".concat((0,utils/* formatSat */.Q0)(_requiredBtcSats, 8), " BTC (").concat(btcServiceFeeSats, " sats service fee + ~").concat(estMinerBtcSats, " sats miner fee & postage @ ").concat(btcRate, " sat/vB), available ").concat(userBal.btc || "0", " BTC.");
         }
         return "";
       }
     }
     if (bridgeType === "redeem") {
-      var _feeQuote$mvcFeeSats2;
       if (decAmount.gt(new decimal/* default */.A(String(sendBal || "0")))) {
         return "Insufficient ".concat(asset.targetSymbol, " balance.");
       }
-      var mvcFeeSats = Number((_feeQuote$mvcFeeSats2 = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.mvcFeeSats) !== null && _feeQuote$mvcFeeSats2 !== void 0 ? _feeQuote$mvcFeeSats2 : 50000);
-      var estMvcMinerSats = 6000;
-      var requiredSpaceSats = mvcFeeSats + estMvcMinerSats;
+      var requiredSpaceSats = totalOutlayMvcSats;
       if (spaceSats < requiredSpaceSats) {
-        return "Insufficient MVC SPACE for Redeem fee: need at least ".concat((0,utils/* formatSat */.Q0)(requiredSpaceSats, 8), " SPACE (").concat((0,utils/* formatSat */.Q0)(mvcFeeSats, 8), " SPACE bridge fee + MVC network gas), available ").concat(userBal.space || "0", " SPACE.");
+        return "Insufficient MVC SPACE for Redeem: need at least ~".concat((0,utils/* formatSat */.Q0)(requiredSpaceSats, 8), " SPACE (").concat((0,utils/* formatSat */.Q0)(mvcServiceFeeSats, 8), " SPACE service fee + ~").concat((0,utils/* formatSat */.Q0)(estMinerMvcSats, 8), " SPACE network miner fee), available ").concat(userBal.space || "0", " SPACE.");
       }
-      var btcFeeSats = (0,utils/* computeRedeemBtcServiceFeeSats */.VU)(protocolType === "btc" ? "BTC" : "MRC20", btcRate, feeQuote);
-      var estBtcMinerSats = Math.ceil(150 * btcRate);
-      var _requiredBtcSats2 = btcFeeSats + estBtcMinerSats;
+      var _requiredBtcSats2 = totalOutlayBtcSats;
       if (btcSats < _requiredBtcSats2) {
-        return "Insufficient BTC for Redeem payout fee: need at least ".concat((0,utils/* formatSat */.Q0)(_requiredBtcSats2, 8), " BTC (").concat((0,utils/* formatSat */.Q0)(btcFeeSats, 8), " BTC bridge fee + BTC miner fee @ ").concat(btcRate, " sat/vB), available ").concat(userBal.btc || "0", " BTC.");
+        return "Insufficient BTC for Redeem: need at least ~".concat((0,utils/* formatSat */.Q0)(_requiredBtcSats2, 8), " BTC (").concat((0,utils/* formatSat */.Q0)(btcServiceFeeSats, 8), " BTC service fee + ~").concat((0,utils/* formatSat */.Q0)(estMinerBtcSats, 8), " BTC network miner fee & postage @ ").concat(btcRate, " sat/vB), available ").concat(userBal.btc || "0", " BTC.");
       }
     }
     return "";
-  }, [connected, asset, amount, userBal, feeRate, feeQuote, AssetsInfo, bridgeType, protocolType, sendBal]);
+  }, [connected, asset, amount, userBal, liveFeeBreakdown, bridgeType, protocolType, sendBal]);
   var handleQuickPercent = function handleQuickPercent(ratio) {
     if (!asset) return;
     var total = new decimal/* default */.A(String(sendBal || "0"));
@@ -1800,9 +1850,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
       return;
     }
     if (bridgeType === "mint" && protocolType === "btc" && ratio === 1) {
-      var _feeQuote$btcFeeSats4;
-      var btcRate = Math.max(1, Math.ceil(Number(feeRate || (feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeRate) || (AssetsInfo === null || AssetsInfo === void 0 ? void 0 : AssetsInfo.feeBtc) || 2)));
-      var reserveBtc = new decimal/* default */.A(Number((_feeQuote$btcFeeSats4 = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.btcFeeSats) !== null && _feeQuote$btcFeeSats4 !== void 0 ? _feeQuote$btcFeeSats4 : 800) + Math.ceil(180 * btcRate)).div(1e8);
+      var reserveBtc = new decimal/* default */.A(liveFeeBreakdown.btcServiceFeeSats + Math.ceil(180 * liveFeeBreakdown.btcRate)).div(1e8);
       var maxSend = decimal/* default */.A.max(0, total.minus(reserveBtc));
       onInputChange(maxSend.toDP(assetMaxDecimals, decimal/* default */.A.ROUND_DOWN).toString());
       return;
@@ -2016,9 +2064,11 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
       show: true,
       amount: amount,
       reciveAmount: String(reciveAmount),
-      minerFee: String(feeInfo.minerFee),
-      bridgeFee: String(feeInfo.bridgeFee),
-      totalFee: String(feeInfo.totalFee),
+      minerFee: String(feeInfo.minerFee || liveFeeBreakdown.minerFeeText),
+      bridgeFee: String(feeInfo.bridgeFee || liveFeeBreakdown.serviceFeeText),
+      totalFee: String(feeInfo.totalFee || liveFeeBreakdown.totalFeeText),
+      serviceFeeTooltip: feeInfo.serviceFeeTooltip || liveFeeBreakdown.serviceFeeTooltip,
+      minerFeeBreakdown: feeInfo.minerFeeBreakdown || liveFeeBreakdown.minerFeeBreakdown,
       handleSubmit: handleSubmit,
       onClose: function onClose() {
         setConfirmProps(defaultConfirmProps);
@@ -2322,21 +2372,46 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
-            children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-              className: "label",
-              children: "Bridge Service Fee"
+            children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+              className: "label feeLabelWithHelp",
+              children: ["Bridge Service Fee", /*#__PURE__*/(0,jsx_runtime.jsx)(tooltip/* default */.A, {
+                title: liveFeeBreakdown.serviceFeeTooltip,
+                overlayInnerStyle: {
+                  maxWidth: 340,
+                  background: "#14124a",
+                  border: "1px solid rgba(110, 102, 250, 0.45)",
+                  fontSize: 12
+                },
+                children: /*#__PURE__*/(0,jsx_runtime.jsx)(QuestionCircleOutlined/* default */.A, {
+                  className: "feeHelpIcon"
+                })
+              })]
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "value",
-              children: liveServiceFeeSummary
+              children: liveFeeBreakdown.serviceFeeText
             })]
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "item",
             children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
-              className: "label",
-              children: ["Est. Network Miner Fee (", feeRate, " sat/vB)"]
+              className: "label feeLabelWithHelp",
+              children: ["Est. Network Miner Fee (", liveFeeBreakdown.btcRate, " sat/vB)", /*#__PURE__*/(0,jsx_runtime.jsx)(tooltip/* default */.A, {
+                title: /*#__PURE__*/(0,jsx_runtime.jsx)(MinerFeeBreakdownOverlay, {
+                  items: liveFeeBreakdown.minerFeeBreakdown,
+                  total: liveFeeBreakdown.minerFeeText
+                }),
+                overlayInnerStyle: {
+                  maxWidth: 400,
+                  background: "#14124a",
+                  border: "1px solid rgba(110, 102, 250, 0.45)",
+                  padding: "10px 12px"
+                },
+                children: /*#__PURE__*/(0,jsx_runtime.jsx)(QuestionCircleOutlined/* default */.A, {
+                  className: "feeHelpIcon"
+                })
+              })]
             }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
               className: "value",
-              children: liveEstMinerFeeSummary
+              children: liveFeeBreakdown.minerFeeText
             })]
           })]
         }), isMintPaused && /*#__PURE__*/(0,jsx_runtime.jsx)(es_alert/* default */.A, {
