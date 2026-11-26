@@ -882,7 +882,8 @@ export default () => {
               <div className="feeInfoBox">
                 <div className="item feeRow">
                   <span className="label feeLabelWithHelp">
-                    <span>Bridge Service Fee</span>
+                    <span className="desktopFeeLabel">Bridge Service Fee</span>
+                    <span className="mobileFeeLabel">Service Fee</span>
                     <Tooltip
                       trigger={["hover", "click"]}
                       title={liveFeeBreakdown.serviceFeeTooltip}
@@ -906,7 +907,7 @@ export default () => {
                       Est. Network Miner Fee ({liveFeeBreakdown.btcRate} sat/vB)
                     </span>
                     <span className="mobileFeeLabel">
-                      Est. Miner Fee ({liveFeeBreakdown.btcRate} sat/vB)
+                      Miner Fee ({liveFeeBreakdown.btcRate} sat/vB)
                     </span>
                     <Tooltip
                       trigger={["hover", "click"]}
