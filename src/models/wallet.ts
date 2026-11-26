@@ -12,6 +12,7 @@ import {
   normalizeWalletNetwork,
   withTimeout,
 } from "@/utils/utils";
+import { message } from "antd";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export type Network = "mainnet" | "testnet";
@@ -285,12 +286,8 @@ export default () => {
             };
           }
 
-          const { pass, message } = checkAddressType(_btcAddress);
-          if (!pass) {
-            return { pass, message };
-          }
-
           const normNet = normalizeWalletNetwork(netInfo?.network);
+          const prevAddr = btcAddrRef.current;
           btcAddrRef.current = _btcAddress;
           networkRef.current = normNet;
 
@@ -299,6 +296,13 @@ export default () => {
           setBTCAddress(_btcAddress);
           setConnected(true);
           setLoginModalShow(false);
+
+          const { pass } = checkAddressType(_btcAddress);
+          if (!pass && prevAddr !== _btcAddress) {
+            message.warning(
+              "Unsupported BTC address type (P2SH / 3...). Please switch to Native Segwit (bc1q...), Taproot (bc1p...), or Legacy (1...) in Metalet."
+            );
+          }
 
           // Fetch balances asynchronously so login & modal dismissal never block!
           void getBal(true, _btcAddress, normNet);
