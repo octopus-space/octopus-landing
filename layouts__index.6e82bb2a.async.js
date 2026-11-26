@@ -774,8 +774,8 @@ var PlanIcon = function PlanIcon(_ref) {
   var plan = _ref.plan;
   if (plan === "Fast") {
     return /*#__PURE__*/(0,jsx_runtime.jsx)("svg", {
-      width: "18",
-      height: "18",
+      width: "17",
+      height: "17",
       viewBox: "0 0 24 24",
       fill: "none",
       children: /*#__PURE__*/(0,jsx_runtime.jsx)("path", {
@@ -789,8 +789,8 @@ var PlanIcon = function PlanIcon(_ref) {
   }
   if (plan === "Avg") {
     return /*#__PURE__*/(0,jsx_runtime.jsxs)("svg", {
-      width: "18",
-      height: "18",
+      width: "17",
+      height: "17",
       viewBox: "0 0 24 24",
       fill: "none",
       children: [/*#__PURE__*/(0,jsx_runtime.jsx)("circle", {
@@ -809,8 +809,8 @@ var PlanIcon = function PlanIcon(_ref) {
   }
   if (plan === "Slow") {
     return /*#__PURE__*/(0,jsx_runtime.jsx)("svg", {
-      width: "18",
-      height: "18",
+      width: "17",
+      height: "17",
       viewBox: "0 0 24 24",
       fill: "none",
       children: /*#__PURE__*/(0,jsx_runtime.jsx)("path", {
@@ -823,8 +823,8 @@ var PlanIcon = function PlanIcon(_ref) {
     });
   }
   return /*#__PURE__*/(0,jsx_runtime.jsx)("svg", {
-    width: "18",
-    height: "18",
+    width: "17",
+    height: "17",
     viewBox: "0 0 24 24",
     fill: "none",
     children: /*#__PURE__*/(0,jsx_runtime.jsx)("path", {
@@ -854,7 +854,7 @@ var PlanIcon = function PlanIcon(_ref) {
     },
     title: "BTC Network Fee",
     closable: true,
-    modalWidth: 440,
+    modalWidth: 420,
     children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
       className: "octopusFeeModal",
       children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
@@ -867,18 +867,18 @@ var PlanIcon = function PlanIcon(_ref) {
           })
         }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
           className: "subNote",
-          children: "Applies to BTC transactions in both directions \xB7 MVC defaults to 1 sat/B"
+          children: "Applies to both directions \xB7 MVC fixed at 1 sat/B"
         })]
       }), /*#__PURE__*/(0,jsx_runtime.jsx)(divider, {
         style: {
           borderColor: "rgba(255,255,255,0.08)",
-          margin: "16px 0"
+          margin: "12px 0"
         }
       }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
         className: "sectionLabel",
-        children: "Choose BTC Gas Plan"
+        children: "Select Speed"
       }), /*#__PURE__*/(0,jsx_runtime.jsxs)(row/* default */.A, {
-        gutter: [12, 12],
+        gutter: [10, 10],
         children: [feeRates.map(function (item) {
           var active = feeRateType === item.label;
           return /*#__PURE__*/(0,jsx_runtime.jsx)(col/* default */.A, {
@@ -889,27 +889,31 @@ var PlanIcon = function PlanIcon(_ref) {
             children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
               className: "planCard ".concat(active ? "active" : ""),
               children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                className: "planLeft",
-                children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                  className: "planTitle",
+                className: "planMain",
+                children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  className: "planIcon",
+                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(PlanIcon, {
+                    plan: item.label
+                  })
+                }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                  className: "planMeta",
                   children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                    className: "planIcon",
-                    children: /*#__PURE__*/(0,jsx_runtime.jsx)(PlanIcon, {
-                      plan: item.label
-                    })
-                  }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                    className: "planName",
                     children: item.label
                   }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
                     className: "planEta",
                     children: item.time
                   })]
-                }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                })]
+              }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                className: "planRight",
+                children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
                   className: "planRate",
                   children: [item.value, " sat/vB"]
+                }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  className: "planCheck",
+                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(CheckOutlined/* default */.A, {})
                 })]
-              }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-                className: "planCheck",
-                children: /*#__PURE__*/(0,jsx_runtime.jsx)(CheckOutlined/* default */.A, {})
               })]
             })
           }, item.label);
@@ -921,48 +925,50 @@ var PlanIcon = function PlanIcon(_ref) {
           children: /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
             className: "planCard ".concat(feeRateType === "Custom" ? "active" : ""),
             children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-              className: "planLeft",
-              children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                className: "planTitle",
+              className: "planMain",
+              children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                className: "planIcon",
+                children: /*#__PURE__*/(0,jsx_runtime.jsx)(PlanIcon, {
+                  plan: "Custom"
+                })
+              }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+                className: "planMeta",
                 children: [/*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                  className: "planIcon",
-                  children: /*#__PURE__*/(0,jsx_runtime.jsx)(PlanIcon, {
-                    plan: "Custom"
-                  })
-                }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                  className: "planName",
                   children: "Custom"
                 }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
                   className: "planEta",
                   children: ["Min ", minFeeRate, " sat/vB"]
                 })]
-              }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
-                className: "planRate customRow",
-                onClick: function onClick(e) {
-                  return e.stopPropagation();
-                },
-                children: [/*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.A, {
-                  value: customFeeRate,
-                  onFocus: function onFocus() {
-                    return selectFeeRatePlan("Custom");
-                  },
-                  onChange: function onChange(val) {
-                    selectFeeRatePlan("Custom");
-                    updateCustomFeeRate(val);
-                  },
-                  onBlur: commitCustomFeeRate,
-                  min: minFeeRate,
-                  max: mempool/* MAX_CUSTOM_BTC_FEE_RATE */.F,
-                  precision: 0,
-                  controls: false,
-                  placeholder: String(minFeeRate),
-                  className: "customRateInput"
-                }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
-                  children: "sat/vB"
-                })]
               })]
-            }), /*#__PURE__*/(0,jsx_runtime.jsx)("div", {
-              className: "planCheck",
-              children: /*#__PURE__*/(0,jsx_runtime.jsx)(CheckOutlined/* default */.A, {})
+            }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
+              className: "planRight customRow",
+              onClick: function onClick(e) {
+                return e.stopPropagation();
+              },
+              children: [/*#__PURE__*/(0,jsx_runtime.jsx)(input_number/* default */.A, {
+                value: customFeeRate,
+                onFocus: function onFocus() {
+                  return selectFeeRatePlan("Custom");
+                },
+                onChange: function onChange(val) {
+                  selectFeeRatePlan("Custom");
+                  updateCustomFeeRate(val);
+                },
+                onBlur: commitCustomFeeRate,
+                min: minFeeRate,
+                max: mempool/* MAX_CUSTOM_BTC_FEE_RATE */.F,
+                precision: 0,
+                controls: false,
+                placeholder: String(minFeeRate),
+                className: "customRateInput"
+              }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                className: "unitText",
+                children: "sat/vB"
+              }), /*#__PURE__*/(0,jsx_runtime.jsx)("span", {
+                className: "planCheck",
+                children: /*#__PURE__*/(0,jsx_runtime.jsx)(CheckOutlined/* default */.A, {})
+              })]
             })]
           })
         })]
@@ -1148,9 +1154,6 @@ const SvgExit = (props) => /* @__PURE__ */ exit_React.createElement("svg", exit_
         })]
       }), /*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
         className: "navWrap",
-        style: {
-          gap: 12
-        },
         children: [/*#__PURE__*/(0,jsx_runtime.jsxs)("div", {
           className: "headerGasPill",
           onClick: function onClick() {
@@ -1163,8 +1166,11 @@ const SvgExit = (props) => /* @__PURE__ */ exit_React.createElement("svg", exit_
             className: "gasLabel",
             children: "BTC Gas"
           }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
+            className: "gasTier",
+            children: [feeRateType, " \xB7"]
+          }), /*#__PURE__*/(0,jsx_runtime.jsxs)("span", {
             className: "gasVal",
-            children: [feeRateType, " \xB7 ", feeRate, " sat/vB"]
+            children: [feeRate, " sat/vB"]
           })]
         }), connected ? /*#__PURE__*/(0,jsx_runtime.jsx)(dropdown/* default */.A, {
           dropdownRender: function dropdownRender() {
