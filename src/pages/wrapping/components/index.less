@@ -157,8 +157,71 @@
       }
     }
   }
+  .feeLabelWithHelp {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .feeHelpIcon {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.48);
+    cursor: help;
+    transition: color 0.18s ease;
+    &:hover {
+      color: #8c85ff;
+    }
+  }
   .submitWrap {
     width: 100%;
+  }
+}
+.minerFeeTooltipContent {
+  font-size: 12px;
+  line-height: 18px;
+  color: #ffffff;
+  min-width: 280px;
+  .tooltipHeader {
+    font-weight: 600;
+    color: #ffffff;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .tooltipRows {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .tooltipRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    .tooltipRowLabel {
+      color: rgba(255, 255, 255, 0.72);
+    }
+    .tooltipRowVal {
+      white-space: nowrap;
+      font-weight: 500;
+      color: #ffffff;
+      text-align: right;
+    }
+    .tooltipRowSub {
+      color: rgba(255, 255, 255, 0.52);
+      font-weight: 400;
+      font-size: 11px;
+    }
+  }
+  .tooltipFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    font-weight: 600;
+    color: #8cff95;
   }
 }
 .historyWrap {

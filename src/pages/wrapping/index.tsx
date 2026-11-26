@@ -5,12 +5,17 @@ import {
   Segmented,
   Space,
   Spin,
+  Tooltip,
   message,
   theme,
   Grid,
   Alert,
 } from "antd";
-import { DownOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DownOutlined,
+  EditOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "./index.less";
 import { useModel } from "umi";
@@ -22,7 +27,7 @@ import {
   calcMintInfo,
   calcRedeemInfo,
   calculateQuantityLimitRange,
-  computeRedeemBtcServiceFeeSats,
+  computeScenarioFeeBreakdown,
   determineAddressInfo,
   formatSat,
 } from "@/utils/utils";
@@ -39,7 +44,10 @@ import {
 } from "@/servies/wrapping";
 import { getUserMrc20Balances } from "@/servies/api";
 import SelectAsset from "@/components/SelectAsset";
-import Summary, { ConfirmProps } from "./components/Summary";
+import Summary, {
+  ConfirmProps,
+  MinerFeeBreakdownOverlay,
+} from "./components/Summary";
 import SuccessModel from "@/components/SuccessModel";
 import SwitchChain from "./components/SwitchChain";
 import InputToken from "./components/InputToken";
@@ -264,35 +272,15 @@ export default () => {
     return [slow, avg, fast].filter(Boolean) as typeof feeRates;
   }, [feeRates]);
 
-  const liveServiceFeeSummary = useMemo(() => {
-    if (!asset) return "";
-    if (bridgeType === "mint") {
-      const btcFee = Number(
-        feeQuote?.btcFeeSats ?? (protocolType === "btc" ? 800 : 1000)
-      );
-      return `${formatSat(btcFee, 8)} BTC (${btcFee} sats)`;
-    }
-    const btcFee = computeRedeemBtcServiceFeeSats(
-      protocolType === "btc" ? "BTC" : "MRC20",
-      feeRate,
-      feeQuote
-    );
-    const mvcFee = Number(feeQuote?.mvcFeeSats ?? 50000);
-    return `${formatSat(mvcFee, 8)} SPACE + ${formatSat(btcFee, 8)} BTC`;
-  }, [asset, bridgeType, protocolType, feeQuote, feeRate]);
-
-  const liveEstMinerFeeSummary = useMemo(() => {
-    const btcRate = Math.max(1, Math.ceil(Number(feeRate || 2)));
-    if (bridgeType === "mint") {
-      const estSats =
-        protocolType === "btc"
-          ? Math.ceil(160 * btcRate)
-          : 546 + Math.ceil(300 * btcRate);
-      return `~${formatSat(estSats, 8)} BTC`;
-    }
-    const estBtcSats = Math.ceil(150 * btcRate);
-    return `~${formatSat(4500, 8)} SPACE + ~${formatSat(estBtcSats, 8)} BTC`;
-  }, [bridgeType, protocolType, feeRate]);
+  const liveFeeBreakdown = useMemo(() => {
+    return computeScenarioFeeBreakdown({
+      protocolType,
+      bridgeType,
+      userBtcFeeRate: feeRate,
+      quote: feeQuote,
+      defaultBtcRate: AssetsInfo?.feeBtc,
+    });
+  }, [protocolType, bridgeType, feeRate, feeQuote, AssetsInfo]);
 
   /**
    * Dual-chain native gas & bridge fee pre-flight check:
@@ -311,25 +299,31 @@ export default () => {
 
     const btcSats = Number(userBal.btcSats ?? 0);
     const spaceSats = Number(userBal.spaceSats ?? 0);
-    const btcRate = Math.max(
-      1,
-      Math.ceil(Number(feeRate || feeQuote?.btcFeeRate || AssetsInfo?.feeBtc || 2))
-    );
+    const {
+      btcRate,
+      btcServiceFeeSats,
+      mvcServiceFeeSats,
+      estMinerBtcSats,
+      estMinerMvcSats,
+      totalOutlayBtcSats,
+      totalOutlayMvcSats,
+    } = liveFeeBreakdown;
 
     if (bridgeType === "mint") {
       if (protocolType === "btc") {
         const principalSats = Number(amountRaw(decAmount.toFixed(), 8));
-        const bridgeFeeSats = Number(feeQuote?.btcFeeSats ?? 800);
-        const estMinerSats = Math.ceil(180 * btcRate);
-        const requiredBtcSats = principalSats + bridgeFeeSats + estMinerSats;
+        const requiredBtcSats = principalSats + totalOutlayBtcSats;
         if (btcSats < requiredBtcSats) {
           return `Insufficient BTC balance: need ~${formatSat(
             requiredBtcSats,
             8
           )} BTC (amount + ${formatSat(
-            bridgeFeeSats,
+            btcServiceFeeSats,
             8
-          )} BTC bridge fee + miner fee @ ${btcRate} sat/vB), available ${
+          )} BTC service fee + ~${formatSat(
+            estMinerBtcSats,
+            8
+          )} BTC miner fee @ ${btcRate} sat/vB), available ${
             userBal.btc || "0"
           } BTC.`;
         }
@@ -340,14 +334,12 @@ export default () => {
         if (decAmount.gt(new Decimal(String(sendBal || "0")))) {
           return `Insufficient ${asset.originSymbol} balance.`;
         }
-        const bridgeFeeSats = Number(feeQuote?.btcFeeSats ?? 1000);
-        const estCommitRevealSats = 546 + Math.ceil(320 * btcRate);
-        const requiredBtcSats = bridgeFeeSats + estCommitRevealSats;
+        const requiredBtcSats = totalOutlayBtcSats;
         if (btcSats < requiredBtcSats) {
-          return `Insufficient BTC for bridge & network fee: need at least ~${formatSat(
+          return `Insufficient BTC for service & network miner fee: need at least ~${formatSat(
             requiredBtcSats,
             8
-          )} BTC (${bridgeFeeSats} sats bridge fee + commit/reveal gas @ ${btcRate} sat/vB), available ${
+          )} BTC (${btcServiceFeeSats} sats service fee + ~${estMinerBtcSats} sats miner fee & postage @ ${btcRate} sat/vB), available ${
             userBal.btc || "0"
           } BTC.`;
         }
@@ -359,36 +351,34 @@ export default () => {
       if (decAmount.gt(new Decimal(String(sendBal || "0")))) {
         return `Insufficient ${asset.targetSymbol} balance.`;
       }
-      const mvcFeeSats = Number(feeQuote?.mvcFeeSats ?? 50000);
-      const estMvcMinerSats = 6000;
-      const requiredSpaceSats = mvcFeeSats + estMvcMinerSats;
+      const requiredSpaceSats = totalOutlayMvcSats;
       if (spaceSats < requiredSpaceSats) {
-        return `Insufficient MVC SPACE for Redeem fee: need at least ${formatSat(
+        return `Insufficient MVC SPACE for Redeem: need at least ~${formatSat(
           requiredSpaceSats,
           8
         )} SPACE (${formatSat(
-          mvcFeeSats,
+          mvcServiceFeeSats,
           8
-        )} SPACE bridge fee + MVC network gas), available ${
+        )} SPACE service fee + ~${formatSat(
+          estMinerMvcSats,
+          8
+        )} SPACE network miner fee), available ${
           userBal.space || "0"
         } SPACE.`;
       }
 
-      const btcFeeSats = computeRedeemBtcServiceFeeSats(
-        protocolType === "btc" ? "BTC" : "MRC20",
-        btcRate,
-        feeQuote
-      );
-      const estBtcMinerSats = Math.ceil(150 * btcRate);
-      const requiredBtcSats = btcFeeSats + estBtcMinerSats;
+      const requiredBtcSats = totalOutlayBtcSats;
       if (btcSats < requiredBtcSats) {
-        return `Insufficient BTC for Redeem payout fee: need at least ${formatSat(
+        return `Insufficient BTC for Redeem: need at least ~${formatSat(
           requiredBtcSats,
           8
         )} BTC (${formatSat(
-          btcFeeSats,
+          btcServiceFeeSats,
           8
-        )} BTC bridge fee + BTC miner fee @ ${btcRate} sat/vB), available ${
+        )} BTC service fee + ~${formatSat(
+          estMinerBtcSats,
+          8
+        )} BTC network miner fee & postage @ ${btcRate} sat/vB), available ${
           userBal.btc || "0"
         } BTC.`;
       }
@@ -400,9 +390,7 @@ export default () => {
     asset,
     amount,
     userBal,
-    feeRate,
-    feeQuote,
-    AssetsInfo,
+    liveFeeBreakdown,
     bridgeType,
     protocolType,
     sendBal,
@@ -416,12 +404,9 @@ export default () => {
       return;
     }
     if (bridgeType === "mint" && protocolType === "btc" && ratio === 1) {
-      const btcRate = Math.max(
-        1,
-        Math.ceil(Number(feeRate || feeQuote?.btcFeeRate || AssetsInfo?.feeBtc || 2))
-      );
       const reserveBtc = new Decimal(
-        Number(feeQuote?.btcFeeSats ?? 800) + Math.ceil(180 * btcRate)
+        liveFeeBreakdown.btcServiceFeeSats +
+          Math.ceil(180 * liveFeeBreakdown.btcRate)
       ).div(1e8);
       const maxSend = Decimal.max(0, total.minus(reserveBtc));
       onInputChange(
@@ -595,9 +580,13 @@ export default () => {
       show: true,
       amount,
       reciveAmount: String(reciveAmount),
-      minerFee: String(feeInfo.minerFee),
-      bridgeFee: String(feeInfo.bridgeFee),
-      totalFee: String(feeInfo.totalFee),
+      minerFee: String(feeInfo.minerFee || liveFeeBreakdown.minerFeeText),
+      bridgeFee: String(feeInfo.bridgeFee || liveFeeBreakdown.serviceFeeText),
+      totalFee: String(feeInfo.totalFee || liveFeeBreakdown.totalFeeText),
+      serviceFeeTooltip:
+        feeInfo.serviceFeeTooltip || liveFeeBreakdown.serviceFeeTooltip,
+      minerFeeBreakdown:
+        feeInfo.minerFeeBreakdown || liveFeeBreakdown.minerFeeBreakdown,
       handleSubmit,
       onClose: () => {
         setConfirmProps(defaultConfirmProps);
@@ -902,14 +891,43 @@ export default () => {
               </div>
 
               <div className="item">
-                <span className="label">Bridge Service Fee</span>
-                <span className="value">{liveServiceFeeSummary}</span>
+                <span className="label feeLabelWithHelp">
+                  Bridge Service Fee
+                  <Tooltip
+                    title={liveFeeBreakdown.serviceFeeTooltip}
+                    overlayInnerStyle={{
+                      maxWidth: 340,
+                      background: "#14124a",
+                      border: "1px solid rgba(110, 102, 250, 0.45)",
+                      fontSize: 12,
+                    }}
+                  >
+                    <QuestionCircleOutlined className="feeHelpIcon" />
+                  </Tooltip>
+                </span>
+                <span className="value">{liveFeeBreakdown.serviceFeeText}</span>
               </div>
               <div className="item">
-                <span className="label">
-                  Est. Network Miner Fee ({feeRate} sat/vB)
+                <span className="label feeLabelWithHelp">
+                  Est. Network Miner Fee ({liveFeeBreakdown.btcRate} sat/vB)
+                  <Tooltip
+                    title={
+                      <MinerFeeBreakdownOverlay
+                        items={liveFeeBreakdown.minerFeeBreakdown}
+                        total={liveFeeBreakdown.minerFeeText}
+                      />
+                    }
+                    overlayInnerStyle={{
+                      maxWidth: 400,
+                      background: "#14124a",
+                      border: "1px solid rgba(110, 102, 250, 0.45)",
+                      padding: "10px 12px",
+                    }}
+                  >
+                    <QuestionCircleOutlined className="feeHelpIcon" />
+                  </Tooltip>
                 </span>
-                <span className="value">{liveEstMinerFeeSummary}</span>
+                <span className="value">{liveFeeBreakdown.minerFeeText}</span>
               </div>
             </div>
           )}

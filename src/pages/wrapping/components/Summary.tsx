@@ -1,10 +1,12 @@
 import Popup from "@/components/ResponPopup";
-import { Spin } from "antd";
+import { Spin, Tooltip } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 import TokenIcon from "@/components/TokenIcon";
 import { useModel } from "umi";
 import "./index.less";
 import arrow from "@/assets/arrowRight.svg";
 import FormButton from "@/components/FormButton";
+import { FeeBreakdownItem } from "@/utils/utils";
 
 export type ConfirmProps = {
   show: boolean;
@@ -14,9 +16,38 @@ export type ConfirmProps = {
   bridgeFee: string;
   totalFee: string;
   minerFee: string;
+  serviceFeeTooltip?: string;
+  minerFeeBreakdown?: FeeBreakdownItem[];
   handleSubmit: () => void;
   submitting?: boolean;
 };
+
+export const MinerFeeBreakdownOverlay = ({
+  items,
+  total,
+}: {
+  items: FeeBreakdownItem[];
+  total: string;
+}) => (
+  <div className="minerFeeTooltipContent">
+    <div className="tooltipHeader">Network Miner Fee &amp; Postage Breakdown</div>
+    <div className="tooltipRows">
+      {items.map((row) => (
+        <div className="tooltipRow" key={row.label}>
+          <span className="tooltipRowLabel">{row.label}</span>
+          <span className="tooltipRowVal">
+            {row.value}
+            {row.sub ? <span className="tooltipRowSub"> ({row.sub})</span> : null}
+          </span>
+        </div>
+      ))}
+    </div>
+    <div className="tooltipFooter">
+      <span>Est. Miner &amp; Postage Total</span>
+      <span>{total}</span>
+    </div>
+  </div>
+);
 
 export default ({
   show,
@@ -26,6 +57,8 @@ export default ({
   bridgeFee = "0",
   totalFee = "0",
   minerFee = "0",
+  serviceFeeTooltip,
+  minerFeeBreakdown,
   handleSubmit,
   submitting = false,
 }: ConfirmProps) => {
@@ -88,11 +121,46 @@ export default ({
               </span>
             </div>
             <div className="item">
-              <span className="label">Service Fee</span>
+              <span className="label feeLabelWithHelp">
+                Bridge Service Fee
+                {serviceFeeTooltip ? (
+                  <Tooltip
+                    title={serviceFeeTooltip}
+                    overlayInnerStyle={{
+                      maxWidth: 340,
+                      background: "#14124a",
+                      border: "1px solid rgba(110, 102, 250, 0.45)",
+                      fontSize: 12,
+                    }}
+                  >
+                    <QuestionCircleOutlined className="feeHelpIcon" />
+                  </Tooltip>
+                ) : null}
+              </span>
               <span className="value">{bridgeFee}</span>
             </div>
             <div className="item">
-              <span className="label">Est. Network Fee</span>
+              <span className="label feeLabelWithHelp">
+                Est. Network Miner Fee
+                {minerFeeBreakdown && minerFeeBreakdown.length > 0 ? (
+                  <Tooltip
+                    title={
+                      <MinerFeeBreakdownOverlay
+                        items={minerFeeBreakdown}
+                        total={minerFee}
+                      />
+                    }
+                    overlayInnerStyle={{
+                      maxWidth: 400,
+                      background: "#14124a",
+                      border: "1px solid rgba(110, 102, 250, 0.45)",
+                      padding: "10px 12px",
+                    }}
+                  >
+                    <QuestionCircleOutlined className="feeHelpIcon" />
+                  </Tooltip>
+                ) : null}
+              </span>
               <span className="value">{minerFee}</span>
             </div>
             <div className="item">

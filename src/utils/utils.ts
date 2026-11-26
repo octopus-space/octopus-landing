@@ -53,6 +53,29 @@ export const confirmNumberBySeqAndAmount = function (
   return 2;
 };
 
+export type FeeBreakdownItem = {
+  label: string;
+  value: string;
+  sub?: string;
+};
+
+export type ScenarioFeeBreakdown = {
+  btcRate: number;
+  btcServiceFeeSats: number;
+  mvcServiceFeeSats: number;
+  serviceFeeText: string;
+  serviceFeeTooltip: string;
+  estMinerBtcSats: number;
+  estMinerMvcSats: number;
+  minerFeeText: string;
+  minerFeeBreakdown: FeeBreakdownItem[];
+  btcOrderFeeOutputSats: number;
+  mvcOrderFeeOutputSats: number;
+  totalOutlayBtcSats: number;
+  totalOutlayMvcSats: number;
+  totalFeeText: string;
+};
+
 export type FeeInfo = {
   receiveAmount: string;
   minerFee: string;
@@ -61,6 +84,8 @@ export type FeeInfo = {
   confirmNumber?: number | string;
   btcBridgeFeeSats?: number;
   mvcBridgeFeeSats?: number;
+  serviceFeeTooltip?: string;
+  minerFeeBreakdown?: FeeBreakdownItem[];
 };
 
 export function determineAddressInfo(address: string): string {
@@ -154,31 +179,242 @@ function validateAmountAndPrecision(
 }
 
 /**
- * Computes the Redeem BTC payout fee (sats) synchronously for a chosen BTC fee rate,
- * matching backend calculateBridgeFeeQuote 1:1 so UI updates with zero latency.
+ * Single source of truth for the two-layer fee breakdown across all 4 bridge scenarios:
+ * 1. Bridge Service Fee: Fixed protocol revenue (~2x standard miner fee on each chain), NEVER inflated by userBtcFeeRate or 546 postage.
+ * 2. Est. Network Miner Fee: 1.0x actual chain miner fees (user wallet tx + target-chain vault unlock/burn) + MRC20 546 sats carrier postage.
  */
-export const computeRedeemBtcServiceFeeSats = (
-  assetNetwork: "BTC" | "MRC20" | string,
-  userBtcFeeRate?: number,
-  quote?: API.FeeQuoteData
-): number => {
-  const rate = Math.min(
+export const computeScenarioFeeBreakdown = (params: {
+  protocolType: "btc" | "mrc20";
+  bridgeType: "mint" | "redeem";
+  userBtcFeeRate?: number;
+  quote?: API.FeeQuoteData;
+  defaultBtcRate?: number;
+}): ScenarioFeeBreakdown => {
+  const { protocolType, bridgeType, userBtcFeeRate, quote, defaultBtcRate } =
+    params;
+  const btcRate = Math.min(
     100,
-    Math.max(1, Math.ceil(Number(userBtcFeeRate || quote?.btcFeeRate || 2)))
+    Math.max(
+      1,
+      Math.ceil(Number(userBtcFeeRate || quote?.btcFeeRate || defaultBtcRate || 2))
+    )
   );
-  if (quote && Number(quote.btcFeeRate) === rate && Number(quote.btcFeeSats) > 0) {
-    return Number(quote.btcFeeSats);
+  const btcServiceFeeSats = Number(quote?.btcServiceFeeSats ?? 800);
+
+  if (bridgeType === "mint") {
+    const serviceFeeText = `${formatSat(btcServiceFeeSats, 8)} BTC (${btcServiceFeeSats} sats)`;
+    const serviceFeeTooltip = `Fixed protocol service fee (~2x standard BTC miner fee): ${btcServiceFeeSats} sats (${formatSat(
+      btcServiceFeeSats,
+      8
+    )} BTC). Bridged token arrives 1:1 with zero deduction.`;
+
+    if (protocolType === "btc") {
+      const walletBtcMinerSats = Math.ceil(160 * btcRate);
+      const totalOutlayBtcSats = btcServiceFeeSats + walletBtcMinerSats;
+      return {
+        btcRate,
+        btcServiceFeeSats,
+        mvcServiceFeeSats: 0,
+        serviceFeeText,
+        serviceFeeTooltip,
+        estMinerBtcSats: walletBtcMinerSats,
+        estMinerMvcSats: 0,
+        minerFeeText: `~${formatSat(walletBtcMinerSats, 8)} BTC`,
+        minerFeeBreakdown: [
+          {
+            label: `BTC deposit tx miner fee (~160 vB × ${btcRate} sat/vB)`,
+            value: `~${formatSat(walletBtcMinerSats, 8)} BTC`,
+            sub: `~${walletBtcMinerSats} sats`,
+          },
+          {
+            label: "MVC minting gas",
+            value: "0 SPACE",
+            sub: "Sponsored by bridge",
+          },
+        ],
+        btcOrderFeeOutputSats: btcServiceFeeSats,
+        mvcOrderFeeOutputSats: 0,
+        totalOutlayBtcSats,
+        totalOutlayMvcSats: 0,
+        totalFeeText: `~${formatSat(totalOutlayBtcSats, 8)} BTC`,
+      };
+    }
+
+    const walletCommitRevealSats = Math.ceil(300 * btcRate);
+    const postageSats = 546;
+    const estMinerBtcSats = walletCommitRevealSats + postageSats;
+    const totalOutlayBtcSats = btcServiceFeeSats + estMinerBtcSats;
+    return {
+      btcRate,
+      btcServiceFeeSats,
+      mvcServiceFeeSats: 0,
+      serviceFeeText,
+      serviceFeeTooltip,
+      estMinerBtcSats,
+      estMinerMvcSats: 0,
+      minerFeeText: `~${formatSat(estMinerBtcSats, 8)} BTC`,
+      minerFeeBreakdown: [
+        {
+          label: `BTC commit + reveal miner fee (~300 vB × ${btcRate} sat/vB)`,
+          value: `~${formatSat(walletCommitRevealSats, 8)} BTC`,
+          sub: `~${walletCommitRevealSats} sats`,
+        },
+        {
+          label: "MRC20 token UTXO postage",
+          value: `${formatSat(postageSats, 8)} BTC`,
+          sub: `${postageSats} sats`,
+        },
+        {
+          label: "MVC minting gas",
+          value: "0 SPACE",
+          sub: "Sponsored by bridge",
+        },
+      ],
+      btcOrderFeeOutputSats: btcServiceFeeSats,
+      mvcOrderFeeOutputSats: 0,
+      totalOutlayBtcSats,
+      totalOutlayMvcSats: 0,
+      totalFeeText: `~${formatSat(totalOutlayBtcSats, 8)} BTC`,
+    };
   }
-  const mult = Number(quote?.safetyMultiplier || 2.0);
-  if (assetNetwork === "BTC") {
-    return Math.max(800, Math.ceil(rate * 220 * mult));
+
+  // Redeem (MVC -> BTC / MVC -> MRC20)
+  const mvcServiceFeeSats = Number(quote?.mvcServiceFeeSats ?? 40000);
+  const mult = Number(quote?.safetyMultiplier || 1.0);
+  const bridgeBurnMvcMinerSats = Number(quote?.mvcBridgeMinerFeeSats ?? 20000);
+  const walletMvcMinerSats = 25000; // MVC 1 sat/B MCP02 FT transfer + SPACE fee tx
+  const estMinerMvcSats = walletMvcMinerSats + bridgeBurnMvcMinerSats;
+  const mvcOrderFeeOutputSats = mvcServiceFeeSats + bridgeBurnMvcMinerSats;
+
+  const serviceFeeText = `${formatSat(mvcServiceFeeSats, 8)} SPACE + ${formatSat(
+    btcServiceFeeSats,
+    8
+  )} BTC`;
+  const serviceFeeTooltip = `Fixed protocol service fee (~2x standard miner fee on each chain): ${formatSat(
+    mvcServiceFeeSats,
+    8
+  )} SPACE + ${formatSat(
+    btcServiceFeeSats,
+    8
+  )} BTC (${btcServiceFeeSats} sats). Remains constant regardless of your selected BTC fee rate.`;
+
+  const walletBtcMinerSats = Math.ceil(150 * btcRate);
+
+  if (protocolType === "btc") {
+    const payoutVSize = Number(quote?.btcPayoutVSize || 170);
+    const bridgePayoutBtcMinerSats = Math.ceil(payoutVSize * btcRate * mult);
+    const estMinerBtcSats = walletBtcMinerSats + bridgePayoutBtcMinerSats;
+    const btcOrderFeeOutputSats = btcServiceFeeSats + bridgePayoutBtcMinerSats;
+    const totalOutlayMvcSats = mvcServiceFeeSats + estMinerMvcSats;
+    const totalOutlayBtcSats = btcServiceFeeSats + estMinerBtcSats;
+
+    return {
+      btcRate,
+      btcServiceFeeSats,
+      mvcServiceFeeSats,
+      serviceFeeText,
+      serviceFeeTooltip,
+      estMinerBtcSats,
+      estMinerMvcSats,
+      minerFeeText: `~${formatSat(estMinerMvcSats, 8)} SPACE + ~${formatSat(
+        estMinerBtcSats,
+        8
+      )} BTC`,
+      minerFeeBreakdown: [
+        {
+          label: `BTC prepay tx miner fee (~150 vB × ${btcRate} sat/vB)`,
+          value: `~${formatSat(walletBtcMinerSats, 8)} BTC`,
+          sub: `~${walletBtcMinerSats} sats`,
+        },
+        {
+          label: `BTC vault payout miner fee (${payoutVSize} vB × ${btcRate} sat/vB)`,
+          value: `${formatSat(bridgePayoutBtcMinerSats, 8)} BTC`,
+          sub: `${bridgePayoutBtcMinerSats} sats`,
+        },
+        {
+          label: "MVC wallet FT transfer fee (1 sat/B)",
+          value: `~${formatSat(walletMvcMinerSats, 8)} SPACE`,
+          sub: `~${walletMvcMinerSats} sats`,
+        },
+        {
+          label: "MVC contract burn miner fee (1 sat/B)",
+          value: `${formatSat(bridgeBurnMvcMinerSats, 8)} SPACE`,
+          sub: `${bridgeBurnMvcMinerSats} sats`,
+        },
+      ],
+      btcOrderFeeOutputSats,
+      mvcOrderFeeOutputSats,
+      totalOutlayBtcSats,
+      totalOutlayMvcSats,
+      totalFeeText: `~${formatSat(totalOutlayMvcSats, 8)} SPACE + ~${formatSat(
+        totalOutlayBtcSats,
+        8
+      )} BTC`,
+    };
   }
-  return Math.max(1800, Math.ceil(rate * 380 * mult) + 546);
+
+  const payoutVSize = Number(quote?.btcPayoutVSize || 430);
+  const bridgePayoutBtcMinerSats = Math.ceil(payoutVSize * btcRate * mult);
+  const postageSats = Number(quote?.btcPostageSats ?? 546);
+  const estMinerBtcSats =
+    walletBtcMinerSats + bridgePayoutBtcMinerSats + postageSats;
+  const btcOrderFeeOutputSats =
+    btcServiceFeeSats + bridgePayoutBtcMinerSats + postageSats;
+  const totalOutlayMvcSats = mvcServiceFeeSats + estMinerMvcSats;
+  const totalOutlayBtcSats = btcServiceFeeSats + estMinerBtcSats;
+
+  return {
+    btcRate,
+    btcServiceFeeSats,
+    mvcServiceFeeSats,
+    serviceFeeText,
+    serviceFeeTooltip,
+    estMinerBtcSats,
+    estMinerMvcSats,
+    minerFeeText: `~${formatSat(estMinerMvcSats, 8)} SPACE + ~${formatSat(
+      estMinerBtcSats,
+      8
+    )} BTC`,
+    minerFeeBreakdown: [
+      {
+        label: `BTC prepay tx miner fee (~150 vB × ${btcRate} sat/vB)`,
+        value: `~${formatSat(walletBtcMinerSats, 8)} BTC`,
+        sub: `~${walletBtcMinerSats} sats`,
+      },
+      {
+        label: `BTC commit + reveal payout miner fee (${payoutVSize} vB × ${btcRate} sat/vB)`,
+        value: `${formatSat(bridgePayoutBtcMinerSats, 8)} BTC`,
+        sub: `${bridgePayoutBtcMinerSats} sats`,
+      },
+      {
+        label: "MRC20 token UTXO postage (returned to you)",
+        value: `${formatSat(postageSats, 8)} BTC`,
+        sub: `${postageSats} sats`,
+      },
+      {
+        label: "MVC wallet FT transfer fee (1 sat/B)",
+        value: `~${formatSat(walletMvcMinerSats, 8)} SPACE`,
+        sub: `~${walletMvcMinerSats} sats`,
+      },
+      {
+        label: "MVC contract burn miner fee (1 sat/B)",
+        value: `${formatSat(bridgeBurnMvcMinerSats, 8)} SPACE`,
+        sub: `${bridgeBurnMvcMinerSats} sats`,
+      },
+    ],
+    btcOrderFeeOutputSats,
+    mvcOrderFeeOutputSats,
+    totalOutlayBtcSats,
+    totalOutlayMvcSats,
+    totalFeeText: `~${formatSat(totalOutlayMvcSats, 8)} SPACE + ~${formatSat(
+      totalOutlayBtcSats,
+      8
+    )} BTC`,
+  };
 };
 
 /**
  * 1:1 full arrival calculation for Mint (BTC -> WBTC, MRC20 -> MetaContract).
- * Bridge service fee is paid externally in native BTC; user's BTC deposit miner fee uses userBtcFeeRate.
  */
 export const calcMintInfo = (
   amount: number | string,
@@ -199,16 +435,13 @@ export const calcMintInfo = (
     maxAmount
   );
 
-  const defaultFeeSats = asset.network === "BTC" ? 800 : 1000;
-  const btcFeeSats = Number(quote?.btcFeeSats ?? defaultFeeSats);
-  const btcRate = Math.max(
-    1,
-    Math.ceil(Number(userBtcFeeRate || quote?.btcFeeRate || assetInfo.feeBtc || 2))
-  );
-  const estMinerSats =
-    asset.network === "BTC"
-      ? Math.ceil(160 * btcRate)
-      : 546 + Math.ceil(300 * btcRate);
+  const breakdown = computeScenarioFeeBreakdown({
+    protocolType: asset.network === "BTC" ? "btc" : "mrc20",
+    bridgeType: "mint",
+    userBtcFeeRate,
+    quote,
+    defaultBtcRate: assetInfo.feeBtc,
+  });
 
   const confirmAmountSats =
     asset.network === "BTC" ? dec.mul(1e8).toNumber() : 0;
@@ -220,18 +453,19 @@ export const calcMintInfo = (
 
   return {
     receiveAmount: dec.toFixed(),
-    bridgeFee: `${formatSat(btcFeeSats, 8)} BTC`,
-    minerFee: `~${formatSat(estMinerSats, 8)} BTC`,
-    totalFee: `~${formatSat(btcFeeSats + estMinerSats, 8)} BTC`,
+    bridgeFee: breakdown.serviceFeeText,
+    minerFee: breakdown.minerFeeText,
+    totalFee: breakdown.totalFeeText,
     confirmNumber,
-    btcBridgeFeeSats: btcFeeSats,
+    btcBridgeFeeSats: breakdown.btcServiceFeeSats,
     mvcBridgeFeeSats: 0,
+    serviceFeeTooltip: breakdown.serviceFeeTooltip,
+    minerFeeBreakdown: breakdown.minerFeeBreakdown,
   };
 };
 
 /**
  * 1:1 full arrival calculation for Redeem (WBTC -> BTC, MetaContract -> MRC20).
- * MVC defaults to 1 sat/B; BTC payout fee & BTC prepay miner fee scale with userBtcFeeRate.
  */
 export const calcRedeemInfo = (
   amount: number | string,
@@ -252,18 +486,13 @@ export const calcRedeemInfo = (
     maxAmount
   );
 
-  const mvcFeeSats = Number(quote?.mvcFeeSats ?? 50000);
-  const btcRate = Math.max(
-    1,
-    Math.ceil(Number(userBtcFeeRate || quote?.btcFeeRate || assetInfo.feeBtc || 2))
-  );
-  const btcFeeSats = computeRedeemBtcServiceFeeSats(
-    asset.network,
-    btcRate,
-    quote
-  );
-  const estBtcMinerSats = Math.ceil(150 * btcRate);
-  const estMvcMinerSats = 4500; // MVC fixed at 1 sat/B
+  const breakdown = computeScenarioFeeBreakdown({
+    protocolType: asset.network === "BTC" ? "btc" : "mrc20",
+    bridgeType: "redeem",
+    userBtcFeeRate,
+    quote,
+    defaultBtcRate: assetInfo.feeBtc,
+  });
 
   const confirmAmountSats =
     asset.network === "BTC" ? dec.mul(1e8).toNumber() : 0;
@@ -275,12 +504,14 @@ export const calcRedeemInfo = (
 
   return {
     receiveAmount: dec.toFixed(),
-    bridgeFee: `${formatSat(mvcFeeSats, 8)} SPACE + ${formatSat(btcFeeSats, 8)} BTC`,
-    minerFee: `~${formatSat(estMvcMinerSats, 8)} SPACE + ~${formatSat(estBtcMinerSats, 8)} BTC`,
-    totalFee: `${formatSat(mvcFeeSats + estMvcMinerSats, 8)} SPACE + ${formatSat(btcFeeSats + estBtcMinerSats, 8)} BTC`,
+    bridgeFee: breakdown.serviceFeeText,
+    minerFee: breakdown.minerFeeText,
+    totalFee: breakdown.totalFeeText,
     confirmNumber,
-    btcBridgeFeeSats: btcFeeSats,
-    mvcBridgeFeeSats: mvcFeeSats,
+    btcBridgeFeeSats: breakdown.btcServiceFeeSats,
+    mvcBridgeFeeSats: breakdown.mvcServiceFeeSats,
+    serviceFeeTooltip: breakdown.serviceFeeTooltip,
+    minerFeeBreakdown: breakdown.minerFeeBreakdown,
   };
 };
 
