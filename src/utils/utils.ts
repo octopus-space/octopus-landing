@@ -179,9 +179,10 @@ function validateAmountAndPrecision(
 }
 
 /**
- * Single source of truth for the two-layer fee breakdown across all 4 bridge scenarios:
- * 1. Bridge Service Fee: Fixed protocol revenue (~2x standard miner fee on each chain), NEVER inflated by userBtcFeeRate or 546 postage.
- * 2. Est. Network Miner Fee: 1.0x actual chain miner fees (user wallet tx + target-chain vault unlock/burn) + MRC20 546 sats carrier postage.
+ * Single source of truth for the two-layer fee breakdown across all 4 bridge scenarios,
+ * matching backend calculateBridgeFeeQuote 1:1:
+ * 1. Est. Network Miner Fee: 1.0x actual chain miner fees (wallet tx + target-chain vault unlock/burn) + MRC20 546 sats carrier postage.
+ * 2. Bridge Service Fee: Pure protocol revenue synchronously set to 2.0x of Est. Network Miner Fee (with 650 sats anti-dust floor on BTC Mint).
  */
 export const computeScenarioFeeBreakdown = (params: {
   protocolType: "btc" | "mrc20";
@@ -199,18 +200,36 @@ export const computeScenarioFeeBreakdown = (params: {
       Math.ceil(Number(userBtcFeeRate || quote?.btcFeeRate || defaultBtcRate || 2))
     )
   );
-  const btcServiceFeeSats = Number(quote?.btcServiceFeeSats ?? 800);
+  const svcMult = Number(quote?.serviceFeeMultiplier || 2.0);
+  const mult = Number(quote?.safetyMultiplier || 1.0);
+  const minCleanBtcSats = 650;
+  const isRateMatchedQuote =
+    Boolean(quote) && Number(quote?.btcFeeRate) === btcRate;
 
   if (bridgeType === "mint") {
-    const serviceFeeText = `${formatSat(btcServiceFeeSats, 8)} BTC (${btcServiceFeeSats} sats)`;
-    const serviceFeeTooltip = `Fixed protocol service fee (~2x standard BTC miner fee): ${btcServiceFeeSats} sats (${formatSat(
-      btcServiceFeeSats,
-      8
-    )} BTC). Bridged token arrives 1:1 with zero deduction.`;
-
     if (protocolType === "btc") {
       const walletBtcMinerSats = Math.ceil(160 * btcRate);
+      const computedServiceSats = Math.max(
+        minCleanBtcSats,
+        Math.ceil(walletBtcMinerSats * svcMult)
+      );
+      const btcServiceFeeSats =
+        isRateMatchedQuote && Number(quote?.btcServiceFeeSats) > 0
+          ? Number(quote!.btcServiceFeeSats)
+          : computedServiceSats;
+      const serviceFeeText = `${formatSat(btcServiceFeeSats, 8)} BTC (${btcServiceFeeSats} sats)`;
+      const hitFloor = btcServiceFeeSats > Math.ceil(walletBtcMinerSats * svcMult);
+      const serviceFeeTooltip = hitFloor
+        ? `Protocol service fee (2× estimated network miner fee, min ${minCleanBtcSats} sats anti-dust floor): ${btcServiceFeeSats} sats (${formatSat(
+            btcServiceFeeSats,
+            8
+          )} BTC). Bridged token arrives 1:1 with zero deduction.`
+        : `Protocol service fee (2× estimated network miner fee): ${btcServiceFeeSats} sats (${formatSat(
+            btcServiceFeeSats,
+            8
+          )} BTC). Bridged token arrives 1:1 with zero deduction.`;
       const totalOutlayBtcSats = btcServiceFeeSats + walletBtcMinerSats;
+
       return {
         btcRate,
         btcServiceFeeSats,
@@ -243,7 +262,21 @@ export const computeScenarioFeeBreakdown = (params: {
     const walletCommitRevealSats = Math.ceil(300 * btcRate);
     const postageSats = 546;
     const estMinerBtcSats = walletCommitRevealSats + postageSats;
+    const computedServiceSats = Math.max(
+      minCleanBtcSats,
+      Math.ceil(estMinerBtcSats * svcMult)
+    );
+    const btcServiceFeeSats =
+      isRateMatchedQuote && Number(quote?.btcServiceFeeSats) > 0
+        ? Number(quote!.btcServiceFeeSats)
+        : computedServiceSats;
+    const serviceFeeText = `${formatSat(btcServiceFeeSats, 8)} BTC (${btcServiceFeeSats} sats)`;
+    const serviceFeeTooltip = `Protocol service fee (2× estimated network miner fee): ${btcServiceFeeSats} sats (${formatSat(
+      btcServiceFeeSats,
+      8
+    )} BTC). Bridged token arrives 1:1 with zero deduction.`;
     const totalOutlayBtcSats = btcServiceFeeSats + estMinerBtcSats;
+
     return {
       btcRate,
       btcServiceFeeSats,
@@ -279,34 +312,43 @@ export const computeScenarioFeeBreakdown = (params: {
   }
 
   // Redeem (MVC -> BTC / MVC -> MRC20)
-  const mvcServiceFeeSats = Number(quote?.mvcServiceFeeSats ?? 40000);
-  const mult = Number(quote?.safetyMultiplier || 1.0);
   const bridgeBurnMvcMinerSats = Number(quote?.mvcBridgeMinerFeeSats ?? 20000);
   const walletMvcMinerSats = 25000; // MVC 1 sat/B MCP02 FT transfer + SPACE fee tx
   const estMinerMvcSats = walletMvcMinerSats + bridgeBurnMvcMinerSats;
+  const mvcServiceFeeSats =
+    quote && Number(quote.mvcServiceFeeSats) > 0
+      ? Number(quote.mvcServiceFeeSats)
+      : Math.ceil(estMinerMvcSats * svcMult);
   const mvcOrderFeeOutputSats = mvcServiceFeeSats + bridgeBurnMvcMinerSats;
-
-  const serviceFeeText = `${formatSat(mvcServiceFeeSats, 8)} SPACE + ${formatSat(
-    btcServiceFeeSats,
-    8
-  )} BTC`;
-  const serviceFeeTooltip = `Fixed protocol service fee (~2x standard miner fee on each chain): ${formatSat(
-    mvcServiceFeeSats,
-    8
-  )} SPACE + ${formatSat(
-    btcServiceFeeSats,
-    8
-  )} BTC (${btcServiceFeeSats} sats). Remains constant regardless of your selected BTC fee rate.`;
-
   const walletBtcMinerSats = Math.ceil(150 * btcRate);
 
   if (protocolType === "btc") {
     const payoutVSize = Number(quote?.btcPayoutVSize || 170);
     const bridgePayoutBtcMinerSats = Math.ceil(payoutVSize * btcRate * mult);
     const estMinerBtcSats = walletBtcMinerSats + bridgePayoutBtcMinerSats;
+    const rawService = Math.ceil(estMinerBtcSats * svcMult);
+    const computedServiceSats =
+      rawService + bridgePayoutBtcMinerSats < minCleanBtcSats
+        ? Math.max(0, minCleanBtcSats - bridgePayoutBtcMinerSats)
+        : rawService;
+    const btcServiceFeeSats =
+      isRateMatchedQuote && Number(quote?.btcServiceFeeSats) > 0
+        ? Number(quote!.btcServiceFeeSats)
+        : computedServiceSats;
     const btcOrderFeeOutputSats = btcServiceFeeSats + bridgePayoutBtcMinerSats;
     const totalOutlayMvcSats = mvcServiceFeeSats + estMinerMvcSats;
     const totalOutlayBtcSats = btcServiceFeeSats + estMinerBtcSats;
+    const serviceFeeText = `${formatSat(mvcServiceFeeSats, 8)} SPACE + ${formatSat(
+      btcServiceFeeSats,
+      8
+    )} BTC`;
+    const serviceFeeTooltip = `Protocol service fee (2× estimated network miner fee on each chain): ${formatSat(
+      mvcServiceFeeSats,
+      8
+    )} SPACE + ${formatSat(
+      btcServiceFeeSats,
+      8
+    )} BTC (${btcServiceFeeSats} sats). Bridged token arrives 1:1 with zero deduction.`;
 
     return {
       btcRate,
@@ -358,10 +400,26 @@ export const computeScenarioFeeBreakdown = (params: {
   const postageSats = Number(quote?.btcPostageSats ?? 546);
   const estMinerBtcSats =
     walletBtcMinerSats + bridgePayoutBtcMinerSats + postageSats;
+  const computedServiceSats = Math.ceil(estMinerBtcSats * svcMult);
+  const btcServiceFeeSats =
+    isRateMatchedQuote && Number(quote?.btcServiceFeeSats) > 0
+      ? Number(quote!.btcServiceFeeSats)
+      : computedServiceSats;
   const btcOrderFeeOutputSats =
     btcServiceFeeSats + bridgePayoutBtcMinerSats + postageSats;
   const totalOutlayMvcSats = mvcServiceFeeSats + estMinerMvcSats;
   const totalOutlayBtcSats = btcServiceFeeSats + estMinerBtcSats;
+  const serviceFeeText = `${formatSat(mvcServiceFeeSats, 8)} SPACE + ${formatSat(
+    btcServiceFeeSats,
+    8
+  )} BTC`;
+  const serviceFeeTooltip = `Protocol service fee (2× estimated network miner fee on each chain): ${formatSat(
+    mvcServiceFeeSats,
+    8
+  )} SPACE + ${formatSat(
+    btcServiceFeeSats,
+    8
+  )} BTC (${btcServiceFeeSats} sats). Bridged token arrives 1:1 with zero deduction.`;
 
   return {
     btcRate,

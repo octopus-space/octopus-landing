@@ -62,8 +62,11 @@ declare namespace API {
     btcFeeRate: number;
     mvcFeeRate: number;
     safetyMultiplier: number;
+    serviceFeeMultiplier?: number;
     btcServiceFeeSats?: number;
     mvcServiceFeeSats?: number;
+    estNetworkMinerBtcSats?: number;
+    estNetworkMinerMvcSats?: number;
     btcBridgeMinerFeeSats?: number;
     btcPostageSats?: number;
     mvcBridgeMinerFeeSats?: number;
