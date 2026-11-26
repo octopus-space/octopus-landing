@@ -30,6 +30,7 @@ import {
   computeScenarioFeeBreakdown,
   determineAddressInfo,
   formatSat,
+  formatSatsInt,
 } from "@/utils/utils";
 import History from "./components/History";
 import FormButton from "@/components/FormButton";
@@ -317,13 +318,11 @@ export default () => {
           return `Insufficient BTC balance: need ~${formatSat(
             requiredBtcSats,
             8
-          )} BTC (amount + ${formatSat(
-            btcServiceFeeSats,
-            8
-          )} BTC service fee + ~${formatSat(
-            estMinerBtcSats,
-            8
-          )} BTC miner fee @ ${btcRate} sat/vB), available ${
+          )} BTC (amount + ${formatSatsInt(
+            btcServiceFeeSats
+          )} Sats service fee + ~${formatSatsInt(
+            estMinerBtcSats
+          )} Sats miner fee @ ${btcRate} sat/vB), available ${
             userBal.btc || "0"
           } BTC.`;
         }
@@ -336,12 +335,15 @@ export default () => {
         }
         const requiredBtcSats = totalOutlayBtcSats;
         if (btcSats < requiredBtcSats) {
-          return `Insufficient BTC for service & network miner fee: need at least ~${formatSat(
-            requiredBtcSats,
-            8
-          )} BTC (${btcServiceFeeSats} sats service fee + ~${estMinerBtcSats} sats miner fee & postage @ ${btcRate} sat/vB), available ${
-            userBal.btc || "0"
-          } BTC.`;
+          return `Insufficient BTC for fees: need ~${formatSatsInt(
+            requiredBtcSats
+          )} Sats (${formatSatsInt(
+            btcServiceFeeSats
+          )} Sats service fee + ~${formatSatsInt(
+            estMinerBtcSats
+          )} Sats miner fee & postage @ ${btcRate} sat/vB), available ${formatSatsInt(
+            btcSats
+          )} Sats.`;
         }
         return "";
       }
@@ -353,7 +355,7 @@ export default () => {
       }
       const requiredSpaceSats = totalOutlayMvcSats;
       if (spaceSats < requiredSpaceSats) {
-        return `Insufficient MVC SPACE for Redeem: need at least ~${formatSat(
+        return `Insufficient MVC SPACE for Redeem: need ~${formatSat(
           requiredSpaceSats,
           8
         )} SPACE (${formatSat(
@@ -369,18 +371,15 @@ export default () => {
 
       const requiredBtcSats = totalOutlayBtcSats;
       if (btcSats < requiredBtcSats) {
-        return `Insufficient BTC for Redeem: need at least ~${formatSat(
-          requiredBtcSats,
-          8
-        )} BTC (${formatSat(
-          btcServiceFeeSats,
-          8
-        )} BTC service fee + ~${formatSat(
-          estMinerBtcSats,
-          8
-        )} BTC network miner fee & postage @ ${btcRate} sat/vB), available ${
-          userBal.btc || "0"
-        } BTC.`;
+        return `Insufficient BTC for Redeem: need ~${formatSatsInt(
+          requiredBtcSats
+        )} Sats (${formatSatsInt(
+          btcServiceFeeSats
+        )} Sats service fee + ~${formatSatsInt(
+          estMinerBtcSats
+        )} Sats miner fee & postage @ ${btcRate} sat/vB), available ${formatSatsInt(
+          btcSats
+        )} Sats.`;
       }
     }
 
@@ -597,12 +596,7 @@ export default () => {
   return (
     <div className="wrapPage">
       <Segmented
-        style={{
-          width: 520,
-          maxWidth: "92vw",
-          marginBottom: 32,
-          overflow: "auto",
-        }}
+        className="protocolSegmented"
         value={protocolType}
         onChange={(value) => {
           setProtocolType(value as any);
@@ -613,13 +607,7 @@ export default () => {
         block
       />
       <Card
-        style={{
-          width: 520,
-          maxWidth: "92vw",
-          position: "relative",
-          border: "2px solid #6e66fa",
-          minHeight: 666,
-        }}
+        className="wrappingCard"
         id="wrapping"
         loading={!AssetsInfo}
       >
@@ -734,22 +722,23 @@ export default () => {
                   </div>
                 </div>
                 <div className="bal">
-                  Balance:
-                  <span> {loadingInput ? "..." : sendBal} </span>
-                  {bridgeType === "mint"
-                    ? asset.originSymbol
-                    : asset.targetSymbol}
+                  <span className="balPrimary">
+                    Balance: <span>{loadingInput ? "..." : sendBal}</span>{" "}
+                    {bridgeType === "mint"
+                      ? asset.originSymbol
+                      : asset.targetSymbol}
+                  </span>
                   {connected && bridgeType === "redeem" && (
-                    <span style={{ marginLeft: 12, opacity: 0.8 }}>
-                      | Gas: {userBal.space || "0"} SPACE ·{" "}
-                      {userBal.btc || "0"} BTC
+                    <span className="balGasTag">
+                      Gas: {userBal.space || "0"} SPACE ·{" "}
+                      {formatSatsInt(userBal.btcSats ?? 0)} Sats
                     </span>
                   )}
                   {connected &&
                     bridgeType === "mint" &&
                     protocolType === "mrc20" && (
-                      <span style={{ marginLeft: 12, opacity: 0.8 }}>
-                        | BTC Gas: {userBal.btc || "0"} BTC
+                      <span className="balGasTag">
+                        BTC Gas: {formatSatsInt(userBal.btcSats ?? 0)} Sats
                       </span>
                     )}
                 </div>
@@ -853,11 +842,11 @@ export default () => {
                 </>
               )}
 
-              <div className="item feeSelectorRow">
-                <span className="label">
-                  BTC Fee Rate
-                  <span className="mvcSubBadge">MVC: 1 sat/B</span>
-                </span>
+              <div className="feeSelectorBox">
+                <div className="feeSelectorHeader">
+                  <span className="feeSelectorTitle">BTC Fee Rate</span>
+                  <span className="mvcSubBadge">MVC · 1 sat/B</span>
+                </div>
                 <div className="feeChipGroup">
                   {orderedQuickTiers.map((tier) => {
                     const active = feeRateType === tier.label;
@@ -880,54 +869,67 @@ export default () => {
                     }`}
                     onClick={() => setFeeRateModalVisible(true)}
                   >
-                    <span className="chipLabel">
-                      {feeRateType === "Custom"
-                        ? `Custom · ${feeRate}`
-                        : "Custom"}
-                    </span>
-                    <EditOutlined style={{ fontSize: 10 }} />
+                    <span className="chipLabel">Custom</span>
+                    {feeRateType === "Custom" ? (
+                      <span className="chipVal">{feeRate}</span>
+                    ) : (
+                      <EditOutlined className="chipEditIcon" />
+                    )}
                   </button>
                 </div>
               </div>
 
-              <div className="item">
-                <span className="label feeLabelWithHelp">
-                  Bridge Service Fee
-                  <Tooltip
-                    title={liveFeeBreakdown.serviceFeeTooltip}
-                    overlayInnerStyle={{
-                      maxWidth: 340,
-                      background: "#14124a",
-                      border: "1px solid rgba(110, 102, 250, 0.45)",
-                      fontSize: 12,
-                    }}
-                  >
-                    <QuestionCircleOutlined className="feeHelpIcon" />
-                  </Tooltip>
-                </span>
-                <span className="value">{liveFeeBreakdown.serviceFeeText}</span>
-              </div>
-              <div className="item">
-                <span className="label feeLabelWithHelp">
-                  Est. Network Miner Fee ({liveFeeBreakdown.btcRate} sat/vB)
-                  <Tooltip
-                    title={
-                      <MinerFeeBreakdownOverlay
-                        items={liveFeeBreakdown.minerFeeBreakdown}
-                        total={liveFeeBreakdown.minerFeeText}
-                      />
-                    }
-                    overlayInnerStyle={{
-                      maxWidth: 400,
-                      background: "#14124a",
-                      border: "1px solid rgba(110, 102, 250, 0.45)",
-                      padding: "10px 12px",
-                    }}
-                  >
-                    <QuestionCircleOutlined className="feeHelpIcon" />
-                  </Tooltip>
-                </span>
-                <span className="value">{liveFeeBreakdown.minerFeeText}</span>
+              <div className="feeInfoBox">
+                <div className="item feeRow">
+                  <span className="label feeLabelWithHelp">
+                    <span>Bridge Service Fee</span>
+                    <Tooltip
+                      trigger={["hover", "click"]}
+                      title={liveFeeBreakdown.serviceFeeTooltip}
+                      overlayInnerStyle={{
+                        maxWidth: "min(330px, calc(100vw - 24px))",
+                        background: "#14124a",
+                        border: "1px solid rgba(110, 102, 250, 0.45)",
+                        fontSize: 12,
+                      }}
+                    >
+                      <QuestionCircleOutlined className="feeHelpIcon" />
+                    </Tooltip>
+                  </span>
+                  <span className="value feeValue">
+                    {liveFeeBreakdown.serviceFeeText}
+                  </span>
+                </div>
+                <div className="item feeRow">
+                  <span className="label feeLabelWithHelp">
+                    <span className="desktopFeeLabel">
+                      Est. Network Miner Fee ({liveFeeBreakdown.btcRate} sat/vB)
+                    </span>
+                    <span className="mobileFeeLabel">
+                      Est. Miner Fee ({liveFeeBreakdown.btcRate} sat/vB)
+                    </span>
+                    <Tooltip
+                      trigger={["hover", "click"]}
+                      title={
+                        <MinerFeeBreakdownOverlay
+                          items={liveFeeBreakdown.minerFeeBreakdown}
+                          total={liveFeeBreakdown.minerFeeText}
+                        />
+                      }
+                      overlayInnerStyle={{
+                        maxWidth: "min(360px, calc(100vw - 24px))",
+                        background: "#14124a",
+                        border: "1px solid rgba(110, 102, 250, 0.45)",
+                        padding: "10px 12px",
+                      }}
+                    >
+                      <QuestionCircleOutlined className="feeHelpIcon" />
+                    </Tooltip>
+                  </span>
+                  <span className="value feeValue">
+                    {liveFeeBreakdown.minerFeeText}
+                  </span>
+                </div>
               </div>
             </div>
           )}

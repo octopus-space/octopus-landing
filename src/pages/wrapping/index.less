@@ -1,13 +1,31 @@
 .wrapPage {
-  margin-top: 92px;
-  margin-bottom: 92px;
-  padding: 0 1vw;
+  margin-top: 64px;
+  margin-bottom: 72px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  .protocolSegmented {
+    width: 520px;
+    max-width: 100%;
+    margin-bottom: 24px;
+    overflow: auto;
+  }
+
+  .wrappingCard {
+    width: 520px;
+    max-width: 100%;
+    position: relative;
+    border: 2px solid #6e66fa;
+    border-radius: 14px;
+  }
+
   .ant-segmented.ant-segmented-block .ant-segmented-item {
-    min-width: 120px;
+    min-width: 110px;
   }
   .ant-segmented-item {
     font-size: 12px;
@@ -42,7 +60,7 @@
     }
   }
   .chains {
-    margin-top: 48px;
+    margin-top: 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -56,18 +74,17 @@
     .chain {
       flex-grow: 1;
       .label {
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 500;
-        line-height: 24px;
+        line-height: 22px;
       }
       .selectWrap {
-        margin-top: 11px;
+        margin-top: 10px;
         width: 200px;
-        height: 56px;
+        height: 54px;
         display: flex;
         align-items: center;
         justify-content: center;
-        // cursor: pointer;
       }
     }
   }
@@ -76,16 +93,16 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 30px 0 16px;
-      font-size: 16px;
+      margin: 24px 0 12px;
+      font-size: 15px;
       font-weight: 500;
-      line-height: 24px;
+      line-height: 22px;
       .tag {
         font-size: 10px;
-        font-weight: 300;
+        font-weight: 400;
         line-height: 16px;
         width: 40px;
-        height: 20px;
+        height: 22px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -101,7 +118,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 24px;
+    padding: 13px 20px;
     box-sizing: border-box;
     border: 2px solid #080731;
     &:focus-within {
@@ -111,16 +128,18 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      height: 50px;
+      height: 48px;
+      flex-shrink: 0;
     }
     .assetName {
-      max-width: 160px;
+      max-width: 150px;
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
     }
     .inputWrap {
       flex-grow: 1;
+      min-width: 0;
       display: flex;
       flex-direction: column;
       width: 100%;
@@ -130,57 +149,33 @@
 
         input {
           text-align: right;
-          line-height: 42px;
+          line-height: 40px;
           padding: 4px 0;
         }
       }
     }
   }
-  .bal {
-    margin-top: 11px;
-    font-size: 10px;
-    font-weight: 300;
-    line-height: normal;
-    text-align: right;
-    letter-spacing: 0em;
 
-    font-variation-settings: "opsz" auto;
-    color: #ffffff;
-  }
-  .submitWrap {
-    margin-top: 34px;
-  }
-  .brcItem {
-    box-sizing: border-box;
-    width: 50px;
-    height: 50px;
+  .bal {
+    margin-top: 9px;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.45;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    border: 1px solid rgb(216, 216, 216);
-    border-radius: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    &.active {
-      border: 1px solid var(--primary);
-    }
-    .tick {
-      font-size: 6px;
-    }
-    .amount {
-      font-size: 10px;
-    }
-    .number {
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      background-color: var(--primary);
+    justify-content: flex-end;
+    gap: 2px 10px;
+    color: rgba(255, 255, 255, 0.85);
+    font-variant-numeric: tabular-nums;
+
+    .balGasTag {
+      color: rgba(255, 255, 255, 0.65);
     }
   }
-  .inscribeBtn {
-    margin-left: 14px;
-    background-color: rgba(110, 102, 250, 0.1);
+
+  .submitWrap {
+    margin-top: 26px;
   }
 
   .spanRotate {
@@ -192,135 +187,284 @@
     transform: rotate(0deg);
     transition: transform 0.3s;
   }
+
   .range {
     font-size: 12px;
-    font-weight: 300;
-    margin-top: 20px;
+    font-weight: 400;
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
     .item {
       display: flex;
-      align-items: center;
+      align-items: baseline;
       justify-content: space-between;
-      gap: 12px;
+      flex-wrap: wrap;
+      gap: 4px 10px;
+
+      .label {
+        color: rgba(255, 255, 255, 0.68);
+        flex-shrink: 0;
+      }
+
       .value {
-        white-space: nowrap;
-        flex-grow: 1;
+        margin-left: auto;
         text-align: right;
+        color: #ffffff;
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
       }
-      & + .item {
-        margin-top: 16px;
-      }
+
       .feeLabelWithHelp {
         display: inline-flex;
         align-items: center;
         gap: 5px;
       }
+
+      .mobileFeeLabel {
+        display: none;
+      }
+
       .feeHelpIcon {
         font-size: 12px;
         color: rgba(255, 255, 255, 0.48);
-        cursor: help;
+        cursor: pointer;
         transition: color 0.18s ease;
         &:hover {
           color: #8c85ff;
         }
       }
     }
-    .feeSelectorRow {
-      flex-wrap: wrap;
-      row-gap: 8px;
-      .label {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        .mvcSubBadge {
-          font-size: 10px;
-          padding: 1px 6px;
-          border-radius: 999px;
-          color: rgba(255, 255, 255, 0.65);
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-      }
-      .feeChipGroup {
+
+    .feeSelectorBox {
+      margin-top: 2px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      background: rgba(8, 7, 49, 0.68);
+      border: 1px solid rgba(110, 102, 250, 0.24);
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+
+      .feeSelectorHeader {
         display: flex;
         align-items: center;
-        justify-content: flex-end;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-left: auto;
+        justify-content: space-between;
+        gap: 8px;
+
+        .feeSelectorTitle {
+          font-size: 12px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.85);
+        }
+
+        .mvcSubBadge {
+          font-size: 10.5px;
+          padding: 1px 8px;
+          border-radius: 999px;
+          color: rgba(255, 255, 255, 0.68);
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          white-space: nowrap;
+        }
       }
+
+      .feeChipGroup {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+      }
+
       .feeChip {
         appearance: none;
+        width: 100%;
+        min-width: 0;
+        height: 32px;
+        padding: 0 6px;
+        border-radius: 8px;
+        background: #14124a;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 11.5px;
+        line-height: 1;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 4px;
-        padding: 3px 9px;
-        border-radius: 999px;
-        background: #080731;
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        color: rgba(255, 255, 255, 0.78);
-        font-size: 11px;
-        line-height: 16px;
+        white-space: nowrap;
         cursor: pointer;
         transition: all 0.18s ease;
+
         &:hover {
           border-color: rgba(110, 102, 250, 0.8);
           color: #ffffff;
         }
+
+        .chipLabel {
+          font-weight: 500;
+        }
+
         .chipVal {
           color: #8cff95;
-          font-weight: 600;
+          font-weight: 700;
+          font-variant-numeric: tabular-nums;
         }
+
+        .chipEditIcon {
+          font-size: 11px;
+          color: rgba(255, 255, 255, 0.65);
+        }
+
         &.active {
           border-color: #6e66fa;
-          background: rgba(110, 102, 250, 0.28);
+          background: rgba(110, 102, 250, 0.34);
           color: #ffffff;
-          box-shadow: 0 0 0 1px rgba(110, 102, 250, 0.25);
+          box-shadow: 0 0 0 1px rgba(110, 102, 250, 0.28);
+
+          .chipEditIcon {
+            color: #8cff95;
+          }
+        }
+      }
+    }
+
+    .feeInfoBox {
+      padding: 11px 12px;
+      border-radius: 10px;
+      background: rgba(8, 7, 49, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .feeRow {
+        .feeValue {
+          color: #ffffff;
+          font-weight: 600;
+          font-size: 12.5px;
         }
       }
     }
   }
 }
+
 @media screen and (max-width: 768px) {
   .wrapPage {
+    margin-top: 18px;
+    margin-bottom: 40px;
+    padding: 0 12px;
+
+    .protocolSegmented {
+      margin-bottom: 14px;
+    }
+
+    .ant-card .ant-card-body {
+      padding: 16px 14px;
+    }
+
+    .title {
+      font-size: 18px;
+      .imgwrap {
+        width: 32px;
+        height: 32px;
+      }
+    }
+
     .chains {
+      margin-top: 18px;
       display: flex;
       flex-direction: column;
+      gap: 6px;
+
       .switchIcon {
-        margin: 11px 0 0 60px;
+        margin: 4px 0;
         transform: rotate(90deg);
       }
+
       .chain {
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 10px;
+
         .label {
-          min-width: 60px;
+          min-width: 46px;
+          font-size: 13px;
         }
+
         .selectWrap {
+          margin-top: 0;
           flex-grow: 1;
+          width: auto;
+          height: 46px;
         }
       }
-    }
-    .inputCard {
-      padding: 15px 12px;
-      .assetName {
-        max-width: 80px;
-      }
-    }
-    .ant-card .ant-card-body {
-      padding: 16px;
-    }
-    .inscribeBtn {
-      margin-left: 4px;
-      background-color: rgba(110, 102, 250, 0.1);
-    }
-    .ant-btn-sm{
-      padding: 0 4px;
     }
 
-    .Brc20Error {
-      font-size: 12px;
+    .inputCardWrap {
+      .label {
+        margin: 18px 0 8px;
+        font-size: 13.5px;
+      }
+    }
+
+    .inputCard {
+      padding: 10px 12px;
+      .tokenInputWrap {
+        height: 42px;
+      }
+      .assetName {
+        max-width: 88px;
+      }
+      .inputWrap .input {
+        font-size: 18px;
+        input {
+          line-height: 34px;
+        }
+      }
+    }
+
+    .range {
+      margin-top: 14px;
+      gap: 10px;
+      font-size: 11.5px;
+
+      .item {
+        .desktopFeeLabel {
+          display: none;
+        }
+        .mobileFeeLabel {
+          display: inline;
+        }
+      }
+
+      .feeSelectorBox {
+        padding: 10px;
+        gap: 8px;
+
+        .feeChip {
+          height: 32px;
+          padding: 0 4px;
+          font-size: 11px;
+          gap: 3px;
+        }
+      }
+
+      .feeInfoBox {
+        padding: 10px;
+        gap: 9px;
+
+        .feeRow .feeValue {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .submitWrap {
+      margin-top: 20px;
     }
   }
 }

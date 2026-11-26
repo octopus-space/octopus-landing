@@ -57,7 +57,7 @@ export default () => {
           </div>
         </div>
 
-        <div className="navWrap" style={{ gap: 12 }}>
+        <div className="navWrap">
           <div
             className="headerGasPill"
             onClick={() => setFeeRateModalVisible(true)}
@@ -65,9 +65,8 @@ export default () => {
           >
             <span className="gasDot" />
             <span className="gasLabel">BTC Gas</span>
-            <span className="gasVal">
-              {feeRateType} · {feeRate} sat/vB
-            </span>
+            <span className="gasTier">{feeRateType} ·</span>
+            <span className="gasVal">{feeRate} sat/vB</span>
           </div>
 
           {connected ? (

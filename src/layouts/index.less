@@ -91,16 +91,21 @@
       .navWrap {
         display: flex;
         align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
         .headerGasPill {
           display: inline-flex;
           align-items: center;
-          gap: 6px;
+          gap: 5px;
           height: 32px;
           padding: 0 12px;
           border-radius: 999px;
           background: rgba(26, 24, 95, 0.88);
           border: 1px solid rgba(110, 102, 250, 0.45);
           font-size: 12px;
+          line-height: 1;
+          white-space: nowrap;
+          flex-shrink: 0;
           cursor: pointer;
           user-select: none;
           transition: all 0.2s ease;
@@ -111,6 +116,7 @@
           .gasDot {
             width: 6px;
             height: 6px;
+            flex-shrink: 0;
             border-radius: 50%;
             background: #8cff95;
             box-shadow: 0 0 6px rgba(140, 255, 149, 0.8);
@@ -118,9 +124,14 @@
           .gasLabel {
             color: rgba(255, 255, 255, 0.65);
           }
+          .gasTier {
+            color: #8cff95;
+            font-weight: 600;
+          }
           .gasVal {
             color: #8cff95;
             font-weight: 600;
+            font-variant-numeric: tabular-nums;
           }
         }
         .entryBtn {
@@ -203,31 +214,57 @@
         width: 100%;
         box-sizing: border-box;
         padding: 0 12px;
-        height: 60px;
-        gap: 0;
+        height: 56px;
+        gap: 8px;
+        .left {
+          min-width: 0;
+          align-items: center;
+        }
         .logo {
-          width: 150px;
-          height: 25px;
+          width: 120px;
+          height: 20px;
+          flex-shrink: 1;
         }
         .navWrap {
+          gap: 8px;
           .headerGasPill {
-            padding: 0 8px;
+            height: 30px;
+            padding: 0 10px;
             font-size: 11px;
+            gap: 4px;
             .gasLabel {
               display: none;
             }
+          }
+          .ant-btn {
+            height: 30px;
+            padding: 0 12px;
+            font-size: 12px;
+            border-radius: 999px;
           }
           .nav {
             display: none;
           }
           .entryBtn {
-            width: 100px;
+            margin-left: 0;
+            width: 96px;
             height: 30px;
             line-height: 30px;
             font-size: 12px;
           }
         }
         .routes {
+          display: none;
+        }
+      }
+    }
+    @media screen and (max-width: 380px) {
+      .header .headerwrap {
+        .logo {
+          width: 106px;
+          height: 18px;
+        }
+        .navWrap .headerGasPill .gasTier {
           display: none;
         }
       }

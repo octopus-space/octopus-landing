@@ -1,5 +1,5 @@
 .octopusFeeModal {
-  padding-top: 4px;
+  padding-top: 2px;
 
   .heroRate {
     display: flex;
@@ -8,35 +8,37 @@
     text-align: center;
 
     .curRate {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 700;
       color: #8cff95;
       line-height: 1.2;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
+      font-variant-numeric: tabular-nums;
     }
 
     .subNote {
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.58);
-      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.56);
+      line-height: 1.4;
     }
   }
 
   .sectionLabel {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 10px;
   }
 
   .planCard {
     background: #080731;
     border: 1.5px solid rgba(110, 102, 250, 0.22);
     border-radius: 10px;
-    padding: 12px 16px;
+    padding: 11px 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
 
@@ -45,47 +47,68 @@
       background: #100e4a;
     }
 
-    .planLeft {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .planTitle {
+    .planMain {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #ffffff;
+      gap: 10px;
+      min-width: 0;
+    }
 
-      .planIcon {
-        display: inline-flex;
-        align-items: center;
-        color: #9c96ff;
+    .planIcon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(110, 102, 250, 0.14);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #9c96ff;
+      flex-shrink: 0;
+    }
+
+    .planMeta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+
+      .planName {
+        font-size: 14px;
+        font-weight: 600;
+        color: #ffffff;
+        line-height: 1.2;
       }
 
       .planEta {
         font-size: 11px;
         font-weight: 400;
-        color: rgba(255, 255, 255, 0.45);
+        color: rgba(255, 255, 255, 0.48);
+        line-height: 1.2;
       }
     }
 
-    .planRate {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.72);
-      padding-left: 26px;
+    .planRight {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      white-space: nowrap;
 
-      &.customRow {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+      .planRate {
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.85);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .unitText {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.65);
       }
     }
 
     .customRateInput {
-      width: 84px;
+      width: 72px;
       background: #1a185f;
       border: 1px solid rgba(110, 102, 250, 0.45);
       border-radius: 6px;
@@ -93,24 +116,26 @@
       .ant-input-number-input {
         color: #ffffff;
         font-weight: 600;
-        height: 28px;
+        height: 30px;
         padding: 0 8px;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
       }
     }
 
     .planCheck {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       background: rgba(140, 255, 149, 0.16);
       color: #8cff95;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 11px;
       opacity: 0;
       transform: scale(0.85);
-      transition: all 0.2s ease;
+      transition: all 0.18s ease;
     }
 
     &.active {
@@ -118,18 +143,40 @@
       border-color: #6e66fa;
       box-shadow: 0 0 0 1px rgba(110, 102, 250, 0.25);
 
-      .planTitle .planIcon {
+      .planIcon {
+        background: rgba(140, 255, 149, 0.14);
         color: #8cff95;
       }
 
-      .planRate {
-        color: #ffffff;
-        font-weight: 500;
+      .planRight .planRate {
+        color: #8cff95;
       }
 
       .planCheck {
         opacity: 1;
         transform: scale(1);
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .octopusFeeModal {
+    .heroRate {
+      .curRate {
+        font-size: 21px;
+      }
+      .subNote {
+        font-size: 11px;
+      }
+    }
+    .planCard {
+      padding: 10px 12px;
+      .customRateInput {
+        width: 68px;
+        .ant-input-number-input {
+          font-size: 16px;
+        }
       }
     }
   }

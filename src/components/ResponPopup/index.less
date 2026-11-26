@@ -6,20 +6,32 @@
     }
   }
   .ant-modal-content {
-    padding: 28px 25px;
+    padding: 24px 22px;
     border: 2px solid #6e66fa;
+    border-radius: 14px;
   }
   .ant-modal-title {
-    font-size: 16.97px;
+    font-size: 16.5px;
     font-weight: bold;
   }
 }
 .ant-modal {
-  top: 252px;
+  top: 120px;
 }
 
 @media screen and (max-width: 768px) {
   .ant-modal {
-    top: 100px;
+    top: 24px;
+    max-width: calc(100vw - 24px) !important;
+    margin: 0 auto 24px;
+  }
+  .hayPopup {
+    .ant-modal-content {
+      padding: 18px 15px;
+      border-radius: 14px;
+    }
+    .ant-modal-title {
+      font-size: 15.5px;
+    }
   }
 }

@@ -117,7 +117,7 @@ export default ({
             <div className="item">
               <span className="label">Network Fee Rate</span>
               <span className="value">
-                BTC {feeRate} sat/vB ({feeRateType}) · MVC 1 sat/B
+                BTC {feeRate} sat/vB · MVC 1 sat/B
               </span>
             </div>
             <div className="item">
@@ -125,9 +125,10 @@ export default ({
                 Bridge Service Fee
                 {serviceFeeTooltip ? (
                   <Tooltip
+                    trigger={["hover", "click"]}
                     title={serviceFeeTooltip}
                     overlayInnerStyle={{
-                      maxWidth: 340,
+                      maxWidth: "min(330px, calc(100vw - 24px))",
                       background: "#14124a",
                       border: "1px solid rgba(110, 102, 250, 0.45)",
                       fontSize: 12,
@@ -141,9 +142,10 @@ export default ({
             </div>
             <div className="item">
               <span className="label feeLabelWithHelp">
-                Est. Network Miner Fee
+                Est. Miner Fee
                 {minerFeeBreakdown && minerFeeBreakdown.length > 0 ? (
                   <Tooltip
+                    trigger={["hover", "click"]}
                     title={
                       <MinerFeeBreakdownOverlay
                         items={minerFeeBreakdown}
@@ -151,7 +153,7 @@ export default ({
                       />
                     }
                     overlayInnerStyle={{
-                      maxWidth: 400,
+                      maxWidth: "min(360px, calc(100vw - 24px))",
                       background: "#14124a",
                       border: "1px solid rgba(110, 102, 250, 0.45)",
                       padding: "10px 12px",

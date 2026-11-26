@@ -10,7 +10,7 @@ import "./index.less";
 const PlanIcon: React.FC<{ plan: FeeRatePlan }> = ({ plan }) => {
   if (plan === "Fast") {
     return (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
         <path
           d="M13 2L4 14h7l-1 8 10-12h-7l0-8z"
           stroke="currentColor"
@@ -23,7 +23,7 @@ const PlanIcon: React.FC<{ plan: FeeRatePlan }> = ({ plan }) => {
   }
   if (plan === "Avg") {
     return (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
         <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
         <path
           d="M12 7v5l3.5 2"
@@ -36,7 +36,7 @@ const PlanIcon: React.FC<{ plan: FeeRatePlan }> = ({ plan }) => {
   }
   if (plan === "Slow") {
     return (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
         <path
           d="M12 3a9 9 0 109 9c0-4.97-4.03-9-9-9zm0 4v5h4"
           stroke="currentColor"
@@ -48,7 +48,7 @@ const PlanIcon: React.FC<{ plan: FeeRatePlan }> = ({ plan }) => {
     );
   }
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
       <path
         d="M4 7h16M4 17h16M8 4v6M16 14v6"
         stroke="currentColor"
@@ -79,7 +79,7 @@ export default () => {
       onClose={() => setFeeRateModalVisible(false)}
       title="BTC Network Fee"
       closable={true}
-      modalWidth={440}
+      modalWidth={420}
     >
       <div className="octopusFeeModal">
         <div className="heroRate">
@@ -87,15 +87,17 @@ export default () => {
             <NumberFormat value={feeRate} suffix=" sat/vB" />
           </div>
           <div className="subNote">
-            Applies to BTC transactions in both directions · MVC defaults to 1 sat/B
+            Applies to both directions · MVC fixed at 1 sat/B
           </div>
         </div>
 
-        <Divider style={{ borderColor: "rgba(255,255,255,0.08)", margin: "16px 0" }} />
+        <Divider
+          style={{ borderColor: "rgba(255,255,255,0.08)", margin: "12px 0" }}
+        />
 
-        <div className="sectionLabel">Choose BTC Gas Plan</div>
+        <div className="sectionLabel">Select Speed</div>
 
-        <Row gutter={[12, 12]}>
+        <Row gutter={[10, 10]}>
           {feeRates.map((item) => {
             const active = feeRateType === item.label;
             return (
@@ -105,58 +107,64 @@ export default () => {
                 onClick={() => selectFeeRatePlan(item.label)}
               >
                 <div className={`planCard ${active ? "active" : ""}`}>
-                  <div className="planLeft">
-                    <div className="planTitle">
-                      <span className="planIcon">
-                        <PlanIcon plan={item.label} />
-                      </span>
-                      <span>{item.label}</span>
+                  <div className="planMain">
+                    <span className="planIcon">
+                      <PlanIcon plan={item.label} />
+                    </span>
+                    <div className="planMeta">
+                      <span className="planName">{item.label}</span>
                       <span className="planEta">{item.time}</span>
                     </div>
-                    <div className="planRate">{item.value} sat/vB</div>
                   </div>
-                  <div className="planCheck">
-                    <CheckOutlined />
+                  <div className="planRight">
+                    <span className="planRate">{item.value} sat/vB</span>
+                    <span className="planCheck">
+                      <CheckOutlined />
+                    </span>
                   </div>
                 </div>
               </Col>
             );
           })}
 
-          <Col
-            span={24}
-            onClick={() => selectFeeRatePlan("Custom")}
-          >
-            <div className={`planCard ${feeRateType === "Custom" ? "active" : ""}`}>
-              <div className="planLeft">
-                <div className="planTitle">
-                  <span className="planIcon">
-                    <PlanIcon plan="Custom" />
-                  </span>
-                  <span>Custom</span>
+          <Col span={24} onClick={() => selectFeeRatePlan("Custom")}>
+            <div
+              className={`planCard ${
+                feeRateType === "Custom" ? "active" : ""
+              }`}
+            >
+              <div className="planMain">
+                <span className="planIcon">
+                  <PlanIcon plan="Custom" />
+                </span>
+                <div className="planMeta">
+                  <span className="planName">Custom</span>
                   <span className="planEta">Min {minFeeRate} sat/vB</span>
                 </div>
-                <div className="planRate customRow" onClick={(e) => e.stopPropagation()}>
-                  <InputNumber
-                    value={customFeeRate}
-                    onFocus={() => selectFeeRatePlan("Custom")}
-                    onChange={(val) => {
-                      selectFeeRatePlan("Custom");
-                      updateCustomFeeRate(val);
-                    }}
-                    onBlur={commitCustomFeeRate}
-                    min={minFeeRate}
-                    max={MAX_CUSTOM_BTC_FEE_RATE}
-                    precision={0}
-                    controls={false}
-                    placeholder={String(minFeeRate)}
-                    className="customRateInput"
-                  />
-                  <span>sat/vB</span>
-                </div>
               </div>
-              <div className="planCheck">
-                <CheckOutlined />
+              <div
+                className="planRight customRow"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <InputNumber
+                  value={customFeeRate}
+                  onFocus={() => selectFeeRatePlan("Custom")}
+                  onChange={(val) => {
+                    selectFeeRatePlan("Custom");
+                    updateCustomFeeRate(val);
+                  }}
+                  onBlur={commitCustomFeeRate}
+                  min={minFeeRate}
+                  max={MAX_CUSTOM_BTC_FEE_RATE}
+                  precision={0}
+                  controls={false}
+                  placeholder={String(minFeeRate)}
+                  className="customRateInput"
+                />
+                <span className="unitText">sat/vB</span>
+                <span className="planCheck">
+                  <CheckOutlined />
+                </span>
               </div>
             </div>
           </Col>
