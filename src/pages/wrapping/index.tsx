@@ -420,6 +420,21 @@ export default () => {
     onInputChange(target);
   };
 
+  const unsupportedBtcAddrMsg = useMemo(() => {
+    if (!connected || !btcAddress) return "";
+    try {
+      const addrType = determineAddressInfo(
+        btcAddress
+      ).toUpperCase() as SupportRedeemAddressType;
+      if (!supportRedeemAddressType.includes(addrType)) {
+        return "Unsupported BTC address type (Nested Segwit / P2SH 3...). Please switch your BTC address in Metalet to Native Segwit (bc1q...), Taproot (bc1p...), or Legacy (1...).";
+      }
+    } catch {
+      return "Invalid or unsupported BTC wallet address.";
+    }
+    return "";
+  }, [connected, btcAddress]);
+
   const redeem = async () => {
     if (!btcAddress || !asset || !network) return;
 
@@ -431,7 +446,9 @@ export default () => {
       const addressType: SupportRedeemAddressType =
         addressInfo.toUpperCase() as SupportRedeemAddressType;
       if (!supportRedeemAddressType.includes(addressType)) {
-        throw new Error("unsupport address type");
+        throw new Error(
+          "Unsupported BTC address type (P2SH/3...). Please switch to Native Segwit (bc1q), Taproot (bc1p), or Legacy (1...) in Metalet."
+        );
       }
       if (protocolType === "btc") {
         await redeemBtc(
@@ -490,6 +507,11 @@ export default () => {
       const addressInfo = determineAddressInfo(btcAddress);
       const addressType: SupportRedeemAddressType =
         addressInfo.toUpperCase() as SupportRedeemAddressType;
+      if (!supportRedeemAddressType.includes(addressType)) {
+        throw new Error(
+          "Unsupported BTC address type (P2SH/3...). Please switch to Native Segwit (bc1q), Taproot (bc1p), or Legacy (1...) in Metalet."
+        );
+      }
       if (protocolType === "btc") {
         await mintBtc(
           amountRaw(String(amount), 8),
@@ -538,6 +560,15 @@ export default () => {
         },
       },
       {
+        condition: Boolean(unsupportedBtcAddrMsg),
+        text: "Switch BTC Address Type",
+        type: "primary" as const,
+        danger: true,
+        onClick: () => {
+          message.warning(unsupportedBtcAddrMsg);
+        },
+      },
+      {
         condition: !amount || Number(amount) <= 0,
         text: "Enter Amount",
         type: "primary" as const,
@@ -559,7 +590,14 @@ export default () => {
         },
       },
     ];
-  }, [ErrorMsg, amount, balCheck, isMintPaused, mintPausedMessage]);
+  }, [
+    ErrorMsg,
+    amount,
+    balCheck,
+    isMintPaused,
+    mintPausedMessage,
+    unsupportedBtcAddrMsg,
+  ]);
 
   const handleSubmit = () => {
     if (bridgeType === "mint") return mint();
@@ -569,6 +607,10 @@ export default () => {
   const handleConfirm = () => {
     if (isMintPaused) {
       message.warning(mintPausedMessage);
+      return;
+    }
+    if (unsupportedBtcAddrMsg) {
+      message.warning(unsupportedBtcAddrMsg);
       return;
     }
     if (balCheck) {
@@ -938,6 +980,14 @@ export default () => {
           {isMintPaused && (
             <Alert
               message={mintPausedMessage}
+              type="warning"
+              style={{ marginTop: 20 }}
+              showIcon
+            />
+          )}
+          {unsupportedBtcAddrMsg && (
+            <Alert
+              message={unsupportedBtcAddrMsg}
               type="warning"
               style={{ marginTop: 20 }}
               showIcon

@@ -1,7 +1,7 @@
 import TokenIcon from "@/components/TokenIcon";
 import { getBridgeHistory } from "@/servies/api";
 import { formatUnitToBtc, prettyTimestamp } from "@/utils/utils";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useModel } from "umi";
 import btc from "@/assets/btc.png";
 import mvc from "@/assets/mvc.png";
@@ -27,21 +27,19 @@ export default ({ type }: { type: HistoryType }) => {
   const [isEnd, setIsEnd] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const fetchHistory = useCallback(async () => {
-    if (!AssetsInfo) return;
-    try {
-      setLoading(true);
-      const { txList } = await getBridgeHistory(network, {
-        type,
-        cursor: page * size,
-        size: size,
-        order: "desc",
-        address: mvcAddress || "",
-      });
-      if (txList.length < size) {
-        setIsEnd(true);
-      }
-      const _list = txList.map((item) => {
+  const trimmedAddress = (mvcAddress || "").trim();
+
+  useEffect(() => {
+    setPage(0);
+    setList([]);
+    setIsEnd(false);
+  }, [trimmedAddress, type, network]);
+
+  const formatTxItems = useCallback(
+    (txList: API.HsitoryDetail[]) => {
+      if (!AssetsInfo) return [];
+      return txList.map((raw) => {
+        const item = { ...raw };
         if (type === "btcToMvc" || type === "mrc20ToMvc") {
           item.originNetwork = "BTC";
           item.targetNetwork = "MVC";
@@ -50,12 +48,9 @@ export default ({ type }: { type: HistoryType }) => {
           item.originNetwork = "MVC";
           item.targetNetwork = "BTC";
         }
+        const rawTs = Number(item.timestamp);
         const timeD =
-          ((new Date().getTime() - Number(item.timestamp) * 1000) /
-            1000 /
-            60 /
-            20) *
-          100;
+          ((new Date().getTime() - rawTs * 1000) / 1000 / 60 / 20) * 100;
         item.progess =
           item.status === "success"
             ? 100
@@ -63,7 +58,7 @@ export default ({ type }: { type: HistoryType }) => {
               ? 98
               : Math.max(5, Math.ceil(timeD));
         item.progess = item.status === "failed" ? 0 : item.progess;
-        item.timestamp = prettyTimestamp(Number(item.timestamp), true);
+        item.timestamp = prettyTimestamp(rawTs, true);
 
         const currentToken = AssetsInfo.assetList.find((token) => {
           return (
@@ -87,20 +82,68 @@ export default ({ type }: { type: HistoryType }) => {
 
         return item;
       });
-      const originTxids = _list.map((item) => item.originTxid);
-      setList((prev) => {
-        return [
-          ...prev.filter((item) => !originTxids.includes(item.originTxid)),
-          ..._list,
-        ];
-      });
-    } catch (err) {
-      console.log(err);
-    }
-    setLoading(false);
-  }, [page, AssetsInfo, mvcAddress, network, type]);
+    },
+    [AssetsInfo, type]
+  );
 
-  useIntervalAsync(fetchHistory, 30 * 1000);
+  const loadPage = useCallback(
+    async (targetPage: number, mode: "refreshTop" | "append") => {
+      if (!AssetsInfo || !trimmedAddress) {
+        if (!trimmedAddress) {
+          setList([]);
+          setIsEnd(true);
+        }
+        return;
+      }
+      try {
+        setLoading(true);
+        const { txList } = await getBridgeHistory(network, {
+          type,
+          cursor: targetPage * size,
+          size: size,
+          order: "desc",
+          address: trimmedAddress,
+        });
+        const formatted = formatTxItems(txList || []);
+        if (mode === "append" || targetPage === 0) {
+          if (formatted.length < size) {
+            setIsEnd(true);
+          }
+        }
+        setList((prev) => {
+          if (mode === "refreshTop") {
+            const freshMap = new Map(
+              formatted.map((item) => [item.originTxid, item])
+            );
+            const updatedPrev = prev.map(
+              (old) => freshMap.get(old.originTxid) || old
+            );
+            const prevIds = new Set(updatedPrev.map((i) => i.originTxid));
+            const brandNew = formatted.filter(
+              (item) => !prevIds.has(item.originTxid)
+            );
+            return prev.length === 0 ? formatted : [...brandNew, ...updatedPrev];
+          }
+          const prevIds = new Set(prev.map((i) => i.originTxid));
+          const olderItems = formatted.filter(
+            (item) => !prevIds.has(item.originTxid)
+          );
+          return [...prev, ...olderItems];
+        });
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [AssetsInfo, trimmedAddress, network, type, formatTxItems]
+  );
+
+  const pollLatest = useCallback(async () => {
+    await loadPage(0, "refreshTop");
+  }, [loadPage]);
+
+  useIntervalAsync(pollLatest, 30 * 1000);
 
   return (
     <div
@@ -176,8 +219,11 @@ export default ({ type }: { type: HistoryType }) => {
       {list.length > 0 && !isEnd && (
         <Button
           type="link"
+          disabled={loading}
           onClick={() => {
-            setPage((prev) => prev + 1);
+            const nextPage = page + 1;
+            setPage(nextPage);
+            loadPage(nextPage, "append");
           }}
         >
           load More
