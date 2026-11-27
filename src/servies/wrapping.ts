@@ -19,12 +19,13 @@ export const supportRedeemAddressType: SupportRedeemAddressType[] = [
   "P2PKH",
 ];
 
-function extractApiErrorMessage(error: any): string {
+export function extractApiErrorMessage(error: any): string {
   return (
     error?.response?.data?.message ||
     error?.response?.data?.msg ||
     error?.data?.message ||
     error?.data?.msg ||
+    error?.info?.errorMessage ||
     error?.message ||
     error?.msg ||
     "unknown error"

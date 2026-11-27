@@ -117,6 +117,7 @@ export default () => {
     const isSameCtx = prevQuoteCtxRef.current === ctxKey;
     prevQuoteCtxRef.current = ctxKey;
 
+    const requestedOriginId = asset?.originTokenId || "";
     const runQuoteFetch = async () => {
       if (!network) return;
       try {
@@ -127,7 +128,10 @@ export default () => {
           btcFeeRate: feeRate,
         });
         if (!didCancel && ret?.data) {
-          setRawFeeQuote(ret.data);
+          setRawFeeQuote({
+            ...ret.data,
+            _originTokenId: requestedOriginId,
+          });
         }
       } catch (err) {
         console.log("getFeeQuote error:", err);
@@ -148,7 +152,7 @@ export default () => {
     };
   }, [network, protocolType, bridgeType, asset?.originTokenId, feeRate, refetchAssets]);
 
-  // Ensure stale Redeem/MRC20 quote never bleeds into Mint/BTC during switches
+  // Ensure stale Redeem/MRC20 quote never bleeds across network, direction, or token switches
   const feeQuote = useMemo(() => {
     if (!rawFeeQuote) return undefined;
     const expectedNetwork = protocolType === "btc" ? "BTC" : "MRC20";
@@ -158,8 +162,16 @@ export default () => {
     ) {
       return undefined;
     }
+    if (
+      expectedNetwork === "MRC20" &&
+      asset?.originTokenId &&
+      rawFeeQuote._originTokenId &&
+      rawFeeQuote._originTokenId !== asset.originTokenId
+    ) {
+      return undefined;
+    }
     return rawFeeQuote;
-  }, [rawFeeQuote, protocolType, bridgeType]);
+  }, [rawFeeQuote, protocolType, bridgeType, asset?.originTokenId]);
 
   const handleRefetchAssets = useCallback(async () => {
     setRefetchAssets((prev) => !prev);

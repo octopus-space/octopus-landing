@@ -37,6 +37,7 @@ import FormButton from "@/components/FormButton";
 import { SegOptions } from "./components/Options";
 import {
   SupportRedeemAddressType,
+  extractApiErrorMessage,
   mintBtc,
   mintMrc20,
   redeemBtc,
@@ -435,6 +436,28 @@ export default () => {
     return "";
   }, [connected, btcAddress]);
 
+  const singleMintCapMsg = useMemo(() => {
+    if (
+      bridgeType !== "mint" ||
+      protocolType !== "mrc20" ||
+      !asset ||
+      !amount ||
+      Number(amount) <= 0
+    ) {
+      return "";
+    }
+    const capStr = feeQuote?.maxSingleMintAmount;
+    if (capStr === undefined || capStr === null || capStr === "") return "";
+    try {
+      const decAmt = new Decimal(String(amount));
+      const decCap = new Decimal(String(capStr));
+      if (decAmt.gt(decCap)) {
+        return `Single-order Mint limit is ${capStr} ${asset.originSymbol} (current lock-pool UTXO cap). Please split into smaller orders.`;
+      }
+    } catch {}
+    return "";
+  }, [bridgeType, protocolType, asset, amount, feeQuote?.maxSingleMintAmount]);
+
   const redeem = async () => {
     if (!btcAddress || !asset || !network) return;
 
@@ -473,7 +496,21 @@ export default () => {
       await getBal(true);
     } catch (err: any) {
       console.log(err);
-      message.error(err.message || "unknown error");
+      const errMsg = extractApiErrorMessage(err);
+      if (errMsg === "canceled") {
+        message.info("Signing canceled");
+        return;
+      }
+      const replenishMsg =
+        feeQuote?.hotVaultReplenishingMessage ||
+        "系统冷钱包正在补充中，请稍后尝试";
+      if (errMsg === replenishMsg || errMsg.includes("冷钱包正在补充")) {
+        setConfirmProps(defaultConfirmProps);
+        setErrorMsg(errMsg);
+        message.warning(errMsg);
+        return;
+      }
+      message.error(errMsg);
     } finally {
       setSubmitting(false);
     }
@@ -535,14 +572,11 @@ export default () => {
       await getBal(true);
     } catch (err: any) {
       console.log(err);
-      const errMsg =
-        err?.response?.data?.message ||
-        err?.response?.data?.msg ||
-        err?.data?.message ||
-        err?.data?.msg ||
-        err?.message ||
-        err?.msg ||
-        "unknown error";
+      const errMsg = extractApiErrorMessage(err);
+      if (errMsg === "canceled") {
+        message.info("Signing canceled");
+        return;
+      }
       message.error(errMsg);
     } finally {
       setSubmitting(false);
@@ -578,7 +612,18 @@ export default () => {
         condition: Boolean(ErrorMsg),
         text: ErrorMsg,
         type: "primary" as const,
-        onClick: () => {},
+        onClick: () => {
+          message.warning(ErrorMsg);
+        },
+      },
+      {
+        condition: Boolean(singleMintCapMsg),
+        text: "Exceeds Single-Order Limit",
+        type: "primary" as const,
+        danger: true,
+        onClick: () => {
+          message.warning(singleMintCapMsg);
+        },
       },
       {
         condition: Boolean(balCheck),
@@ -596,6 +641,7 @@ export default () => {
     balCheck,
     isMintPaused,
     mintPausedMessage,
+    singleMintCapMsg,
     unsupportedBtcAddrMsg,
   ]);
 
@@ -611,6 +657,10 @@ export default () => {
     }
     if (unsupportedBtcAddrMsg) {
       message.warning(unsupportedBtcAddrMsg);
+      return;
+    }
+    if (singleMintCapMsg) {
+      message.warning(singleMintCapMsg);
       return;
     }
     if (balCheck) {
@@ -988,6 +1038,14 @@ export default () => {
           {unsupportedBtcAddrMsg && (
             <Alert
               message={unsupportedBtcAddrMsg}
+              type="warning"
+              style={{ marginTop: 20 }}
+              showIcon
+            />
+          )}
+          {singleMintCapMsg && (
+            <Alert
+              message={singleMintCapMsg}
               type="warning"
               style={{ marginTop: 20 }}
               showIcon

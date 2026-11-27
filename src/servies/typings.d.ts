@@ -77,11 +77,15 @@ declare namespace API {
     mvcFeeSats: number;
     mvcFeeAddress: string;
     assetFeeAmount: "0";
+    maxSingleMintAmount?: string | null;
+    maxSingleRedeemAmount?: string | null;
+    hotVaultReplenishingMessage?: string;
+    _originTokenId?: string;
   };
 
   interface Ret<T> {
     success: boolean;
-    code?: number;
+    code?: number | string;
     message?: string;
     msg?: string;
     data: T;
