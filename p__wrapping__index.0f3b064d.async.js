@@ -1928,9 +1928,24 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
     }
     return "";
   }, [connected, btcAddress]);
+  var singleMintCapMsg = (0,react.useMemo)(function () {
+    if (bridgeType !== "mint" || protocolType !== "mrc20" || !asset || !amount || Number(amount) <= 0) {
+      return "";
+    }
+    var capStr = feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.maxSingleMintAmount;
+    if (capStr === undefined || capStr === null || capStr === "") return "";
+    try {
+      var decAmt = new decimal/* default */.A(String(amount));
+      var decCap = new decimal/* default */.A(String(capStr));
+      if (decAmt.gt(decCap)) {
+        return "Single-order Mint limit is ".concat(capStr, " ").concat(asset.originSymbol, " (current lock-pool UTXO cap). Please split into smaller orders.");
+      }
+    } catch (_unused4) {}
+    return "";
+  }, [bridgeType, protocolType, asset, amount, feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.maxSingleMintAmount]);
   var redeem = /*#__PURE__*/function () {
     var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
-      var _yield$checkWalletAdd, status, addrErr, addressInfo, addressType;
+      var _yield$checkWalletAdd, status, addrErr, addressInfo, addressType, errMsg, replenishMsg;
       return regeneratorRuntime_default()().wrap(function _callee3$(_context3) {
         while (1) switch (_context3.prev = _context3.next) {
           case 0:
@@ -1983,22 +1998,40 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
             _context3.next = 26;
             return getBal(true);
           case 26:
-            _context3.next = 32;
+            _context3.next = 42;
             break;
           case 28:
             _context3.prev = 28;
             _context3.t0 = _context3["catch"](2);
             console.log(_context3.t0);
-            message/* default */.Ay.error(_context3.t0.message || "unknown error");
-          case 32:
-            _context3.prev = 32;
-            setSubmitting(false);
-            return _context3.finish(32);
+            errMsg = (0,wrapping/* extractApiErrorMessage */.VR)(_context3.t0);
+            if (!(errMsg === "canceled")) {
+              _context3.next = 35;
+              break;
+            }
+            message/* default */.Ay.info("Signing canceled");
+            return _context3.abrupt("return");
           case 35:
+            replenishMsg = (feeQuote === null || feeQuote === void 0 ? void 0 : feeQuote.hotVaultReplenishingMessage) || "系统冷钱包正在补充中，请稍后尝试";
+            if (!(errMsg === replenishMsg || errMsg.includes("冷钱包正在补充"))) {
+              _context3.next = 41;
+              break;
+            }
+            setConfirmProps(defaultConfirmProps);
+            setErrorMsg(errMsg);
+            message/* default */.Ay.warning(errMsg);
+            return _context3.abrupt("return");
+          case 41:
+            message/* default */.Ay.error(errMsg);
+          case 42:
+            _context3.prev = 42;
+            setSubmitting(false);
+            return _context3.finish(42);
+          case 45:
           case "end":
             return _context3.stop();
         }
-      }, _callee3, null, [[2, 28, 32, 35]]);
+      }, _callee3, null, [[2, 28, 42, 45]]);
     }));
     return function redeem() {
       return _ref2.apply(this, arguments);
@@ -2013,7 +2046,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
   }, [AssetsInfo]);
   var mint = /*#__PURE__*/function () {
     var _ref3 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee4() {
-      var _yield$checkWalletAdd2, status, addrErr, addressInfo, addressType, _err$response, _err$response2, _err$data, _err$data2, errMsg;
+      var _yield$checkWalletAdd2, status, addrErr, addressInfo, addressType, errMsg;
       return regeneratorRuntime_default()().wrap(function _callee4$(_context4) {
         while (1) switch (_context4.prev = _context4.next) {
           case 0:
@@ -2073,23 +2106,30 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
             _context4.next = 29;
             return getBal(true);
           case 29:
-            _context4.next = 36;
+            _context4.next = 39;
             break;
           case 31:
             _context4.prev = 31;
             _context4.t0 = _context4["catch"](5);
             console.log(_context4.t0);
-            errMsg = (_context4.t0 === null || _context4.t0 === void 0 || (_err$response = _context4.t0.response) === null || _err$response === void 0 || (_err$response = _err$response.data) === null || _err$response === void 0 ? void 0 : _err$response.message) || (_context4.t0 === null || _context4.t0 === void 0 || (_err$response2 = _context4.t0.response) === null || _err$response2 === void 0 || (_err$response2 = _err$response2.data) === null || _err$response2 === void 0 ? void 0 : _err$response2.msg) || (_context4.t0 === null || _context4.t0 === void 0 || (_err$data = _context4.t0.data) === null || _err$data === void 0 ? void 0 : _err$data.message) || (_context4.t0 === null || _context4.t0 === void 0 || (_err$data2 = _context4.t0.data) === null || _err$data2 === void 0 ? void 0 : _err$data2.msg) || (_context4.t0 === null || _context4.t0 === void 0 ? void 0 : _context4.t0.message) || (_context4.t0 === null || _context4.t0 === void 0 ? void 0 : _context4.t0.msg) || "unknown error";
+            errMsg = (0,wrapping/* extractApiErrorMessage */.VR)(_context4.t0);
+            if (!(errMsg === "canceled")) {
+              _context4.next = 38;
+              break;
+            }
+            message/* default */.Ay.info("Signing canceled");
+            return _context4.abrupt("return");
+          case 38:
             message/* default */.Ay.error(errMsg);
-          case 36:
-            _context4.prev = 36;
-            setSubmitting(false);
-            return _context4.finish(36);
           case 39:
+            _context4.prev = 39;
+            setSubmitting(false);
+            return _context4.finish(39);
+          case 42:
           case "end":
             return _context4.stop();
         }
-      }, _callee4, null, [[5, 31, 36, 39]]);
+      }, _callee4, null, [[5, 31, 39, 42]]);
     }));
     return function mint() {
       return _ref3.apply(this, arguments);
@@ -2120,7 +2160,17 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
       condition: Boolean(ErrorMsg),
       text: ErrorMsg,
       type: "primary",
-      onClick: function onClick() {}
+      onClick: function onClick() {
+        message/* default */.Ay.warning(ErrorMsg);
+      }
+    }, {
+      condition: Boolean(singleMintCapMsg),
+      text: "Exceeds Single-Order Limit",
+      type: "primary",
+      danger: true,
+      onClick: function onClick() {
+        message/* default */.Ay.warning(singleMintCapMsg);
+      }
     }, {
       condition: Boolean(balCheck),
       text: "Insufficient Balance",
@@ -2130,7 +2180,7 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
         message/* default */.Ay.warning(balCheck);
       }
     }];
-  }, [ErrorMsg, amount, balCheck, isMintPaused, mintPausedMessage, unsupportedBtcAddrMsg]);
+  }, [ErrorMsg, amount, balCheck, isMintPaused, mintPausedMessage, singleMintCapMsg, unsupportedBtcAddrMsg]);
   var handleSubmit = function handleSubmit() {
     if (bridgeType === "mint") return mint();
     if (bridgeType === "redeem") return redeem();
@@ -2142,6 +2192,10 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
     }
     if (unsupportedBtcAddrMsg) {
       message/* default */.Ay.warning(unsupportedBtcAddrMsg);
+      return;
+    }
+    if (singleMintCapMsg) {
+      message/* default */.Ay.warning(singleMintCapMsg);
       return;
     }
     if (balCheck) {
@@ -2518,6 +2572,13 @@ var useBreakpoint = grid/* default */.Ay.useBreakpoint;
           showIcon: true
         }), unsupportedBtcAddrMsg && /*#__PURE__*/(0,jsx_runtime.jsx)(es_alert/* default */.A, {
           message: unsupportedBtcAddrMsg,
+          type: "warning",
+          style: {
+            marginTop: 20
+          },
+          showIcon: true
+        }), singleMintCapMsg && /*#__PURE__*/(0,jsx_runtime.jsx)(es_alert/* default */.A, {
+          message: singleMintCapMsg,
           type: "warning",
           style: {
             marginTop: 20

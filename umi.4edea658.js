@@ -9603,6 +9603,7 @@ var defaultChains = [{
     var ctxKey = "".concat(network, ":").concat(assetNetwork, ":").concat(bridgeType, ":").concat((asset === null || asset === void 0 ? void 0 : asset.originTokenId) || "");
     var isSameCtx = prevQuoteCtxRef.current === ctxKey;
     prevQuoteCtxRef.current = ctxKey;
+    var requestedOriginId = (asset === null || asset === void 0 ? void 0 : asset.originTokenId) || "";
     var runQuoteFetch = /*#__PURE__*/function () {
       var _ref2 = asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee2() {
         var ret;
@@ -9626,7 +9627,9 @@ var defaultChains = [{
             case 5:
               ret = _context2.sent;
               if (!didCancel && ret !== null && ret !== void 0 && ret.data) {
-                setRawFeeQuote(ret.data);
+                setRawFeeQuote(objectSpread2_default()(objectSpread2_default()({}, ret.data), {}, {
+                  _originTokenId: requestedOriginId
+                }));
               }
               _context2.next = 12;
               break;
@@ -9657,15 +9660,18 @@ var defaultChains = [{
     };
   }, [network, protocolType, bridgeType, asset === null || asset === void 0 ? void 0 : asset.originTokenId, feeRate, refetchAssets]);
 
-  // Ensure stale Redeem/MRC20 quote never bleeds into Mint/BTC during switches
+  // Ensure stale Redeem/MRC20 quote never bleeds across network, direction, or token switches
   var feeQuote = (0,react.useMemo)(function () {
     if (!rawFeeQuote) return undefined;
     var expectedNetwork = protocolType === "btc" ? "BTC" : "MRC20";
     if (rawFeeQuote.network !== expectedNetwork || rawFeeQuote.direction !== bridgeType) {
       return undefined;
     }
+    if (expectedNetwork === "MRC20" && asset !== null && asset !== void 0 && asset.originTokenId && rawFeeQuote._originTokenId && rawFeeQuote._originTokenId !== asset.originTokenId) {
+      return undefined;
+    }
     return rawFeeQuote;
-  }, [rawFeeQuote, protocolType, bridgeType]);
+  }, [rawFeeQuote, protocolType, bridgeType, asset === null || asset === void 0 ? void 0 : asset.originTokenId]);
   var handleRefetchAssets = (0,react.useCallback)( /*#__PURE__*/asyncToGenerator_default()( /*#__PURE__*/regeneratorRuntime_default()().mark(function _callee3() {
     return regeneratorRuntime_default()().wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
@@ -12972,6 +12978,7 @@ function _getUserMrc20Balances() {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
+  VR: function() { return /* binding */ extractApiErrorMessage; },
   gb: function() { return /* binding */ mintBtc; },
   l8: function() { return /* binding */ mintMrc20; },
   qO: function() { return /* binding */ redeemBtc; },
@@ -46747,8 +46754,8 @@ var transferBTCs = /*#__PURE__*/(/* unused pure expression or super */ null && (
 
 var supportRedeemAddressType = ["P2TR", "P2WPKH", "P2PKH"];
 function extractApiErrorMessage(error) {
-  var _error$response, _error$response2, _error$data, _error$data2;
-  return (error === null || error === void 0 || (_error$response = error.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || (error === null || error === void 0 || (_error$response2 = error.response) === null || _error$response2 === void 0 || (_error$response2 = _error$response2.data) === null || _error$response2 === void 0 ? void 0 : _error$response2.msg) || (error === null || error === void 0 || (_error$data = error.data) === null || _error$data === void 0 ? void 0 : _error$data.message) || (error === null || error === void 0 || (_error$data2 = error.data) === null || _error$data2 === void 0 ? void 0 : _error$data2.msg) || (error === null || error === void 0 ? void 0 : error.message) || (error === null || error === void 0 ? void 0 : error.msg) || "unknown error";
+  var _error$response, _error$response2, _error$data, _error$data2, _error$info;
+  return (error === null || error === void 0 || (_error$response = error.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || (error === null || error === void 0 || (_error$response2 = error.response) === null || _error$response2 === void 0 || (_error$response2 = _error$response2.data) === null || _error$response2 === void 0 ? void 0 : _error$response2.msg) || (error === null || error === void 0 || (_error$data = error.data) === null || _error$data === void 0 ? void 0 : _error$data.message) || (error === null || error === void 0 || (_error$data2 = error.data) === null || _error$data2 === void 0 ? void 0 : _error$data2.msg) || (error === null || error === void 0 || (_error$info = error.info) === null || _error$info === void 0 ? void 0 : _error$info.errorMessage) || (error === null || error === void 0 ? void 0 : error.message) || (error === null || error === void 0 ? void 0 : error.msg) || "unknown error";
 }
 
 /**
@@ -169501,7 +169508,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"2.16.840.1.101.3.4.1.1":"aes-128-ecb
 /******/ 	
 /******/ 	/* webpack/runtime/get javascript chunk filename */
 /******/ 	// This function allow to reference async chunks
-/******/ 	__webpack_require__.u = function(chunkId) { return ({"73":"p__index","266":"layouts__index","807":"p__wrapping__index"}[chunkId] || chunkId) + "." + {"73":"167e2d29","146":"1075749a","266":"6e82bb2a","299":"c18e6c73","639":"76ba1c0f","807":"11a515b5"}[chunkId] + ".async.js"; };
+/******/ 	__webpack_require__.u = function(chunkId) { return ({"73":"p__index","266":"layouts__index","807":"p__wrapping__index"}[chunkId] || chunkId) + "." + {"73":"167e2d29","146":"1075749a","266":"6e82bb2a","299":"c18e6c73","639":"76ba1c0f","807":"0f3b064d"}[chunkId] + ".async.js"; };
 /******/ 	
 /******/ 	/* webpack/runtime/get mini-css chunk filename */
 /******/ 	// This function allow to reference async chunks
@@ -171612,7 +171619,7 @@ function _render() {
 render();
 if (typeof window !== 'undefined') {
   window.g_umi = {
-    version: '4.7.40'
+    version: '4.7.41'
   };
 }
 }();
